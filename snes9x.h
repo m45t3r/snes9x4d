@@ -57,9 +57,7 @@
 #define ROM_NAME_LEN 23
 
 #ifdef ZLIB
-#ifndef __WIN32__
 #include "zlib.h"
-#endif
 #define STREAM gzFile
 #define READ_STREAM(p,l,s) gzread (s,p,l)
 #define WRITE_STREAM(p,l,s) gzwrite (s,p,l)

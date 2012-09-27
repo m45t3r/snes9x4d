@@ -118,7 +118,7 @@ STRIP	= mipsel-linux-strip
 AS		= mipsel-linux-as
 GASM	= mipsel-linux-g++
 
-INCLUDES=-I/opt/mipsel-linux-uclibc/include
+INCLUDES=-I/opt/opendingux-toolchain/usr/include
 
 OPTIMISE= -O3 -G 0 -march=mips32 -mtune=r4600 -mno-mips16 -D_ZAURUS -DDINGOO
 OPTIMISE += -ffast-math -fstrict-aliasing -fomit-frame-pointer -ftree-vectorize -funroll-all-loops -fpeel-loops -ftracer -funswitch-loops -finline-functions -msoft-float
@@ -127,8 +127,8 @@ OPTIMISE += -ffast-math -fstrict-aliasing -fomit-frame-pointer -ftree-vectorize 
 #-fprofile-use
 
 CCFLAGS = $(OPTIMISE) \
--I/opt/mipsel-linux-uclibc/usr/include \
--I/opt/mipsel-linux-uclibc/usr/include/SDL \
+-I/opt/opendingux-toolchain/usr/include \
+-I/opt/opendingux-toolchain/usr/include/SDL \
 -I. \
 -Iunzip \
 -Isdl \
@@ -148,7 +148,7 @@ $(OPENGLDEFINES) \
 $(GUIDEFINES) \
 $(KREEDDEFINES) \
 $(CHEATDEFINES) \
-$(shell /opt/mipsel-linux-uclibc/usr/bin/sdl-config --cflags)
+$(shell /opt/opendingux-toolchain/usr/bin/sdl-config --cflags)
 
 CFLAGS=$(CCFLAGS)
 

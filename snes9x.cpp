@@ -54,7 +54,7 @@ extern bool8_32 Scale;
 void S9xUsage ()
 {
     printf("usage: snes9x <options> <rom image filename>\n");
-//    S9xExit();
+    S9xExit();
 }
 
 /*

@@ -420,7 +420,7 @@ again:
 			"Found multiple ROM file headers (and ignored them).");
     }
 
-    CheckForIPSPatch (filename, HeaderCount != 0, TotalFileSize);
+    CheckForIPSPatch (filename, HeaderCount != 0, TotalFileSize); 
     int orig_hi_score, orig_lo_score;
     int hi_score, lo_score;
 
@@ -2795,7 +2795,7 @@ void CMemory::CheckForIPSPatch (const char *rom_filename, bool8_32 header,
 
     _splitpath (rom_filename, drive, dir, name, ext);
     _makepath (fname, drive, dir, name, "ips");
-    
+
     if (!(patch_file = fopen (fname, "rb")))
     {
 	if (!(patch_file = fopen (S9xGetFilename (".ips"), "rb")))

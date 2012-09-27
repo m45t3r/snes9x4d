@@ -39,7 +39,7 @@
  * Nintendo Co., Limited and its subsidiary companies.
  */
 #include <fcntl.h>
-#include <sys/mman.h>
+//#include <sys/mman.h>
 #include "snes9x.h"
 #include "memmap.h"
 #include "cpuops.h"

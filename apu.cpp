@@ -43,6 +43,10 @@
 #undef TRUE
 #endif
 
+#ifdef __SDL__
+#undef __WIN32__
+#endif
+
 #include "snes9x.h"
 #include "spc700.h"
 #include "apu.h"

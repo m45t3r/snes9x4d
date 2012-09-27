@@ -90,6 +90,7 @@ typedef long			int16_32;
 
 #define SDD1_DECOMP
 
+#ifndef WIN32
 #ifndef PATH_MAX
 #define PATH_MAX 1024
 #endif
@@ -99,6 +100,7 @@ typedef long			int16_32;
 #define _MAX_FNAME PATH_MAX
 #define _MAX_EXT PATH_MAX
 #define _MAX_PATH PATH_MAX
+#endif
 
 /* #define ZeroMemory(a,b) memset((a),0,(b)) */
 #define ZeroMemory(a,b) \
