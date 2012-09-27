@@ -1,0 +1,165 @@
+# derived from "Makefile", 01 June 2010
+# blame Skeezix
+
+UNZIP=1
+CHEATS=1
+
+FXOBJ = ../fxinst.o ../fxemu.o ../fxdbg.o
+FXDEFINES = -DEXECUTE_SUPERFX_PER_LINE
+FXNO_DEPENDS = zsnes_fx
+
+SOUNDOBJ = ../spc700.o ../soundux.o ../apu.o
+SOUNDDEFINES = -DSPC700_C
+
+CPUOBJ = ../cpuops.o ../cpuexec.o
+
+C4OBJ = ../c4.o ../c4emu.o
+C4DEFINES =
+C4NO_DEPENDS = zsnes_c4
+
+
+ifdef CHEATS
+CHEAT = ../cheats.o ../cheats2.o
+CHEATDEFINES = -DCHEATS
+else
+CHEAT =
+CHEATDEFINES =
+endif
+
+OBJECTS = $(CPUOBJ) $(FXOBJ) $(C4OBJ) $(CHEAT) \
+	../cpu.o ../tile.o ../gfx.o ../clip.o \
+	../memmap.o ../ppu.o ../dma.o sdlmenu.o sdlmain.o \
+	$(SOUNDOBJ) sdlvideo.o \
+	../sdd1.o ../sdd1emu.o ../dsp1.o ../sa1.o ../sa1cpu.o ../obc1.o \
+	../snes9x.o ../snapshot.o ../data.o ../globals.o \
+
+ifdef NETPLAY
+OBJECTS += ../netplay.o #../server.o
+NETPLAYDEFINES = -DNETPLAY_SUPPORT
+endif
+
+ifdef UNZIP
+OBJECTS += ../loadzip.o ../unzip/unzip.o ../unzip/explode.o ../unzip/unreduce.o \
+	   ../unzip/unshrink.o
+UNZIPDEFINES = -DUNZIP_SUPPORT
+endif
+
+TOOLCHAINDIR := 
+BINPATH    := 
+
+ARCH :=
+
+CCC		= mipsel-linux-g++
+CC		= mipsel-linux-gcc
+STRIP	= mipsel-linux-strip
+AS		= mipsel-linux-as
+GASM	= mipsel-linux-g++
+
+INCLUDES=
+
+OPTIMISE = -D_ZAURUS -O3 -march=mips32 -mtune=r4600 -ffast-math -fsingle-precision-constant -fvariable-expansion-in-unroller -funsafe-loop-optimizations -Wunsafe-loop-optimizations
+
+CCFLAGS = $(OPTIMISE) \
+-I. \
+-I../ \
+-I../unzip \
+-D__SDL__ \
+-DDINGOO \
+-DZLIB \
+-DVAR_CYCLES \
+-DCPU_SHUTDOWN \
+-DSPC700_SHUTDOWN \
+$(FXDEFINES) \
+$(C4DEFINES) \
+$(CPUDEFINES) \
+$(SOUNDDEFINES) \
+$(NETPLAYDEFINES) \
+$(UNZIPDEFINES) \
+$(GLIDEDEFINES) \
+$(OPENGLDEFINES) \
+$(GUIDEFINES) \
+$(KREEDDEFINES) \
+$(CHEATDEFINES) \
+
+CCFLAGS  += -I.
+
+LDLIBS  = -lSDL
+
+
+.SUFFIXES: .o .cpp .c .cc .h .m .i .S .asm .obj
+
+all: snes9x4d.dge
+
+snes9x4d.dge: $(OBJECTS) 
+	$(CCC) -o $@ $(OBJECTS) $(EXTRALIBS) $(LDLIBS) -lz -lm
+	$(STRIP) snes9x4d.dge
+
+.cpp.o:
+	$(CCC) -c $(CCFLAGS) $*.cpp -o $@
+
+.c.o:
+	$(CC) -c $(CCFLAGS) $*.c -o $@
+
+.cpp.S:
+	$(CCC) -S $(CCFLAGS) $*.cpp -o $@
+
+.cpp.i:
+	$(CCC) -E $(CCFLAGS) $*.cpp -o $@
+
+.S.o:
+	$(CCC) -c $(CCFLAGS) $*.S -o $@
+
+.S.i:
+	$(CCC) -c -E $(CCFLAGS) $*.S -o $@
+
+.asm.o:
+	$(NASM) -f elf $(FXDEFINES) -i . -i i386 -o $@ $*.asm
+
+clean:
+	rm -f $(OBJECTS)
+
+release: clean all
+
+../ppu.o: $(FXDEPENDS)
+../cpu.o: $(FXDEPENDS)
+../memmap.o: $(FXDEPENDS)
+../globals.o: $(FXDEPENDS)
+../snapshot.o: $(FXDEPENDS)
+../snaporig.o: $(FXDEPENDS)
+
+../cpuexec.o: ../cpuexec.h ../cpuops.h ../snes9x.h ../snapshot.h ../gfx.h \
+			../memmap.h ../ppu.h ../debug.h ../port.h ../display.h ../apu.h ../spc700.h ../apu.h
+../debug.o: ../cpuops.h ../cpuexec.h ../snes9x.h \
+			../memmap.h ../ppu.h ../debug.h ../missing.h ../port.h ../display.h ../apu.h
+../ppu.o: ../snes9x.h ../memmap.h ../ppu.h ../missing.h ../port.h ../cpuexec.h \
+			../apu.h ../spc700.h ../fxemu.h ../fxinst.h ../sdd1.h
+../dsp1.o: ../snes9x.h ../port.h ../dsp1.h
+../sdd1.o: ../snes9x.h ../sdd1.h
+../sdd1emu.o: ../sdd1emu.h
+../sa1.o: ../sa1.h
+../snapshot.o: ../snapshot.h ../memmap.h ../snes9x.h ../65c816.h ../ppu.h \
+				../cpuexec.h ../display.h ../apu.h ../spc700.h ../soundux.h
+../snes96.o: ../port.h ../snes9x.h ../memmap.h
+../memmap.o: ../cpuexec.h ../snes9x.h ../memmap.h ../ppu.h ../port.h ../cheats.h ../getset.h ../apu.h \
+			../spc700.h
+sdlmain.o: ../cpuexec.h ../snes9x.h ../port.h ../snapshot.h ../display.h ../apu.h ../gfx.h ../cheats.h ../soundux.h
+sdlmenu.o: ../cpuexec.h ../snes9x.h ../port.h ../snapshot.h ../display.h ../apu.h ../gfx.h
+sdlvideo.o: ../display.h ../snes9x.h ../memmap.h ../debug.h ../ppu.h ../snapshot.h ../gfx.h ../soundux.h
+../gfx.o: ../memmap.h ../snes9x.h ../ppu.h ../gfx.h ../display.h ../port.h
+../tile.o: ../memmap.h ../snes9x.h ../ppu.h ../display.h ../gfx.h ../tile.h
+../spc700.o: ../spc700.h ../apu.h ../apumem.h ../snes9x.h ../memmap.h
+../apu.o: ../spc700.h ../apu.h ../apumem.h ../snes9x.h ../soundux.h
+../soundux.o: ../snes9x.h ../soundux.h ../apu.h
+../dma.o: ../ppu.h ../dma.h ../memmap.h ../getset.h ../snes9x.h ../port.h ../apu.h ../spc700.h ../sdd1.h ../sdd1emu.h
+../cheats.o: ../cheats.h ../snes9x.h ../port.h ../memmap.h
+../fxemu.o: ../fxemu.h ../fxinst.h
+../fxinst.o: ../fxemu.h ../fxinst.h
+../fxdbg.o: ../fxemu.h ../fxinst.h
+../offsets.o: ../port.h ../snes9x.h ../memmap.h ../ppu.h ../apu.h ../cpuexec.h ../65c816.h
+../globals.o: ../memmap.h ../spc700.h ../apu.h ../cpuexec.h ../ppu.h ../cheats.h ../snes9x.h ../gfx.h \
+				../missing.h ../dma.h ../dsp1.h ../soundux.h
+../xf86.o: ../display.h ../snes9x.h ../memmap.h ../debug.h ../ppu.h ../snapshot.h ../gfx.h
+../server.o: ../snes9x.h ../port.h ../memmap.h ../netplay.h
+../netplay.o: ../snes9x.h ../port.h ../memmap.h ../netplay.h
+../snaporig.o: ../cpuexec.h
+
