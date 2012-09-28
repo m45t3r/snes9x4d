@@ -2,7 +2,6 @@
 #include <time.h>
 #include <fcntl.h>
 #include <dirent.h>
-//#include <sys/mman.h>
 #include <strings.h>
 #include "keydef.h"
 #include "dingoo.h"
@@ -17,17 +16,6 @@
 
 #ifdef WIN32
 static void sync() { }
-#endif
-
-#ifdef PANDORA
-	#include "pandora_scaling/blitscale.h"
-	extern blit_scaler_option_t blit_scalers[];
-	extern blit_scaler_e g_scale;
-#endif
-
-#ifdef DINGOO
-	int batt_level(void);
-	int chk_hold(void);
 #endif
 
 extern Uint16 sfc_key[256];
@@ -117,12 +105,10 @@ void loadmenu_dispupdate(int romcount)
 
 #if CAANOO
 	strcpy(disptxt[0],"  Snes9x4C v20101010");
-#elif PANDORA
-	strcpy(disptxt[0],"  Snes9x4P v20101111");
 #elif CYGWIN32
 	strcpy(disptxt[0],"  Snes9x4W v20101010");
 #else
-	strcpy(disptxt[0],"  Snes9x4D v20101010");
+	strcpy(disptxt[0],"  Snes9x4D v20101010 for OpenDingux");
 #endif
 
 	//copy roms filenames to disp[] cache
@@ -230,7 +216,7 @@ char* menu_romselector()
 					}
 			}
 #else
-			//PANDORA & DINGOO & WIN32 -----------------------------------------------------
+			// DINGOO & WIN32 -----------------------------------------------------
 			keyssnes = SDL_GetKeyState(NULL);
 			switch(event.type)
 			{
@@ -320,12 +306,10 @@ void menu_dispupdate(void)
 	}
 #if CAANOO
 	strcpy(disptxt[0],"Snes9x4C v20101010");
-#elif PANDORA
-	strcpy(disptxt[0],"Snes9x4P v20101106");
 #elif CYGWIN32
 	strcpy(disptxt[0],"Snes9x4W v20101010");
 #else
-	strcpy(disptxt[0],"Snes9x4D v20101010");
+	strcpy(disptxt[0],"Snes9x4D v20101010 for OpenDingux");
 #endif
 	strcpy(disptxt[1],"");
 	strcpy(disptxt[2],"Reset Game           ");
@@ -334,22 +318,11 @@ void menu_dispupdate(void)
 	strcpy(disptxt[5],"State Slot              No.");
 	strcpy(disptxt[6],"Display Frame Rate     ");
 	strcpy(disptxt[7],"Transparency           ");
-#ifdef PANDORA
-	strcpy(disptxt[8],"Display mode        ");
-#else
 	strcpy(disptxt[8],"Full Screen         ");
-#endif
 	strcpy(disptxt[9],"Frameskip              ");
 	strcpy(disptxt[10],"Sound Volume           ");
 	strcpy(disptxt[11],"Credit              ");
 	strcpy(disptxt[12],"Exit");
-#ifdef DINGOO
-	strcpy(disptxt[13],"--------------");
-	strcpy(disptxt[14],"BATT:");
-//	strcpy(disptxt[15],"     ");
-//	strcpy(disptxt[16],"MHZ :");
-//	strcpy(disptxt[17],"BACKLIGHT:");
-#endif
 
 	sprintf(temp,"%s%d",disptxt[5],SaveSlotNum);
 	strcpy(disptxt[5],temp);
@@ -366,12 +339,6 @@ void menu_dispupdate(void)
 		sprintf(temp,"%s  Off",disptxt[7]);
 	strcpy(disptxt[7],temp);
 
-#ifdef PANDORA
-	{
-	  sprintf ( temp, "%s%s", disptxt [ 8 ], blit_scalers [ g_scale ].desc_en );
-	  strcpy ( disptxt[8], temp );
-	}
-#else
 	if (highres_current==false)
 	{
 		if(Scale_org)
@@ -385,7 +352,6 @@ void menu_dispupdate(void)
 		sprintf(temp,"%sinactive",disptxt[8]);
 		strcpy(disptxt[8],temp);
 	}
-#endif
 
 	if (Settings.SkipFrames == AUTO_FRAMERATE)
 	{
@@ -400,24 +366,6 @@ void menu_dispupdate(void)
 
 	sprintf(temp,"%s %3d%%",disptxt[10],vol);
 	strcpy(disptxt[10],temp);
-
-#ifdef DINGOO
-	if      (batt_level() >= 3739)
-		sprintf(temp,"%s  (#####)",disptxt[14]);
-	else if (batt_level() >= 3707)
-		sprintf(temp,"%s  ( ####)",disptxt[14]);
-	else if (batt_level() >= 3675)
-		sprintf(temp,"%s  (  ###)",disptxt[14]);
-    	else if (batt_level() >= 3643)
-		sprintf(temp,"%s  (   ##)",disptxt[14]);
-	else if (batt_level() >= 3611)
-		sprintf(temp,"%s  (    #)",disptxt[14]);
-   	else   sprintf(temp,"%s  (     )",disptxt[14]);
-	strcpy(disptxt[14],temp);
-
-//	sprintf(temp,"%s  (%5d)",disptxt[15],(batt_level()/10)*10);
-//	strcpy(disptxt[15],temp);	
-#endif
 
 #ifdef DINGOO
 	for(int i=0;i<=14;i++)
@@ -592,7 +540,7 @@ void menu_loop(void)
 					}
 				}
 #else
-				//PANDORA & DINGOO & WIN32 -----------------------------------------------------
+				// DINGOO & WIN32 -----------------------------------------------------
 				keyssnes = SDL_GetKeyState(NULL);
 
 				if(keyssnes[sfc_key[UP_1]] == SDL_PRESSED)
@@ -658,25 +606,7 @@ void menu_loop(void)
 							Settings.Transparency = !Settings.Transparency;
 						break;
 						case 8:
-#ifdef PANDORA
-						  // rotate through scalers
-							if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
-							{
-								do
-								{
-									g_scale = (blit_scaler_e) ( ( g_scale + 1 ) % bs_max );
-								} while ( blit_scalers [ g_scale ].valid == bs_invalid );
-							} else if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED)
-							{
-								do
-								{
-									g_scale = (blit_scaler_e) ( g_scale - 1 );
-									if (g_scale < 1) g_scale = (blit_scaler_e)(bs_max-1);
-								} while ( blit_scalers [ g_scale ].valid == bs_invalid );
-							}
-#else
 							Scale_org = !Scale_org;
-#endif
 						break;
 						case 9:
 							if (Settings.SkipFrames == AUTO_FRAMERATE)
@@ -821,37 +751,6 @@ void show_screenshot()
 		}
 	}
 }
-
-#ifdef DINGOO
-int batt_level(void)
-{
-	FILE *FP;
-	int mvolts;
-	char buf[6]={};
-	FP = fopen("/proc/jz/battery", "rb");
-	if (!FP) return(0);
-	fgets(buf, 5, FP);
-	fclose(FP);
- 	sscanf(buf, "%d", &mvolts);
-	return (mvolts);
-}
-
-int chk_hold(void)
-{
-	FILE *FP;
-	uint32 hold=0;
-	char buf[12]={};
-	FP = fopen("/proc/jz/gpio3_pxpin", "rb");
-	if (!FP) return(0);
-	fgets(buf, 11, FP);
-	fclose(FP);
- 	sscanf(buf, "%x", &hold);
-	if((hold & 0x400000) == 0)
-		return (1);
-	else
-		return (0);
-}
-#endif
 
 void ShowCredit()
 {

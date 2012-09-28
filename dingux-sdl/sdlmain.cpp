@@ -65,30 +65,6 @@
 	#include "dingoo.h"
 #endif
 
-#ifdef PANDORA
-#include <linux/fb.h>
-#include "unix/pandora_scaling/simple_noAA_scaler.h"
-extern "C" {
-#include "unix/pandora_scaling/hqx/hqx.h"
-#include "unix/pandora_scaling/scale2x/scalebit.h"
-}
-#ifndef FBIO_WAITFORVSYNC
-#define FBIO_WAITFORVSYNC _IOW('F', 0x20, __u32)
-#endif
-#endif
-
-#include <unistd.h>
-#include <sys/types.h>
-#ifndef WIN32
-#include <sys/ioctl.h>
-#endif
-#include <sys/time.h>
-
-#ifndef WIN32
-#include <sys/soundcard.h>
-#include <sys/mman.h>
-#endif
-
 #include "snes9x.h"
 #include "memmap.h"
 #include "debug.h"
@@ -103,31 +79,6 @@ extern "C" {
 
 #ifdef WIN32
 static void sync() { }
-#endif
-
-#ifdef PANDORA
-	#include "pandora_scaling/blitscale.h"
-	blit_scaler_option_t blit_scalers[] = {
-		// KEEP IN SYNC TO BLIT_SCALER_E or Earth Crashes Into The Sun
-		{ bs_error,                bs_invalid, 0, 0,       "Error" },
-		{ bs_1to1,                 bs_invalid, 1, 1,       "1 to 1" },
-		{ bs_1to2_double,          bs_valid,   2, 2,       "2x2 no-AA" },
-		{ bs_1to2_scale2x,         bs_valid,   2, 2,       "2x2 Scale2x" },
-		{ bs_1to2_smooth,          bs_valid,   2, 2,       "2x2 Smoothed" },
-		{ bs_1to32_multiplied,     bs_valid,   3, 2,       "3x2 no-AA" },
-		{ bs_1to32_smooth,         bs_invalid, 3, 2,       "3x2 Smoothed" },
-		{ bs_fs_aspect_multiplied, bs_invalid, 0xFF, 0xFF, "Fullscreen (aspect) (unsmoothed)" },
-		{ bs_fs_aspect_smooth,     bs_invalid, 0xFF, 0xFF, "Fullscreen (aspect) (smoothed)" },
-		{ bs_fs_always_multiplied, bs_invalid, 0xFF, 0xFF, "Fullscreen (unsmoothed)" },
-		{ bs_fs_always_smooth,     bs_invalid, 0xFF, 0xFF, "Fullscreen (smoothed)" },
-	};
-
-	blit_scaler_e g_scale = bs_1to2_double;
-	//blit_scaler_e g_scale = bs_1to32_multiplied;
-	unsigned char g_fullscreen = 1;
-	unsigned char g_scanline = 0; // pixel doubling, but skipping the vertical alternate lines
-	unsigned char g_vsync = 1; // if >0, do vsync
-	int g_fb = -1; // fb for framebuffer
 #endif
 
 #ifdef CAANOO
@@ -156,7 +107,7 @@ void OutOfMemory();
 
 extern void S9xDisplayFrameRate (uint8 *, uint32);
 extern void S9xDisplayString (const char *string, uint8 *, uint32, int);
-extern SDL_Surface *screen,*gfxscreen;
+extern SDL_Surface *screen, *gfxscreen;
 
 static uint32 ffc = 0;
 uint32 xs = 320; //width
@@ -251,13 +202,14 @@ int main (int argc, char **argv)
 	ZeroMemory (&Settings, sizeof (Settings));
 
 	Settings.JoystickEnabled = FALSE;
-	Settings.SoundPlaybackRate = 2;
+	Settings.SoundPlaybackRate = 5;
 	Settings.Stereo = TRUE;
 	//Settings.SoundSync = TRUE;
 	Settings.SoundBufferSize = 512; //256 //2048
 	Settings.CyclesPercentage = 100;
 	Settings.DisableSoundEcho = FALSE;
 	Settings.APUEnabled = Settings.NextAPUEnabled = TRUE;
+	Settings.InterpolatedSound = TRUE;
 	Settings.H_Max = SNES_CYCLES_PER_SCANLINE;
 #ifdef PANDORA
 	Settings.SkipFrames = 1;
@@ -383,10 +335,6 @@ int main (int argc, char **argv)
 		OutOfMemory ();
 	}
 
-#ifdef PANDORA
-	hqxInit();
-#endif
-
 	S9xInitInputDevices ();
 
 	CPU.Flags = saved_flags;
@@ -439,8 +387,6 @@ int main (int argc, char **argv)
 	//Handheld Key Infos
 #ifdef CAANOO
 	sprintf(msg,"Press HOME to Show MENU");
-#elif PANDORA
-	sprintf(msg,"Press SPACEBAR to Show MENU");
 #elif CYGWIN32
 	sprintf(msg,"Press ESC+LALT to Show MENU");
 #else
@@ -582,7 +528,7 @@ void S9xExit()
 	if (Settings.NetPlay)
 		S9xNPDisconnect();
 #endif
-	// this crashes
+
 	Memory.SaveSRAM (S9xGetFilename (".srm"));
 	//S9xSaveCheatFile (S9xGetFilename (".cht")); // not needed for embedded devices
 
@@ -623,34 +569,6 @@ void S9xInitInputDevices ()
 	sfc_key[DOWN_1] = CAANOO_BUTTON_DOWN;
 
 	sfc_key[QUIT] = CAANOO_BUTTON_HOME;
-#elif PANDORA
-	// Pandora mapping
-	sfc_key[A_1] = SDLK_END; //DINGOO_BUTTON_A; A = B
-	sfc_key[B_1] = SDLK_PAGEDOWN; //DINGOO_BUTTON_B; B = X
-	sfc_key[X_1] = SDLK_PAGEUP; //DINGOO_BUTTON_X; X = Y
-	sfc_key[Y_1] = SDLK_HOME; //DINGOO_BUTTON_Y; Y = A
-	sfc_key[L_1] = SDLK_RSHIFT; //DINGOO_BUTTON_L;
-	sfc_key[R_1] = SDLK_RCTRL; // DINGOO_BUTTON_R;
-	sfc_key[START_1] = SDLK_LALT; //DINGOO_BUTTON_START;
-	sfc_key[SELECT_1] = SDLK_LCTRL; //DINGOO_BUTTON_SELECT;
-	sfc_key[LEFT_1] = SDLK_LEFT; //DINGOO_BUTTON_LEFT;
-	sfc_key[RIGHT_1] = SDLK_RIGHT; //DINGOO_BUTTON_RIGHT;
-	sfc_key[UP_1] = SDLK_UP; //DINGOO_BUTTON_UP;
-	sfc_key[DOWN_1] = SDLK_DOWN; //DINGOO_BUTTON_DOWN;
-/*
-	// for now, essentially unmapped
-	sfc_key[LEFT_2] = SDLK_g;
-	sfc_key[RIGHT_2] = SDLK_j;
-	sfc_key[UP_2] = SDLK_u;
-	sfc_key[DOWN_2] = SDLK_n;
-	sfc_key[LU_2] = SDLK_y;
-	sfc_key[LD_2] = SDLK_b;
-	sfc_key[RU_2] = SDLK_i;
-	sfc_key[RD_2] = SDLK_m;
-
-	sfc_key[QUIT] = SDLK_ESCAPE;
-	sfc_key[ACCEL] = SDLK_TAB;
-*/
 #else
 	// Dingoo mapping
 	sfc_key[A_1] = DINGOO_BUTTON_A;
@@ -665,20 +583,6 @@ void S9xInitInputDevices ()
 	sfc_key[RIGHT_1] = DINGOO_BUTTON_RIGHT;
 	sfc_key[UP_1] = DINGOO_BUTTON_UP;
 	sfc_key[DOWN_1] = DINGOO_BUTTON_DOWN;
-/*
-	// for now, essentially unmapped
-	sfc_key[LEFT_2] = SDLK_g;
-	sfc_key[RIGHT_2] = SDLK_j;
-	sfc_key[UP_2] = SDLK_u;
-	sfc_key[DOWN_2] = SDLK_n;
-	sfc_key[LU_2] = SDLK_y;
-	sfc_key[LD_2] = SDLK_b;
-	sfc_key[RU_2] = SDLK_i;
-	sfc_key[RD_2] = SDLK_m;
-
-	sfc_key[QUIT] = SDLK_d;
-	sfc_key[ACCEL] = SDLK_u;
-*/
 #endif
 
 	int i = 0;
@@ -860,161 +764,9 @@ bool8_32 S9xInitUpdate ()
 	return (TRUE);
 }
 
-//		uint32 xs = 320, ys = 240, cl = 0, cs = 0, mfs = 10;
-#ifdef PANDORA
-bool8_32 S9xDeinitUpdate ( int Width, int Height ) {
-
-  /* rules:
-   * if highres mode -> g_scale should always be 1 (ie: no scaling, since high res mode is 512x480
-   * for non-highres-mode -> g_scale can be 1 (1:1) or 2 (1:2, pixel doubling)
-   *
-   * future:
-   * g_scale -> to imply anti-aliasing or stretch-blit or other scaling modes
-   */
-
-  // NEEDS WORK, THIS IS JUST TO GET WORKING
-
-	// get the pitch only once...
-	// pitch is in 1b increments, so is 2* what you think!
-	uint16 screen_pitch_half = (screen -> pitch) >> 1;
-	
-	//pointer to the screen
-	uint16* screen_pixels = (uint16*)(screen -> pixels);
-	
-	// this line for centering in Y direction always assumes that Height<=240 and double scaling in Y is wanted (interlacing!)
-	// screen_pitch_half * (480-(Heigth*2))/2; due to shifting no "div by zero" not possible
-	// heigth is usually 224, 239 or 240!
-	uint16 widescreen_center_y = screen_pitch_half * ( ( 480 - ( Height << 1 ) ) >> 1 );
-	// centering in X direction depends on the scaling type used and is defined at the according places
-	uint16 widescreen_center_x;
-	// destination pointer address: pointer to screen_pixels plus moving for centering
-	uint16* destination_pointer_address;
-	
-	//fprintf (stderr, "width: %d, height: %d\n", Width, Height);
-	
-	uint16 source_panewidth = 320; // LoRes games are rendered into a 320 wide SDL screen
-	if (Settings.SupportHiRes)
-		source_panewidth = 512; // HiRes games are rendered into a 512 wide SDL screen
-	
-	switch (g_scale) {
-		case bs_1to2_double:
-			// the pandora screen has a width of 800px, so everything above should be handled differently
-			// only some scenes in hires roms use 512px width, otherwise the max is 320px in the menu!
-			// hires modules themselves come with two modes, one with 512 width, one with 256
-			if (Width > 400 ) {
-				widescreen_center_x = ( screen -> w - Width ) >> 1; // ( screen -> w - Width ) / 2
-				destination_pointer_address = screen_pixels + widescreen_center_x + widescreen_center_y;
-				
-				render_x_single(destination_pointer_address, screen_pitch_half,
-								(uint16*)(GFX.Screen), source_panewidth, Width, Height);
-			}
-			else {
-				widescreen_center_x = ( screen -> w - ( Width << 1 ) ) >> 1; // ( screen -> w - ( Width * 2 ) ) / 2
-				// destination pointer address: pointer to screen_pixels plus moving for centering
-				destination_pointer_address = screen_pixels + widescreen_center_x + widescreen_center_y;
-				
-				render_x_double(destination_pointer_address, screen_pitch_half,
-								(uint16*)(GFX.Screen), source_panewidth, Width, Height);
-			}
-			break;
-		case bs_1to32_multiplied:
-			//widescreen_center_x = 16; // screen -> w - 3*Width
-			// destination pointer address: pointer to screen_pixels plus moving for centering
-			destination_pointer_address = screen_pixels + 16 + widescreen_center_y;
-			
-			// the pandora screen has a width of 800px, so everything above should be handled differently
-			// only some scenes in hires roms use 512px width, otherwise the max is 320px in the menu!
-			// hires modules themselves come with two modes, one with 512 width, one with 256
-			if (Width > 400 ) {
-				render_x_oneandhalf(destination_pointer_address, screen_pitch_half,
-								(uint16*)(GFX.Screen), source_panewidth, Width, Height);
-			}
-			else {
-				render_x_triple(destination_pointer_address, screen_pitch_half,
-								(uint16*)(GFX.Screen), source_panewidth, Width, Height);
-			}
-			break;
-		case bs_1to2_smooth:
-			if (Settings.SupportHiRes) { 
-				fprintf ( stderr, "Smoothed not enabled for hires mode!\n" );
-				g_scale = bs_1to2_double;
-			} else {
-				hq2x_16((uint16*)(GFX.Screen), screen_pixels, Width, Height, screen->w, screen->h);
-			}
-			break;
-		case bs_1to2_scale2x:
-			if (Settings.SupportHiRes) { 
-				fprintf ( stderr, "Scale2x not enabled for hires mode!\n" );
-				g_scale = bs_1to2_double;
-			} else {
-				widescreen_center_x = ( screen -> w - ( Width << 1 ) ) >> 1; // ( screen -> w - ( Width * 2 ) ) / 2
-				destination_pointer_address = screen_pixels + widescreen_center_x + widescreen_center_y;
-				
-				scale(2, (uint16*)destination_pointer_address, screen->w*2, (uint16*)GFX.Screen, 320*2, 2, Width, Height);
-			}
-			break;
-		default:
-			// code error; unknown scaler
-			fprintf ( stderr, "invalid scaler option handed to render code; fix me!\n" );
-			exit ( 0 );
-	}
-
-
-//The part below is the version that should be used when you want scanline support.
-//if you don't want scanlines, the other system should be faster.
-// 		for (register uint16 i = 0; i < Height; ++i) {
-// 			// first scanline of doubled pair
-// 			register uint16 *dp16 = destination_pointer_address + ( i * screen_pitch );
-// 			
-// 			register uint16 *sp16 = (uint16*)(GFX.Screen);
-// 			sp16 += ( i * 320 );
-// 			
-// 			for (register uint16 j = 0; j < Width /*256*/; ++j, ++sp16) {
-// 				*dp16++ = *sp16;
-// 				*dp16++ = *sp16; // doubled
-// 			}
-// 			
-// 			if ( ! g_scanline ) {
-// 				// second scanline of doubled pair
-// 				dp16 = destination_pointer_address + ( i * screen_pitch ) + screen_pitch_half;
-// 				
-// 				sp16 = (uint16*)(GFX.Screen);
-// 				sp16 += ( i * 320 );
-// 				for (register uint16 j = 0; j < Width /*256*/; ++j, ++sp16) {
-// 					*dp16++ = *sp16;
-// 					*dp16++ = *sp16; // doubled
-// 				}
-// 			} // scanline
-// 		} // for each height unit
-
-  if (Settings.DisplayFrameRate) {
-	S9xDisplayFrameRate ((uint8 *)screen->pixels + 64, 800 * 2 * 2 );
-  }
-
-//the following part was once the cause of a segfault with savestates, this is no longer the case
-//sadly it is not removed correctly in every screen mode, so commenting it out for the moment
-//  if (GFX.InfoString) {
-//	S9xDisplayString (GFX.InfoString, (uint8 *)screen->pixels + 64, 800 * 2 * 2, 240 );
-//  }
-
-  // SDL_UnlockSurface(screen);
-
-  // vsync
-  if ( g_vsync && g_fb >= 0 ) {
-	int arg = 0;
-	ioctl ( g_fb, FBIO_WAITFORVSYNC, &arg );
-  }
-
-  // update the actual screen
-  SDL_UpdateRect(screen,0,0,0,0);
-
-  return(TRUE);
-}
-#else
 bool8_32 S9xDeinitUpdate (int Width, int Height)
 {
-//printf("Width=%d, Height=%d\n",Width,Height);
-
+	SDL_LockSurface(screen);
 	register uint32 lp = (xs > 256) ? 16 : 0;
 
 	if (Width > 256)
@@ -1049,8 +801,6 @@ bool8_32 S9xDeinitUpdate (int Width, int Height)
 			S9xDisplayString (GFX.InfoString, (uint8 *)screen->pixels + 64, 640,0);
 		else if (Settings.DisplayFrameRate)
 			S9xDisplayFrameRate ((uint8 *)screen->pixels + 64, 640);
-
-		SDL_UpdateRect(screen,32,0,256,Height);
 	}
 	else
 	{
@@ -1095,27 +845,19 @@ bool8_32 S9xDeinitUpdate (int Width, int Height)
 				S9xDisplayString (GFX.InfoString, (uint8 *)screen->pixels + 64, 640,0);
 			else if (Settings.DisplayFrameRate)
 				S9xDisplayFrameRate ((uint8 *)screen->pixels + 64, 640);
-	
-			SDL_UpdateRect(screen,0,yoffset,320,Height);
 		}
 		else
 		{
-			//center ypos if ysize is only 224px
-//			int yoffset = 8*(Height == 224);
-			
 			if (GFX.InfoString)
 				S9xDisplayString (GFX.InfoString, (uint8 *)screen->pixels + 64, 640,0);
 			else if (Settings.DisplayFrameRate)
 				S9xDisplayFrameRate ((uint8 *)screen->pixels + 64, 640);
-	
-//			SDL_UpdateRect(screen,0,yoffset,320,Height);
-			SDL_UpdateRect(screen,32,0,256,Height);
 		}
 	}
-
+	SDL_UnlockSurface(screen);
+	SDL_Flip(screen);
 	return(TRUE);
 }
-#endif
 
 #ifndef _ZAURUS
 static unsigned long now ()
@@ -1349,34 +1091,10 @@ void S9xProcessEvents (bool8_32 block)
 				}
 				break;
 #else
-			//PANDORA & DINGOO ------------------------------------------------------
+			//DINGOO ------------------------------------------------------
 			case SDL_KEYDOWN:
 				keyssnes = SDL_GetKeyState(NULL);
 
-				// shortcut
-#ifdef PANDORA
-				if ( event.key.keysym.sym == SDLK_q )
-				{
-					//exit ( 0 ); // just die
-					S9xExit();
-				}
-				if ( event.key.keysym.sym == SDLK_s )
-				{
-					//exit ( 0 ); // just die
-					//S9xExit();
-					if (g_scale == bs_1to2_double)
-					{
-						g_scale = bs_1to2_scale2x;
-					} else if (g_scale == bs_1to2_scale2x)
-					{
-						g_scale = bs_1to2_smooth;
-					} else
-					{
-						g_scale = bs_1to2_double;
-					}
-				}
-
-#endif //PANDORA
 				//QUIT Emulator
 				if ( (keyssnes[sfc_key[SELECT_1]] == SDL_PRESSED) &&(keyssnes[sfc_key[START_1]] == SDL_PRESSED) && (keyssnes[sfc_key[X_1]] == SDL_PRESSED) )
 				{
@@ -1418,20 +1136,6 @@ void S9xProcessEvents (bool8_32 block)
 					S9xSetSoundMute(true);
 					menu_loop();
 					S9xSetSoundMute(false);
-#ifdef DINGOO
-					//S9xSetMasterVolume (vol, vol);
-#endif
-
-#ifdef PANDORA
-				}
-				// another shortcut I'm afraid
-				else if (event.key.keysym.sym == SDLK_SPACE)
-				{
-						S9xSetSoundMute(true);
-						menu_loop();
-						S9xSetSoundMute(false);
-						//S9xSetMasterVolume (vol, vol);
-#endif //PANDORA
 				}
 				break;
 			case SDL_KEYUP:

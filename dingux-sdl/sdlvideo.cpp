@@ -38,7 +38,7 @@
  * Super NES and Super Nintendo Entertainment System are trademarks of
  * Nintendo Co., Limited and its subsidiary companies.
  */
-//#ifdef __linux
+
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
@@ -49,12 +49,6 @@
 #include <signal.h>
 
 #include <SDL/SDL.h>
-
-#ifdef PANDORA
-	#include <sys/types.h>
-	#include <sys/stat.h>
-	#include <fcntl.h>
-#endif
 
 #include "snes9x.h"
 #include "memmap.h"
@@ -72,16 +66,10 @@ SDL_Surface *screen, *gfxscreen;
 extern uint32 xs, ys, cl, cs;
 extern bool8_32 Scale;
 
-#ifdef PANDORA
-	#include "pandora_scaling/blitscale.h"
-	extern blit_scaler_e g_scale;
-	extern unsigned char g_fullscreen;
-#endif
-
 #ifndef _ZAURUS
 int S9xMinCommandLineArgs ()
 {
-    return (2);
+	return (2);
 }
 
 void S9xGraphicsMode ()
@@ -110,39 +98,7 @@ void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
 	// No more MOUSE-CURSOR
 	SDL_ShowCursor(SDL_DISABLE);
 
-#ifdef PANDORA
-	//screen = SDL_SetVideoMode(xs * blit_scalers [ g_scale ].scale_x, ys * blit_scalers [ g_scale ].scale_y, 16,
-	//  g_fullscreen ? SDL_SWSURFACE|SDL_FULLSCREEN : SDL_SWSURFACE);
-	screen = SDL_SetVideoMode( 800 /* pandora horiz */, 480 /* pandora vert */, 16,
-				   g_fullscreen ? SDL_SWSURFACE|SDL_FULLSCREEN : SDL_SWSURFACE);
-
-	// for vsync
-	{
-	  extern int g_fb;
-	  g_fb = open ("/dev/fb0", O_RDONLY /* O_RDWR */ );
-	  if ( g_fb < 0 ) {
-	    fprintf ( stderr, "Couldn't open /dev/fb0 for vsync\n" );
-	  }
-	}
-
-	// for LCD refresh rate
-	switch ( (int) Memory.ROMFramesPerSecond )
-	{
-		case 60:
-		  fprintf ( stderr, "Assuming 60hz LCD\n" );
-		  break; // nothing to do
-		case 50:
-		  fprintf ( stderr, "Switching to 50hz LCD\n" );
-		  system ( "/usr/bin/sudo -n /usr/pandora/scripts/op_lcdrate.sh 50" );
-		  break;
-		default:
-		  fprintf ( stderr, "Game reports %d hz display; ignoring.\n", (int) Memory.ROMFramesPerSecond );
-		  break;
-	}
-
-#else //DINGOO //CAANOO
-	screen = SDL_SetVideoMode(xs, ys, 16, SDL_SWSURFACE);	//do no take SDL_HWSURFACE on Dingoo (bad overlays) and CAANOO (flickers)
-#endif
+	screen = SDL_SetVideoMode(xs, ys, 16, SDL_SWSURFACE); //do no take SDL_HWSURFACE on Dingoo (bad overlays) and CAANOO (flickers)
 
 	if (screen == NULL)
 	{
@@ -158,16 +114,6 @@ void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
 	}
 	else
 	{
-#ifdef PANDORA
-		if ( g_scale > bs_1to1 )
-		{
-			GFX.Screen = (uint8*) malloc ( ( 512 * 480 * 2 ) + 64 );
-			GFX.Pitch = 320 * 2;
-	    } else {
-	    	GFX.Screen = (uint8 *)screen->pixels + 64;
-	    	GFX.Pitch = 320 * 2;
-	    }
-#else
 		if(Scale)
 		{
 			GFX.Screen = (uint8 *)screen->pixels;
@@ -178,7 +124,6 @@ void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
 			GFX.Screen = (uint8 *)screen->pixels + 64;	//center screen
 			GFX.Pitch = 320 * 2;
 		}
-#endif
 	}
 
 	GFX.SubScreen = (uint8 *)malloc(512 * 480 * 2);
@@ -188,17 +133,6 @@ void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
 
 void S9xDeinitDisplay ()
 {
-#ifdef PANDORA
-    // for vsync
-    extern int g_fb;
-    if ( g_fb >= 0 )
-    {
-	  close ( g_fb );
-	}
-	// for LCD refresh
-	system ( "/usr/bin/sudo -n /usr/pandora/scripts/op_lcdrate.sh 60" );
-#endif
-
 	SDL_FreeSurface(screen);
 	free(GFX.SubScreen);
 	free(GFX.ZBuffer);
@@ -215,29 +149,29 @@ void S9xSetTitle (const char * /*title*/)
 
 #ifndef _ZAURUS
 const char *S9xSelectFilename (const char *def, const char *dir1,
-			    const char *ext1, const char *title)
+								const char *ext1, const char *title)
 {
-    static char path [PATH_MAX];
-    char buffer [PATH_MAX];
-    
-    S9xTextMode ();
-    printf ("\n%s (default: %s): ", title, def);
-    fflush (stdout);
-    
-    if (fgets (buffer, sizeof (buffer) - 1, stdin))
-    {
+	static char path [PATH_MAX];
+	char buffer [PATH_MAX];
+
+	S9xTextMode ();
+	printf ("\n%s (default: %s): ", title, def);
+	fflush (stdout);
+
+	if (fgets (buffer, sizeof (buffer) - 1, stdin))
+	{
 		char *p = buffer;
 		while (isspace (*p) || *p == '\n')
-		    p++;
+			p++;
 		if (!*p)
 		{
-		    strcpy (buffer, def);
-		    p = buffer;
+			strcpy (buffer, def);
+			p = buffer;
 		}
-	
+
 		char *q = strrchr (p, '\n');
 		if (q)
-		    *q = 0;
+			*q = 0;
 	
 		char fname [PATH_MAX];
 		char drive [_MAX_DRIVE];
@@ -248,10 +182,10 @@ const char *S9xSelectFilename (const char *def, const char *dir1,
 		_makepath (path, drive, *dir ? dir : dir1, fname, *ext ? ext : ext1);
 		S9xGraphicsMode ();
 		return (path);
-    }
-    
-    S9xGraphicsMode ();
-    return (NULL);
+	}
+
+	S9xGraphicsMode ();
+	return (NULL);
 }
 
 void S9xExtraUsage ()
@@ -259,21 +193,21 @@ void S9xExtraUsage ()
 }
 
 bool8 S9xReadMousePosition (int /* which1 */, int &/* x */, int & /* y */,
-			    uint32 & /* buttons */)
+				uint32 & /* buttons */)
 {
-//	SDL_GetMouseState
-    return (FALSE);
+	//SDL_GetMouseState
+	return (FALSE);
 }
 
 bool8 S9xReadSuperScopePosition (int & /* x */, int & /* y */, 
 				 uint32 & /* buttons */)
 {
-    return (FALSE);
+	return (FALSE);
 }
 #endif
 
 void S9xMessage (int /* type */, int /* number */, const char *message)
 {
-    fprintf (stderr, "%s\n", message);
+	fprintf (stderr, "%s\n", message);
 }
-//#endif
+
