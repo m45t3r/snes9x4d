@@ -37,7 +37,7 @@ int romcount_maxrows = 16;
 
 char SaveSlotNum_old=255;
 bool8_32 Scale_org=Scale;
-bool8_32 highres_current = false;
+bool8_32 highres_current = FALSE;
 char snapscreen[17120]={};
 
 char temp[256];
@@ -99,7 +99,7 @@ void loadmenu_dispupdate(int romcount)
 	//draw blue screen
 	for(int y=12;y<=212;y++){
 		for(int x=10;x<246*2;x+=2){
-			memset(GFX.Screen + 320*y*2+x,0x11,2);
+			memset(GFX.Screen + GFX.Pitch*y+x,0x11,2);
 		}	
 	}
 
@@ -140,11 +140,11 @@ void loadmenu_dispupdate(int romcount)
 	//draw 20 lines on screen
 	for(int i=0;i<19;i++)
 	{
-		S9xDisplayString (disptxt[i], GFX.Screen, 640,i*10+64);
+		S9xDisplayString (disptxt[i], GFX.Screen, GFX.Pitch, i*10+64);
 	}
 
 	//update screen
-	S9xDeinitUpdate (320, 240);
+	S9xDeinitUpdate (256, 240);
 }
 
 char* menu_romselector()
@@ -301,7 +301,7 @@ void menu_dispupdate(void)
 	//memset(GFX.Screen + 320*12*2,0x11,320*200*2);
 	for(int y=12;y<=212;y++){
 		for(int x=10;x<246*2;x+=2){
-			memset(GFX.Screen + 320*y*2+x,0x11,2);
+			memset(GFX.Screen + GFX.Pitch*y+x,0x11,2);
 		}	
 	}
 #if CAANOO
@@ -339,7 +339,7 @@ void menu_dispupdate(void)
 		sprintf(temp,"%s  Off",disptxt[7]);
 	strcpy(disptxt[7],temp);
 
-	if (highres_current==false)
+	if (highres_current==FALSE)
 	{
 		if(Scale_org)
 			sprintf(temp,"%s    True",disptxt[8]);
@@ -379,15 +379,15 @@ void menu_dispupdate(void)
 			sprintf(temp,"  %s",disptxt[i]);
 		strcpy(disptxt[i],temp);
 
-		S9xDisplayString (disptxt[i], GFX.Screen, 640,i*10+64);		
+		S9xDisplayString (disptxt[i], GFX.Screen, GFX.Pitch ,i*10+64);
 	}
 
 	//show screen shot for snapshot
 	if(SaveSlotNum_old != SaveSlotNum)
 	{
 		strcpy(temp,"Loading...");
-		S9xDisplayString (temp, GFX.Screen +280, 640,210/*204*/);
-		S9xDeinitUpdate (320, 240);
+		S9xDisplayString (temp, GFX.Screen + 280, GFX.Pitch, 210/*204*/);
+		S9xDeinitUpdate (256, 240);
 		char fname[256], ext[8];
 		sprintf(ext, ".s0%d", SaveSlotNum);
 		strcpy(fname, S9xGetFilename (ext));
@@ -395,7 +395,7 @@ void menu_dispupdate(void)
 		SaveSlotNum_old = SaveSlotNum;
 	}
 	show_screenshot();
-	S9xDeinitUpdate (320, 240);
+	S9xDeinitUpdate (256, 240);
 }
 
 void menu_loop(void)
@@ -418,7 +418,7 @@ void menu_loop(void)
 	capt_screenshot();
 	memcpy(snapscreen_tmp,snapscreen,17120);
 
-	Scale = false;
+	Scale = FALSE;
 	Settings.SupportHiRes=FALSE;
 	S9xDeinitDisplay();
 	S9xInitDisplay(0, 0);
@@ -459,8 +459,8 @@ void menu_loop(void)
 								memcpy(snapscreen,snapscreen_tmp,16050);
 								show_screenshot();
 								strcpy(fname," Saving...");
-								S9xDisplayString (fname, GFX.Screen +280, 640,204);
-								S9xDeinitUpdate (320, 240);
+								S9xDisplayString (fname, GFX.Screen +280, GFX.Pitch, 204);
+								S9xDeinitUpdate (256, 240);
 								sprintf(ext, ".s0%d", SaveSlotNum);
 								strcpy(fname, S9xGetFilename (ext));
 								save_screenshot(fname);
@@ -566,8 +566,8 @@ void menu_loop(void)
 								memcpy(snapscreen,snapscreen_tmp,16050);
 								show_screenshot();
 								strcpy(fname," Saving...");
-								S9xDisplayString (fname, GFX.Screen +280, 640,204);
-								S9xDeinitUpdate (320, 240);
+								S9xDisplayString (fname, GFX.Screen +280, GFX.Pitch, 204);
+								S9xDeinitUpdate (256, 240);
 								sprintf(ext, ".s0%d", SaveSlotNum);
 								strcpy(fname, S9xGetFilename (ext));
 								save_screenshot(fname);
@@ -707,15 +707,15 @@ void capt_screenshot() //107px*80px
 	if(ippu->RenderedScreenHeight == 224)
 		yoffset = 8;
 
-	if (highres_current==true)
+	if (highres_current==TRUE)
 	{
 		//working but in highres mode
 		for(int y=yoffset;y<240-yoffset;y+=3) //80,1 //240,3
 		{
-			s+=22*1/*(Scale_disp!=TRUE)*/;
-			for(int x=0;x<640-128*1/*(Scale_disp!=TRUE)*/;x+=6) //107,1 //214,2 //428,4 +42+42
+			s += 22 * 1 /*(Scale_disp!=TRUE)*/;
+			for(int x = 0; x < 640-128*1/*(Scale_disp!=TRUE)*/;x+=6) //107,1 //214,2 //428,4 +42+42
 			{
-				uint8 *d = GFX.Screen + y*1024 + x; //1024
+				uint8 *d = GFX.Screen + y*GFX.Pitch + x; //1024
 				snapscreen[s++] = *d++;
 				snapscreen[s++] = *d++;
 			}
@@ -728,9 +728,9 @@ void capt_screenshot() //107px*80px
 		for(int y=yoffset;y<240-yoffset;y+=3) // 240/3=80
 		{
 			s+=22*(Scale_disp!=TRUE);
-			for(int x=0 ;x<320*2-128*(Scale_disp!=TRUE);x+=3*2) // 640/6=107
+			for(int x=0 ;x<640-128*(Scale_disp!=TRUE);x+=3*2) // 640/6=107
 			{
-				uint8 *d = GFX.Screen + y*320 *2 + x;
+				uint8 *d = GFX.Screen + y*GFX.Pitch + x;
 				snapscreen[s++] = *d++;
 				snapscreen[s++] = *d++;
 			}
@@ -745,7 +745,7 @@ void show_screenshot()
 //	for(int y=126;y<126+80;y++){
 	for(int y=132;y<130+80;y++){
 		for(int x=248; x<248+107*2; x+=2){
-			uint8 *d = GFX.Screen + y*320*2 + x;
+			uint8 *d = GFX.Screen + y*GFX.Pitch + x;
 			*d++ = snapscreen[s++];
 			*d++ = snapscreen[s++];
 		}
@@ -797,14 +797,14 @@ void ShowCredit()
 
 		for(int y=12; y<=212; y++){
 			for(int x=10; x<246*2; x+=2){
-				memset(GFX.Screen + 320*y*2+x,0x11,2);
+				memset(GFX.Screen + GFX.Pitch*y+x,0x11,2);
 			}	
 		}
 		
 		for(int i=0;i<=16;i++){
 			int j=i+line;
 			if(j>=20) j-=20;
-			S9xDisplayString (disptxt[j], GFX.Screen, 640,i*10+80-ypix);
+			S9xDisplayString (disptxt[j], GFX.Screen, GFX.Pitch, i*10+80-ypix);
 		}
 		
 		ypix+=2;
@@ -813,7 +813,7 @@ void ShowCredit()
 			ypix=0;
 		}
 		if(line == 20) line = 0;
-		S9xDeinitUpdate (320, 240);
+		S9xDeinitUpdate (256, 240);
 		sys_sleep(3000);
 	}
 #ifdef CAANOO

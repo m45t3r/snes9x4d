@@ -98,7 +98,7 @@ void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
 	// No more MOUSE-CURSOR
 	SDL_ShowCursor(SDL_DISABLE);
 
-	screen = SDL_SetVideoMode(xs, ys, 16, SDL_SWSURFACE); //do no take SDL_HWSURFACE on Dingoo (bad overlays) and CAANOO (flickers)
+	screen = SDL_SetVideoMode(xs, ys, 16, SDL_HWSURFACE|SDL_DOUBLEBUF);
 
 	if (screen == NULL)
 	{
@@ -114,16 +114,9 @@ void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
 	}
 	else
 	{
-		if(Scale)
-		{
-			GFX.Screen = (uint8 *)screen->pixels;
-			GFX.Pitch = 320 * 2;
-		}
-		else
-		{
-			GFX.Screen = (uint8 *)screen->pixels + 64;	//center screen
-			GFX.Pitch = 320 * 2;
-		}
+		gfxscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, 256, 240, 16, 0, 0, 0, 0);
+		GFX.Screen = (uint8 *)gfxscreen->pixels;
+		GFX.Pitch = 256 * 2;
 	}
 
 	GFX.SubScreen = (uint8 *)malloc(512 * 480 * 2);
@@ -134,6 +127,7 @@ void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
 void S9xDeinitDisplay ()
 {
 	SDL_FreeSurface(screen);
+	SDL_FreeSurface(gfxscreen);
 	free(GFX.SubScreen);
 	free(GFX.ZBuffer);
 	free(GFX.SubZBuffer);

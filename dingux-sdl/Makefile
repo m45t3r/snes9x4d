@@ -57,7 +57,9 @@ GASM	= mipsel-linux-g++
 
 INCLUDES=
 
-OPTIMISE = -D_ZAURUS -O3 -march=mips32 -mtune=r4600 -ffast-math -fsingle-precision-constant -fvariable-expansion-in-unroller -funsafe-loop-optimizations -Wunsafe-loop-optimizations
+OPTIMISE = -D_ZAURUS -O3 -march=mips32 -mtune=r4600 -mno-mips16 -msoft-float \
+			-ffast-math -fomit-frame-pointer -fno-strength-reduce \
+			-finline-functions -funroll-loops
 
 CCFLAGS = $(OPTIMISE) \
 -I. \

@@ -228,7 +228,7 @@ int main (int argc, char **argv)
 	Settings.MultiPlayer5 = FALSE;
 	Settings.ControllerOption = SNES_MULTIPLAYER5;
 	Settings.ControllerOption = 0;
-	Settings.Transparency = FALSE; //TRUE;
+	Settings.Transparency = TRUE;
 	Settings.SixteenBit = TRUE;
 	Settings.SupportHiRes = FALSE; //autodetected for known highres roms
 	Settings.NetPlay = FALSE;
@@ -766,7 +766,6 @@ bool8_32 S9xInitUpdate ()
 
 bool8_32 S9xDeinitUpdate (int Width, int Height)
 {
-	SDL_LockSurface(screen);
 	register uint32 lp = (xs > 256) ? 16 : 0;
 
 	if (Width > 256)
@@ -774,6 +773,7 @@ bool8_32 S9xDeinitUpdate (int Width, int Height)
 
 	if (Settings.SupportHiRes)
 	{
+		SDL_LockSurface(screen);
 		if (Width > 256)
 		{
 			//Wenn SupportHiRes activ und HighRes Frame
@@ -798,9 +798,11 @@ bool8_32 S9xDeinitUpdate (int Width, int Height)
 		}
 
 		if (GFX.InfoString)
-			S9xDisplayString (GFX.InfoString, (uint8 *)screen->pixels + 64, 640,0);
+			S9xDisplayString (GFX.InfoString, (uint8 *)screen->pixels + screen->w - 256, screen->pitch, 0);
 		else if (Settings.DisplayFrameRate)
-			S9xDisplayFrameRate ((uint8 *)screen->pixels + 64, 640);
+			S9xDisplayFrameRate ((uint8 *)screen->pixels + screen->w - 256, screen->pitch);
+
+		SDL_UnlockSurface(screen);
 	}
 	else
 	{
@@ -809,18 +811,17 @@ bool8_32 S9xDeinitUpdate (int Width, int Height)
 		{
 			int x,y,s;
 			uint32 x_error;
-			static uint32 x_fraction=52428;
+			static uint32 x_fraction = 0xCCCC;
 		 	char temp[512];
 			register uint8 *d;
 
 			//center ypos if ysize is only 224px
 			int yoffset = 8*(Height == 224);
 
-			for (y = Height-1;y >= 0; y--)
+			for (y = Height-1; y >= 0; y--)
 			{
-				d = GFX.Screen + y * 640;
-				memcpy(temp,d,512);
-				d += yoffset*640;
+				d = (uint8 *)screen->pixels + y * screen->pitch;
+				memcpy(temp, GFX.Screen + y * GFX.Pitch + yoffset * GFX.Pitch, 512);
 				x_error = x_fraction;
 				s=0;
 
@@ -841,20 +842,31 @@ bool8_32 S9xDeinitUpdate (int Width, int Height)
 					}
 				}
 			}
+			SDL_LockSurface(screen);
+
 			if (GFX.InfoString)
-				S9xDisplayString (GFX.InfoString, (uint8 *)screen->pixels + 64, 640,0);
+				S9xDisplayString (GFX.InfoString, (uint8 *)screen->pixels + screen->w - 256, screen->pitch, 0);
 			else if (Settings.DisplayFrameRate)
-				S9xDisplayFrameRate ((uint8 *)screen->pixels + 64, 640);
+				S9xDisplayFrameRate ((uint8 *)screen->pixels + screen->w - 256, screen->pitch);
+
+			SDL_UnlockSurface(screen);
 		}
 		else
 		{
 			if (GFX.InfoString)
-				S9xDisplayString (GFX.InfoString, (uint8 *)screen->pixels + 64, 640,0);
+				S9xDisplayString (GFX.InfoString, (uint8 *)gfxscreen->pixels, GFX.Pitch, 0);
 			else if (Settings.DisplayFrameRate)
-				S9xDisplayFrameRate ((uint8 *)screen->pixels + 64, 640);
+				S9xDisplayFrameRate ((uint8 *)gfxscreen->pixels, GFX.Pitch);
+
+			SDL_Rect dst;
+			dst.x = (screen->w - 256) / 2;
+			dst.y = (screen->h - 240) / 2;
+			SDL_BlitSurface(gfxscreen, NULL, screen, &dst);
+
+
 		}
 	}
-	SDL_UnlockSurface(screen);
+
 	SDL_Flip(screen);
 	return(TRUE);
 }

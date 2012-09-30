@@ -633,10 +633,10 @@ void S9xStartScreenRefresh ()
 			if (Settings.SixteenBit)
 			    gfx->ZPitch >>= 1;
 		} else {
-			gfx->Pitch2 = gfx->Pitch = 640;
-			gfx->PPL = 320;
-			gfx->PPLx2 = 640;
-			gfx->ZPitch = 320;
+			gfx->Pitch2 = gfx->Pitch = GFX.Pitch;
+			gfx->PPL = GFX.Pitch >> 1;
+			gfx->PPLx2 = GFX.Pitch;
+			gfx->ZPitch = GFX.Pitch >> 1;
 		}
         }
 	}
