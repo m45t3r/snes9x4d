@@ -59,6 +59,7 @@
 #include "display.h"
 #include "apu.h"
 #include "keydef.h"
+#include "scaler.h"
 
 #define COUNT(a) (sizeof(a) / sizeof(a[0]))
 
@@ -98,7 +99,32 @@ void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
 	// No more MOUSE-CURSOR
 	SDL_ShowCursor(SDL_DISABLE);
 
-	screen = SDL_SetVideoMode(xs, ys, 16, SDL_HWSURFACE|SDL_DOUBLEBUF);
+	//screen = SDL_SetVideoMode(xs, ys, 16, SDL_HWSURFACE|SDL_DOUBLEBUF);
+	{
+		int i = 0; // 0 - 320x240, 1 - 400x240, 2 - 480x272
+		int surfacewidth, surfaceheight;
+		#define NUMOFVIDEOMODES 3
+		struct {
+			int x;
+			int y;
+			void (*p)(uint32_t *, uint32_t *, int);
+		} vm[NUMOFVIDEOMODES] = {
+			{320, 240, upscale_256x224_to_320x240},
+			{400, 240, upscale_256x224_to_384x240_for_400x240},
+			{480, 272, upscale_256x224_to_384x272_for_480x272}
+		};
+
+		// check 3 videomodes: 480x272, 400x240, 320x240
+		for(i = NUMOFVIDEOMODES-1; i >= 0; i--) {
+			if(SDL_VideoModeOK(vm[i].x, vm[i].y, 16, SDL_HWSURFACE|SDL_DOUBLEBUF) != 0) {
+				surfacewidth = vm[i].x;
+				surfaceheight = vm[i].y;
+				upscale_p = vm[i].p;
+				break;
+			}
+		}
+		screen = SDL_SetVideoMode(surfacewidth, surfaceheight, 16, SDL_HWSURFACE|SDL_DOUBLEBUF);
+	}
 
 	if (screen == NULL)
 	{

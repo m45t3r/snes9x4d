@@ -54,6 +54,7 @@
 #include <time.h>
 #include "sdlmenu.h"
 #include "keydef.h"
+#include "scaler.h"
 
 #ifdef NETPLAY_SUPPORT
 	#include "../netplay.h"
@@ -202,7 +203,7 @@ int main (int argc, char **argv)
 	ZeroMemory (&Settings, sizeof (Settings));
 
 	Settings.JoystickEnabled = FALSE;
-	Settings.SoundPlaybackRate = 5;
+	Settings.SoundPlaybackRate = 3;
 	Settings.Stereo = TRUE;
 	//Settings.SoundSync = TRUE;
 	Settings.SoundBufferSize = 512; //256 //2048
@@ -228,7 +229,7 @@ int main (int argc, char **argv)
 	Settings.MultiPlayer5 = FALSE;
 	Settings.ControllerOption = SNES_MULTIPLAYER5;
 	Settings.ControllerOption = 0;
-	Settings.Transparency = TRUE;
+	Settings.Transparency = FALSE; //TRUE;
 	Settings.SixteenBit = TRUE;
 	Settings.SupportHiRes = FALSE; //autodetected for known highres roms
 	Settings.NetPlay = FALSE;
@@ -766,107 +767,61 @@ bool8_32 S9xInitUpdate ()
 
 bool8_32 S9xDeinitUpdate (int Width, int Height)
 {
-	register uint32 lp = (xs > 256) ? 16 : 0;
+	uint32 spd = (Settings.SupportHiRes ? 256/2 : 0);
+	uint32 dpd = (screen->w - 256) / 2;
+	uint32 dpo = (screen->w - 256)/4 + (screen->h - 224)/2*screen->w/2;
 
-	if (Width > 256)
-		lp *= 2;
+	SDL_LockSurface(screen);
 
 	if (Settings.SupportHiRes)
 	{
-		SDL_LockSurface(screen);
 		if (Width > 256)
 		{
-			//Wenn SupportHiRes activ und HighRes Frame
-			for (register uint32 i = 0; i < Height; i++) {
-				register uint16 *dp16 = (uint16 *)(screen->pixels) + ((i + cl) * xs) + lp;
-				register uint32 *sp32 = (uint32 *)(GFX.Screen) + (i << 8) + cs;
-				for (register uint32 j = 0; j < 256; j++) {
+			// If SupportHiRes is active and HighRes Frame
+			uint16 *dp16 = (uint16 *)(screen->pixels) + dpo*2;
+			uint32 *sp32 = (uint32 *)(GFX.Screen);
+			for(int y = 224; y--;) {
+				for(int x = 256; x--; ) {
 					*dp16++ = *sp32++;
 				}
+				dp16 += dpd*2;
 			}
 		}
 		else
 		{
-			//Wenn SupportHiRes activ aber kein HighRes Frame
-			for (register uint32 i = 0; i < Height; i++) {
-				register uint32 *dp32 = (uint32 *)(screen->pixels) + ((i + cl) * xs / 2) + lp;
-				register uint32 *sp32 = (uint32 *)(GFX.Screen) + (i << 8) + cs;
-				for (register uint32 j = 0; j < 128; j++) {
-					*dp32++ = *sp32++;
-				}
-			}
+			if(Scale) {
+				// put here upscale to 400x240 and 480x272
+				(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 512); 
+			} else goto __jump;
 		}
-
-		if (GFX.InfoString)
-			S9xDisplayString (GFX.InfoString, (uint8 *)screen->pixels + screen->w - 256, screen->pitch, 0);
-		else if (Settings.DisplayFrameRate)
-			S9xDisplayFrameRate ((uint8 *)screen->pixels + screen->w - 256, screen->pitch);
-
-		SDL_UnlockSurface(screen);
 	}
 	else
 	{
 		// if scaling for non-highres (is centered)
-		if(Scale)
-		{
-			int x,y,s;
-			uint32 x_error;
-			static uint32 x_fraction = 0xCCCC;
-		 	char temp[512];
-			register uint8 *d;
+		if(Scale) {
+			// put here upscale to 400x240 and 480x272
+			(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 256); 
 
-			//center ypos if ysize is only 224px
-			int yoffset = 8*(Height == 224);
-
-			for (y = Height-1; y >= 0; y--)
-			{
-				d = (uint8 *)screen->pixels + y * screen->pitch;
-				memcpy(temp, GFX.Screen + y * GFX.Pitch + yoffset * GFX.Pitch, 512);
-				x_error = x_fraction;
-				s=0;
-
-				for (x = 0; x < 320; x++)
-				{
-					x_error += x_fraction;
-
-					if(x_error >= 0x10000)
-					{
-						*d++ = temp[s++];
-						*d++ = temp[s++];
-						x_error -= 0x10000;
-					}
-					else
-					{
-						*d++ = ((temp[s-2] ^ temp[s])>>1)&0xEF | ((temp[s-2] & temp[s]));
-						*d++ = ((temp[s-1] ^ temp[s+1])>>1)&0x7B | ((temp[s-1] & temp[s+1]));
-					}
+		} else {
+		__jump:
+			uint32 *dp32 = (uint32 *)(screen->pixels) + dpo;
+			uint32 *sp32 = (uint32 *)(GFX.Screen);
+			for(int y = 224; y--;) {
+				for(int x = 256/2; x--; ) {
+					*dp32++ = *sp32++;
 				}
+				sp32 += spd;
+				dp32 += dpd;
 			}
-			SDL_LockSurface(screen);
-
-			if (GFX.InfoString)
-				S9xDisplayString (GFX.InfoString, (uint8 *)screen->pixels + screen->w - 256, screen->pitch, 0);
-			else if (Settings.DisplayFrameRate)
-				S9xDisplayFrameRate ((uint8 *)screen->pixels + screen->w - 256, screen->pitch);
-
-			SDL_UnlockSurface(screen);
-		}
-		else
-		{
-			if (GFX.InfoString)
-				S9xDisplayString (GFX.InfoString, (uint8 *)gfxscreen->pixels, GFX.Pitch, 0);
-			else if (Settings.DisplayFrameRate)
-				S9xDisplayFrameRate ((uint8 *)gfxscreen->pixels, GFX.Pitch);
-
-			SDL_Rect dst;
-			dst.x = (screen->w - 256) / 2;
-			dst.y = (screen->h - 240) / 2;
-			SDL_BlitSurface(gfxscreen, NULL, screen, &dst);
-
-
 		}
 	}
 
+	if (GFX.InfoString)
+		S9xDisplayString (GFX.InfoString, (uint8 *)screen->pixels + screen->w - 256, screen->pitch, 0);
+	else if (Settings.DisplayFrameRate)
+		S9xDisplayFrameRate ((uint8 *)screen->pixels + screen->w - 256, screen->pitch);
+
+	SDL_UnlockSurface(screen);
 	SDL_Flip(screen);
 	return(TRUE);
 }

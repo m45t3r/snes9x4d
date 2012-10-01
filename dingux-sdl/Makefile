@@ -28,7 +28,7 @@ endif
 
 OBJECTS = $(CPUOBJ) $(FXOBJ) $(C4OBJ) $(CHEAT) \
 	../cpu.o ../tile.o ../gfx.o ../clip.o \
-	../memmap.o ../ppu.o ../dma.o sdlmenu.o sdlmain.o \
+	../memmap.o ../ppu.o ../dma.o sdlmenu.o sdlmain.o scaler.o \
 	$(SOUNDOBJ) sdlvideo.o \
 	../sdd1.o ../sdd1emu.o ../dsp1.o ../sa1.o ../sa1cpu.o ../obc1.o \
 	../snes9x.o ../snapshot.o ../data.o ../globals.o \
@@ -61,7 +61,7 @@ OPTIMISE = -D_ZAURUS -O3 -march=mips32 -mtune=r4600 -mno-mips16 -msoft-float \
 			-ffast-math -fomit-frame-pointer -fno-strength-reduce \
 			-finline-functions -funroll-loops
 
-CCFLAGS = $(OPTIMISE) \
+CCFLAGS = $(OPTIMISE) $(PROFILE) \
 -I. \
 -I../ \
 -I../unzip \
@@ -85,7 +85,7 @@ $(CHEATDEFINES) \
 
 CCFLAGS  += -I.
 
-LDLIBS  = -lSDL
+LDLIBS  = -lSDL -lz -lm
 
 
 .SUFFIXES: .o .cpp .c .cc .h .m .i .S .asm .obj
@@ -93,7 +93,7 @@ LDLIBS  = -lSDL
 all: snes9x4d.dge
 
 snes9x4d.dge: $(OBJECTS) 
-	$(CCC) -o $@ $(OBJECTS) $(EXTRALIBS) $(LDLIBS) -lz -lm
+	$(CCC) -o $@ $(OBJECTS) $(EXTRALIBS) $(LDLIBS) $(PROFILE)
 	$(STRIP) snes9x4d.dge
 
 .cpp.o:

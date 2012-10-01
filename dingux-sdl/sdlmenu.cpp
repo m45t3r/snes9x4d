@@ -339,7 +339,7 @@ void menu_dispupdate(void)
 		sprintf(temp,"%s  Off",disptxt[7]);
 	strcpy(disptxt[7],temp);
 
-	if (highres_current==FALSE)
+	//if (highres_current==FALSE)
 	{
 		if(Scale_org)
 			sprintf(temp,"%s    True",disptxt[8]);
@@ -347,11 +347,11 @@ void menu_dispupdate(void)
 			sprintf(temp,"%s   False",disptxt[8]);
 		strcpy(disptxt[8],temp);
 	}
-	else
+	/*else
 	{
 		sprintf(temp,"%sinactive",disptxt[8]);
 		strcpy(disptxt[8],temp);
-	}
+	}*/
 
 	if (Settings.SkipFrames == AUTO_FRAMERATE)
 	{
