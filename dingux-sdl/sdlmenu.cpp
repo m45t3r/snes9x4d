@@ -14,6 +14,8 @@
 #include "gfx.h"
 #include "unistd.h"
 
+#include "sdlaudio.h"
+
 #ifdef WIN32
 static void sync() { }
 #endif
@@ -295,6 +297,7 @@ char* menu_romselector()
 
 void menu_dispupdate(void)
 {
+	static char *Rates[8] = { "off", "8192", "11025", "16000", "22050", "32000", "44100", "48000" };
 //	char temp[256];
 //	char disptxt[20][256];
 
@@ -320,7 +323,7 @@ void menu_dispupdate(void)
 	strcpy(disptxt[7],"Transparency           ");
 	strcpy(disptxt[8],"Full Screen         ");
 	strcpy(disptxt[9],"Frameskip              ");
-	strcpy(disptxt[10],"Sound Volume           ");
+	strcpy(disptxt[10],"Sound Rate           ");
 	strcpy(disptxt[11],"Credit              ");
 	strcpy(disptxt[12],"Exit");
 
@@ -339,19 +342,11 @@ void menu_dispupdate(void)
 		sprintf(temp,"%s  Off",disptxt[7]);
 	strcpy(disptxt[7],temp);
 
-	//if (highres_current==FALSE)
-	{
-		if(Scale_org)
-			sprintf(temp,"%s    True",disptxt[8]);
-		else
-			sprintf(temp,"%s   False",disptxt[8]);
-		strcpy(disptxt[8],temp);
-	}
-	/*else
-	{
-		sprintf(temp,"%sinactive",disptxt[8]);
-		strcpy(disptxt[8],temp);
-	}*/
+	if(Scale_org)
+		sprintf(temp,"%s    True",disptxt[8]);
+	else
+		sprintf(temp,"%s   False",disptxt[8]);
+	strcpy(disptxt[8],temp);
 
 	if (Settings.SkipFrames == AUTO_FRAMERATE)
 	{
@@ -364,7 +359,7 @@ void menu_dispupdate(void)
 		strcpy(disptxt[9],temp);
 	}
 
-	sprintf(temp,"%s %3d%%",disptxt[10],vol);
+	sprintf(temp,"%s  %s",disptxt[10], Rates[Settings.SoundPlaybackRate]);
 	strcpy(disptxt[10],temp);
 
 #ifdef DINGOO
@@ -400,6 +395,7 @@ void menu_dispupdate(void)
 
 void menu_loop(void)
 {
+	int old_frame_rate = Settings.SoundPlaybackRate;
 	bool8_32 exit_loop = false;
 	char fname[256], ext[8];
 	char snapscreen_tmp[17120];
@@ -623,6 +619,7 @@ void menu_loop(void)
 								Settings.SkipFrames = 1;
 						break;
 						case 10:
+							#if 0
 							if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED)
 								vol -= 10;
 							else
@@ -633,6 +630,13 @@ void menu_loop(void)
 								vol = 100;
 							else if (vol<=0)
 								vol = 0;
+							#else
+							if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED) {
+								Settings.SoundPlaybackRate = (Settings.SoundPlaybackRate - 1) & 7;
+							} else if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED) {
+								Settings.SoundPlaybackRate = (Settings.SoundPlaybackRate + 1) & 7;
+							}
+							#endif
 						break;
 						case 11:
 							if (keyssnes[sfc_key[A_1]] == SDL_PRESSED)
@@ -667,6 +671,7 @@ void menu_loop(void)
 	Settings.SupportHiRes=highres_current;
 	S9xDeinitDisplay();
 	S9xInitDisplay(0, 0);
+	if(old_frame_rate != Settings.SoundPlaybackRate) S9xReinitSound(Settings.SoundPlaybackRate);
 }
 
 void save_screenshot(char *fname){

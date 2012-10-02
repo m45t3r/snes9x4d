@@ -28,7 +28,7 @@ endif
 
 OBJECTS = $(CPUOBJ) $(FXOBJ) $(C4OBJ) $(CHEAT) \
 	../cpu.o ../tile.o ../gfx.o ../clip.o \
-	../memmap.o ../ppu.o ../dma.o sdlmenu.o sdlmain.o scaler.o \
+	../memmap.o ../ppu.o ../dma.o sdlmenu.o sdlmain.o sdlaudio.o scaler.o \
 	$(SOUNDOBJ) sdlvideo.o \
 	../sdd1.o ../sdd1emu.o ../dsp1.o ../sa1.o ../sa1cpu.o ../obc1.o \
 	../snes9x.o ../snapshot.o ../data.o ../globals.o \
