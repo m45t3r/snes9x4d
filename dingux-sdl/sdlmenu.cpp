@@ -619,24 +619,11 @@ void menu_loop(void)
 								Settings.SkipFrames = 1;
 						break;
 						case 10:
-							#if 0
-							if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED)
-								vol -= 10;
-							else
-							if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
-								vol += 10;
-
-							if(vol>=100)
-								vol = 100;
-							else if (vol<=0)
-								vol = 0;
-							#else
 							if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED) {
 								Settings.SoundPlaybackRate = (Settings.SoundPlaybackRate - 1) & 7;
 							} else if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED) {
 								Settings.SoundPlaybackRate = (Settings.SoundPlaybackRate + 1) & 7;
 							}
-							#endif
 						break;
 						case 11:
 							if (keyssnes[sfc_key[A_1]] == SDL_PRESSED)
