@@ -391,7 +391,7 @@ int main (int argc, char **argv)
 #elif CYGWIN32
 	sprintf(msg,"Press ESC+LALT to Show MENU");
 #else
-	sprintf(msg,"Press SELECT+B to Show MENU");
+	sprintf(msg,"Press SELECT+START to Show MENU");
 #endif
 	S9xSetInfoString(msg);
 
@@ -1098,7 +1098,7 @@ void S9xProcessEvents (bool8_32 block)
 					S9xSetSoundMute(false);
 				}
 				// MAINMENU
-				else if ((keyssnes[sfc_key[SELECT_1]] == SDL_PRESSED)&&(keyssnes[sfc_key[B_1]] == SDL_PRESSED) )
+				else if ((keyssnes[sfc_key[SELECT_1]] == SDL_PRESSED)&&(keyssnes[sfc_key[START_1]] == SDL_PRESSED) )
 				{
 					S9xSetSoundMute(true);
 					menu_loop();

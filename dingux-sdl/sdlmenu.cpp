@@ -172,7 +172,7 @@ char* menu_romselector()
 	S9xInitDisplay(0, 0);
 	
 	loadmenu_dispupdate(romcount);
-	sys_sleep(100000);
+	sys_sleep(10000);
 
 	SDL_Event event;
 
@@ -424,7 +424,7 @@ void menu_loop(void)
 	S9xInitDisplay(0, 0);
 
 	menu_dispupdate();
-	sys_sleep(100000);
+	sys_sleep(10000);
 
 	SDL_Event event;
 
