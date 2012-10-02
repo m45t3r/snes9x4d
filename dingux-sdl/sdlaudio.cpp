@@ -32,6 +32,7 @@ static int BufferSizes [8] =
 
 SDL_mutex *sound_mutex;
 SDL_cond *sound_cv;
+int sound_i = FALSE;
 
 static void sdl_audio_callback (void *userdata, Uint8 *stream, int len)
 {
@@ -73,7 +74,8 @@ bool8_32 S9xOpenSoundDevice (int mode, bool8_32 stereo, int buffer_size) // call
 	}
 
 	sound_mutex = SDL_CreateMutex();
-	sound_cv = SDL_CreateCond(); 
+	sound_cv = SDL_CreateCond();
+	sound_i = TRUE;
 
 	SDL_PauseAudio (0);
 
@@ -86,10 +88,14 @@ bool8_32 S9xOpenSoundDevice (int mode, bool8_32 stereo, int buffer_size) // call
 
 void S9xReinitSound(int new_freq)
 {
-	SDL_PauseAudio(1);
-	SDL_CloseAudio();
-	SDL_DestroyMutex(sound_mutex);
-	SDL_DestroyCond(sound_cv);
+	// dont deinit if previously shut
+	if(sound_i == TRUE) {
+		SDL_PauseAudio(1);
+		SDL_CloseAudio();
+		SDL_DestroyMutex(sound_mutex);
+		SDL_DestroyCond(sound_cv);
+		sound_i = FALSE;
+	}
 	if(Settings.SoundPlaybackRate)
 		S9xOpenSoundDevice(Settings.SoundPlaybackRate, Settings.Stereo, BufferSizes[Settings.SoundPlaybackRate]);
 	else so.mute_sound = TRUE;

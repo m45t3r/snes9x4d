@@ -202,7 +202,7 @@ int main (int argc, char **argv)
 	Settings.JoystickEnabled = FALSE;
 	Settings.SoundPlaybackRate = 3;
 	Settings.Stereo = TRUE;
-	//Settings.SoundSync = TRUE;
+	Settings.SoundSync = TRUE;
 	Settings.SoundBufferSize = 512; //256 //2048
 	Settings.CyclesPercentage = 100;
 	Settings.DisableSoundEcho = FALSE;
@@ -231,7 +231,7 @@ int main (int argc, char **argv)
 	Settings.SupportHiRes = FALSE; //autodetected for known highres roms
 	Settings.NetPlay = FALSE;
 	Settings.ServerName [0] = 0;
-	Settings.ThreadSound = TRUE;
+	Settings.ThreadSound = FALSE;
 	Settings.AutoSaveDelay = 30;
 	Settings.ApplyCheats = TRUE;
 	Settings.TurboMode = FALSE;
