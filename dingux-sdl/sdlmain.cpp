@@ -99,8 +99,7 @@ short vol=50;
 static int mixerdev = 0;
 clock_t start;
 
-int OldSkipFrame;
-int S9xProcessSound (void *);
+const char *GetHomeDirectory();
 void OutOfMemory();
 
 extern void S9xDisplayFrameRate (uint8 *, uint32);
@@ -188,6 +187,46 @@ void S9xParseArg (char **argv, int &i, int argc)
 		S9xUsage ();
 }
 
+const char *S9xGetCfgName()
+{
+	static char filename [PATH_MAX + 1];
+	char drive [_MAX_DRIVE + 1];
+	char dir [_MAX_DIR + 1];
+	char fname [_MAX_FNAME + 1];
+	char ext [_MAX_EXT + 1];
+
+	_splitpath (rom_filename, drive, dir, fname, ext);
+	sprintf(filename, "%s/.snes9x4d/%s.cfg", GetHomeDirectory(), fname);
+
+	return (filename);
+}
+
+void S9xWriteConfig()
+{
+	FILE *fp;
+
+	fp = fopen(S9xGetCfgName(), "wb+");
+	fwrite(&Settings, 1, sizeof(Settings), fp);
+	fwrite(&Scale, 1, sizeof(Scale), fp);
+	fclose(fp);
+}
+
+void S9xReadConfig()
+{
+	FILE *fp;
+
+	if(!rom_filename) return;
+
+	fp = fopen(S9xGetCfgName(), "rb");
+	if(!fp) {
+		S9xWriteConfig();
+		return;
+	}
+	fread(&Settings, 1, sizeof(Settings), fp);
+	fread(&Scale, 1, sizeof(Scale), fp);
+	fclose(fp);
+}
+
 extern "C"
 #undef main
 int main (int argc, char **argv)
@@ -245,7 +284,7 @@ int main (int argc, char **argv)
 	rom_filename = S9xParseArgs (argv, argc);
 	printf("Rom filename: %s\n", rom_filename);
 
-	printf("Playbackrate1: %02d\n",Settings.SoundPlaybackRate );
+	S9xReadConfig();
 
 	Settings.HBlankStart = (256 * Settings.H_Max) / SNES_HCOUNTER_MAX;
 
@@ -527,6 +566,7 @@ void S9xExit()
 		S9xNPDisconnect();
 #endif
 
+	S9xWriteConfig();
 	Memory.SaveSRAM (S9xGetFilename (".srm"));
 	//S9xSaveCheatFile (S9xGetFilename (".cht")); // not needed for embedded devices
 

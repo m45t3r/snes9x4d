@@ -51,6 +51,18 @@ void sys_sleep(int us)
 		SDL_Delay(us/100);
 }
 
+extern SDL_Surface *screen, *gfxscreen;
+
+void menu_flip()
+{
+	SDL_Rect dst;
+
+	dst.x = (screen->w - 256) / 2;
+	dst.y = (screen->h - 224) / 2;
+	SDL_BlitSurface(gfxscreen, NULL, screen, &dst);
+	SDL_Flip(screen);
+}
+
 #ifndef DINGOO
 //------------------------------------------------------------------------------------------
 struct dirent **namelist;
@@ -146,7 +158,7 @@ void loadmenu_dispupdate(int romcount)
 	}
 
 	//update screen
-	S9xDeinitUpdate (256, 240);
+	menu_flip();
 }
 
 char* menu_romselector()
@@ -168,7 +180,7 @@ char* menu_romselector()
 	Scale_org = Scale;
 	highres_current=Settings.SupportHiRes;
 
-	Scale = false;
+	//Scale = false;
 	Settings.SupportHiRes=FALSE;
 	S9xDeinitDisplay();
 	S9xInitDisplay(0, 0);
@@ -382,7 +394,7 @@ void menu_dispupdate(void)
 	{
 		strcpy(temp,"Loading...");
 		S9xDisplayString (temp, GFX.Screen + 280, GFX.Pitch, 210/*204*/);
-		S9xDeinitUpdate (256, 240);
+		menu_flip();
 		char fname[256], ext[8];
 		sprintf(ext, ".s0%d", SaveSlotNum);
 		strcpy(fname, S9xGetFilename (ext));
@@ -390,7 +402,7 @@ void menu_dispupdate(void)
 		SaveSlotNum_old = SaveSlotNum;
 	}
 	show_screenshot();
-	S9xDeinitUpdate (256, 240);
+	menu_flip();
 }
 
 void menu_loop(void)
@@ -414,7 +426,7 @@ void menu_loop(void)
 	capt_screenshot();
 	memcpy(snapscreen_tmp,snapscreen,17120);
 
-	Scale = FALSE;
+	//Scale = FALSE;
 	Settings.SupportHiRes=FALSE;
 	S9xDeinitDisplay();
 	S9xInitDisplay(0, 0);
@@ -456,7 +468,7 @@ void menu_loop(void)
 								show_screenshot();
 								strcpy(fname," Saving...");
 								S9xDisplayString (fname, GFX.Screen +280, GFX.Pitch, 204);
-								S9xDeinitUpdate (256, 240);
+								menu_flip();
 								sprintf(ext, ".s0%d", SaveSlotNum);
 								strcpy(fname, S9xGetFilename (ext));
 								save_screenshot(fname);
@@ -563,7 +575,7 @@ void menu_loop(void)
 								show_screenshot();
 								strcpy(fname," Saving...");
 								S9xDisplayString (fname, GFX.Screen +280, GFX.Pitch, 204);
-								S9xDeinitUpdate (256, 240);
+								menu_flip();
 								sprintf(ext, ".s0%d", SaveSlotNum);
 								strcpy(fname, S9xGetFilename (ext));
 								save_screenshot(fname);
@@ -805,7 +817,7 @@ void ShowCredit()
 			ypix=0;
 		}
 		if(line == 20) line = 0;
-		S9xDeinitUpdate (256, 240);
+		menu_flip();
 		sys_sleep(3000);
 	}
 #ifdef CAANOO
