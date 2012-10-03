@@ -201,11 +201,25 @@ const char *S9xGetCfgName()
 	return (filename);
 }
 
+void check_home()
+{
+	char home[512];
+	sprintf(home, "%s/%s", GetHomeDirectory(), ".snes9x4d");
+	mkdir (home
+	#ifndef WIN32
+	, 0777
+	#endif
+	);
+}
+
 void S9xWriteConfig()
 {
 	FILE *fp;
 
-	fp = fopen(S9xGetCfgName(), "wb+");
+	if(!rom_filename) return;
+	check_home();
+
+	fp = fopen(S9xGetCfgName(), "wb");
 	fwrite(&Settings, 1, sizeof(Settings), fp);
 	fwrite(&Scale, 1, sizeof(Scale), fp);
 	fclose(fp);
@@ -216,6 +230,7 @@ void S9xReadConfig()
 	FILE *fp;
 
 	if(!rom_filename) return;
+	check_home();
 
 	fp = fopen(S9xGetCfgName(), "rb");
 	if(!fp) {
