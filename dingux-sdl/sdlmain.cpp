@@ -261,7 +261,7 @@ int main (int argc, char **argv)
 	Settings.SoundPlaybackRate = 3;
 	Settings.Stereo = TRUE;
 	Settings.SoundSync = TRUE;
-	Settings.SoundBufferSize = 512; //256 //2048
+	Settings.SoundBufferSize = 256;
 	Settings.CyclesPercentage = 100;
 	Settings.DisableSoundEcho = FALSE;
 	Settings.APUEnabled = Settings.NextAPUEnabled = TRUE;
@@ -272,7 +272,7 @@ int main (int argc, char **argv)
 #else
 	Settings.SkipFrames = AUTO_FRAMERATE;
 #endif
-	Settings.DisplayFrameRate = TRUE;
+	Settings.DisplayFrameRate = FALSE;
 	Settings.ShutdownMaster = TRUE;
 	Settings.FrameTimePAL = 20000;
 	Settings.FrameTimeNTSC = 16667;
