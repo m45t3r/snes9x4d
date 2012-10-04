@@ -331,10 +331,6 @@ again:
     _splitpath (filename, drive, dir, name, ext);
     _makepath (fname, drive, dir, name, ext);
 
-#ifdef __WIN32__
-    memmove (&ext [0], &ext[1], 4);
-#endif
-
     int32 TotalFileSize = 0;
 
 #ifdef UNZIP_SUPPORT

@@ -38,7 +38,6 @@ int loadcursor = 0;
 int romcount_maxrows = 16;
 
 char SaveSlotNum_old=255;
-bool8_32 Scale_org=Scale;
 bool8_32 highres_current = FALSE;
 char snapscreen[17120]={};
 
@@ -85,8 +84,12 @@ int FileDir(char *dir, const char *ext)
 	int n;
 
 	//printf ("Try to create ./roms directory..");
+#ifdef WIN32
+	mkdir (dir);
+#else
 	mkdir (dir, 0777);
 	chown (dir, getuid (), getgid ());
+#endif
 
 	n = scandir (dir, &namelist, isFile, alphasort);
 	if (n >= 0)
@@ -98,10 +101,12 @@ int FileDir(char *dir, const char *ext)
 	else
 	{
 		perror ("Couldn't open ./roms directory..try to create this directory");
-
+	#ifdef WIN32
+		mkdir (dir);
+	#else
 		mkdir (dir, 0777);
 		chown (dir, getuid (), getgid ());
-	
+	#endif
 		n = scandir (dir, &namelist, isFile, alphasort);
 	}
 		
@@ -177,10 +182,8 @@ char* menu_romselector()
 	//Read ROM-Directory
 	romcount = FileDir("./roms", "sfc,smc");
 
-	Scale_org = Scale;
 	highres_current=Settings.SupportHiRes;
 
-	//Scale = false;
 	Settings.SupportHiRes=FALSE;
 	S9xDeinitDisplay();
 	S9xInitDisplay(0, 0);
@@ -296,7 +299,6 @@ char* menu_romselector()
 	// TODO:
 	///free(). 	namelist
 
-	Scale = Scale_org;
 	Settings.SupportHiRes=highres_current;
 	S9xDeinitDisplay();
 	S9xInitDisplay(0, 0);
@@ -354,7 +356,7 @@ void menu_dispupdate(void)
 		sprintf(temp,"%s  Off",disptxt[7]);
 	strcpy(disptxt[7],temp);
 
-	if(Scale_org)
+	if(Scale)
 		sprintf(temp,"%s    True",disptxt[8]);
 	else
 		sprintf(temp,"%s   False",disptxt[8]);
@@ -420,13 +422,11 @@ void menu_loop(void)
 
 	SaveSlotNum_old = -1;
 
-	Scale_org = Scale;
 	highres_current=Settings.SupportHiRes;
 
 	capt_screenshot();
 	memcpy(snapscreen_tmp,snapscreen,17120);
 
-	//Scale = FALSE;
 	Settings.SupportHiRes=FALSE;
 	S9xDeinitDisplay();
 	S9xInitDisplay(0, 0);
@@ -506,7 +506,7 @@ void menu_loop(void)
 							Settings.Transparency = !Settings.Transparency;
 						break;
 						case 8:
-							Scale_org = !Scale_org;
+							Scale = !Scale;
 						break;
 						case 9:
 							if (Settings.SkipFrames == AUTO_FRAMERATE)
@@ -614,7 +614,7 @@ void menu_loop(void)
 							Settings.Transparency = !Settings.Transparency;
 						break;
 						case 8:
-							Scale_org = !Scale_org;
+							Scale = !Scale;
 						break;
 						case 9:
 							if (Settings.SkipFrames == AUTO_FRAMERATE)
@@ -666,7 +666,6 @@ void menu_loop(void)
 	while( exit_loop!=TRUE && keyssnes[sfc_key[B_1]] != SDL_PRESSED );
 #endif
 
-	Scale = Scale_org;
 	Settings.SupportHiRes=highres_current;
 	S9xDeinitDisplay();
 	S9xInitDisplay(0, 0);
