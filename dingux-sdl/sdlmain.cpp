@@ -697,7 +697,7 @@ const char *S9xGetSnapshotDirectory ()
 		const char *home = GetHomeDirectory ();
 		strcpy (filename, home);
 		strcat (filename, SLASH_STR);
-		strcat (filename, ".snes9x4d");
+		strcat (filename, ".snes96_snapshots");
 		mkdir (filename
 		#ifndef WIN32
 		, 0777
