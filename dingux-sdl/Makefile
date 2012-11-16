@@ -57,7 +57,7 @@ GASM	= mipsel-linux-g++
 
 INCLUDES=
 
-OPTIMISE = -D_ZAURUS -O3 -march=mips32 -mtune=r4600 -mno-mips16 -msoft-float \
+OPTIMISE = -D_ZAURUS -O3 -march=mips32 -mtune=r4600 -mno-mips16 \
 			-ffast-math -fomit-frame-pointer -fno-strength-reduce \
 			-finline-functions -funroll-loops
 
