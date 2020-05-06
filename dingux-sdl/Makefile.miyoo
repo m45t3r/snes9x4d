@@ -72,7 +72,7 @@ CCFLAGS = $(OPTIMISE) $(PROFILE) \
 -I../ \
 -I../unzip \
 -D__SDL__ \
--DDINGOO \
+-DMIYOO \
 -DZLIB \
 -DVAR_CYCLES \
 -DCPU_SHUTDOWN \

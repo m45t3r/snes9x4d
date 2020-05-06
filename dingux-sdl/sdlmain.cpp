@@ -60,6 +60,8 @@
 
 #ifdef CAANOO
 	#include "caanoo.h"
+#elif MIYOO
+	#include "miyoo.h"
 #else
 	#include "dingoo.h"
 #endif
@@ -443,6 +445,8 @@ int main (int argc, char **argv)
 	//Handheld Key Infos
 #ifdef CAANOO
 	sprintf(msg,"Press HOME to Show MENU");
+#elif MIYOO
+	sprintf(msg,"Press R to Show MENU");
 #elif CYGWIN32
 	sprintf(msg,"Press ESC+LALT to Show MENU");
 #else
@@ -626,6 +630,22 @@ void S9xInitInputDevices ()
 	sfc_key[DOWN_1] = CAANOO_BUTTON_DOWN;
 
 	sfc_key[QUIT] = CAANOO_BUTTON_HOME;
+#elif MIYOO
+	// Miyoo mapping
+	sfc_key[A_1] = MIYOO_BUTTON_A;
+	sfc_key[B_1] = MIYOO_BUTTON_B;
+	sfc_key[X_1] = MIYOO_BUTTON_X;
+	sfc_key[Y_1] = MIYOO_BUTTON_Y;
+	sfc_key[L_1] = MIYOO_BUTTON_L;
+	sfc_key[R_1] = MIYOO_BUTTON_R;
+	sfc_key[START_1] = MIYOO_BUTTON_START;
+	sfc_key[SELECT_1] = MIYOO_BUTTON_SELECT;
+	sfc_key[LEFT_1] = MIYOO_BUTTON_LEFT;
+	sfc_key[RIGHT_1] = MIYOO_BUTTON_RIGHT;
+	sfc_key[UP_1] = MIYOO_BUTTON_UP;
+	sfc_key[DOWN_1] = MIYOO_BUTTON_DOWN;
+
+	sfc_key[QUIT] = MIYOO_BUTTON_RESET;
 #else
 	// Dingoo mapping
 	sfc_key[A_1] = DINGOO_BUTTON_A;
@@ -1112,6 +1132,57 @@ void S9xProcessEvents (bool8_32 block)
 				switch(event.jbutton.button)
 				{
 				}
+				break;
+#elif MIYOO
+			//MIYOO ------------------------------------------------------
+			case SDL_KEYDOWN:
+				keyssnes = SDL_GetKeyState(NULL);
+
+				//QUIT Emulator
+				if ( (keyssnes[sfc_key[SELECT_1]] == SDL_PRESSED) &&(keyssnes[sfc_key[START_1]] == SDL_PRESSED) && (keyssnes[sfc_key[X_1]] == SDL_PRESSED) )
+				{
+					S9xExit();
+				}
+				//RESET ROM Playback
+				else if ((keyssnes[sfc_key[SELECT_1]] == SDL_PRESSED) && (keyssnes[sfc_key[START_1]] == SDL_PRESSED) && (keyssnes[sfc_key[B_1]] == SDL_PRESSED))
+				{
+					S9xReset();
+				}
+				//SAVE State
+				else if ( (keyssnes[sfc_key[START_1]] == SDL_PRESSED) && (keyssnes[sfc_key[R_1]] == SDL_PRESSED) )
+				{
+					//extern char snapscreen;
+					char fname[256], ext[20];
+					S9xSetSoundMute(true);
+					sprintf(ext, ".00%d", SaveSlotNum);
+					strcpy(fname, S9xGetFilename (ext));
+					S9xFreezeGame (fname);
+					capt_screenshot();
+					sprintf(ext, ".s0%d", SaveSlotNum);
+					strcpy(fname, S9xGetFilename (ext));
+					save_screenshot(fname);
+					S9xSetSoundMute(false);
+				}
+				//LOAD State
+				else if ( (keyssnes[sfc_key[START_1]] == SDL_PRESSED) && (keyssnes[sfc_key[L_1]] == SDL_PRESSED) )
+				{
+					char fname[256], ext[8];
+					S9xSetSoundMute(true);
+					sprintf(ext, ".00%d", SaveSlotNum);
+					strcpy(fname, S9xGetFilename (ext));
+					S9xLoadSnapshot (fname);
+					S9xSetSoundMute(false);
+				}
+				// MAINMENU
+				else if ( keyssnes[sfc_key[QUIT]] == SDL_PRESSED )
+				{
+					S9xSetSoundMute(true);
+					menu_loop();
+					S9xSetSoundMute(false);
+				}
+				break;
+			case SDL_KEYUP:
+				keyssnes = SDL_GetKeyState(NULL);
 				break;
 #else
 			//DINGOO ------------------------------------------------------
