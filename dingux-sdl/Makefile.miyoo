@@ -63,7 +63,9 @@ INCLUDES =
 
 OPTIMISE = -D_ZAURUS -O3 -std=gnu++98 -march=armv5te -mtune=arm926ej-s \
 			-ffast-math -fomit-frame-pointer -fno-strength-reduce \
-			-finline-functions -funroll-loops
+			-finline-functions -funroll-loops -funswitch-loops \
+			-ftree-vectorize -fno-strict-aliasing \
+			-fprofile-use -fprofile-dir=./profile
 
 CCFLAGS = $(OPTIMISE) $(PROFILE) \
 -I. \
