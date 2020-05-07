@@ -1,0 +1,8 @@
+*.o
+*.gcda
+*.dge
+*.opk
+.opk_data
+*.ipk
+*.elf
+snes9x4d
