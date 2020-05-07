@@ -135,21 +135,21 @@
  * 3100-32ff -	CACHERAM 512 bytes of GSU cache memory
  *
  * SFR status flag register bits:
- *  0   -	
+ *  0   -
  *  1   Z	Zero flag
  *  2   CY	Carry flag
  *  3   S	Sign flag
  *  4   OV	Overflow flag
  *  5   G	Go flag (set to 1 when the GSU is running)
  *  6   R	Set to 1 when reading ROM using R14 address
- *  7   -	
+ *  7   -
  *  8   ALT1	Mode set-up flag for the next instruction
  *  9   ALT2	Mode set-up flag for the next instruction
  * 10   IL	Immediate lower 8-bit flag
  * 11   IH	Immediate higher 8-bit flag
  * 12   B	Set to 1 when the WITH instruction is executed
- * 13   -	
- * 14   -	
+ * 13   -
+ * 14   -
  * 15   IRQ	Set to 1 when GSU caused an interrupt
  *              Set to 0 when read by 658c16
  *
@@ -157,13 +157,13 @@
  * BRAMR = 1, BackupRAM is enabled
  *
  * CFGR control flags register bits:
- *  0   -	
- *  1   -	
- *  2   -	
- *  3   -	
- *  4   -	
+ *  0   -
+ *  1   -
+ *  2   -
+ *  3   -
+ *  4   -
  *  5   MS0	Multiplier speed, 0=standard, 1=high speed
- *  6   -	
+ *  6   -
  *  7   IRQ	Set to 1 when GSU interrupt request is masked
  *
  * CLSR clock speed register bits:
@@ -176,8 +176,8 @@
  *  3	RAN	RAM access control
  *  4	RON	ROM access control
  *  5	HT1	screen height bit 2
- *  6	-	
- *  7	-	
+ *  6	-
+ *  7	-
  *
  * RON = 0	SNES CPU has ROM access
  * RON = 1	GSU has ROM access

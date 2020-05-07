@@ -84,7 +84,7 @@ void S9xTextMode ()
 
 
 void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
-{	
+{
 	if (SDL_Init(SDL_INIT_VIDEO /*| (Settings.NextAPUEnabled ? SDL_INIT_AUDIO : 0)*/) < 0 )
  	{
 		printf("Could not initialize SDL(%s)\n", SDL_GetError());
@@ -127,7 +127,7 @@ void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
 		printf("Couldn't set video mode: %s\n", SDL_GetError());
 		S9xExit();
 	}
-	
+
 	if (Settings.SupportHiRes)
 	{
 		gfxscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 480, 16, 0, 0, 0, 0);
@@ -188,12 +188,12 @@ const char *S9xSelectFilename (const char *def, const char *dir1,
 		char *q = strrchr (p, '\n');
 		if (q)
 			*q = 0;
-	
+
 		char fname [PATH_MAX];
 		char drive [_MAX_DRIVE];
 		char dir [_MAX_DIR];
 		char ext [_MAX_EXT];
-	
+
 		_splitpath (p, drive, dir, fname, ext);
 		_makepath (path, drive, *dir ? dir : dir1, fname, *ext ? ext : ext1);
 		S9xGraphicsMode ();

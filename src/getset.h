@@ -112,14 +112,14 @@ INLINE uint8 S9xGetByte (uint32 Address, struct SCPUState * cpu)
 #endif
 		return (*(GetAddress + (Address & 0xffff)));
     }
-	
+
     switch ((int) GetAddress)
     {
     case CMemory::MAP_PPU:
 #ifdef VAR_CYCLES
 		if (!cpu->InDMA)
 			cpu->Cycles += ONE_CYCLE;
-#endif	
+#endif
 		return (S9xGetPPU (Address & 0xffff, &PPU, &Memory));
     case CMemory::MAP_CPU:
 #ifdef VAR_CYCLES
@@ -146,7 +146,7 @@ INLINE uint8 S9xGetByte (uint32 Address, struct SCPUState * cpu)
 		//unbound & SRAMMask = Sram offset
 		return (*(Memory.SRAM + ((((Address&0xFF0000)>>1) |(Address&0x7FFF)) &Memory.SRAMMask)));
 //		return (*(Memory.SRAM + ((Address & Memory.SRAMMask))));
-		
+
 //	case CMemory::MAP_RONLY_SRAM:
     case CMemory::MAP_HIROM_SRAM:
 #ifdef VAR_CYCLES
@@ -170,7 +170,7 @@ INLINE uint8 S9xGetByte (uint32 Address, struct SCPUState * cpu)
 		#endif
 				cpu->Cycles += SLOW_ONE_CYCLE;
 				return S9xGetSPC7110Byte(Address);
-		
+
 			case CMemory::MAP_SPC7110_DRAM:
 		#ifdef SPC7110_DEBUG
 				printf("reading Bank 50 (byte)\n");
@@ -186,7 +186,7 @@ INLINE uint8 S9xGetByte (uint32 Address, struct SCPUState * cpu)
 			case CMemory::MAP_SETA_DSP:
 				cpu->Cycles += SLOW_ONE_CYCLE;
 				return S9xGetSetaDSP(Address);
-			
+
 			case CMemory::MAP_SETA_RISC:
 				cpu->Cycles += SLOW_ONE_CYCLE;
 				return S9xGetST018(Address);
@@ -244,14 +244,14 @@ INLINE uint16 S9xGetWord (uint32 Address, struct SCPUState * cpu)
 #endif
 		return READ_WORD(GetAddress + (Address & 0xffff));
     }
-	
+
     switch ((int) GetAddress)
     {
     case CMemory::MAP_PPU:
 #ifdef VAR_CYCLES
 		if (!cpu->InDMA)
 			cpu->Cycles += TWO_CYCLES;
-#endif	
+#endif
 		return (S9xGetPPU (Address & 0xffff, &PPU, &Memory) |
 			(S9xGetPPU ((Address + 1) & 0xffff, &PPU, &Memory) << 8));
     case CMemory::MAP_CPU:
@@ -286,7 +286,7 @@ INLINE uint16 S9xGetWord (uint32 Address, struct SCPUState * cpu)
 
 		//return (*(uint16*)(Memory.SRAM + ((((Address&0xFF0000)>>1)|(Address&0x7FFF)) & Memory.SRAMMask));// |
 	//		(*(Memory.SRAM + ((Address + 1) & Memory.SRAMMask)) << 8));
-		
+
 //	case CMemory::MAP_RONLY_SRAM:
     case CMemory::MAP_HIROM_SRAM:
 #ifdef VAR_CYCLES
@@ -316,7 +316,7 @@ INLINE uint16 S9xGetWord (uint32 Address, struct SCPUState * cpu)
 		#endif
 				cpu->Cycles += SLOW_ONE_CYCLE * 2;
 			return (S9xGetSPC7110Byte(Address)|
-					(S9xGetSPC7110Byte (Address+1))<<8);	
+					(S9xGetSPC7110Byte (Address+1))<<8);
 			case CMemory::MAP_SPC7110_DRAM:
 		#ifdef SPC7110_DEBUG
 				printf("reading Bank 50 (word)\n");
@@ -333,7 +333,7 @@ INLINE uint16 S9xGetWord (uint32 Address, struct SCPUState * cpu)
 			case CMemory::MAP_SETA_DSP:
 				cpu->Cycles += SLOW_ONE_CYCLE * 2;
 				return S9xGetSetaDSP(Address)| (S9xGetSetaDSP((Address+1))<<8);
-			
+
 			case CMemory::MAP_SETA_RISC:
 				cpu->Cycles += SLOW_ONE_CYCLE * 2;
 				return S9xGetST018(Address)| S9xGetST018((Address+1));
@@ -378,7 +378,7 @@ INLINE void S9xSetByte (uint8 Byte, uint32 Address, struct SCPUState * cpu)
 #else
     uint8 *SetAddress = Memory.WriteMap [(Address >> MEMMAP_SHIFT) & MEMMAP_MASK];
 #endif
-	
+
     if (SetAddress >= (uint8 *) CMemory::MAP_LAST)
     {
 #ifdef VAR_CYCLES
@@ -400,35 +400,35 @@ INLINE void S9xSetByte (uint8 Byte, uint32 Address, struct SCPUState * cpu)
 #endif
 		return;
     }
-	
+
     switch ((int) SetAddress)
     {
     case CMemory::MAP_PPU:
 #ifdef VAR_CYCLES
 		if (!cpu->InDMA)
 			cpu->Cycles += ONE_CYCLE;
-#endif	
+#endif
 		S9xSetPPU (Byte, Address & 0xffff, &PPU, &IPPU);
 		return;
-		
+
     case CMemory::MAP_CPU:
 #ifdef VAR_CYCLES
 		cpu->Cycles += ONE_CYCLE;
 #endif
 		S9xSetCPU (Byte, Address & 0xffff, &PPU, cpu);
 		return;
-		
+
     case CMemory::MAP_DSP:
 #ifdef VAR_CYCLES
 		cpu->Cycles += SLOW_ONE_CYCLE;
-#endif	
+#endif
 
 #ifdef DSP_DUMMY_LOOPS
 		printf("DSP Byte: %02X to %06X\n", Byte, Address);
 #endif
 		S9xSetDSP (Byte, Address & 0xffff);
 		return;
-		
+
     case CMemory::MAP_LOROM_SRAM:
 #ifdef VAR_CYCLES
 		cpu->Cycles += SLOW_ONE_CYCLE;
@@ -440,7 +440,7 @@ INLINE void S9xSetByte (uint8 Byte, uint32 Address, struct SCPUState * cpu)
 			cpu->SRAMModified = TRUE;
 		}
 		return;
-		
+
     case CMemory::MAP_HIROM_SRAM:
 #ifdef VAR_CYCLES
 		cpu->Cycles += SLOW_ONE_CYCLE;
@@ -459,7 +459,7 @@ INLINE void S9xSetByte (uint8 Byte, uint32 Address, struct SCPUState * cpu)
 		*(Memory.BWRAM + ((Address & 0x7fff) - 0x6000)) = Byte;
 		cpu->SRAMModified = TRUE;
 		return;
-		
+
     case CMemory::MAP_DEBUG:
 #ifdef DEBUGGER
 		printf ("W(B) %06x\n", Address);
@@ -497,7 +497,7 @@ INLINE void S9xSetByte (uint8 Byte, uint32 Address, struct SCPUState * cpu)
 				cpu->Cycles += SLOW_ONE_CYCLE;
 				S9xSetSetaDSP(Address, Byte);
 				return;
-			
+
 			case CMemory::MAP_SETA_RISC:
 				cpu->Cycles += SLOW_ONE_CYCLE;
 				S9xSetST018(Address, Byte);
@@ -541,7 +541,7 @@ INLINE void S9xSetWord (uint16 Word, uint32 Address, struct SCPUState * cpu)
 #else
     uint8 *SetAddress = Memory.WriteMap [(Address >> MEMMAP_SHIFT) & MEMMAP_MASK];
 #endif
-	
+
     if (SetAddress >= (uint8 *) CMemory::MAP_LAST)
     {
 #ifdef VAR_CYCLES
@@ -563,18 +563,18 @@ INLINE void S9xSetWord (uint16 Word, uint32 Address, struct SCPUState * cpu)
 #endif
 		return;
     }
-	
+
     switch ((int) SetAddress)
     {
     case CMemory::MAP_PPU:
 #ifdef VAR_CYCLES
 		if (!cpu->InDMA)
 			cpu->Cycles += TWO_CYCLES;
-#endif	
+#endif
 		S9xSetPPU ((uint8) Word, Address & 0xffff, &PPU, &IPPU);
 		S9xSetPPU (Word >> 8, (Address & 0xffff) + 1, &PPU, &IPPU);
 		return;
-		
+
     case CMemory::MAP_CPU:
 #ifdef VAR_CYCLES
 		cpu->Cycles += TWO_CYCLES;
@@ -582,11 +582,11 @@ INLINE void S9xSetWord (uint16 Word, uint32 Address, struct SCPUState * cpu)
 		S9xSetCPU ((uint8) Word, (Address & 0xffff), &PPU, cpu);
 		S9xSetCPU (Word >> 8, (Address & 0xffff) + 1, &PPU, cpu);
 		return;
-		
+
     case CMemory::MAP_DSP:
 #ifdef VAR_CYCLES
 		cpu->Cycles += SLOW_ONE_CYCLE * 2;
-#endif	
+#endif
 
 #ifdef DSP_DUMMY_LOOPS
 		printf("DSP Word: %04X to %06X\n", Word, Address);
@@ -594,7 +594,7 @@ INLINE void S9xSetWord (uint16 Word, uint32 Address, struct SCPUState * cpu)
 		S9xSetDSP ((uint8) Word, (Address & 0xffff));
 		S9xSetDSP (Word >> 8, (Address & 0xffff) + 1);
 		return;
-		
+
     case CMemory::MAP_LOROM_SRAM:
 #ifdef VAR_CYCLES
 		cpu->Cycles += SLOW_ONE_CYCLE * 2;
@@ -609,7 +609,7 @@ INLINE void S9xSetWord (uint16 Word, uint32 Address, struct SCPUState * cpu)
 			cpu->SRAMModified = TRUE;
 		}
 		return;
-		
+
     case CMemory::MAP_HIROM_SRAM:
 #ifdef VAR_CYCLES
 		cpu->Cycles += SLOW_ONE_CYCLE * 2;
@@ -633,7 +633,7 @@ INLINE void S9xSetWord (uint16 Word, uint32 Address, struct SCPUState * cpu)
 		*(Memory.BWRAM + (((Address + 1) & 0x7fff) - 0x6000)) = (uint8) (Word >> 8);
 		cpu->SRAMModified = TRUE;
 		return;
-		
+
     case CMemory::MAP_DEBUG:
 #ifdef DEBUGGER
 		printf ("W(W) %06x\n", Address);
@@ -675,7 +675,7 @@ INLINE void S9xSetWord (uint16 Word, uint32 Address, struct SCPUState * cpu)
 				S9xSetSetaDSP (Address, Word & 0xff);
 				S9xSetSetaDSP ((Address + 1),(uint8) (Word >> 8));
 				return;
-			
+
 			case CMemory::MAP_SETA_RISC:
 				cpu->Cycles += SLOW_ONE_CYCLE * 2;
 				S9xSetST018 (Address, Word & 0xff);
@@ -841,18 +841,18 @@ INLINE void S9xSetPCBase (uint32 Address, struct SCPUState * cpu)
 		cpu->PC = GetAddress + (Address & 0xffff);
 		return;
     }
-	
+
     switch ((int) GetAddress)
     {
     case CMemory::MAP_PPU:
 #ifdef VAR_CYCLES
 		cpu->MemSpeed = ONE_CYCLE;
 		cpu->MemSpeedx2 = TWO_CYCLES;
-#endif	
+#endif
 		cpu->PCBase = Memory.FillRAM - 0x2000;
 		cpu->PC = cpu->PCBase + (Address & 0xffff);
 		return;
-		
+
     case CMemory::MAP_CPU:
 #ifdef VAR_CYCLES
 		cpu->MemSpeed = ONE_CYCLE;
@@ -861,16 +861,16 @@ INLINE void S9xSetPCBase (uint32 Address, struct SCPUState * cpu)
 		cpu->PCBase = Memory.FillRAM - 0x4000;
 		cpu->PC = cpu->PCBase + (Address & 0xffff);
 		return;
-		
+
     case CMemory::MAP_DSP:
 #ifdef VAR_CYCLES
 		cpu->MemSpeed = SLOW_ONE_CYCLE;
 		cpu->MemSpeedx2 = SLOW_ONE_CYCLE * 2;
-#endif	
+#endif
 		cpu->PCBase = Memory.FillRAM - 0x6000;
 		cpu->PC = cpu->PCBase + (Address & 0xffff);
 		return;
-		
+
     case CMemory::MAP_SA1RAM:
     case CMemory::MAP_LOROM_SRAM:
 #ifdef VAR_CYCLES
@@ -910,7 +910,7 @@ INLINE void S9xSetPCBase (uint32 Address, struct SCPUState * cpu)
 #ifdef DEBUGGER
 		printf ("SBP %06x\n", Address);
 #endif
-		
+
     default:
     case CMemory::MAP_NONE:
 #ifdef VAR_CYCLES

@@ -95,7 +95,7 @@ void S9xDoDMA (uint8 Channel)
 
     if (Channel > 7 || cpu->InDMA)
 		return;
-	
+
     cpu->InDMA = TRUE;
     bool8_32 in_sa1_dma = FALSE;
 	uint8 *in_sdd1_dma = NULL;
@@ -108,7 +108,7 @@ void S9xDoDMA (uint8 Channel)
 	// Prepare for custom chip DMA
     if (count == 0)
 		count = 0x10000;
-	
+
     int inc = d->AAddressFixed ? 0 : (!d->AAddressDecrement ? 1 : -1);
 
 	if((d->ABank==0x7E||d->ABank==0x7F)&&d->BAddress==0x80)
@@ -200,7 +200,7 @@ void S9xDoDMA (uint8 Channel)
 			int num_chars = 1 << ((Memory.FillRAM [0x2231] >> 2) & 7);
 			int depth = (Memory.FillRAM [0x2231] & 3) == 0 ? 8 :
 			(Memory.FillRAM [0x2231] & 3) == 1 ? 4 : 2;
-			
+
 			int bytes_per_char = 8 * depth;
 			int bytes_per_line = depth * num_chars;
 			int char_line_bytes = bytes_per_char * num_chars;
@@ -210,14 +210,14 @@ void S9xDoDMA (uint8 Channel)
 			uint8 *p = buffer;
 			uint32 inc = char_line_bytes - (d->AAddress % char_line_bytes);
 			uint32 char_count = inc / bytes_per_char;
-			
+
 			in_sa1_dma = TRUE;
-			
+
 			//printf ("%08x,", base); fflush (stdout);
 			//printf ("depth = %d, count = %d, bytes_per_char = %d, bytes_per_line = %d, num_chars = %d, char_line_bytes = %d\n",
 			//depth, count, bytes_per_char, bytes_per_line, num_chars, char_line_bytes);
 			int i;
-			
+
 			switch (depth)
 			{
 			case 2:
@@ -327,16 +327,16 @@ void S9xDoDMA (uint8 Channel)
 
 		else
 			if (d->BAddress == 0x22)
-			
+
 				sprintf (String, "%s CGRAM: %02X (%x)", String, ppu->CGADD,
-					ppu->CGFLIP);			
+					ppu->CGFLIP);
 			else
 				if (d->BAddress == 0x04)
 					sprintf (String, "%s OBJADDR: %04X", String, ppu->OAMAddr);
 				S9xMessage (S9X_TRACE, S9X_DMA_TRACE, String);
     }
 #endif
-	
+
     if (!d->TransferDirection)
     {
 #ifdef VAR_CYCLES
@@ -350,7 +350,7 @@ void S9xDoDMA (uint8 Channel)
 #endif
 		uint8 *base = GetBasePointer ((d->ABank << 16) + d->AAddress);
 		uint16 p = d->AAddress;
-		
+
 		if (!base)
 			base = Memory.ROM;
 
@@ -376,7 +376,7 @@ void S9xDoDMA (uint8 Channel)
 		else
 			if (inc < 0)
 				d->AAddress -= count;
-			
+
 			if (d->TransferMode == 0 || d->TransferMode == 2)
 			{
 				switch (d->BAddress)
@@ -479,7 +479,7 @@ void S9xDoDMA (uint8 Channel)
 								Work = *(base + p);
 								REGISTER_2118_linear(Work, &Memory, ippu, ppu);
 								p += inc;
-								
+
 								Work = *(base + p);
 								REGISTER_2119_linear(Work, &Memory, ippu, ppu);
 								p += inc;
@@ -500,7 +500,7 @@ void S9xDoDMA (uint8 Channel)
 								Work = *(base + p);
 								REGISTER_2118_tile(Work, &Memory, ippu, ppu);
 								p += inc;
-								
+
 								Work = *(base + p);
 								REGISTER_2119_tile(Work, &Memory, ippu, ppu);
 								p += inc;
@@ -523,7 +523,7 @@ void S9xDoDMA (uint8 Channel)
 							Work = *(base + p);
 							S9xSetPPU (Work, 0x2100 + d->BAddress, ppu, ippu);
 							p += inc;
-							
+
 							Work = *(base + p);
 							S9xSetPPU (Work, 0x2101 + d->BAddress, ppu, ippu);
 							p += inc;
@@ -548,19 +548,19 @@ void S9xDoDMA (uint8 Channel)
 							p += inc;
 							if (count <= 1)
 								break;
-							
+
 							Work = *(base + p);
 							S9xSetPPU (Work, 0x2100 + d->BAddress, ppu, ippu);
 							p += inc;
 							if (count <= 2)
 								break;
-							
+
 							Work = *(base + p);
 							S9xSetPPU (Work, 0x2101 + d->BAddress, ppu, ippu);
 							p += inc;
 							if (count <= 3)
 								break;
-							
+
 							Work = *(base + p);
 							S9xSetPPU (Work, 0x2101 + d->BAddress, ppu, ippu);
 							p += inc;
@@ -578,19 +578,19 @@ void S9xDoDMA (uint8 Channel)
 								p += inc;
 								if (count <= 1)
 									break;
-								
+
 								Work = *(base + p);
 								S9xSetPPU (Work, 0x2101 + d->BAddress, ppu, ippu);
 								p += inc;
 								if (count <= 2)
 									break;
-								
+
 								Work = *(base + p);
 								S9xSetPPU (Work, 0x2102 + d->BAddress, ppu, ippu);
 								p += inc;
 								if (count <= 3)
 									break;
-								
+
 								Work = *(base + p);
 								S9xSetPPU (Work, 0x2103 + d->BAddress, ppu, ippu);
 								p += inc;
@@ -626,7 +626,7 @@ void S9xDoDMA (uint8 Channel)
 				d->AAddress += inc;
 				--count;
 				break;
-				
+
 			case 1:
 			case 5:
 #ifndef VAR_CYCLES
@@ -637,13 +637,13 @@ void S9xDoDMA (uint8 Channel)
 				d->AAddress += inc;
 				if (!--count)
 					break;
-				
+
 				Work = S9xGetPPU (0x2101 + d->BAddress, ppu, &Memory);
 				S9xSetByte (Work, (d->ABank << 16) + d->AAddress, cpu);
 				d->AAddress += inc;
 				count--;
 				break;
-				
+
 			case 3:
 #ifndef VAR_CYCLES
 				cpu->Cycles += 6;
@@ -653,25 +653,25 @@ void S9xDoDMA (uint8 Channel)
 				d->AAddress += inc;
 				if (!--count)
 					break;
-				
+
 				Work = S9xGetPPU (0x2100 + d->BAddress, ppu, &Memory);
 				S9xSetByte (Work, (d->ABank << 16) + d->AAddress, cpu);
 				d->AAddress += inc;
 				if (!--count)
 					break;
-				
+
 				Work = S9xGetPPU (0x2101 + d->BAddress, ppu, &Memory);
 				S9xSetByte (Work, (d->ABank << 16) + d->AAddress, cpu);
 				d->AAddress += inc;
 				if (!--count)
 					break;
-				
+
 				Work = S9xGetPPU (0x2101 + d->BAddress, ppu, &Memory);
 				S9xSetByte (Work, (d->ABank << 16) + d->AAddress, cpu);
 				d->AAddress += inc;
 				count--;
 				break;
-				
+
 			case 4:
 #ifndef VAR_CYCLES
 				cpu->Cycles += 6;
@@ -681,25 +681,25 @@ void S9xDoDMA (uint8 Channel)
 				d->AAddress += inc;
 				if (!--count)
 					break;
-				
+
 				Work = S9xGetPPU (0x2101 + d->BAddress, ppu, &Memory);
 				S9xSetByte (Work, (d->ABank << 16) + d->AAddress, cpu);
 				d->AAddress += inc;
 				if (!--count)
 					break;
-				
+
 				Work = S9xGetPPU (0x2102 + d->BAddress, ppu, &Memory);
 				S9xSetByte (Work, (d->ABank << 16) + d->AAddress, cpu);
 				d->AAddress += inc;
 				if (!--count)
 					break;
-				
+
 				Work = S9xGetPPU (0x2103 + d->BAddress, ppu, &Memory);
 				S9xSetByte (Work, (d->ABank << 16) + d->AAddress, cpu);
 				d->AAddress += inc;
 				count--;
 				break;
-				
+
 			default:
 #ifdef DEBUGGER
 				if (1) //Settings.TraceDMA)
@@ -735,12 +735,12 @@ update_address:
     // DMA transfer.
     Memory.FillRAM[0x4302 + (Channel << 4)] = (uint8) d->AAddress;
     Memory.FillRAM[0x4303 + (Channel << 4)] = d->AAddress >> 8;
-	
+
     // Secret of the Mana requires that the DMA bytes transfer count be set to
     // zero when DMA has completed.
     Memory.FillRAM [0x4305 + (Channel << 4)] = 0;
     Memory.FillRAM [0x4306 + (Channel << 4)] = 0;
-	
+
     DMA[Channel].IndirectAddress = 0;
     d->TransferBytes = 0;
 
@@ -757,7 +757,7 @@ void S9xStartHDMA ()
 		ippu->HDMA = 0;
     else
 		missing.hdma_this_frame = ippu->HDMA = Memory.FillRAM [0x420c];
-	
+
 	//per anomie timing post
 	if(IPPU.HDMA!=0)
 	{
@@ -827,7 +827,7 @@ uint8 S9xDoHDMA (struct InternalPPU *ippu, struct SPPU *ppu, struct SCPUState *c
 					p->Repeat = !(line & 0x80);
 					p->LineCount = line & 0x7f;
 				}
-				
+
 				// Disable H-DMA'ing into V-RAM (register 2118) for Hook
 				if (!p->LineCount || p->BAddress == 0x18)
 				{
@@ -837,7 +837,7 @@ uint8 S9xDoHDMA (struct InternalPPU *ippu, struct SPPU *ppu, struct SCPUState *c
 					Memory.FillRAM [0x4306 + (d << 4)] = p->IndirectAddress >> 8;
 					continue;
 				}
-				
+
 				p->Address++;
 				p->FirstLine = 1;
 				if (p->HDMAIndirectAddressing)
@@ -1015,7 +1015,7 @@ void S9xResetDMA ()
     {
 		for (d = c; d < c + 12; d++)
 			Memory.FillRAM [d] = 0xff;
-		
+
 		Memory.FillRAM [c + 0xf] = 0xff;
     }
 }

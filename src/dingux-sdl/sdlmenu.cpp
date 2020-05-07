@@ -64,7 +64,7 @@ void menu_init()
 	for(int y=12;y<=212;y++){
 		for(int x=10;x<246*2;x+=2){
 			memset(GFX.Screen + GFX.Pitch*y+x,0x0,2);
-		}	
+		}
 	}
 }
 
@@ -107,7 +107,7 @@ int FileDir(const char *dir, const char *ext)
 		chown (dir, getuid (), getgid ());
 		n = scandir (dir, &namelist, isFile, alphasort);
 	}
-		
+
 	return n;
 }
 
@@ -169,7 +169,7 @@ char* menu_romselector()
 	Settings.SupportHiRes=FALSE;
 	S9xDeinitDisplay();
 	S9xInitDisplay(0, 0);
-	
+
 	loadmenu_dispupdate(romcount);
 	sys_sleep(10000);
 
@@ -494,7 +494,7 @@ void save_screenshot(char *fname){
 	FILE  *fs = fopen (fname,"wb");
 	if(fs==NULL)
 		return;
-	
+
 	fwrite(snapscreen,17120,1,fs);
 	fclose (fs);
 	sync();
@@ -609,13 +609,13 @@ void ShowCredit()
 		keyssnes = SDL_GetKeyState(NULL);
 
 		menu_init();
-		
+
 		for(int i=0;i<=16;i++){
 			int j=i+line;
 			if(j>=20) j-=20;
 			S9xDisplayString (disptxt[j], GFX.Screen, GFX.Pitch, i*10+80-ypix);
 		}
-		
+
 		ypix+=2;
 		if(ypix==12) {
 			line++;

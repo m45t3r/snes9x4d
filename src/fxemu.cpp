@@ -179,7 +179,7 @@ static void fx_backupCache()
 		    memcpy(t1,&GSU.pvCache[i<<4],a);
 		    memcpy(&GSU.avCacheBackup[(i<<4)+a],t2,16-a);
 		    memcpy(t2,&GSU.pvCache[(i<<4)+a],16-a);
-		}		
+		}
 	    }
 	    c = USEX16(c+16);
 	    v >>= 1;
@@ -215,7 +215,7 @@ static void fx_restoreCache()
 		    memcpy(&GSU.pvCache[i<<4],t1,a);
 		    memcpy(t2,&GSU.avCacheBackup[(i<<4)+a],16-a);
 		    memcpy(&GSU.pvCache[(i<<4)+a],t2,16-a);
-		}		
+		}
 	    }
 	    c = USEX16(c+16);
 	    v >>= 1;
@@ -495,7 +495,7 @@ void FxReset(struct FxInit_s *psFxInfo)
 	&fx_a_apfFunctionTable[0],
 	&fx_r_apfFunctionTable[0],
 	&fx_ar_apfFunctionTable[0],
-#endif	
+#endif
     };
     static void (**appfPlot[])() = {
 	&fx_apfPlotTable[0],
@@ -503,15 +503,15 @@ void FxReset(struct FxInit_s *psFxInfo)
 	&fx_a_apfPlotTable[0],
 	&fx_r_apfPlotTable[0],
 	&fx_ar_apfPlotTable[0],
-#endif	
+#endif
     };
     static void (**appfOpcode[])() = {
 	&fx_apfOpcodeTable[0],
-#if 0	
+#if 0
 	&fx_a_apfOpcodeTable[0],
 	&fx_r_apfOpcodeTable[0],
 	&fx_ar_apfOpcodeTable[0],
-#endif	
+#endif
     };
 
     /* Get function pointers for the current emulation mode */

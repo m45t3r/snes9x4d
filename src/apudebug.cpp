@@ -304,7 +304,7 @@ int S9xAPUOPrint (char *buffer, uint16 Address)
 	     CPU.V_Counter,
 	     CPU.Cycles,
 	     APU.Cycles);
-		
+
     return (bytes);
 }
 

@@ -112,7 +112,7 @@ static int ReadBlock (const char *key, void *block, int max_len, STREAM snap)
 	READ_STREAM (junk, rem, snap);
 	delete junk;
     }
-	
+
     return (SUCCESS);
 }
 

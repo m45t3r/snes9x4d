@@ -821,7 +821,7 @@ int ReadByte(x)
 
 	if (pfile_in_zip_read_info->rest_read_compressed <= 0)
 	    return (0);
-	
+
 	if (pfile_in_zip_read_info->rest_read_compressed < uReadThis)
 	    uReadThis = (uInt) pfile_in_zip_read_info->rest_read_compressed;
 	if (uReadThis == 0)

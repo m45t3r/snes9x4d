@@ -271,7 +271,7 @@ void ComputeClipWindows ()
 			// 1. <no range> (Left > Right. One band)
 			// 2. |    ----------------             | (Left >= 0, Right <= 255, Left <= Right. One band)
 			// 3. |------------           ----------| (Left1 == 0, Right1 < Left2; Left2 > Right1, Right2 == 255. Two bands)
-			
+
 			struct Band Bands [6];
 			int B = 0;
 			switch (ppu->ClipWindowOverlapLogic [w] ^ 1)
@@ -525,7 +525,7 @@ void ComputeClipWindows ()
 				else
 				    empty_band_count++;
 			    }
-			
+
 			    if (j > 0)
 			    {
 				if (j == 1)

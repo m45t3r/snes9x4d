@@ -1294,7 +1294,7 @@ void ProcessDebugCommand (char *Line)
 		apu_trace = NULL;
 	    }
 	}
-		
+
 	printf ("APU tracing %s\n", APU.Flags & TRACE_FLAG ? "enabled" :
 		"disabled");
     }
@@ -1600,7 +1600,7 @@ void ProcessDebugCommand (char *Line)
 		 (Registers.P.W & 1) != 0 ? "C" : "c",
 		 (Registers.P.W & 256) != 0 ? "E" : "e");
 	DPrint (String);
-#endif	
+#endif
 	S9xOPrint (String, Bank, Address);
 	DPrint (String);
     }
@@ -1798,7 +1798,7 @@ static void WhatsUsed ()
     case 2: s = "outside";   break;
     case 3: s = "always off";   break;
     }
-	
+
     printf ("\nSub-screen (%s): ", s);
     for (i = 0; i < 5; i++)
 	if (Memory.FillRAM[0x212d] & (1 << i))

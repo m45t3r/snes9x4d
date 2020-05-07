@@ -1123,7 +1123,7 @@ void DrawLargePixel16Add (uint32 Tile, uint32 Offset,
 			       COLOR_ADD (p, *(s + gfx->Delta))    : \
 			       COLOR_ADD (p, gfx->FixedColour)) \
 			    : p)
-			
+
     RENDER_TILE_LARGE (gfx->ScreenColors [pixel], LARGE_ADD_PIXEL)
 }
 
@@ -1142,7 +1142,7 @@ void DrawLargePixel16Add1_2 (uint32 Tile, uint32 Offset,
 			       COLOR_ADD1_2 (p, *(s + gfx->Delta))    : \
 			       COLOR_ADD (p, gfx->FixedColour)) \
 			    : p))
-			
+
     RENDER_TILE_LARGE (gfx->ScreenColors [pixel], LARGE_ADD_PIXEL1_2)
 }
 
@@ -1161,7 +1161,7 @@ void DrawLargePixel16Sub (uint32 Tile, uint32 Offset,
 			       COLOR_SUB (p, *(s + gfx->Delta))    : \
 			       COLOR_SUB (p, gfx->FixedColour)) \
 			    : p)
-			
+
     RENDER_TILE_LARGE (gfx->ScreenColors [pixel], LARGE_SUB_PIXEL)
 }
 
@@ -1180,7 +1180,7 @@ void DrawLargePixel16Sub1_2 (uint32 Tile, uint32 Offset,
 			       COLOR_SUB1_2 (p, *(s + gfx->Delta))    : \
 			       COLOR_SUB (p, gfx->FixedColour)) \
 			    : p)
-			
+
     RENDER_TILE_LARGE (gfx->ScreenColors [pixel], LARGE_SUB_PIXEL1_2)
 }
 

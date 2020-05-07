@@ -146,7 +146,7 @@ void DSP2_Op01 ()
 {
 	// Op01 size is always 32 bytes input and output.
 	// The hardware does strange things if you vary the size.
-	
+
 	int j;
 	unsigned char c0, c1, c2, c3;
 	unsigned char *p1 = DSP1.parameters;

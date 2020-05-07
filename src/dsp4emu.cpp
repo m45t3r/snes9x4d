@@ -147,7 +147,7 @@ void DSP4_Op03()
 
 	for (int i=0; i < 32; i++)
 		RowCount[i] = 0;
-	
+
 	// reset op09 data
 	op09_mode = 0;
 }
@@ -162,7 +162,7 @@ void DSP4_Op0E()
 
 	for (int i=0; i < 32; i++)
 		RowCount[i] = 0;
-	
+
 	// reset op09 data
 	op09_mode = 1;
 }
@@ -331,7 +331,7 @@ void DSP4_Op01()
 		DSP4_WRITE_WORD(4,project_focaly);
 		DSP4_WRITE_WORD(6,project_y2);
 		DSP4_WRITE_WORD(8,segments);
-		
+
 #if 0
 		DSP4_WRITE_WORD(0,-1);
 		DSP4_WRITE_WORD(2,-1);
@@ -659,7 +659,7 @@ void DSP4_Op08()
 		DSP4.in_count = 2;
 
 		DSP4_WAIT(1) resume1:
-	
+
 		// inspect input
 		command = DSP4_READ_WORD(0);
 
@@ -1010,7 +1010,7 @@ void DSP4_Op0D()
 	do {
 		// scan next command
 		DSP4.in_count = 2;
-		
+
 		DSP4_WAIT(1) resume1:
 
 		// inspect input
@@ -1156,7 +1156,7 @@ void DSP4_Op0D()
 		project_focaly += project_pitchy;
 		project_focalx += project_pitchx;
 	} while(1);
-	
+
 	DSP4.waiting4command = TRUE;
 	DSP4.out_count = 0;
 }
@@ -1463,7 +1463,7 @@ sprite_found:
 						clip=TRUE;
 				}
 			}
-	
+
 #ifdef PRINT
 			printf("(line %d) %04X, %04X, %04X / %04X %04X\n",line,
 				(uint16)sp_x,(uint16)sp_y,(uint16)far_plane,(uint16)multi_farplane[multi_index1],(uint16)multi_raster[multi_index1]);
@@ -1538,7 +1538,7 @@ sprite_found:
 				DSP4_WRITE_WORD(out_index+4,-1);
 #endif
 			}
-			
+
 			// no sprite information
 			if(DSP4.out_count == 0)
 			{

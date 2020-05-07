@@ -127,7 +127,7 @@ void FxPipeString(char * pvString)
     const char *m = fx_apvMnemonicTable[vOpcode];
     uint8 vPipe1,vPipe2,vByte1,vByte2;
     uint8 vPipeBank = GSU.vPipeAdr >> 16;
-	
+
     /* The next two bytes after the pipe's address */
     vPipe1 = GSU.apvRomBank[vPipeBank][USEX16(GSU.vPipeAdr+1)];
     vPipe2 = GSU.apvRomBank[vPipeBank][USEX16(GSU.vPipeAdr+2)];

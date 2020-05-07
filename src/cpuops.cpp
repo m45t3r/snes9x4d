@@ -522,7 +522,7 @@ static void Op89M0 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUSta
     icpu->_Zero = (reg->A.W & *(uint16 *) cpu->PC) != 0;
 #else
     icpu->_Zero = (reg->A.W & (*cpu->PC + (*(cpu->PC + 1) << 8))) != 0;
-#endif	
+#endif
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2;
 #endif
@@ -3548,7 +3548,7 @@ static void Op02 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState
 #ifdef DEBUGGER
     if (cpu->Flags & TRACE_FLAG)
 	S9xTraceMessage ("*** COP");
-#endif	
+#endif
     if (!CHECKEMULATION_OP())
     {
 	PUSHB_OP (reg->PB);

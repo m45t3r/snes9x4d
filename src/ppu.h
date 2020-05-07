@@ -292,7 +292,7 @@ STATIC inline void REGISTER_2104 (uint8 byte,
 {
     if (ppu->OAMAddr >= 0x110)
 	return;
-	
+
     int addr = (ppu->OAMAddr << 1) + (ppu->OAMFlip & 1);
 
     if (byte != ppu->OAMData [addr])
@@ -340,7 +340,7 @@ STATIC inline void REGISTER_2104 (uint8 byte,
 		if (addr & 2)
 		{
 		    // Tile group
-		
+
 		    ppu->OBJ[addr = ppu->OAMAddr >> 1].Name &= 0x100;
 		    ppu->OBJ[addr].Name |= byte;
 		}
@@ -388,7 +388,7 @@ STATIC inline void REGISTER_2118 (uint8 Byte,
 		    mem->FillRAM[0x2115] & 3,
 		    (mem->FillRAM [0x2115] & 0x0c) >> 2);
 	}
-#endif	
+#endif
 	ppu->VMA.Address += ppu->VMA.Increment;
     }
 //    mem->FillRAM [0x2118] = Byte;
@@ -452,7 +452,7 @@ STATIC inline void REGISTER_2119 (uint8 Byte,
 		    mem->FillRAM[0x2115] & 3,
 		    (mem->FillRAM [0x2115] & 0x0c) >> 2);
 	}
-#endif	
+#endif
 	ppu->VMA.Address += ppu->VMA.Increment;
     }
 //    mem->FillRAM [0x2119] = Byte;

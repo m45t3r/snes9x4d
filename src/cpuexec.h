@@ -127,7 +127,7 @@ STATIC inline void S9xPackStatus()
     if (!CPU.IRQActive) \
 	CPU.Flags &= ~IRQ_PENDING_FLAG; \
 }
-	
+
 STATIC inline void S9xFixCycles (struct SRegisters * reg, struct SICPU * icpu)
 {
     if (CHECKEMULATION())

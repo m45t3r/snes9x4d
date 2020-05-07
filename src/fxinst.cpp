@@ -158,7 +158,7 @@ static void fx_cache()
 	    memcpy(GSU.pvCache,t1,i);
 	    memcpy(&GSU.pvCache[i],t2,512-i);
 	}
-#endif	
+#endif
     }
     R15++;
     CLRFLAGS;

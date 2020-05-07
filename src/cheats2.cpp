@@ -116,7 +116,7 @@ void S9xRemoveCheat (uint32 which1)
 
 	int block = (address >> MEMMAP_SHIFT) & MEMMAP_MASK;
 	uint8 *ptr = Memory.Map [block];
-	
+
 	if (ptr >= (uint8 *) CMemory::MAP_LAST)
 	    *(ptr + (address & 0xffff)) = Cheat.c [which1].saved_byte;
 	else
@@ -167,7 +167,7 @@ bool8 S9xLoadCheatFile (const char *filename)
 
     if (!fs)
 	return (FALSE);
-	
+
 	printf ("Loading Cheatfile: %s\n", filename);
 
     while (fread ((void *) data, 1, 28, fs) == 28)

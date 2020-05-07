@@ -589,22 +589,22 @@ static int Unfreeze (STREAM stream)
     {
 		if ((result = UnfreezeStruct (stream, "ARE", &APURegisters, SnapAPURegisters, COUNT (SnapAPURegisters))) != SUCCESS)
 		    return (result);
-	
+
 		if ((result = UnfreezeBlock (stream, "ARA", IAPU.RAM, 0x10000)) != SUCCESS)
 		    return (result);
-	
+
 		if ((result = UnfreezeStruct (stream, "SOU", &SoundData, SnapSoundData, COUNT (SnapSoundData))) != SUCCESS)
 		    return (result);
-	
+
 		S9xSetSoundMute (FALSE);
 		IAPU.PC = IAPU.RAM + APURegisters.PC;
 		S9xAPUUnpackStatus ();
-		
+
 		if (APUCheckDirectPage ())
 		    IAPU.DirectPage = IAPU.RAM + 0x100;
 		else
 		    IAPU.DirectPage = IAPU.RAM;
-	
+
 		Settings.APUEnabled = TRUE;
 		IAPU.APUExecuting = TRUE;
     }
@@ -620,7 +620,7 @@ static int Unfreeze (STREAM stream)
 		if ((result = UnfreezeStruct (stream, "SAR", &SA1Registers,
 					      SnapSA1Registers, COUNT (SnapSA1Registers))) != SUCCESS)
 		    return (result);
-	
+
 		S9xFixSA1AfterSnapshotLoad ();
 		SA1.Flags |= sa1_old_flags & (TRACE_FLAG);
     }
@@ -871,7 +871,7 @@ int UnfreezeBlock (STREAM stream, const char *name, uint8 *block, int size)
 	READ_STREAM (junk, rem, stream);
 	free(junk);
     }
-	
+
     return (SUCCESS);
 }
 
@@ -1128,7 +1128,7 @@ bool8_32 S9xUnfreezeZSNES (const char *filename)
 	    APURegisters.YA.B.Y = t [12];
 	    APURegisters.P    = t [16];
 	    APURegisters.S    = t [24];
-	
+
 	    APU.Cycles = READ_DWORD (&t [32]);
 	    APU.ShowROM = (IAPU.RAM [0xf1] & 0x80) != 0;
 	    APU.OutPorts [0] = t [36];
@@ -1153,7 +1153,7 @@ bool8_32 S9xUnfreezeZSNES (const char *filename)
 
 	    // SNES sound DSP register values
 	    fread (t, 1, 256, fs);
-	
+
 	    uint8 saved = IAPU.RAM [0xf2];
 
 	    for (i = 0; i < 128; i++)

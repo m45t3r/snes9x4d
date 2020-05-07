@@ -467,7 +467,7 @@ void DSP3_Decode_Data()
 		{
 			DSP3_SR = 0xC0;
 			return;
-		}	
+		}
 	}
 
 	if (DSP3_LZCode == 1)
@@ -616,7 +616,7 @@ void DSP3_Decode_Symbols()
 
 		DSP3_Codes[DSP3_Index++] = DSP3_Symbol;
 		DSP3_Codewords--;
-		
+
 	} while (DSP3_Codewords);
 
 	DSP3_Index = 0;
@@ -654,7 +654,7 @@ void DSP3_Command()
 		case 0x02: SetDSP3 = &DSP3_Coordinate; break;
 		case 0x03: SetDSP3 = &DSP3_OP03; break;
 		case 0x06: SetDSP3 = &DSP3_OP06; break;
-		case 0x07: SetDSP3 = &DSP3_OP07; return;									
+		case 0x07: SetDSP3 = &DSP3_OP07; return;
 		case 0x0f: SetDSP3 = &DSP3_TestMemory; break;
 		case 0x18: SetDSP3 = &DSP3_Convert; break;
 		case 0x1f: SetDSP3 = &DSP3_MemoryDump; break;
@@ -686,13 +686,13 @@ void DSP3SetByte(uint8 byte, uint16 address)
 		{
 			DSP3_SR ^= 0x10;
 
-			if (DSP3_SR & 0x10)	
+			if (DSP3_SR & 0x10)
 				DSP3_DR = (DSP3_DR & 0xff00) + byte;
 			else
 			{
 				DSP3_DR = (DSP3_DR & 0x00ff) + (byte << 8);
 				(*SetDSP3)();
-			}	
+			}
 		}
 	}
 }
@@ -712,7 +712,7 @@ uint8 DSP3GetByte(uint16 address)
 		{
 			DSP3_SR ^= 0x10;
 
-			if (DSP3_SR & 0x10)	
+			if (DSP3_SR & 0x10)
 				byte = (uint8) (DSP3_DR);
 			else
 			{

@@ -319,10 +319,10 @@ void S9xDoHBlankProcessing (struct SCPUState *cpu, struct SAPU *apu, struct SIAP
 			{
 				iapu->RAM [0xff] = (iapu->RAM [0xff] + 1) & 0xf;
 				apu->Timer [2] -= apu->TimerTarget [2];
-#ifdef SPC700_SHUTDOWN		
+#ifdef SPC700_SHUTDOWN
 				iapu->WaitCounter++;
 				iapu->APUExecuting = TRUE;
-#endif		
+#endif
 			}
 	    }
 	    if (cpu->V_Counter & 1)
@@ -334,10 +334,10 @@ void S9xDoHBlankProcessing (struct SCPUState *cpu, struct SAPU *apu, struct SIAP
 				{
 					iapu->RAM [0xfd] = (iapu->RAM [0xfd] + 1) & 0xf;
 					apu->Timer [0] = 0;
-#ifdef SPC700_SHUTDOWN		
+#ifdef SPC700_SHUTDOWN
 					iapu->WaitCounter++;
 					iapu->APUExecuting = TRUE;
-#endif		
+#endif
 			    }
 			}
 			if (apu->TimerEnabled [1])
@@ -347,10 +347,10 @@ void S9xDoHBlankProcessing (struct SCPUState *cpu, struct SAPU *apu, struct SIAP
 				{
 					iapu->RAM [0xfe] = (iapu->RAM [0xfe] + 1) & 0xf;
 					apu->Timer [1] = 0;
-#ifdef SPC700_SHUTDOWN		
+#ifdef SPC700_SHUTDOWN
 					iapu->WaitCounter++;
 					iapu->APUExecuting = TRUE;
-#endif		
+#endif
 			    }
 			}
 	    }

@@ -330,7 +330,7 @@ void S9xSetAPUDSP (uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 
 		    if (Settings.TraceSoundDSP)
 			S9xTraceSoundDSP ("%d,", c);
-#endif		
+#endif
 		    if (apu->KeyedChannels & mask)
 		    {
 			{
@@ -365,7 +365,7 @@ void S9xSetAPUDSP (uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 #ifdef DEBUGGER
 		    if (Settings.TraceSoundDSP)
 			S9xTraceSoundDSP ("%d,", c);
-#endif		
+#endif
 		    // Pac-In-Time requires that channels can be key-on
 		    // regardeless of their current state.
 		    apu->KeyedChannels |= mask;
@@ -381,7 +381,7 @@ void S9xSetAPUDSP (uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 #endif
 	}
 	return;
-	
+
     case APU_VOL_LEFT + 0x00:
     case APU_VOL_LEFT + 0x10:
     case APU_VOL_LEFT + 0x20:
@@ -494,7 +494,7 @@ void S9xSetAPUDSP (uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 	    S9xSetSoundSample (reg >> 4, byte);
 	}
 	break;
-	
+
     case APU_ADSR1 + 0x00:
     case APU_ADSR1 + 0x10:
     case APU_ADSR1 + 0x20:
@@ -856,9 +856,9 @@ void S9xUpdateAPUTimer (void)
 	//if (CPU.Cycles * 10000L >= IAPU.NextAPUTimerPos)
 	{
 		//APU_EXECUTE();
-		
-		IAPU.NextAPUTimerPos += SNES_APUTIMER2_CYCLEx10000;		
-		
+
+		IAPU.NextAPUTimerPos += SNES_APUTIMER2_CYCLEx10000;
+
 		if (APU.TimerEnabled [2])
 		{
 			APU.Timer [2] ++;
@@ -866,17 +866,17 @@ void S9xUpdateAPUTimer (void)
 			{
 			    IAPU.RAM [0xff] = (IAPU.RAM [0xff] + 1) & 0xf;
 			    APU.Timer [2] = 0;
-			#ifdef SPC700_SHUTDOWN		
+			#ifdef SPC700_SHUTDOWN
 			    IAPU.WaitCounter++;
 			    IAPU.APUExecuting = TRUE;
-			#endif		
+			#endif
 			}
 		}
 
 		if (++IAPU.APUTimerCounter == 8)
 		{
 			IAPU.APUTimerCounter = 0;
-			
+
 			if (APU.TimerEnabled [0])
 			{
 			    APU.Timer [0]++;
@@ -884,10 +884,10 @@ void S9xUpdateAPUTimer (void)
 			    {
 					IAPU.RAM [0xfd] = (IAPU.RAM [0xfd] + 1) & 0xf;
 					APU.Timer [0] = 0;
-				#ifdef SPC700_SHUTDOWN		
+				#ifdef SPC700_SHUTDOWN
 					IAPU.WaitCounter++;
 					IAPU.APUExecuting = TRUE;
-				#endif		
+				#endif
 			    }
 			}
 
@@ -898,10 +898,10 @@ void S9xUpdateAPUTimer (void)
 			    {
 					IAPU.RAM [0xfe] = (IAPU.RAM [0xfe] + 1) & 0xf;
 					APU.Timer [1] = 0;
-				#ifdef SPC700_SHUTDOWN		
+				#ifdef SPC700_SHUTDOWN
 					IAPU.WaitCounter++;
 					IAPU.APUExecuting = TRUE;
-				#endif		
+				#endif
 			    }
 			}
 		}

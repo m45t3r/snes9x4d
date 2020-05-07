@@ -96,7 +96,7 @@ bool8 LoadZip(const char* zipname,
 	    port = unzGoToNextFile(file);
 	    continue;
 	}
-	
+
 	if ((int) info.uncompressed_size > filesize)
 	{
 	    strcpy(filename,name);
@@ -140,17 +140,17 @@ bool8 LoadZip(const char* zipname,
     {
 	assert(info.uncompressed_size <= CMemory::MAX_ROM_SIZE + 512);
 	int FileSize = info.uncompressed_size;
-	
+
 	int calc_size = FileSize / 0x2000;
 	calc_size *= 0x2000;
-	
+
 	int l = unzReadCurrentFile(file,ptr,FileSize);
 	if(unzCloseCurrentFile(file) == UNZ_CRCERROR)
 	{
 	    unzClose(file);
 	    return (FALSE);
 	}
-	
+
 	if(l <= 0 || l != FileSize)
 	{
 	    unzClose(file);
@@ -200,7 +200,7 @@ bool8 LoadZip(const char* zipname,
 	}
 	else
 	    more = FALSE;
-	
+
 	if(more)
 	{
 	    if( unzLocateFile(file,filename,1) != UNZ_OK ||
@@ -208,7 +208,7 @@ bool8 LoadZip(const char* zipname,
 		unzOpenCurrentFile(file) != UNZ_OK)
 		break;
 	}
-	
+
     } while(more);
 
     unzClose(file);

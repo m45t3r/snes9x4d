@@ -267,17 +267,17 @@ void S9xSA1SetPCBase (uint32 address, struct SCPUState * cpu)
 	cpu->PCBase = Memory.FillRAM - 0x2000;
 	cpu->PC = cpu->PCBase + (address & 0xffff);
 	return;
-	
+
     case CMemory::MAP_CPU:
 	cpu->PCBase = Memory.FillRAM - 0x4000;
 	cpu->PC = cpu->PCBase + (address & 0xffff);
 	return;
-	
+
     case CMemory::MAP_DSP:
 	cpu->PCBase = Memory.FillRAM - 0x6000;
 	cpu->PC = cpu->PCBase + (address & 0xffff);
 	return;
-	
+
     case CMemory::MAP_SA1RAM:
     case CMemory::MAP_LOROM_SRAM:
 	cpu->PCBase = Memory.SRAM;
@@ -297,7 +297,7 @@ void S9xSA1SetPCBase (uint32 address, struct SCPUState * cpu)
 #ifdef DEBUGGER
 	printf ("SBP %06x\n", address);
 #endif
-	
+
     default:
     case CMemory::MAP_NONE:
 	cpu->PCBase = Memory.RAM;
@@ -374,14 +374,14 @@ uint8 S9xGetSA1 (uint32 address)
 	    case 0x230d:
 	    {
 			uint8 byte = Memory.FillRAM [0x230d];
-		
+
 			if (Memory.FillRAM [0x2258] & 0x80)
 			{
 			    S9xSA1ReadVariableLengthData (TRUE, FALSE);
 			}
 			return (byte);
 	    }
-	    default:	
+	    default:
 			//printf ("R: %04x\n", address);
 			break;
     }

@@ -57,7 +57,7 @@ INLINE uint8 S9xAPUGetByteZ (uint8 Address, struct SIAPU * iapu)
 #ifdef SPC700_SHUTDOWN
 	    iapu->WaitAddress2 = iapu->WaitAddress1;
 	    iapu->WaitAddress1 = iapu->PC;
-#endif	
+#endif
 	    return (iapu->RAM [Address]);
 	}
 	if (Address >= 0xfd)
@@ -65,7 +65,7 @@ INLINE uint8 S9xAPUGetByteZ (uint8 Address, struct SIAPU * iapu)
 #ifdef SPC700_SHUTDOWN
 	    iapu->WaitAddress2 = iapu->WaitAddress1;
 	    iapu->WaitAddress1 = iapu->PC;
-#endif	
+#endif
 	    uint8 t = iapu->RAM [Address];
 	    iapu->RAM [Address] = 0;
 	    return (t);
@@ -120,7 +120,7 @@ INLINE uint8 S9xAPUGetByte (uint32 Address, struct SIAPU * iapu)
 #ifdef SPC700_SHUTDOWN
 	    iapu->WaitAddress2 = iapu->WaitAddress1;
 	    iapu->WaitAddress1 = iapu->PC;
-#endif	
+#endif
 	    return (iapu->RAM [Address]);
 	}
 	else

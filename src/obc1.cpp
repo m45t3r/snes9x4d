@@ -144,32 +144,32 @@ void SetOBC1 (uint8 Byte, uint16 Address)
 		{
 			obc1ram[0x1FF0] = Byte;
 			obc1ram[READ_WORD(&Memory.FillRAM[OBC1_OAM_ADDR]) + 0x00] = Byte;
-			
+
 			obc1ram[((uint16)obc1ram[0x1FF6] << 4) + Memory.FillRAM[OBC1_REG_FLIP + 0] + 0] = Byte;
 			Memory.FillRAM[OBC1_REG_FLIP + 0] ^= 0x08;
 			break;
 		}
-		
+
 		case 0x7FF1:
 		{
 			obc1ram[0x1FF1] = Byte;
 			obc1ram[READ_WORD(&Memory.FillRAM[OBC1_OAM_ADDR]) + 0x01] = Byte;
-			
+
 			obc1ram[((uint16)obc1ram[0x1FF6] << 4) + Memory.FillRAM[OBC1_REG_FLIP + 1] + 1] = Byte;
 			Memory.FillRAM[OBC1_REG_FLIP + 1] ^= 0x08;
 			break;
 		}
-		
+
 		case 0x7FF2:
 		{
 			obc1ram[0x1FF2] = Byte;
 			obc1ram[READ_WORD(&Memory.FillRAM[OBC1_OAM_ADDR]) + 0x02] = Byte;
-			
+
 			obc1ram[((uint16)obc1ram[0x1FF6] << 4) + Memory.FillRAM[OBC1_REG_FLIP + 2] + 2] = Byte;
 			Memory.FillRAM[OBC1_REG_FLIP + 2] ^= 0x08;
 			break;
 		}
-		
+
 		case 0x7FF3:
 		{
 			obc1ram[0x1FF3] = Byte;
@@ -179,33 +179,33 @@ void SetOBC1 (uint8 Byte, uint16 Address)
 			else {
 				obc1ram[READ_WORD(&Memory.FillRAM[OBC1_OAM_ADDR]) + 0x03] = Byte;
 			}
-			
+
 			obc1ram[((uint16)obc1ram[0x1FF6] << 4) + Memory.FillRAM[OBC1_REG_FLIP + 3] + 3] = Byte;
 			Memory.FillRAM[OBC1_REG_FLIP + 3] ^= 0x08;
 			break;
 		}
-		
+
 		case 0x7FF4:
 		{
 			obc1ram[0x1FF4] = Byte;
 			uint16 oami = 0x1800 + 0x200 + ((uint16)obc1ram[0x1FF6] >> 2);
 			uint8 oams = ((obc1ram[0x1FF6] & 3) << 1);
 			obc1ram[oami] = (obc1ram[oami] & ~(3 << oams)) | ((Byte & 3) << oams);
-			
+
 			obc1ram[((uint16)obc1ram[0x1FF6] << 4) + Memory.FillRAM[OBC1_REG_FLIP + 4] + 4] = Byte;
 			Memory.FillRAM[OBC1_REG_FLIP + 4] ^= 0x08;
 			break;
 		}
-		
+
 		case 0x7FF5:
 		{
 			obc1ram[0x1FF5] = Byte;
-			
+
 			obc1ram[((uint16)obc1ram[0x1FF6] << 4) + Memory.FillRAM[OBC1_REG_FLIP + 5] + 5] = Byte;
 			Memory.FillRAM[OBC1_REG_FLIP + 5] ^= 0x08;
 			break;
 		}
-		
+
 		case 0x7FF6:
 		{
 			Byte &= 0x7F;
@@ -213,7 +213,7 @@ void SetOBC1 (uint8 Byte, uint16 Address)
 			WRITE_WORD(&Memory.FillRAM[OBC1_OAM_ADDR], 0x1800 + (Byte << 2));
 			*((uint32 *)&Memory.FillRAM[OBC1_REG_FLIP]) &= 0xF7F7F7F7;
 			*((uint32 *)&Memory.FillRAM[OBC1_REG_FLIP + 4]) &= 0xF7F7F7F7;
-			
+
 			uint16 obci = (uint16)obc1ram[0x1FF6] << 4;
 			uint16 oami = 0x1800 + (obci >> 2);
 			obc1ram[oami + 0x00] = obc1ram[obci + 0x03];
@@ -223,20 +223,20 @@ void SetOBC1 (uint8 Byte, uint16 Address)
 			uint16 oamii = 0x1800 + 0x200 + (oami >> 4);
 			uint8 oams = ((obc1ram[0x1FF6] & 3) << 1);
 			obc1ram[oamii] = (obc1ram[oamii] & ~(3 << oams)) | ((obc1ram[obci + 0x04] & 3) << oams);
-			
+
 			obc1ram[((uint16)obc1ram[0x1FF6] << 4) + 6] = Byte;
 			break;
 		}
-		
+
 		case 0x7FF7:
 		{
 			obc1ram[0x1FF7] = Byte;
-			
+
 			obc1ram[((uint16)obc1ram[0x1FF6] << 4) + Memory.FillRAM[OBC1_REG_FLIP + 7] + 7] = Byte;
 			Memory.FillRAM[OBC1_REG_FLIP + 7] ^= 0x08;
 			break;
 		}
-		
+
 		default:
 			obc1ram[Address & 0x1FFF] = Byte;
 			break;
