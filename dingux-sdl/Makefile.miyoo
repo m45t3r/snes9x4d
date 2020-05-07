@@ -114,8 +114,7 @@ $(KREEDDEFINES) \
 $(CHEATDEFINES) \
 $(SDL_CFLAGS) \
 
-LDLIBS  = -lSDL -lz -lm $(SDL_LIBS)
-
+LDLIBS  = -lSDL -lz -lm -lgcov $(SDL_LIBS)
 
 .SUFFIXES: .o .cpp .c .cc .h .m .i .S .asm .obj
 
