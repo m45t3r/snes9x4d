@@ -86,7 +86,7 @@ bool8_32 S9xOpenSoundDevice (int mode, bool8_32 stereo, int buffer_size) // call
 	return (TRUE);
 }
 
-void S9xReinitSound(int new_freq)
+void S9xReinitSound()
 {
 	// dont deinit if previously shut
 	if(sound_i == TRUE) {
@@ -96,6 +96,7 @@ void S9xReinitSound(int new_freq)
 		SDL_DestroyCond(sound_cv);
 		sound_i = FALSE;
 	}
+
 	if(Settings.SoundPlaybackRate)
 		S9xOpenSoundDevice(Settings.SoundPlaybackRate, Settings.Stereo, BufferSizes[Settings.SoundPlaybackRate]);
 	else so.mute_sound = TRUE;

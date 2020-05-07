@@ -499,7 +499,7 @@ void menu_loop(void)
 	S9xDeinitDisplay();
 	S9xInitDisplay(0, 0);
 	if (old_sound_playback_rate != Settings.SoundPlaybackRate || old_stereo != Settings.Stereo)
-		S9xReinitSound(Settings.SoundPlaybackRate);
+		S9xReinitSound();
 }
 
 void save_screenshot(char *fname){
