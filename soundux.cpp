@@ -498,29 +498,21 @@ void AltDecodeBlock (Channel *ch)
     if ((ch->last_block = filter & 1))
 		ch->loop = (filter & 2) != 0;
 		
-/*
-#if defined(__MIPSEL__)
+
+#if defined(__ARM__)
 	int16 *raw = ch->block = ch->decoded;
-	
+
 //  if ((Settings.AltSampleDecode) == 1)
   		DecodeBlockAsm (compressed, raw, &ch->previous [0], &ch->previous [1]);
 //	else
 //		DecodeBlockAsm2 (compressed, raw, &ch->previous [0], &ch->previous [1]);
-#else if (!defined (NOASM) && defined (__i386__) || defined (__i486__) ||\
-     defined (__i586__) || defined (__WIN32__) || defined (__DJGPP))
-    int16 *raw = ch->block = ch->decoded;
-	
-    if (Settings.AltSampleDecode == 1)
-		DecodeBlockAsm (compressed, raw, &ch->previous [0], &ch->previous [1]);
-    else
-		DecodeBlockAsm2 (compressed, raw, &ch->previous [0], &ch->previous [1]);
 #else
-*/
+
     int32 out;
     unsigned char shift;
     signed char sample1, sample2;
     unsigned int i;
-	
+
     compressed++;
     signed short *raw = ch->block = ch->decoded;
     
@@ -603,7 +595,7 @@ void AltDecodeBlock (Channel *ch)
     }
     ch->previous [0] = prev0;
     ch->previous [1] = prev1;
-//#endif
+#endif
     ch->block_pointer += 9;
 }
 
