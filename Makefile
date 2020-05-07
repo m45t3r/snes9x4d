@@ -1,138 +1,94 @@
-#ZSNES_FX=1
-#ASMCPU=1
-#SPC700ASM=1
-NETPLAY=1
+# derived from "Makefile", 01 June 2010
+# blame Skeezix
+
+GIT_VERSION := "$(shell git describe --abbrev=7 --dirty --always --tags)"
+
 UNZIP=1
-#GLIDE=1
-#OPENGL=1
-THREAD_SOUND=1
 CHEATS=1
-#ASMKREED=1
-#ZSNESC4=1
 
-ifdef ZSNESFX
-FXOBJ=i386/fxemu2b.o i386/fxemu2.o i386/fxemu2c.o i386/fxtable.o i386/sfxproc.o i386/zsnes.o
-FXDEFINES=-DZSNES_FX -DEXECUTE_SUPERFX_PER_LINE
-FXDEPENDS=zsnes_fx
-FXNO_DEPENDS=c_fx
-else
-FXOBJ=fxinst.o fxemu.o fxdbg.o
-FXDEFINES=-DEXECUTE_SUPERFX_PER_LINE
-FXDEPENDS=c_fx
-FXNO_DEPENDS=zsnes_fx
-endif
+FXOBJ = src/fxinst.o src/fxemu.o src/fxdbg.o
+FXDEFINES = -DEXECUTE_SUPERFX_PER_LINE
+FXNO_DEPENDS = zsnes_fx
 
-ifdef SPC700ASM
-SOUNDOBJ=spctool/spc700.o spctool/dsp.o spctool.o spctool/soundmod.o spc.o
-SOUNDDEFINES=-DSPCTOOL
-else
-SOUNDOBJ=spc700.o soundux.o apu.o
-SOUNDDEFINES=-DSPC700_C
-endif
+SOUNDOBJ = src/spc700.o src/spc700a.o src/spc_decode.o src/soundux.o src/apu.o
+SOUNDDEFINES = -DSPC700_C
 
-ifdef ASMCPU
-CPUOBJ=i386/cpuops.o i386/cpuexec.o i386/sa1ops.o
-else
-CPUOBJ=cpuops.o cpuexec.o
-endif
+CPUOBJ = src/cpuops.o src/cpuexec.o
 
-ifdef ASMKREED
-KREEDOBJ=i386/2xSaImmx.o i386/bilinear.o 2xsai.o
-KREEDDEFINES=-DMMX
-else
-KREEDOBJ=2xsai.o
-KREEDDEFINES=
-endif
-
-ifdef ZSNESC4
-C4OBJ=i386/C4.O i386/zsnesc4.o c4.o
-C4DEFINES=-DZSNES_C4
-C4DEPENDS=zsnes_c4
-C4NO_DEPENDS=c_c4
-else
-C4OBJ=c4.o c4emu.o
-C4DEFINES=
-C4DEPENDS=c_c4
-C4NO_DEPENDS=zsnes_c4
-endif
+C4OBJ = src/c4.o src/c4emu.o
+C4DEFINES =
+C4NO_DEPENDS = zsnes_c4
 
 ifdef CHEATS
-CHEAT=cheats.o cheats2.o
+CHEAT = src/cheats.o src/cheats2.o
+CHEATDEFINES = -DCHEATS
 else
-CHEAT=
+CHEAT =
+CHEATDEFINES =
 endif
 
-OBJECTS=$(CPUOBJ) $(FXOBJ) $(C4OBJ) \
-	cpu.o tile.o gfx.o clip.o \
-	memmap.o ppu.o dma.o unix/menu.o unix/unix.o \
-	$(SOUNDOBJ) unix/svga.o \
-	sdd1.o sdd1emu.o dsp1.o sa1.o sa1cpu.o obc1.o \
-    snes9x.o snapshot.o data.o globals.o \
-	$(KREEDOBJ) $(CHEATS)
+OBJECTS = $(CPUOBJ) $(FXOBJ) $(C4OBJ) $(CHEAT) \
+	src/cpu.o src/tile.o src/gfx.o src/clip.o \
+	src/memmap.o src/ppu.o src/dma.o \
+	src/dingux-sdl/sdlmenu.o src/dingux-sdl/sdlmain.o src/dingux-sdl/sdlaudio.o src/dingux-sdl/scaler.o \
+	$(SOUNDOBJ) src/dingux-sdl/sdlvideo.o \
+	src/sdd1.o src/sdd1emu.o src/dsp1.o src/sa1.o src/sa1cpu.o src/obc1.o \
+	src/snes9x.o src/snapshot.o src/data.o src/globals.o \
 
 ifdef NETPLAY
-OBJECTS += netplay.o server.o
-NETPLAYDEFINES=-DNETPLAY_SUPPORT
+OBJECTS += src/netplay.o #src/server.o
+NETPLAYDEFINES = -DNETPLAY_SUPPORT
 endif
 
 ifdef UNZIP
-OBJECTS += loadzip.o unzip/unzip.o unzip/explode.o unzip/unreduce.o \
-	   unzip/unshrink.o
-UNZIPDEFINES=-DUNZIP_SUPPORT
+OBJECTS += src/loadzip.o src/unzip/unzip.o src/unzip/explode.o src/unzip/unreduce.o \
+	   src/unzip/unshrink.o
+UNZIPDEFINES = -DUNZIP_SUPPORT
 endif
 
-ifdef THREAD_SOUND
-CPUDEFINES += -DUSE_THREADS
-EXTRALIBS += -lpthread
-#-lcygipc
+TOOLCHAINDIR :=
+BINPATH    :=
+
+ARCH :=
+
+PREFIX  = arm-linux
+
+CXX	= $(PREFIX)-g++
+CC	= $(PREFIX)-gcc
+STRIP	= $(PREFIX)-strip
+AS	= $(PREFIX)-as
+GASM	= $(PREFIX)-g++
+
+SYSROOT := $(shell $(CC) --print-sysroot)
+SDL_CFLAGS := $(shell $(SYSROOT)/usr/bin/sdl-config --cflags)
+SDL_LIBS := $(shell $(SYSROOT)/usr/bin/sdl-config --libs)
+
+INCLUDE = -I. -Isrc/ -Isrc/unzip
+
+OPTIMISE = -Ofast -march=armv5te -mtune=arm926ej-s \
+			-ffast-math -fomit-frame-pointer -fno-strength-reduce \
+			-falign-functions=2 -fno-stack-protector
+
+ifeq ($(PGO), GENERATE)
+  OPTIMISE += -fprofile-generate -fprofile-dir=./profile
+  PROFILE += -lgcov
+else ifeq ($(PGO), APPLY)
+  OPTIMISE += -fprofile-use -fprofile-dir=./profile -fbranch-probabilities
 endif
 
-ifdef GLIDE
-GLIDEOBJS = unix/glide.o
-GLIDEDEFINES = -DUSE_GLIDE
-GLIDELIBS = -lglide2x
-GLIDEDEPENDS=use_glide
-GLIDENO_DEPENDS=no_glide
-else
-GLIDEDEPENDS=no_glide
-GLIDENO_DEPENDS=use_glide
-endif
-
-ifdef OPENGL
-OPENGLOBJS = unix/opengl.o
-OPENGLDEFINES = -DUSE_OPENGL
-OPENGLLIBS = -lGL -lGLU -ldl
-OPENGLDEPENDS=use_opengl
-OPENGLNO_DEPENDS=no_opengl
-else
-OPENGLDEPENDS=no_opengl
-OPENGLNO_DEPENDS=use_opengl
-endif
-
-CCC		= g++
-CC		= gcc
-STRIP	= strip
-NASM	=
-GASM	= g++
-
-DEFAULT_CFLAGS = `sdl-config --cflags`
-LDLIBS         = `sdl-config --libs` -lSDL
-
-INCLUDES=
-
-OPTIMISE= -D_ZAURUS -O2 -ffast-math -fstrict-aliasing -fomit-frame-pointer -ftree-vectorize -funroll-all-loops -fpeel-loops -ftracer -funswitch-loops -finline-functions
-#-G 0 
-# -fprofile-use -ftest-coverage -fprofile-arcs
-
-CCFLAGS = $(DEFAULT_CFLAGS) $(OPTIMISE) \
--I. \
--Iunzip \
--Isdl \
--D__linux \
+CXXFLAGS = $(OPTIMISE) $(PROFILE) $(INCLUDE) \
+--std=gnu++98 \
+-fno-exceptions -fno-rtti -fno-math-errno -fno-threadsafe-statics \
+-D__ARM__ \
+-D_ZAURUS \
+-D_FAST_GFX \
+-D__SDL__ \
+-DMIYOO \
 -DZLIB \
 -DVAR_CYCLES \
 -DCPU_SHUTDOWN \
 -DSPC700_SHUTDOWN \
+-DBUILD_VERSION=\"$(GIT_VERSION)\" \
 $(FXDEFINES) \
 $(C4DEFINES) \
 $(CPUDEFINES) \
@@ -143,134 +99,107 @@ $(GLIDEDEFINES) \
 $(OPENGLDEFINES) \
 $(GUIDEFINES) \
 $(KREEDDEFINES) \
+$(CHEATDEFINES) \
+$(SDL_CFLAGS) \
 
-#-DDEBUGGER
-#-DJOYSTICK_SUPPORT
+CFLAGS = $(OPTIMISE) $(PROFILE) $(INCLUDE) \
+--std=gnu89 \
+-D__SDL__ \
+-DMIYOO \
+-DZLIB \
+-DVAR_CYCLES \
+-DCPU_SHUTDOWN \
+-DSPC700_SHUTDOWN \
+-DBUILD_VERSION=\"$(GIT_VERSION)\" \
+$(FXDEFINES) \
+$(C4DEFINES) \
+$(CPUDEFINES) \
+$(SOUNDDEFINES) \
+$(NETPLAYDEFINES) \
+$(UNZIPDEFINES) \
+$(GLIDEDEFINES) \
+$(OPENGLDEFINES) \
+$(GUIDEFINES) \
+$(KREEDDEFINES) \
+$(CHEATDEFINES) \
+$(SDL_CFLAGS) \
 
-CFLAGS=$(CCFLAGS)
+LDLIBS  = -lSDL -lz -lm $(SDL_LIBS)
 
 .SUFFIXES: .o .cpp .c .cc .h .m .i .S .asm .obj
 
-ifdef GLIDE
-all: offsets gsnes9x
-else
-ifdef OPENGL
-all: offsets osnes9x
-else
-all: snes9x 
-endif
-endif
+all: snes9x4d
 
-#ggisnes9x
-#xf86snes9x
-
-$(FXDEPENDS):
-	touch $(FXDEPENDS)
-	$(RM) $(FXNO_DEPENDS)
-
-$(C4DEPENDS):
-	touch $(C4DEPENDS)
-	$(RM) $(C4_NODEPENDS)
-
-$(GLIDEDEPENDS):
-	touch $(GLIDEDEPENDS)
-	$(RM) $(GLIDENO_DEPENDS)
-
-$(OPENGLDEPENDS):
-	touch $(OPENGLDEPENDS)
-	$(RM) $(OPENGLNO_DEPENDS)
-
-snes9x: $(OBJECTS) 
-	$(CC) $(INCLUDES) -o $@ $(OBJECTS) $(EXTRALIBS) $(LDLIBS) -lstdc++ -lz -lpthread -lm -lgcov
-	$(STRIP) snes9x
-
-gsnes9x: $(OBJECTS) unix/x11.o unix/glide.o
-	$(CCC) $(INCLUDES) -o $@ $(OBJECTS) unix/x11.o unix/glide.o $(LDLIBS) $(GLIDELIBS) -lXext -lX11 -lXxf86dga -lXxf86vm $(EXTRALIBS) -lz -lm
-
-osnes9x: $(OBJECTS) unix/x11.o $(OPENGLOBJS)
-	$(CCC) $(INCLUDES) -o $@ $(OBJECTS) unix/x11.o $(OPENGLOBJS) $(LDLIBS) $(OPENGLLIBS) -lXext -lX11 -lXxf86dga -lXxf86vm $(EXTRALIBS) -lz -lm
+snes9x4d: $(OBJECTS)
+	$(CXX) -o $@ $(OBJECTS) $(EXTRALIBS) $(LDLIBS) $(PROFILE)
+	$(STRIP) snes9x4d
 
 .cpp.o:
-	$(CCC) $(INCLUDES) -c $(CCFLAGS) $*.cpp -o $@
+	$(CXX) -c $(CXXFLAGS) $*.cpp -o $@
 
 .c.o:
-	$(CC) $(INCLUDES) -c $(CCFLAGS) $*.c -o $@
+	$(CC) -c $(CFLAGS) $*.c -o $@
 
 .cpp.S:
-	$(CCC) $(INCLUDES) -S $(CCFLAGS) $*.cpp -o $@
+	$(CXX) -S $(CXXFLAGS) $*.cpp -o $@
 
 .cpp.i:
-	$(CCC) $(INCLUDES) -E $(CCFLAGS) $*.cpp -o $@
+	$(CXX) -E $(CXXFLAGS) $*.cpp -o $@
 
 .S.o:
-	$(CCC) $(INCLUDES) -c $(CCFLAGS) $*.S -o $@
+	$(CXX) -c $(CXXFLAGS) $*.S -o $@
 
 .S.i:
-	$(CCC) $(INCLUDES) -c -E $(CCFLAGS) $*.S -o $@
+	$(CXX) -c -E $(CXXFLAGS) $*.S -o $@
 
 .asm.o:
 	$(NASM) -f elf $(FXDEFINES) -i . -i i386 -o $@ $*.asm
 
-#adding the pandora output files to "normal" make clean so that i don't have to call "make -f Makefiles.pandora clean" every time...
 clean:
-	rm -f $(OBJECTS) offsets.o unix/unix.o unix/svga.o snes9x pandora/snes9x*pnd
-	find . -name "*~*" -exec rm {} \; -print
-#release: CCFLAGS += -DNO_DEBUGGER
+	rm -f $(OBJECTS)
 
 release: clean all
 
-ppu.o: $(FXDEPENDS)
-cpu.o: $(FXDEPENDS)
-memmap.o: $(FXDEPENDS)
-globals.o: $(FXDEPENDS)
-i386/cpuexec.o: $(FXDEPENDS)
-snapshot.o: $(FXDEPENDS)
-snaporig.o: $(FXDEPENDS)
+src/ppu.o: $(FXDEPENDS)
+src/cpu.o: $(FXDEPENDS)
+src/memmap.o: $(FXDEPENDS)
+src/globals.o: $(FXDEPENDS)
+src/snapshot.o: $(FXDEPENDS)
+src/snaporig.o: $(FXDEPENDS)
 
-unix/unix.o: $(GLIDEDEPENDS) $(OPENGLDEPENDS)
-unix/x11.o: $(GLIDEDEPENDS) $(OPENGLDEPENDS)
-unix/glide.o: $(GLIDEDEPENDS)
-gfx.o: $(GLIDEDEPENDS) $(OPENGLDEPENDS)
-unix/opengl.o: $(OPENGLDEPENDS)
-
-i386/cpuexec.o: i386/asmstruc.h i386/offsets.h
-i386/cpuops.o: i386/asmstruc.h i386/asmops.h i386/getset.S i386/asmaddr.h i386/offsets.h
-i386/spc700.o: i386/asmstruc.h i386/spcops.h i386/offsets.h
-cpuexec.o: cpuexec.h cpuops.h snes9x.h snapshot.h gfx.h \
-	memmap.h ppu.h debug.h port.h display.h apu.h spc700.h apu.h
-debug.o: cpuops.h cpuexec.h snes9x.h \
-	memmap.h ppu.h debug.h missing.h port.h display.h apu.h
-ppu.o: snes9x.h memmap.h ppu.h missing.h port.h cpuexec.h \
-	apu.h spc700.h fxemu.h fxinst.h sdd1.h
-dsp1.o: snes9x.h port.h dsp1.h
-sdd1.o: snes9x.h sdd1.h
-sdd1emu.o: sdd1emu.h
-sa1.o: sa1.h
-snapshot.o: snapshot.h memmap.h snes9x.h 65c816.h ppu.h \
-	cpuexec.h display.h apu.h spc700.h soundux.h
-snes96.o: port.h snes9x.h memmap.h
-memmap.o: cpuexec.h snes9x.h memmap.h ppu.h port.h cheats.h getset.h apu.h \
-	  spc700.h
-unix.o: cpuexec.h snes9x.h port.h snapshot.h display.h apu.h gfx.h cheats.h soundux.h
-menu.o: cpuexec.h snes9x.h port.h snapshot.h display.h apu.h gfx.h
-x11.o: display.h snes9x.h memmap.h debug.h ppu.h snapshot.h gfx.h
-ggi.o: display.h snes9x.h memmap.h debug.h ppu.h snapshot.h gfx.h 
-svga.o: display.h snes9x.h memmap.h debug.h ppu.h snapshot.h gfx.h soundux.h
-gfx.o: memmap.h snes9x.h ppu.h gfx.h display.h port.h
-tile.o: memmap.h snes9x.h ppu.h display.h gfx.h tile.h
-spc700.o: spc700.h apu.h apumem.h snes9x.h memmap.h
-apu.o: spc700.h apu.h apumem.h snes9x.h soundux.h
-soundux.o: snes9x.h soundux.h apu.h
-dma.o: ppu.h dma.h memmap.h getset.h snes9x.h port.h apu.h spc700.h sdd1.h sdd1emu.h
-cheats.o: cheats.h snes9x.h port.h memmap.h
-fxemu.o: fxemu.h fxinst.h
-fxinst.o: fxemu.h fxinst.h
-fxdbg.o: fxemu.h fxinst.h
-offsets.o: port.h snes9x.h memmap.h ppu.h apu.h cpuexec.h 65c816.h
-globals.o: memmap.h spc700.h apu.h cpuexec.h ppu.h cheats.h snes9x.h gfx.h \
-	   missing.h dma.h dsp1.h soundux.h
-xf86.o: display.h snes9x.h memmap.h debug.h ppu.h snapshot.h gfx.h
-server.o: snes9x.h port.h memmap.h netplay.h
-netplay.o: snes9x.h port.h memmap.h netplay.h
-snaporig.o: cpuexec.h
+src/cpuexec.o: src/cpuexec.h src/cpuops.h src/snes9x.h src/snapshot.h src/gfx.h \
+			src/memmap.h src/ppu.h src/debug.h src/port.h src/display.h src/apu.h src/spc700.h src/apu.h
+src/debug.o: src/cpuops.h src/cpuexec.h src/snes9x.h \
+			src/memmap.h src/ppu.h src/debug.h src/missing.h src/port.h src/display.h src/apu.h
+src/ppu.o: src/snes9x.h src/memmap.h src/ppu.h src/missing.h src/port.h src/cpuexec.h \
+			src/apu.h src/spc700.h src/fxemu.h src/fxinst.h src/sdd1.h
+src/dsp1.o: src/snes9x.h src/port.h src/dsp1.h
+src/sdd1.o: src/snes9x.h src/sdd1.h
+src/sdd1emu.o: src/sdd1emu.h
+src/sa1.o: src/sa1.h
+src/snapshot.o: src/snapshot.h src/memmap.h src/snes9x.h src/65c816.h src/ppu.h \
+				src/cpuexec.h src/display.h src/apu.h src/spc700.h src/soundux.h
+src/snes96.o: src/port.h src/snes9x.h src/memmap.h
+src/memmap.o: src/cpuexec.h src/snes9x.h src/memmap.h src/ppu.h src/port.h src/cheats.h src/getset.h src/apu.h \
+			src/spc700.h
+src/dingux-sdl/sdlmain.o: src/cpuexec.h src/snes9x.h src/port.h src/snapshot.h src/display.h src/apu.h src/gfx.h src/cheats.h src/soundux.h
+src/dingux-sdl/sdlmenu.o: src/cpuexec.h src/snes9x.h src/port.h src/snapshot.h src/display.h src/apu.h src/gfx.h
+src/dingux-sdl/sdlvideo.o: src/display.h src/snes9x.h src/memmap.h src/debug.h src/ppu.h src/snapshot.h src/gfx.h src/soundux.h
+src/gfx.o: src/memmap.h src/snes9x.h src/ppu.h src/gfx.h src/display.h src/port.h
+src/tile.o: src/memmap.h src/snes9x.h src/ppu.h src/display.h src/gfx.h src/tile.h
+src/spc700.o: src/spc700.h src/apu.h src/apumem.h src/snes9x.h src/memmap.h
+src/apu.o: src/spc700.h src/apu.h src/apumem.h src/snes9x.h src/soundux.h
+src/soundux.o: src/snes9x.h src/soundux.h src/apu.h
+src/dma.o: src/ppu.h src/dma.h src/memmap.h src/getset.h src/snes9x.h src/port.h src/apu.h src/spc700.h src/sdd1.h src/sdd1emu.h
+src/cheats.o: src/cheats.h src/snes9x.h src/port.h src/memmap.h
+src/fxemu.o: src/fxemu.h src/fxinst.h
+src/fxinst.o: src/fxemu.h src/fxinst.h
+src/fxdbg.o: src/fxemu.h src/fxinst.h
+src/offsets.o: src/port.h src/snes9x.h src/memmap.h src/ppu.h src/apu.h src/cpuexec.h src/65c816.h
+src/globals.o: src/memmap.h src/spc700.h src/apu.h src/cpuexec.h src/ppu.h src/cheats.h src/snes9x.h src/gfx.h \
+				src/missing.h src/dma.h src/dsp1.h src/soundux.h
+src/xf86.o: src/display.h src/snes9x.h src/memmap.h src/debug.h src/ppu.h src/snapshot.h src/gfx.h
+src/server.o: src/snes9x.h src/port.h src/memmap.h src/netplay.h
+src/netplay.o: src/snes9x.h src/port.h src/memmap.h src/netplay.h
+src/snaporig.o: src/cpuexec.h
 

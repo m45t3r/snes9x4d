@@ -11,7 +11,7 @@ Follow those steps to setup Debian 9 environment with compatible toolchain:
 
 Afterwards, run:
 
-    $ make -f Makefile.miyoo
+    $ make
 
 It will generate a binary `snes9x4d` binary. You can them substitute
 `sd://emus/snes9x4d` contents with the ones in the generated directory.
@@ -19,14 +19,14 @@ It will generate a binary `snes9x4d` binary. You can them substitute
 You can build this binary using [PGO](https://en.wikipedia.org/wiki/Profile-guided_optimization).
 To do this, first:
 
-    $ make -f Makefile.miyoo PGO=GENERATE
+    $ make PGO=GENERATE
 
 To generate a binary with instrumentation. Put this in your Miyoo and play a
 little, but keep in mind that a PGO binary is very slow (so be patient, it
 is worth it). Afterwards, copy all files in `sd://emus/snes9x4d` to this
 directory and run:
 
-    $ make -f Makefile.miyoo PGO=APPLY
+    $ make PGO=APPLY
 
 To apply optimizations. A `profile.zip` file is included with a small
 playthrough during the first level of `Super Mario World`, but may be not

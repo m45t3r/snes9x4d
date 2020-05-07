@@ -1,8 +1,0 @@
-Package: Snes9x4D
-Section: emulators
-Priority: optional
-Source: http://crankgaming.blogspot.com/
-Version: 20100429
-Architecture: mipsel
-Maintainer: SiENcE
-Description: Super Nintendo emulator.

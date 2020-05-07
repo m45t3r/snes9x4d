@@ -1,6 +1,0 @@
-title=Snes9x4D
-description=Super Nintendo emulator.
-exec=/boot/local/emulators/Snes9x4D/Snes9x4D.dge
-selectordir=/boot/media/games/snes
-selectorbrowser=true
-selectorscreens=/boot/media/picture/screenshot/game/snes
