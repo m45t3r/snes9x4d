@@ -62,21 +62,41 @@ void menu_flip()
 	SDL_Flip(screen);
 }
 
+void menu_title()
+{
+	//draw blue screen
+	for(int y=12;y<=212;y++){
+		for(int x=10;x<246*2;x+=2){
+			memset(GFX.Screen + GFX.Pitch*y+x,0x11,2);
+		}	
+	}
+
+#if CAANOO
+	strcpy(disptxt[0],"  Snes9x4C " BUILD_VERSION);
+#elif MIYOO
+	strcpy(disptxt[0],"  Snes9x4D " BUILD_VERSION " for Miyoo");
+#elif CYGWIN32
+	strcpy(disptxt[0],"  Snes9x4W " BUILD_VERSION);
+#else
+	strcpy(disptxt[0],"  Snes9x4D " BUILD_VERSION " for OpenDingux");
+#endif	
+}
+
 #ifndef DINGOO
 //------------------------------------------------------------------------------------------
 struct dirent **namelist;
 
-int isFile(const struct dirent *nombre) {
- int isFile = 0;
- char *extension = rindex( (char*) nombre->d_name, '.');
- if (strcmp(extension, ".sfc") == 0 ||
- 	 strcmp(extension, ".smc") == 0 ||
- 	 strcmp(extension, ".zip" ) == 0 )
- {
-  isFile = 1;
- }
+int isFile(const struct dirent *name) {
+	int isFile = 0;
+	char *extension = rindex( (char*) name->d_name, '.');
+	if (strcmp(extension, ".sfc") == 0 ||
+		strcmp(extension, ".smc") == 0 ||
+		strcmp(extension, ".zip" ) == 0 )
+	{
+		isFile = 1;
+	}
 
- return isFile;
+	return isFile;
 }
 
 int FileDir(char *dir, const char *ext)
@@ -115,22 +135,7 @@ int FileDir(char *dir, const char *ext)
 
 void loadmenu_dispupdate(int romcount)
 {
-	//draw blue screen
-	for(int y=12;y<=212;y++){
-		for(int x=10;x<246*2;x+=2){
-			memset(GFX.Screen + GFX.Pitch*y+x,0x11,2);
-		}	
-	}
-
-#if CAANOO
-	strcpy(disptxt[0],"  Snes9x4C " BUILD_VERSION);
-#elif MIYOO
-	strcpy(disptxt[0],"  Snes9x4D " BUILD_VERSION " for Miyoo");
-#elif CYGWIN32
-	strcpy(disptxt[0],"  Snes9x4W " BUILD_VERSION);
-#else
-	strcpy(disptxt[0],"  Snes9x4D " BUILD_VERSION " for OpenDingux");
-#endif
+	menu_title();
 
 	//copy roms filenames to disp[] cache
 	for(int i=0;i<=romcount_maxrows;i++)
@@ -314,24 +319,9 @@ char* menu_romselector()
 void menu_dispupdate(void)
 {
 	static char *Rates[8] = { "off", "8192", "11025", "16000", "22050", "32000", "44100", "48000" };
-//	char temp[256];
-//	char disptxt[20][256];
 
-	//memset(GFX.Screen + 320*12*2,0x11,320*200*2);
-	for(int y=12;y<=212;y++){
-		for(int x=10;x<246*2;x+=2){
-			memset(GFX.Screen + GFX.Pitch*y+x,0x11,2);
-		}	
-	}
-#if CAANOO
-	strcpy(disptxt[0],"Snes9x4C " BUILD_VERSION);
-#elif MIYOO
-	strcpy(disptxt[0],"Snes9x4D " BUILD_VERSION " for Miyoo");
-#elif CYGWIN32
-	strcpy(disptxt[0],"Snes9x4W " BUILD_VERSION);
-#else
-	strcpy(disptxt[0],"Snes9x4D " BUILD_VERSION " for OpenDingux");
-#endif
+	menu_title();
+
 	strcpy(disptxt[1],"");
 	strcpy(disptxt[2],"Reset Game           ");
 	strcpy(disptxt[3],"Save State           ");
