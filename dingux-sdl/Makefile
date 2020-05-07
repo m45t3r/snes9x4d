@@ -1,7 +1,7 @@
 # derived from "Makefile", 01 June 2010
 # blame Skeezix
 
-GIT_VERSION := "$(shell git describe --abbrev=4 --dirty --always --tags)"
+GIT_VERSION := "$(shell git describe --abbrev=7 --dirty --always --tags)"
 
 UNZIP=1
 CHEATS=1
