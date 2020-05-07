@@ -99,7 +99,7 @@ int isFile(const struct dirent *name) {
 	return isFile;
 }
 
-int FileDir(char *dir, const char *ext)
+int FileDir(const char *dir, const char *ext)
 {
 	int n;
 
@@ -318,7 +318,7 @@ char* menu_romselector()
 
 void menu_dispupdate(void)
 {
-	static char *Rates[8] = { "off", "8192", "11025", "16000", "22050", "32000", "44100", "48000" };
+	const char *Rates[8] = { "off", "8192", "11025", "16000", "22050", "32000", "44100", "48000" };
 
 	menu_title();
 
