@@ -82,12 +82,16 @@
 #include "sa1.h"
 #include "spc7110.h"
 #include "obc1.h"
-/*#include "seta.h"
 
-extern "C"
-{
-	extern uint8 OpenBus;
-}*/
+#ifdef FAST_LSB_WORD_ACCESS
+#define READ_WORD(s) (*(uint16 *) (s))
+#define WRITE_WORD(s, d) (*(uint16 *) (s)) = (d)
+#else
+#define READ_WORD(s) ( *(uint8 *) (s) |\
+		      (*((uint8 *) (s) + 1) << 8))
+#define WRITE_WORD(s, d) *(uint8 *) (s) = (d), \
+                         *((uint8 *) (s) + 1) = (d) >> 8
+#endif
 
 INLINE uint8 S9xGetByte (uint32 Address, struct SCPUState * cpu)
 {
@@ -238,12 +242,7 @@ INLINE uint16 S9xGetWord (uint32 Address, struct SCPUState * cpu)
 		if (Memory.BlockIsRAM [block])
 			cpu->WaitAddress = cpu->PCAtOpcodeStart;
 #endif
-#ifdef FAST_LSB_WORD_ACCESS
-		return (*(uint16 *) (GetAddress + (Address & 0xffff)));
-#else
-		return (*(GetAddress + (Address & 0xffff)) |
-			(*(GetAddress + (Address & 0xffff) + 1) << 8));
-#endif	
+		return READ_WORD(GetAddress + (Address & 0xffff));
     }
 	
     switch ((int) GetAddress)
@@ -558,19 +557,9 @@ INLINE void S9xSetWord (uint16 Word, uint32 Address, struct SCPUState * cpu)
 			SA1.WaitCounter = 0;
 		}
 
-#ifdef FAST_LSB_WORD_ACCESS
-		*(uint16 *) SetAddress = Word;
+		WRITE_WORD(SetAddress, Word);
 #else
-		*SetAddress = (uint8) Word;
-		*(SetAddress + 1) = Word >> 8;
-#endif
-#else
-#ifdef FAST_LSB_WORD_ACCESS
-		*(uint16 *) (SetAddress + (Address & 0xffff)) = Word;
-#else
-		*(SetAddress + (Address & 0xffff)) = (uint8) Word;
-		*(SetAddress + ((Address + 1) & 0xffff)) = Word >> 8;
-#endif
+		WRITE_WORD(SetAddress + (Address & 0xffff), Word);
 #endif
 		return;
     }
