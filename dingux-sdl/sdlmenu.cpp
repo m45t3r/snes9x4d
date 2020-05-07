@@ -124,6 +124,8 @@ void loadmenu_dispupdate(int romcount)
 
 #if CAANOO
 	strcpy(disptxt[0],"  Snes9x4C v20101010");
+#elif MIYOO
+	strcpy(disptxt[0],"  Snes9x4D v20101010 for Miyoo");
 #elif CYGWIN32
 	strcpy(disptxt[0],"  Snes9x4W v20101010");
 #else
@@ -323,6 +325,8 @@ void menu_dispupdate(void)
 	}
 #if CAANOO
 	strcpy(disptxt[0],"Snes9x4C v20101010");
+#elif MIYOO
+	strcpy(disptxt[0],"Snes9x4D v20101010 for Miyoo");
 #elif CYGWIN32
 	strcpy(disptxt[0],"Snes9x4W v20101010");
 #else
