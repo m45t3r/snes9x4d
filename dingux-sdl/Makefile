@@ -19,7 +19,6 @@ C4OBJ = ../c4.o ../c4emu.o
 C4DEFINES =
 C4NO_DEPENDS = zsnes_c4
 
-
 ifdef CHEATS
 CHEAT = ../cheats.o ../cheats2.o
 CHEATDEFINES = -DCHEATS
@@ -51,22 +50,28 @@ BINPATH    :=
 
 ARCH :=
 
-CCC		= mipsel-linux-g++
-CC		= mipsel-linux-gcc
-STRIP	= mipsel-linux-strip
-AS		= mipsel-linux-as
-GASM	= mipsel-linux-g++
+PREFIX  = mipsel-linux
 
-INCLUDES=
+CXX	= $(PREFIX)-g++
+CC	= $(PREFIX)-gcc
+STRIP	= $(PREFIX)-strip
+AS	= $(PREFIX)-as
+GASM	= $(PREFIX)-g++
+
+SYSROOT := $(shell $(CC) --print-sysroot)
+SDL_CFLAGS := $(shell $(SYSROOT)/usr/bin/sdl-config --cflags)
+SDL_LIBS := $(shell $(SYSROOT)/usr/bin/sdl-config --libs)
+
+INCLUDE = -I. -I../ -I../unzip
 
 OPTIMISE = -D_ZAURUS -O3 -march=mips32 -mtune=r4600 -mno-mips16 \
 			-ffast-math -fomit-frame-pointer -fno-strength-reduce \
-			-finline-functions -funroll-loops
+			-finline-functions -funroll-loops -funswitch-loops \
+			-ftree-vectorize -fno-strict-aliasing \
+			-fprofile-use -fprofile-dir=./profile
 
-CCFLAGS = $(OPTIMISE) $(PROFILE) \
--I. \
--I../ \
--I../unzip \
+CXXFLAGS = $(OPTIMISE) $(PROFILE) $(INCLUDE) \
+--std=gnu++98 \
 -D__SDL__ \
 -DDINGOO \
 -DZLIB \
@@ -85,10 +90,31 @@ $(OPENGLDEFINES) \
 $(GUIDEFINES) \
 $(KREEDDEFINES) \
 $(CHEATDEFINES) \
+$(SDL_CFLAGS) \
 
-CCFLAGS  += -I.
+CFLAGS = $(OPTIMISE) $(PROFILE) $(INCLUDE) \
+--std=gnu89 \
+-D__SDL__ \
+-DDINGOO \
+-DZLIB \
+-DVAR_CYCLES \
+-DCPU_SHUTDOWN \
+-DSPC700_SHUTDOWN \
+-DBUILD_VERSION=\"$(GIT_VERSION)\" \
+$(FXDEFINES) \
+$(C4DEFINES) \
+$(CPUDEFINES) \
+$(SOUNDDEFINES) \
+$(NETPLAYDEFINES) \
+$(UNZIPDEFINES) \
+$(GLIDEDEFINES) \
+$(OPENGLDEFINES) \
+$(GUIDEFINES) \
+$(KREEDDEFINES) \
+$(CHEATDEFINES) \
+$(SDL_CFLAGS) \
 
-LDLIBS  = -lSDL -lz -lm
+LDLIBS  = -lSDL -lz -lm $(SDL_LIBS)
 
 
 .SUFFIXES: .o .cpp .c .cc .h .m .i .S .asm .obj
@@ -96,26 +122,26 @@ LDLIBS  = -lSDL -lz -lm
 all: snes9x4d.dge
 
 snes9x4d.dge: $(OBJECTS)
-	$(CCC) -o $@ $(OBJECTS) $(EXTRALIBS) $(LDLIBS) $(PROFILE)
+	$(CXX) -o $@ $(OBJECTS) $(EXTRALIBS) $(LDLIBS) $(PROFILE)
 	$(STRIP) snes9x4d.dge
 
 .cpp.o:
-	$(CCC) -c $(CCFLAGS) $*.cpp -o $@
+	$(CXX) -c $(CXXFLAGS) $*.cpp -o $@
 
 .c.o:
-	$(CC) -c $(CCFLAGS) $*.c -o $@
+	$(CC) -c $(CFLAGS) $*.c -o $@
 
 .cpp.S:
-	$(CCC) -S $(CCFLAGS) $*.cpp -o $@
+	$(CXX) -S $(CXXFLAGS) $*.cpp -o $@
 
 .cpp.i:
-	$(CCC) -E $(CCFLAGS) $*.cpp -o $@
+	$(CXX) -E $(CXXFLAGS) $*.cpp -o $@
 
 .S.o:
-	$(CCC) -c $(CCFLAGS) $*.S -o $@
+	$(CXX) -c $(CXXFLAGS) $*.S -o $@
 
 .S.i:
-	$(CCC) -c -E $(CCFLAGS) $*.S -o $@
+	$(CXX) -c -E $(CXXFLAGS) $*.S -o $@
 
 .asm.o:
 	$(NASM) -f elf $(FXDEFINES) -i . -i i386 -o $@ $*.asm
