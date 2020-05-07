@@ -192,8 +192,8 @@ extern uint8 mul_brightness [16][32];
 //
     #define MASK1 0xF7DE
     #define MASK2 0x7BEF
-/*
-__inline uint16_t COLOR_ADD(uint16_t C1, uint16_t C2){
+
+inline uint16_t COLOR_ADD(uint16_t C1, uint16_t C2) {
     uint16_t a, b, c, z, c1, c2;
 
     c1 = C1 & MASK1;
@@ -204,10 +204,6 @@ __inline uint16_t COLOR_ADD(uint16_t C1, uint16_t C2){
     z = ((a | c) & MASK2)<<1;
     return z;
 }
-*/
-
-#define COLOR_ADD(C1, C2) \
-((((((C1 & 0xF7DE)>>1) + ((C2 & 0xF7DE)>>1)) | (((((C1 & 0xF7DE)>>1) + ((C2 & 0xF7DE)>>1)) & 0x8410)- (((((C1 & 0xF7DE)>>1) + ((C2 & 0xF7DE)>>1)) & 0x8410) >> 4))) & 0x7BEF)<<1)
 
 #define COLOR_ADD1_2(C1, C2) \
 (((((C1) & RGB_REMOVE_LOW_BITS_MASK) + \
@@ -243,10 +239,6 @@ inline uint16_t COLOR_SUB(uint16_t C1, uint16_t C2)
     return z;
 }
 
-/*#define COLOR_SUB(C1, C2) \
-((((((C1 & 0xF7DE)>>1) + ((((C2 & 0xF7DE)>>1) ^ 0xffff) + 0x0821)) & ((((((C1 & 0xF7DE)>>1) + ((((C2 & 0xF7DE)>>1) ^ 0xffff) + 0x0821)) & 0x8410) - (((((C1 & 0xF7DE)>>1) + ((((C2 & 0xF7DE)>>1) ^ 0xffff) + 0x0821)) & 0x8410)>>4)) ^ 0x7bcf)) & 0x7BEF)<<1)
-*/
-
 inline uint16_t COLOR_SUB1_2(uint16_t C1, uint16_t C2)
 {
     uint16_t a, b, c, z, c1, c2;
@@ -261,13 +253,8 @@ inline uint16_t COLOR_SUB1_2(uint16_t C1, uint16_t C2)
 
     return z;
 }
-/*
-#define COLOR_SUB1_2(C1, C2) \
-GFX.ZERO [(((C1) | RGB_HI_BITS_MASKx2) - \
-	   ((C2) & RGB_REMOVE_LOW_BITS_MASK)) >> 1]
-*/
 
-typedef void (*NormalTileRenderer) (uint32 Tile, uint32 Offset, 
+typedef void (*NormalTileRenderer) (uint32 Tile, uint32 Offset,
 				    uint32 StartLine, uint32 LineCount, struct SGFX * gfx);
 typedef void (*ClippedTileRenderer) (uint32 Tile, uint32 Offset,
 				     uint32 StartPixel, uint32 Width,
