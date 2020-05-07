@@ -68,6 +68,7 @@ OPTIMISE = -D_ZAURUS -O3 -march=armv5te -mtune=arm926ej-s \
 			-ffast-math -fomit-frame-pointer -fno-strength-reduce \
 			-finline-functions -funroll-loops -funswitch-loops \
 			-ftree-vectorize -fno-strict-aliasing \
+			-falign-functions=2 -fno-stack-protector \
 			-fprofile-use -fprofile-dir=./profile
 
 CXXFLAGS = $(OPTIMISE) $(PROFILE) $(INCLUDE) \
