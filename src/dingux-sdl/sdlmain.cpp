@@ -76,10 +76,6 @@
 #include "soundux.h"
 #include "spc700.h"
 
-#ifdef WIN32
-static void sync() { }
-#endif
-
 uint8 *keyssnes;
 
 #ifdef NETPLAY_SUPPORT
@@ -202,11 +198,7 @@ int is_home_created()
 {
 	char home[512];
 	sprintf(home, "%s/%s", GetHomeDirectory(), ".snes9x4d");
-	mkdir (home
-	#ifndef WIN32
-	, 0777
-	#endif
-	);
+	mkdir (home , 0777);
 	if(!errno) return FALSE;
 	return TRUE;
 }
@@ -439,8 +431,6 @@ int main (int argc, char **argv)
 	//Handheld Key Infos
 #ifdef MIYOO
 	sprintf(msg,"Press R to Show MENU");
-#elif CYGWIN32
-	sprintf(msg,"Press ESC+LALT to Show MENU");
 #else
 	sprintf(msg,"Press SELECT+START to Show MENU");
 #endif
@@ -682,11 +672,7 @@ const char *S9xGetSnapshotDirectory ()
 		strcpy (filename, home);
 		strcat (filename, SLASH_STR);
 		strcat (filename, ".snes96_snapshots");
-		mkdir (filename
-		#ifndef WIN32
-		, 0777
-		#endif
-		);
+		mkdir (filename , 0777);
 		//chown (filename, getuid (), getgid ());
 	}
 	else

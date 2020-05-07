@@ -16,10 +16,6 @@
 
 #include "sdlaudio.h"
 
-#ifdef WIN32
-static void sync() { }
-#endif
-
 extern Uint16 sfc_key[256];
 extern bool8_32 Scale;
 extern char SaveSlotNum;
@@ -94,12 +90,8 @@ int FileDir(const char *dir, const char *ext)
 	int n;
 
 	//printf ("Try to create ./roms directory..");
-#ifdef WIN32
-	mkdir (dir);
-#else
 	mkdir (dir, 0777);
 	chown (dir, getuid (), getgid ());
-#endif
 
 	n = scandir (dir, &namelist, isFile, alphasort);
 	if (n >= 0)
@@ -111,12 +103,8 @@ int FileDir(const char *dir, const char *ext)
 	else
 	{
 		perror ("Couldn't open ./roms directory..try to create this directory");
-	#ifdef WIN32
-		mkdir (dir);
-	#else
 		mkdir (dir, 0777);
 		chown (dir, getuid (), getgid ());
-	#endif
 		n = scandir (dir, &namelist, isFile, alphasort);
 	}
 		
