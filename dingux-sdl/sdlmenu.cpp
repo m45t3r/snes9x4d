@@ -62,24 +62,14 @@ void menu_flip()
 	SDL_Flip(screen);
 }
 
-void menu_title()
+void menu_init()
 {
-	//draw blue screen
+	//draw black screen
 	for(int y=12;y<=212;y++){
 		for(int x=10;x<246*2;x+=2){
 			memset(GFX.Screen + GFX.Pitch*y+x,0x0,2);
 		}	
 	}
-
-#if CAANOO
-	strcpy(disptxt[0],"  Snes9x4C " BUILD_VERSION);
-#elif MIYOO
-	strcpy(disptxt[0],"  Snes9x4D " BUILD_VERSION " for Miyoo");
-#elif CYGWIN32
-	strcpy(disptxt[0],"  Snes9x4W " BUILD_VERSION);
-#else
-	strcpy(disptxt[0],"  Snes9x4D " BUILD_VERSION " for OpenDingux");
-#endif	
 }
 
 #ifndef DINGOO
@@ -135,7 +125,8 @@ int FileDir(const char *dir, const char *ext)
 
 void loadmenu_dispupdate(int romcount)
 {
-	menu_title();
+	menu_init();
+	strcpy(disptxt[0],"  Snes9x4D v" BUILD_VERSION);
 
 	//copy roms filenames to disp[] cache
 	for(int i=0;i<=romcount_maxrows;i++)
@@ -180,11 +171,7 @@ char* menu_romselector()
 
 	bool8_32 exit_loop = false;
 
-#ifdef CAANOO
-	SDL_Joystick* keyssnes = 0;
-#else
 	uint8 *keyssnes = 0;
-#endif
 
 	//Read ROM-Directory
 	romcount = FileDir("./roms", "sfc,smc");
@@ -207,40 +194,6 @@ char* menu_romselector()
 
 		while(SDL_PollEvent(&event)==1)
 		{
-#ifdef CAANOO
-			// CAANOO -------------------------------------------------------------
-			keyssnes = SDL_JoystickOpen(0);
-			if ( (SDL_JoystickGetAxis(keyssnes, 1) < -16384) || SDL_JoystickGetButton(keyssnes, sfc_key[START_1]) )
-				loadcursor--;
-			else if( (SDL_JoystickGetAxis(keyssnes, 1) > 16384) || SDL_JoystickGetButton(keyssnes, sfc_key[SELECT_1]) )
-				loadcursor++;
-//			else if ( SDL_JoystickGetButton(keyssnes, sfc_key[L_1]) )
-//				loadcursor=loadcursor-10;
-//			else if ( SDL_JoystickGetButton(keyssnes, sfc_key[R_1]) )
-//				loadcursor=loadcursor+10;
-			else if ( SDL_JoystickGetButton(keyssnes, sfc_key[QUIT]) )
-				S9xExit();
-			else if( SDL_JoystickGetButton(keyssnes, sfc_key[A_1]) ||
-					(SDL_JoystickGetAxis(keyssnes, 0) < -16384) ||
-					(SDL_JoystickGetAxis(keyssnes, 0) > 16384)
-					)
-			{
-					switch(loadcursor)
-					{
-						default:
-							if ( SDL_JoystickGetButton(keyssnes, sfc_key[A_1]) )
-							{
-								if ((loadcursor>=0) && (loadcursor<(romcount)))
-								{
-									rom_filename=namelist[loadcursor]->d_name;
-									exit_loop = TRUE;
-								}
-							}
-							break;
-					}
-			}
-#else
-			// DINGOO & WIN32 -----------------------------------------------------
 			keyssnes = SDL_GetKeyState(NULL);
 			switch(event.type)
 			{
@@ -280,7 +233,6 @@ char* menu_romselector()
 					}
 					break;
 			}
-#endif
 
 			if(loadcursor==-1)
 			{
@@ -295,13 +247,7 @@ char* menu_romselector()
 			break;
 		}
 	}
-#ifdef CAANOO
-	while( exit_loop!=TRUE && SDL_JoystickGetButton(keyssnes, sfc_key[QUIT])!=TRUE );
-#elif CYGWIN32
-	while( exit_loop!=TRUE && keyssnes[sfc_key[SELECT_1]] != SDL_PRESSED );
-#else
 	while( exit_loop!=TRUE && keyssnes[sfc_key[B_1]] != SDL_PRESSED );
-#endif
 
 	// TODO:
 	///free(). 	namelist
@@ -320,8 +266,8 @@ void menu_dispupdate(void)
 {
 	const char *Rates[8] = { "off", "8192", "11025", "16000", "22050", "32000", "44100", "48000" };
 
-	menu_title();
-
+	menu_init();
+	strcpy(disptxt[0],"  Snes9x4D v" BUILD_VERSION);
 	strcpy(disptxt[1],"");
 	strcpy(disptxt[2],"Reset Game           ");
 	strcpy(disptxt[3],"Save State           ");
@@ -412,11 +358,7 @@ void menu_loop(void)
 	char fname[256], ext[8];
 	char snapscreen_tmp[17120];
 
-#ifdef CAANOO
-	SDL_Joystick* keyssnes = 0;
-#else
 	uint8 *keyssnes = 0;
-#endif
 
 	SaveSlotNum_old = -1;
 
@@ -438,115 +380,6 @@ void menu_loop(void)
 	{
 		while(SDL_PollEvent(&event)==1)
 		{
-#ifdef CAANOO
-				keyssnes = SDL_JoystickOpen(0);
-				// CAANOO -------------------------------------------------------------
-				if ( (SDL_JoystickGetAxis(keyssnes, 1) < -16384) || SDL_JoystickGetButton(keyssnes, sfc_key[START_1]) )
-					cursor--;
-				else if( (SDL_JoystickGetAxis(keyssnes, 1) > 16384) || SDL_JoystickGetButton(keyssnes, sfc_key[SELECT_1]) )
-					cursor++;
-				else if( SDL_JoystickGetButton(keyssnes, sfc_key[A_1]) ||
-						(SDL_JoystickGetAxis(keyssnes, 0) < -16384) ||
-						(SDL_JoystickGetAxis(keyssnes, 0) > 16384)
-						)
-				{
-					switch(cursor)
-					{
-						case 2:
-							if ( SDL_JoystickGetButton(keyssnes, sfc_key[A_1]) )
-							{
-								S9xReset();
-								exit_loop = TRUE;
-							}
-						break;
-						case 3:
-							if ( SDL_JoystickGetButton(keyssnes, sfc_key[A_1]) )
-							{
-								memcpy(snapscreen,snapscreen_tmp,16050);
-								show_screenshot();
-								strcpy(fname," Saving...");
-								S9xDisplayString (fname, GFX.Screen +280, GFX.Pitch, 204);
-								menu_flip();
-								sprintf(ext, ".s0%d", SaveSlotNum);
-								strcpy(fname, S9xGetFilename (ext));
-								save_screenshot(fname);
-								sprintf(ext, ".00%d", SaveSlotNum);
-								strcpy(fname, S9xGetFilename (ext));
-								S9xFreezeGame (fname);
-								sync();
-								exit_loop = TRUE;
-							}
-						break;
-						case 4:
-							if ( SDL_JoystickGetButton(keyssnes, sfc_key[A_1]) )
-							{
-								sprintf(ext, ".00%d", SaveSlotNum);
-								strcpy(fname, S9xGetFilename (ext));
-								S9xLoadSnapshot (fname);
-								exit_loop = TRUE;
-							}
-						break;
-						case 5:
-							if ( SDL_JoystickGetAxis(keyssnes, 0) < -16384 )
-								SaveSlotNum--;
-							else if (SDL_JoystickGetAxis(keyssnes, 0) > 16384)
-								SaveSlotNum++;
-
-							if(SaveSlotNum>=3)
-								SaveSlotNum=3;			//0
-							else if(SaveSlotNum<=0)
-								SaveSlotNum=0;			//3
-						break;
-						case 6:
-							Settings.DisplayFrameRate = !Settings.DisplayFrameRate;
-						break;
-						case 7:
-							Settings.Transparency = !Settings.Transparency;
-						break;
-						case 8:
-							Scale = !Scale;
-						break;
-						case 9:
-							if (Settings.SkipFrames == AUTO_FRAMERATE)
-								Settings.SkipFrames = 10;
-	
-							if ( SDL_JoystickGetAxis(keyssnes, 0) < -16384 )
-								Settings.SkipFrames--;
-							else if (SDL_JoystickGetAxis(keyssnes, 0) > 16384)
-								Settings.SkipFrames++;
-	
-							if(Settings.SkipFrames>=10)
-								Settings.SkipFrames = AUTO_FRAMERATE;
-							else if (Settings.SkipFrames<=1)
-								Settings.SkipFrames = 1;
-						break;
-						case 10:
-							if ( SDL_JoystickGetAxis(keyssnes, 0) < -16384 )
-								vol -= 10;
-							else if (SDL_JoystickGetAxis(keyssnes, 0) > 16384)
-								vol += 10;
-
-							if(vol>=100)
-							{
-								vol = 100;
-							}
-							else if (vol <=0)
-							{
-								vol = 0;
-							}
-						break;
-						case 11:
-							if ( SDL_JoystickGetButton(keyssnes, sfc_key[A_1]) )
-								ShowCredit();
-						break;
-						case 12:
-							if ( SDL_JoystickGetButton(keyssnes, sfc_key[A_1]) )
-								S9xExit();
-						break;
-					}
-				}
-#else
-				// DINGOO & WIN32 -----------------------------------------------------
 				keyssnes = SDL_GetKeyState(NULL);
 
 				if(keyssnes[sfc_key[UP_1]] == SDL_PRESSED)
@@ -648,7 +481,6 @@ void menu_loop(void)
 						break;
 					}
 				}
-#endif
 
 				if(cursor==1)
 					cursor=13;	//11
@@ -661,11 +493,7 @@ void menu_loop(void)
 				break;
 		}
 	}
-#ifdef CAANOO
-	while( exit_loop!=TRUE && SDL_JoystickGetButton(keyssnes, sfc_key[QUIT])!=TRUE );
-#else
 	while( exit_loop!=TRUE && keyssnes[sfc_key[B_1]] != SDL_PRESSED );
-#endif
 
 	Settings.SupportHiRes=highres_current;
 	S9xDeinitDisplay();
@@ -759,11 +587,7 @@ void show_screenshot()
 
 void ShowCredit()
 {
-#ifdef CAANOO
-	SDL_Joystick* keyssnes = 0;
-#else
 	uint8 *keyssnes = 0;
-#endif
 	int line=0,ypix=0;
 	char disptxt[100][256]={
 	"",
@@ -794,17 +618,9 @@ void ShowCredit()
 		SDL_Event event;
 		SDL_PollEvent(&event);
 
-#ifdef CAANOO
-		keyssnes = SDL_JoystickOpen(0);
-#else
 		keyssnes = SDL_GetKeyState(NULL);
-#endif
 
-		for(int y=12; y<=212; y++){
-			for(int x=10; x<246*2; x+=2){
-				memset(GFX.Screen + GFX.Pitch*y+x,0x11,2);
-			}	
-		}
+		menu_init();
 		
 		for(int i=0;i<=16;i++){
 			int j=i+line;
@@ -821,11 +637,7 @@ void ShowCredit()
 		menu_flip();
 		sys_sleep(3000);
 	}
-#ifdef CAANOO
-	while( SDL_JoystickGetButton(keyssnes, sfc_key[B_1])!=TRUE );
-#else
 	while(keyssnes[sfc_key[B_1]] != SDL_PRESSED);
-#endif
 
 	return;
 }
