@@ -72,7 +72,7 @@ ifeq ($(PGO), GENERATE)
   OPTIMISE += -fprofile-generate -fprofile-dir=./profile
   PROFILE += -lgcov
 else ifeq ($(PGO), APPLY)
-  OPTIMISE += -fprofile-use -fbranch-probabilities
+  OPTIMISE += -fprofile-use -fprofile-dir=./profile -fbranch-probabilities
 endif
 
 CXXFLAGS = $(OPTIMISE) $(PROFILE) $(INCLUDE) \
