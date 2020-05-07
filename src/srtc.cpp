@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -88,7 +88,7 @@ static int month_keys[12] = { 1, 4, 4, 0, 2, 5, 0, 3, 6, 1, 4, 6 };
  *
  *	restore the rtc data structure
  *      rtc.system_timestamp = time (NULL);
- *        
+ *
  *
  *********************************************************************************************/
 
@@ -206,7 +206,7 @@ void	S9xUpdateSrtcTime ()
 
         time_diff = (long) (cur_systime - rtc.system_timestamp);
 	rtc.system_timestamp = cur_systime;
-        
+
         if ( time_diff > 0 )
         {
 	   int		seconds;

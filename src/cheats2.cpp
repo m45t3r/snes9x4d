@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -54,7 +54,7 @@ void S9xInitCheatData ()
     Cheat.FillRAM = Memory.FillRAM;
 }
 
-void S9xAddCheat (bool8 enable, bool8 save_current_value, 
+void S9xAddCheat (bool8 enable, bool8 save_current_value,
 		  uint32 address, uint8 byte)
 {
     if (Cheat.num_cheats < sizeof (Cheat.c) / sizeof (Cheat. c [0]))
@@ -116,7 +116,7 @@ void S9xRemoveCheat (uint32 which1)
 
 	int block = (address >> MEMMAP_SHIFT) & MEMMAP_MASK;
 	uint8 *ptr = Memory.Map [block];
-	    
+	
 	if (ptr >= (uint8 *) CMemory::MAP_LAST)
 	    *(ptr + (address & 0xffff)) = Cheat.c [which1].saved_byte;
 	else
@@ -133,7 +133,7 @@ void S9xApplyCheat (uint32 which1)
 
     int block = (address >> MEMMAP_SHIFT) & MEMMAP_MASK;
     uint8 *ptr = Memory.Map [block];
-    
+
     if (ptr >= (uint8 *) CMemory::MAP_LAST)
 	*(ptr + (address & 0xffff)) = Cheat.c [which1].byte;
     else

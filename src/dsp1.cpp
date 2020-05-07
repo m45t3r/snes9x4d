@@ -1,6 +1,6 @@
 /*******************************************************************************
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
- 
+
   (c) Copyright 1996 - 2002 Gary Henderson (gary.henderson@ntlworld.com) and
                             Jerremy Koot (jkoot@snes9x.com)
 
@@ -43,46 +43,46 @@
   S-DD1 C emulator code
   (c) Copyright 2003 Brad Jorsch with research by
                      Andreas Naive and John Weidman
- 
+
   S-RTC C emulator code
   (c) Copyright 2001 John Weidman
-  
+
   ST010 C++ emulator code
   (c) Copyright 2003 Feather, Kris Bleakley, John Weidman and Matthew Kendora
 
-  Super FX x86 assembler emulator code 
-  (c) Copyright 1998 - 2003 zsKnight, _Demo_, and pagefault 
+  Super FX x86 assembler emulator code
+  (c) Copyright 1998 - 2003 zsKnight, _Demo_, and pagefault
 
-  Super FX C emulator code 
+  Super FX C emulator code
   (c) Copyright 1997 - 1999 Ivar, Gary Henderson and John Weidman
 
 
   SH assembler code partly based on x86 assembler code
-  (c) Copyright 2002 - 2004 Marcus Comstedt (marcus@mc.pp.se) 
+  (c) Copyright 2002 - 2004 Marcus Comstedt (marcus@mc.pp.se)
 
- 
+
   Specific ports contains the works of other authors. See headers in
   individual files.
- 
+
   Snes9x homepage: http://www.snes9x.com
- 
+
   Permission to use, copy, modify and distribute Snes9x in both binary and
   source form, for non-commercial purposes, is hereby granted without fee,
   providing that this license information and copyright notice appear with
   all copies and any derived work.
- 
+
   This software is provided 'as-is', without any express or implied
   warranty. In no event shall the authors be held liable for any damages
   arising from the use of this software.
- 
+
   Snes9x is freeware for PERSONAL USE only. Commercial users should
   seek permission of the copyright holders first. Commercial use includes
   charging money for Snes9x or software derived from Snes9x.
- 
+
   The copyright holders request that bug fixes and improvements to the code
   should be forwarded to them so everyone can benefit from the modifications
   in future versions.
- 
+
   Super NES and Super Nintendo Entertainment System are trademarks of
   Nintendo Co., Limited and its subsidiary companies.
 *******************************************************************************/
@@ -102,7 +102,7 @@ uint8 (*GetDSP)(uint16)=&DSP1GetByte;
 void S9xInitDSP1 ()
 {
     static bool8 init = FALSE;
-    
+
     if (!init)
     {
         InitDSP ();
@@ -113,7 +113,7 @@ void S9xInitDSP1 ()
 void S9xResetDSP1 ()
 {
     S9xInitDSP1 ();
-    
+
     DSP1.waiting4command = TRUE;
     DSP1.in_count = 0;
     DSP1.out_count = 0;
@@ -133,7 +133,7 @@ uint8 S9xGetDSP (uint16 address)
 		S9xMessage (S9X_TRACE, S9X_TRACE_DSP1, String);
     }
 #endif
- 
+
 	t=(*GetDSP)(address);
 		//DSP1GetByte(address);
     return (t);
@@ -196,7 +196,7 @@ void DSP1SetByte(uint8 byte, uint16 address)
 			case 0x0a: DSP1.in_count = 1;	break;
 			case 0x3a:
 			case 0x2a:
-			case 0x1a: 
+			case 0x1a:
 				DSP1. command =0x1a;
 				DSP1.in_count = 1;	break;
 			case 0x16:
@@ -345,8 +345,8 @@ void DSP1SetByte(uint8 byte, uint16 address)
 						DSPOp08 ();
 						
 						DSP1.out_count = 4;
-						DSP1.output [0] = (uint8) (((int16) Op08Ll)&0xFF); 
-						DSP1.output [1] = (uint8) ((((int16) Op08Ll)>>8)&0xFF); 
+						DSP1.output [0] = (uint8) (((int16) Op08Ll)&0xFF);
+						DSP1.output [1] = (uint8) ((((int16) Op08Ll)>>8)&0xFF);
 						DSP1.output [2] = (uint8) (((int16) Op08Lh)&0xFF);
 						DSP1.output [3] = (uint8) ((((int16) Op08Lh)>>8)&0xFF);
 						break;

@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -65,7 +65,7 @@ bool8_32 S9xInitAPU ()
     IAPU.RAM = (uint8 *) malloc (0x10000);
     IAPU.ShadowRAM = (uint8 *) malloc (0x10000);
     IAPU.CachedSamples = (uint8 *) malloc (0x40000);
-    
+
     if (!IAPU.RAM || !IAPU.ShadowRAM || !IAPU.CachedSamples)
     {
 	S9xDeinitAPU ();
@@ -102,7 +102,7 @@ void S9xResetAPU ()
 
     memset (IAPU.RAM, Settings.APURAMInitialValue, 0x10000);
     memset (IAPU.ShadowRAM, Settings.APURAMInitialValue, 0x10000);
-    
+
     ZeroMemory (IAPU.CachedSamples, 0x40000);
     ZeroMemory (APU.OutPorts, 4);
     IAPU.DirectPage = IAPU.RAM;
@@ -247,7 +247,7 @@ void S9xSetAPUDSP (uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 	{
 #ifdef DEBUGGER
 	    if (Settings.TraceSoundDSP)
-		S9xTraceSoundDSP ("[%d] Master volume left:%d\n", 
+		S9xTraceSoundDSP ("[%d] Master volume left:%d\n",
 				  ICPU.Scanline, (signed char) byte);
 #endif
 //		S9xSetMasterVolume ((signed char) byte,
@@ -330,7 +330,7 @@ void S9xSetAPUDSP (uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 
 		    if (Settings.TraceSoundDSP)
 			S9xTraceSoundDSP ("%d,", c);
-#endif		    
+#endif		
 		    if (apu->KeyedChannels & mask)
 		    {
 			{
@@ -365,7 +365,7 @@ void S9xSetAPUDSP (uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 #ifdef DEBUGGER
 		    if (Settings.TraceSoundDSP)
 			S9xTraceSoundDSP ("%d,", c);
-#endif		    
+#endif		
 		    // Pac-In-Time requires that channels can be key-on
 		    // regardeless of their current state.
 		    apu->KeyedChannels |= mask;
@@ -395,7 +395,7 @@ void S9xSetAPUDSP (uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 	{
 #ifdef DEBUGGER
 	    if (Settings.TraceSoundDSP)
-		S9xTraceSoundDSP ("[%d] %d volume left: %d\n", 
+		S9xTraceSoundDSP ("[%d] %d volume left: %d\n",
 				  ICPU.Scanline, reg>>4, (signed char) byte);
 #endif
 //		S9xSetSoundVolume (reg >> 4, (signed char) byte,
@@ -420,7 +420,7 @@ void S9xSetAPUDSP (uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 	{
 #ifdef DEBUGGER
 	    if (Settings.TraceSoundDSP)
-		S9xTraceSoundDSP ("[%d] %d volume right: %d\n", 
+		S9xTraceSoundDSP ("[%d] %d volume right: %d\n",
 				  ICPU.Scanline, reg >>4, (signed char) byte);
 #endif
 //		S9xSetSoundVolume (reg >> 4, (signed char) apu->DSP [reg - 1],
@@ -466,7 +466,7 @@ void S9xSetAPUDSP (uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 	    S9xTraceSoundDSP ("[%d] %d freq high: %d\n",
 			      ICPU.Scanline, reg>>4, byte);
 #endif
-//	    S9xSetSoundHertz (reg >> 4, 
+//	    S9xSetSoundHertz (reg >> 4,
 //			      (((byte << 8) + apu->DSP [reg - 1]) & FREQUENCY_MASK) * 8);
 		{
 		int ch = reg >> 4;
@@ -511,7 +511,7 @@ void S9xSetAPUDSP (uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 				  ICPU.Scanline, reg>>4, byte);
 #endif
 	    {
-		S9xFixEnvelope (reg >> 4, apu->DSP [reg + 2], byte, 
+		S9xFixEnvelope (reg >> 4, apu->DSP [reg + 2], byte,
 			     apu->DSP [reg + 1]);
 	    }
 	}
@@ -529,7 +529,7 @@ void S9xSetAPUDSP (uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 	{
 #ifdef DEBUGGER
 	    if (Settings.TraceSoundDSP)
-		S9xTraceSoundDSP ("[%d] %d adsr2: %02x\n", 
+		S9xTraceSoundDSP ("[%d] %d adsr2: %02x\n",
 				  ICPU.Scanline, reg>>4, byte);
 #endif
 	    {
@@ -580,7 +580,7 @@ void S9xSetAPUDSP (uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
     case APU_OUTX + 0x60:
     case APU_OUTX + 0x70:
 	break;
-    
+
     case APU_DIR:
 #ifdef DEBUGGER
 	if (Settings.TraceSoundDSP)
@@ -703,7 +703,7 @@ void S9xFixEnvelope (int channel, uint8 gain, uint8 adsr1, uint8 adsr2)
 	// at?
 	if (S9xSetSoundMode (channel, MODE_ADSR))
 	{
-	    // Hack for ROMs that use a very short attack rate, key on a 
+	    // Hack for ROMs that use a very short attack rate, key on a
 	    // channel, then switch to decay mode. e.g. Final Fantasy II.
 
 	    int attack = AttackRate [adsr1 & 0xf];
@@ -887,7 +887,7 @@ void S9xUpdateAPUTimer (void)
 				#ifdef SPC700_SHUTDOWN		
 					IAPU.WaitCounter++;
 					IAPU.APUExecuting = TRUE;
-				#endif		    
+				#endif		
 			    }
 			}
 
@@ -901,7 +901,7 @@ void S9xUpdateAPUTimer (void)
 				#ifdef SPC700_SHUTDOWN		
 					IAPU.WaitCounter++;
 					IAPU.APUExecuting = TRUE;
-				#endif		    
+				#endif		
 			    }
 			}
 		}

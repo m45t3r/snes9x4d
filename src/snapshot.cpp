@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -444,7 +444,7 @@ bool8_32 S9xUnfreezeGame (const char *filename)
 	    switch (result)
 	    {
 	    case WRONG_FORMAT:
-		S9xMessage (S9X_ERROR, S9X_WRONG_FORMAT, 
+		S9xMessage (S9X_ERROR, S9X_WRONG_FORMAT,
 			    "File not in Snes9x freeze format");
 		break;
 	    case WRONG_VERSION:
@@ -517,7 +517,7 @@ static void Freeze (STREAM stream)
 	SA1Registers.PC = SA1.PC - SA1.PCBase;
 	S9xSA1PackStatus ();
 	FreezeStruct (stream, "SA1", &SA1, SnapSA1, COUNT (SnapSA1));
-	FreezeStruct (stream, "SAR", &SA1Registers, SnapSA1Registers, 
+	FreezeStruct (stream, "SAR", &SA1Registers, SnapSA1Registers,
 		      COUNT (SnapSA1Registers));
     }
     S9xSetSoundMute (FALSE);
@@ -545,7 +545,7 @@ static int Unfreeze (STREAM stream)
     if ((result = UnfreezeBlock (stream, "NAM", (uint8 *) rom_filename, _MAX_PATH)) != SUCCESS)
 	return (result);
 /*
-    if (strcasecmp (rom_filename, Memory.ROMFilename) != 0 || 
+    if (strcasecmp (rom_filename, Memory.ROMFilename) != 0 ||
          strcasecmp (S9xBasename( rom_filename ), S9xBasename( buffer )) != 0 ){
        	S9xMessage (S9X_WARNING, S9X_FREEZE_ROM_NAME,
    		    "Current loaded ROM image doesn't match that required by freeze-game file.");
@@ -556,7 +556,7 @@ static int Unfreeze (STREAM stream)
     S9xReset ();
     S9xSetSoundMute (TRUE);
 
-    if ((result = UnfreezeStruct (stream, "CPU", &CPU, SnapCPU, 
+    if ((result = UnfreezeStruct (stream, "CPU", &CPU, SnapCPU,
 				  COUNT (SnapCPU))) != SUCCESS)
 	return (result);
     Memory.FixROMSpeed ();
@@ -573,7 +573,7 @@ static int Unfreeze (STREAM stream)
     S9xFixColourBrightness ();
     IPPU.RenderThisFrame = FALSE;
 
-    if ((result = UnfreezeStruct (stream, "DMA", DMA, SnapDMA, 
+    if ((result = UnfreezeStruct (stream, "DMA", DMA, SnapDMA,
 				  COUNT (SnapDMA))) != SUCCESS)
 	return (result);
     if ((result = UnfreezeBlock (stream, "VRA", Memory.VRAM, 0x10000)) != SUCCESS)
@@ -617,7 +617,7 @@ static int Unfreeze (STREAM stream)
 
     if ((result = UnfreezeStruct (stream, "SA1", &SA1, SnapSA1, COUNT(SnapSA1))) == SUCCESS)
     {
-		if ((result = UnfreezeStruct (stream, "SAR", &SA1Registers, 
+		if ((result = UnfreezeStruct (stream, "SAR", &SA1Registers,
 					      SnapSA1Registers, COUNT (SnapSA1Registers))) != SUCCESS)
 		    return (result);
 	
@@ -667,9 +667,9 @@ void FreezeStruct (STREAM stream, const char *name, void *base, FreezeData *fiel
 
     for (i = 0; i < num_fields; i++)
     {
-	if (fields [i].offset + FreezeSize (fields [i].size, 
+	if (fields [i].offset + FreezeSize (fields [i].size,
 					    fields [i].type) > len)
-	    len = fields [i].offset + FreezeSize (fields [i].size, 
+	    len = fields [i].offset + FreezeSize (fields [i].size,
 						  fields [i].type);
     }
 
@@ -750,7 +750,7 @@ void FreezeBlock (STREAM stream, const char *name, uint8 *block, int size)
     sprintf (buffer, "%s:%06d:", name, size);
     WRITE_STREAM (buffer, strlen (buffer), stream);
     WRITE_STREAM (block, size, stream);
-    
+
 }
 
 int UnfreezeStruct (STREAM stream, const char *name, void *base, FreezeData *fields,
@@ -763,9 +763,9 @@ int UnfreezeStruct (STREAM stream, const char *name, void *base, FreezeData *fie
 
     for (i = 0; i < num_fields; i++)
     {
-	if (fields [i].offset + FreezeSize (fields [i].size, 
+	if (fields [i].offset + FreezeSize (fields [i].size,
 					    fields [i].type) > len)
-	    len = fields [i].offset + FreezeSize (fields [i].size, 
+	    len = fields [i].offset + FreezeSize (fields [i].size,
 						  fields [i].type);
     }
 
@@ -852,7 +852,7 @@ int UnfreezeBlock (STREAM stream, const char *name, uint8 *block, int size)
     char buffer [20];
     int len = 0;
     int rem = 0;
-    
+
     if (READ_STREAM (buffer, 11, stream) != 11 )              return (WRONG_FORMAT);
 	if (strncmp (buffer, name, 3) != 0 )                      return (WRONG_FORMAT);
     if ( buffer [3] != ':' || (len = atoi(&buffer [4])) == 0) return (WRONG_FORMAT);
@@ -1128,7 +1128,7 @@ bool8_32 S9xUnfreezeZSNES (const char *filename)
 	    APURegisters.YA.B.Y = t [12];
 	    APURegisters.P    = t [16];
 	    APURegisters.S    = t [24];
-	    
+	
 	    APU.Cycles = READ_DWORD (&t [32]);
 	    APU.ShowROM = (IAPU.RAM [0xf1] & 0x80) != 0;
 	    APU.OutPorts [0] = t [36];
@@ -1153,7 +1153,7 @@ bool8_32 S9xUnfreezeZSNES (const char *filename)
 
 	    // SNES sound DSP register values
 	    fread (t, 1, 256, fs);
-	    
+	
 	    uint8 saved = IAPU.RAM [0xf2];
 
 	    for (i = 0; i < 128; i++)

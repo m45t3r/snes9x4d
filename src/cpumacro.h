@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -66,7 +66,7 @@ STATIC inline void SETZN8 (uint8 Work)
 STATIC inline void ADC8 (long OpAddress, struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
     uint8 Work8 = S9xGetByte (OpAddress, cpu);
-    
+
     if (CHECKDECIMAL())
     {
 	uint8 A1 = (reg->A.W) & 0xF;
@@ -107,7 +107,7 @@ STATIC inline void ADC8 (long OpAddress, struct SRegisters * reg, struct SICPU *
 
 	icpu->_Carry = Ans16 >= 0x100;
 
-	if (~(reg->AL ^ Work8) & 
+	if (~(reg->AL ^ Work8) &
 	     (Work8 ^ (uint8) Ans16) & 0x80)
 	    SETOVERFLOW();
 	else

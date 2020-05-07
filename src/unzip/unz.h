@@ -4,8 +4,8 @@
 
   This header file is used by all of the unzip source files.  Its contents
   are divided into seven more-or-less separate sections:  predefined macros,
-  OS-dependent includes, (mostly) OS-independent defines, typedefs, function 
-  prototypes (or "prototypes," in the case of non-ANSI compilers), macros, 
+  OS-dependent includes, (mostly) OS-independent defines, typedefs, function
+  prototypes (or "prototypes," in the case of non-ANSI compilers), macros,
   and global-variable declarations.
 
   ---------------------------------------------------------------------------*/

@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -215,12 +215,12 @@ char *S9xParseArgs (char **argv, int argc)
 		Settings.ForceNoTransparency = TRUE;
 		Settings.ForceTransparency = FALSE;
 	    }
-	    else if (strcasecmp (argv [i], "-hi") == 0 ||   
+	    else if (strcasecmp (argv [i], "-hi") == 0 ||
 		     strcasecmp (argv [i], "-hires") == 0)
 	    {
 		Settings.SupportHiRes = TRUE;
 	    }
-	    else if (strcasecmp (argv [i], "-nohi") == 0 ||   
+	    else if (strcasecmp (argv [i], "-nohi") == 0 ||
 		     strcasecmp (argv [i], "-nohires") == 0)
 	    {
 		Settings.SupportHiRes = FALSE;
@@ -532,7 +532,7 @@ void S9xParseCheatsFile (const char *rom_filename)
     {
         while(fgets(buf, 80, f) != NULL)
         {
-	    if ((p = strrchr (buf, '\n')) != NULL) 
+	    if ((p = strrchr (buf, '\n')) != NULL)
 		*p = '\0';
 	    if (((error = S9xGameGenieToRaw (buf, address, byte)) == NULL) ||
 		((error = S9xProActionReplayToRaw (buf, address, byte)) == NULL))

@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -88,7 +88,7 @@ struct SGFX{
     uint8	r2130;
     uint8	r2131;
     bool8_32  Pseudo;
-    
+
 #ifdef GFX_MULTI_FORMAT
     uint32 PixelFormat;
     uint32 (*BuildPixel) (uint32 R, uint32 G, uint32 B);
@@ -120,7 +120,7 @@ struct SBG
     uint32 StartPalette;
     uint32 PaletteShift;
     uint32 PaletteMask;
-    
+
     uint8 *Buffer;
     uint8 *Buffered;
     bool8_32  DirectColourMode;

@@ -867,7 +867,7 @@ bool8_32 S9xDeinitUpdate (int Width, int Height)
 		{
 			if(Scale) {
 				// put here upscale to 400x240 and 480x272
-				(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 512); 
+				(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 512);
 			} else goto __jump;
 		}
 	}
@@ -876,7 +876,7 @@ bool8_32 S9xDeinitUpdate (int Width, int Height)
 		// if scaling for non-highres (is centered)
 		if(Scale) {
 			// put here upscale to 400x240 and 480x272
-			(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 256); 
+			(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 256);
 
 		} else {
 		__jump:

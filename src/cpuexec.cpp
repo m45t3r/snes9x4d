@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -188,7 +188,7 @@ void S9xSetIRQ (uint32 source, struct SCPUState *cpu)
     cpu->IRQCycleCount = 3;
     if (cpu->WaitingForInterrupt)
     {
-		// Force IRQ to trigger immediately after WAI - 
+		// Force IRQ to trigger immediately after WAI -
 		// Final Fantasy Mystic Quest crashes without this.
 		cpu->IRQCycleCount = 0;
 		cpu->WaitingForInterrupt = FALSE;
@@ -337,7 +337,7 @@ void S9xDoHBlankProcessing (struct SCPUState *cpu, struct SAPU *apu, struct SIAP
 #ifdef SPC700_SHUTDOWN		
 					iapu->WaitCounter++;
 					iapu->APUExecuting = TRUE;
-#endif		    
+#endif		
 			    }
 			}
 			if (apu->TimerEnabled [1])
@@ -350,7 +350,7 @@ void S9xDoHBlankProcessing (struct SCPUState *cpu, struct SAPU *apu, struct SIAP
 #ifdef SPC700_SHUTDOWN		
 					iapu->WaitCounter++;
 					iapu->APUExecuting = TRUE;
-#endif		    
+#endif		
 			    }
 			}
 	    }
@@ -369,7 +369,7 @@ void S9xDoHBlankProcessing (struct SCPUState *cpu, struct SAPU *apu, struct SIAP
 //    S9xReschedule ();
     uint8 which;
     long max;
-    
+
     if (cpu->WhichEvent == HBLANK_START_EVENT ||
 	cpu->WhichEvent == HTIMER_AFTER_EVENT)
     {

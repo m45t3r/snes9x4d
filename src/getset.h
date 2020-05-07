@@ -1,19 +1,19 @@
 /*******************************************************************************
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
- 
+
   (c) Copyright 1996 - 2003 Gary Henderson (gary.henderson@ntlworld.com) and
                             Jerremy Koot (jkoot@snes9x.com)
 
   (c) Copyright 2002 - 2003 Matthew Kendora and
                             Brad Jorsch (anomie@users.sourceforge.net)
- 
 
-                      
+
+
   C4 x86 assembler and some C emulation code
   (c) Copyright 2000 - 2003 zsKnight (zsknight@zsnes.com),
                             _Demo_ (_demo_@zsnes.com), and
                             Nach (n-a-c-h@users.sourceforge.net)
-                                          
+
   C4 C++ code
   (c) Copyright 2003 Brad Jorsch
 
@@ -22,7 +22,7 @@
                             John Weidman (jweidman@slip.net),
                             neviksti (neviksti@hotmail.com), and
                             Kris Bleakley (stinkfish@bigpond.com)
- 
+
   DSP-2 emulator code
   (c) Copyright 2003 Kris Bleakley, John Weidman, neviksti, Matthew Kendora, and
                      Lord Nightmare (lord_nightmare@users.sourceforge.net
@@ -37,38 +37,38 @@
 
   S-RTC C emulator code
   (c) Copyright 2001 John Weidman
-  
-  Super FX x86 assembler emulator code 
-  (c) Copyright 1998 - 2003 zsKnight, _Demo_, and pagefault 
 
-  Super FX C emulator code 
+  Super FX x86 assembler emulator code
+  (c) Copyright 1998 - 2003 zsKnight, _Demo_, and pagefault
+
+  Super FX C emulator code
   (c) Copyright 1997 - 1999 Ivar and Gary Henderson.
 
 
 
- 
+
   Specific ports contains the works of other authors. See headers in
   individual files.
- 
+
   Snes9x homepage: http://www.snes9x.com
- 
+
   Permission to use, copy, modify and distribute Snes9x in both binary and
   source form, for non-commercial purposes, is hereby granted without fee,
   providing that this license information and copyright notice appear with
   all copies and any derived work.
- 
+
   This software is provided 'as-is', without any express or implied
   warranty. In no event shall the authors be held liable for any damages
   arising from the use of this software.
- 
+
   Snes9x is freeware for PERSONAL USE only. Commercial users should
   seek permission of the copyright holders first. Commercial use includes
   charging money for Snes9x or software derived from Snes9x.
- 
+
   The copyright holders request that bug fixes and improvements to the code
   should be forwarded to them so everyone can benefit from the modifications
   in future versions.
- 
+
   Super NES and Super Nintendo Entertainment System are trademarks of
   Nintendo Co., Limited and its subsidiary companies.
 *******************************************************************************/
@@ -100,7 +100,7 @@ INLINE uint8 S9xGetByte (uint32 Address, struct SCPUState * cpu)
     uint8 *GetAddress = Memory.Map [block = (Address >> MEMMAP_SHIFT) & MEMMAP_MASK];
 #else
     uint8 *GetAddress = Memory.Map [(Address >> MEMMAP_SHIFT) & MEMMAP_MASK];
-#endif    
+#endif
     if (GetAddress >= (uint8 *) CMemory::MAP_LAST)
     {
 #ifdef VAR_CYCLES
@@ -232,7 +232,7 @@ INLINE uint16 S9xGetWord (uint32 Address, struct SCPUState * cpu)
     uint8 *GetAddress = Memory.Map [block = (Address >> MEMMAP_SHIFT) & MEMMAP_MASK];
 #else
     uint8 *GetAddress = Memory.Map [(Address >> MEMMAP_SHIFT) & MEMMAP_MASK];
-#endif    
+#endif
     if (GetAddress >= (uint8 *) CMemory::MAP_LAST)
     {
 #ifdef VAR_CYCLES
@@ -255,7 +255,7 @@ INLINE uint16 S9xGetWord (uint32 Address, struct SCPUState * cpu)
 		return (S9xGetPPU (Address & 0xffff, &PPU, &Memory) |
 			(S9xGetPPU ((Address + 1) & 0xffff, &PPU, &Memory) << 8));
     case CMemory::MAP_CPU:
-#ifdef VAR_CYCLES   
+#ifdef VAR_CYCLES
 		cpu->Cycles += TWO_CYCLES;
 #endif
 		return (S9xGetCPU (Address & 0xffff, &IPPU, &Memory) |
@@ -280,7 +280,7 @@ INLINE uint16 S9xGetWord (uint32 Address, struct SCPUState * cpu)
 		//Address&0xFF0000 -bank
 		//bank>>1 | offset = s-ram address, unbound
 		//unbound & SRAMMask = Sram offset
-		return 
+		return
 			(*(Memory.SRAM + ((((Address&0xFF0000)>>1) |(Address&0x7FFF)) &Memory.SRAMMask)))|
 			((*(Memory.SRAM + (((((Address+1)&0xFF0000)>>1) |((Address+1)&0x7FFF)) &Memory.SRAMMask)))<<8);
 
@@ -412,7 +412,7 @@ INLINE void S9xSetByte (uint8 Byte, uint32 Address, struct SCPUState * cpu)
 		return;
 		
     case CMemory::MAP_CPU:
-#ifdef VAR_CYCLES   
+#ifdef VAR_CYCLES
 		cpu->Cycles += ONE_CYCLE;
 #endif
 		S9xSetCPU (Byte, Address & 0xffff, &PPU, cpu);
@@ -506,7 +506,7 @@ INLINE void S9xSetByte (uint8 Byte, uint32 Address, struct SCPUState * cpu)
 
     default:
     case CMemory::MAP_NONE:
-#ifdef VAR_CYCLES    
+#ifdef VAR_CYCLES
 		cpu->Cycles += SLOW_ONE_CYCLE;
 #endif
 
@@ -576,7 +576,7 @@ INLINE void S9xSetWord (uint16 Word, uint32 Address, struct SCPUState * cpu)
 		return;
 		
     case CMemory::MAP_CPU:
-#ifdef VAR_CYCLES   
+#ifdef VAR_CYCLES
 		cpu->Cycles += TWO_CYCLES;
 #endif
 		S9xSetCPU ((uint8) Word, (Address & 0xffff), &PPU, cpu);
@@ -616,10 +616,10 @@ INLINE void S9xSetWord (uint16 Word, uint32 Address, struct SCPUState * cpu)
 #endif
 		if (Memory.SRAMMask)
 		{
-			*(Memory.SRAM + 
+			*(Memory.SRAM +
 				(((Address & 0x7fff) - 0x6000 +
 				((Address & 0xf0000) >> 3) & Memory.SRAMMask))) = (uint8) Word;
-			*(Memory.SRAM + 
+			*(Memory.SRAM +
 				((((Address + 1) & 0x7fff) - 0x6000 +
 				(((Address + 1) & 0xf0000) >> 3) & Memory.SRAMMask))) = (uint8) (Word >> 8);
 			cpu->SRAMModified = TRUE;
@@ -685,7 +685,7 @@ INLINE void S9xSetWord (uint16 Word, uint32 Address, struct SCPUState * cpu)
 
     default:
     case CMemory::MAP_NONE:
-#ifdef VAR_CYCLES    
+#ifdef VAR_CYCLES
 		cpu->Cycles += SLOW_ONE_CYCLE * 2;
 #endif
 
@@ -830,7 +830,7 @@ INLINE void S9xSetPCBase (uint32 Address, struct SCPUState * cpu)
     uint8 *GetAddress = Memory.Map [block = (Address >> MEMMAP_SHIFT) & MEMMAP_MASK];
 #else
     uint8 *GetAddress = Memory.Map [(Address >> MEMMAP_SHIFT) & MEMMAP_MASK];
-#endif    
+#endif
     if (GetAddress >= (uint8 *) CMemory::MAP_LAST)
     {
 #ifdef VAR_CYCLES
@@ -854,7 +854,7 @@ INLINE void S9xSetPCBase (uint32 Address, struct SCPUState * cpu)
 		return;
 		
     case CMemory::MAP_CPU:
-#ifdef VAR_CYCLES   
+#ifdef VAR_CYCLES
 		cpu->MemSpeed = ONE_CYCLE;
 		cpu->MemSpeedx2 = TWO_CYCLES;
 #endif

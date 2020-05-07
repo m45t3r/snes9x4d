@@ -7,7 +7,7 @@ PocketGo v1.
 ## Bulding
 
 Follow those steps to setup Debian 9 environment with compatible toolchain:
-<https://github.com/steward-fu/miyoo>. 
+<https://github.com/steward-fu/miyoo>.
 
 Afterwards, run:
 

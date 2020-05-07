@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -57,7 +57,7 @@ INLINE uint8 S9xAPUGetByteZ (uint8 Address, struct SIAPU * iapu)
 #ifdef SPC700_SHUTDOWN
 	    iapu->WaitAddress2 = iapu->WaitAddress1;
 	    iapu->WaitAddress1 = iapu->PC;
-#endif	    
+#endif	
 	    return (iapu->RAM [Address]);
 	}
 	if (Address >= 0xfd)
@@ -65,7 +65,7 @@ INLINE uint8 S9xAPUGetByteZ (uint8 Address, struct SIAPU * iapu)
 #ifdef SPC700_SHUTDOWN
 	    iapu->WaitAddress2 = iapu->WaitAddress1;
 	    iapu->WaitAddress1 = iapu->PC;
-#endif	    
+#endif	
 	    uint8 t = iapu->RAM [Address];
 	    iapu->RAM [Address] = 0;
 	    return (t);
@@ -112,7 +112,7 @@ INLINE void S9xAPUSetByteZ (uint8 byte, uint8 Address, struct SIAPU * iapu, stru
 INLINE uint8 S9xAPUGetByte (uint32 Address, struct SIAPU * iapu)
 {
     Address &= 0xffff;
-    
+
     if (Address <= 0xff && Address >= 0xf0)
     {
 	if (Address >= 0xf4 && Address <= 0xf7)
@@ -120,7 +120,7 @@ INLINE uint8 S9xAPUGetByte (uint32 Address, struct SIAPU * iapu)
 #ifdef SPC700_SHUTDOWN
 	    iapu->WaitAddress2 = iapu->WaitAddress1;
 	    iapu->WaitAddress1 = iapu->PC;
-#endif	    
+#endif	
 	    return (iapu->RAM [Address]);
 	}
 	else
@@ -145,7 +145,7 @@ INLINE uint8 S9xAPUGetByte (uint32 Address, struct SIAPU * iapu)
 INLINE void S9xAPUSetByte (uint8 byte, uint32 Address, struct SIAPU * iapu, struct SAPU * apu)
 {
     Address &= 0xffff;
-    
+
     if (Address <= 0xff && Address >= 0xf0)
     {
 	if (Address == 0xf3)

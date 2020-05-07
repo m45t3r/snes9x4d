@@ -35,13 +35,13 @@
    compressed stream for a total of nine bits) or Huffman coded with a
    supplied literal code tree.  If literals are coded, then the minimum match
    length is three, otherwise it is two.
-   
+
    There are therefore four kinds of imploded streams: 8K search with coded
    literals (min match = 3), 4K search with coded literals (min match = 3),
    8K with uncoded literals (min match = 2), and 4K with uncoded literals
    (min match = 2).  The kind of stream is identified in two bits of a
    general purpose bit flag that is outside of the compressed stream.
-   
+
    Distance-length pairs are always coded.  Distance-length pairs for matched
    strings are preceded by a zero bit (to distinguish them from literals) and
    are always coded.  The distance comes first and is either the low six (4K)
@@ -149,7 +149,7 @@ UWORD cpdist8[] = {1, 129, 257, 385, 513, 641, 769, 897, 1025, 1153, 1281,
 
 /* Macros for inflate() bit peeking and grabbing.
    The usage is:
-   
+
         NEEDBITS(j)
         x = b & mask_bits[j];
         DUMPBITS(j)
@@ -188,7 +188,7 @@ unsigned n;             /* number expected */
   unsigned i;           /* bytes remaining in list */
   unsigned k;           /* lengths entered */
   unsigned j;           /* number of codes */
-  unsigned b;           /* bit length for those codes */ 
+  unsigned b;           /* bit length for those codes */
 
 
   /* get bit lengths */
@@ -821,7 +821,7 @@ int ReadByte(x)
 
 	if (pfile_in_zip_read_info->rest_read_compressed <= 0)
 	    return (0);
-	    
+	
 	if (pfile_in_zip_read_info->rest_read_compressed < uReadThis)
 	    uReadThis = (uInt) pfile_in_zip_read_info->rest_read_compressed;
 	if (uReadThis == 0)
@@ -1064,7 +1064,7 @@ struct huft *t;         /* table to free */
     q = (--p)->v.t;
     free(p);
     p = q;
-  } 
+  }
   return 0;
 }
 
@@ -1075,7 +1075,7 @@ unsigned w;             /* number of bytes to flush */
   memmove (pfile_in_zip_read_info->stream.next_out, slide, w);
   pfile_in_zip_read_info->crc32 = crc32 (pfile_in_zip_read_info->crc32,
 					 pfile_in_zip_read_info->stream.next_out,
-					 w);   
+					 w);
   pfile_in_zip_read_info->stream.next_out += w;
   pfile_in_zip_read_info->stream.avail_out -= w;
   pfile_in_zip_read_info->stream.total_out += w;
@@ -1088,7 +1088,7 @@ unsigned w;             /* number of bytes to flush */
   memmove (pfile_in_zip_read_info->stream.next_out, stack, w);
   pfile_in_zip_read_info->crc32 = crc32 (pfile_in_zip_read_info->crc32,
 					 pfile_in_zip_read_info->stream.next_out,
-					 w);   
+					 w);
   pfile_in_zip_read_info->stream.next_out += w;
   pfile_in_zip_read_info->stream.avail_out -= w;
   pfile_in_zip_read_info->stream.total_out += w;

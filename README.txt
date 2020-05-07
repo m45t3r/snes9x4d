@@ -173,7 +173,7 @@ Changes in "1.39ff.20111010.1" compared to "1.39ff.20110310.2"
   This is required to make sounds effects sound better for some games, especially
   games from squaresoft.
 * Fixed the run script to actually allow the usage of an "args.txt" file to
-  supply different commandline arguments to the emulator. 
+  supply different commandline arguments to the emulator.
 
 
 Older, pre repo.o.o changes not following the latest version numbering scheme:
@@ -216,9 +216,9 @@ Changes in v20101028:
 Changes in v20101027:
 * Center the screen when playing a HiRes game (eg Secret of Mana).
 * Implement 3x2 display mode for HiRes games.
- 
- 
-Generic Snes9x4X changes: 
+
+
+Generic Snes9x4X changes:
 
 ver 20101010
 ------------

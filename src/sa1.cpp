@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -337,7 +337,7 @@ void S9xSetSA1MemMap (uint32 which1, uint8 map)
 	for (i = c; i < c + 16; i++)
 	    Memory.Map [start + i] = SA1.Map [start + i] = block;
     }
-    
+
     for (c = 0; c < 0x200; c += 16)
     {
 	uint8 *block = &Memory.ROM [(map & 7) * 0x100000 + (c << 11) - 0x8000];
@@ -354,7 +354,7 @@ uint8 S9xGetSA1 (uint32 address)
     switch (address)
     {
 	    case 0x2300:
-			return ((uint8) ((Memory.FillRAM [0x2209] & 0x5f) | 
+			return ((uint8) ((Memory.FillRAM [0x2209] & 0x5f) |
 			 		(CPU.IRQActive & (SA1_IRQ_SOURCE | SA1_DMA_IRQ_SOURCE))));
 	    case 0x2301:
 			return ((Memory.FillRAM [0x2200] & 0xf) |
@@ -624,7 +624,7 @@ void S9xSetSA1 (uint8 byte, uint32 address)
     case 0x2234:
 	Memory.FillRAM [address] = byte;
 #if 0
-	printf ("DMA source start %06x\n", 
+	printf ("DMA source start %06x\n",
 		Memory.FillRAM [0x2232] | (Memory.FillRAM [0x2233] << 8) |
 		(Memory.FillRAM [0x2234] << 16));
 #endif
@@ -656,7 +656,7 @@ void S9xSetSA1 (uint8 byte, uint32 address)
 	    S9xSA1DMA ();
 	}
 #if 0
-	printf ("DMA dest address %06x\n", 
+	printf ("DMA dest address %06x\n",
 		Memory.FillRAM [0x2235] | (Memory.FillRAM [0x2236] << 8) |
 		(Memory.FillRAM [0x2237] << 16));
 #endif
@@ -665,7 +665,7 @@ void S9xSetSA1 (uint8 byte, uint32 address)
     case 0x2239:
 	Memory.FillRAM [address] = byte;
 #if 0
-	printf ("DMA length %04x\n", 
+	printf ("DMA length %04x\n",
 		Memory.FillRAM [0x2238] | (Memory.FillRAM [0x2239] << 8));
 #endif
 	break;
@@ -707,7 +707,7 @@ void S9xSetSA1 (uint8 byte, uint32 address)
 	    SA1.sum = 0;
 	SA1.arithmetic_op = byte & 3;
 	break;
-    
+
     case 0x2251:
 	SA1.op1 = (SA1.op1 & 0xff00) | byte;
 	break;
@@ -848,7 +848,7 @@ static void S9xSA1DMA ()
     }
     memmove (d, s, len);
     Memory.FillRAM [0x2301] |= 0x20;
-    
+
     if (Memory.FillRAM [0x220a] & 0x20)
     {
 	SA1.Flags |= IRQ_PENDING_FLAG;

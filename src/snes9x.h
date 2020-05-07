@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -269,7 +269,7 @@ struct SSettings{
     bool8_32  SuperScope;
     bool8_32  SRTC;
     uint32 ControllerOption;
-    
+
     bool8_32  ShutdownMaster;
     bool8_32  MultiPlayer5Master;
     bool8_32  SuperScopeMaster;
@@ -302,7 +302,7 @@ struct SSettings{
     bool8_32  NextAPUEnabled;
     uint8  AltSampleDecode;
     bool8_32  FixFrequency;
-    
+
     // Graphics options
     bool8_32  SixteenBit;
     bool8_32  Transparency;
@@ -329,7 +329,7 @@ struct SSettings{
     bool8_32  TurboMode;
     uint32 TurboSkipFrames;
     uint32 AutoMaxSkipFrames;
-    
+
 // Fixes for individual games
     uint32 StrikeGunnerOffsetHack;
     bool8_32  ChuckRock;
@@ -340,7 +340,7 @@ struct SSettings{
     bool8_32  BS;	// Japanese Satellite System games.
     bool8_32  DaffyDuck;
     uint8  APURAMInitialValue;
-    
+
 #ifdef __WIN32__
     int    SoundDriver;
 #endif

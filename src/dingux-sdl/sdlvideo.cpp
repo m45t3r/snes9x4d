@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -88,7 +88,7 @@ void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
 #ifdef CAANOO
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_JOYSTICK /*|(Settings.NextAPUEnabled ? SDL_INIT_AUDIO : 0)*/) < 0 )
 #else
-	if (SDL_Init(SDL_INIT_VIDEO /*| (Settings.NextAPUEnabled ? SDL_INIT_AUDIO : 0)*/) < 0 ) 
+	if (SDL_Init(SDL_INIT_VIDEO /*| (Settings.NextAPUEnabled ? SDL_INIT_AUDIO : 0)*/) < 0 )
 #endif
  	{
 		printf("Could not initialize SDL(%s)\n", SDL_GetError());
@@ -219,7 +219,7 @@ bool8 S9xReadMousePosition (int /* which1 */, int &/* x */, int & /* y */,
 	return (FALSE);
 }
 
-bool8 S9xReadSuperScopePosition (int & /* x */, int & /* y */, 
+bool8 S9xReadSuperScopePosition (int & /* x */, int & /* y */,
 				 uint32 & /* buttons */)
 {
 	return (FALSE);

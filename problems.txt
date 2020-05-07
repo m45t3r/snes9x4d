@@ -4,7 +4,7 @@ o FIXED: Missing sprites on Captain Commando (all negative x coords) - only
   on asm version, but now...
 o FIXED: Flashing screen on Captain Commando.
 o FIXED: Super Street Fighter 2 won't respond to joy-pad controls.
-o FIXED: Final Fantasy V - text windows are partially hidden - background 
+o FIXED: Final Fantasy V - text windows are partially hidden - background
   priority-per tile problem. - needed dual-windowing AND/OR logic mode.
 o FIXED: Tinytoons uses Mode 7 priority per pixel.
 o FIXED: Formation Soccer seems to need transparent mode 7 graphics and sprites
@@ -73,13 +73,13 @@ o FIXED: SFC Bastard has offset problems on Mode 7 graphics on title screen.
 o FIXED: SOUND: SFC Bastard (bastardy.smc) locks with sound enabled.
 o FIXED: GANBARE GOEMON 2 (sf16232a.078) requires SavedOAMAddr to be set in
   OAMAddr after end of frame (at max v_counter?).
-o FIXED: SuperOffroad: The Baj has screen flash/timing problems during game - 
+o FIXED: SuperOffroad: The Baj has screen flash/timing problems during game -
   skipping IRQs ? - It was reseting the H-IRQ position so another IRQ would
   occur on the scanline it was already on.
 o FIXED: R-TYPE 3 has missing scrolling "space" background during game.
   (location $54 contains $10, needs to contain $11) - not a bug, when run on a
   real SNES the background is missing as well.
-o FIXED: Toy Story plays sample that walks off end of memory - was causing 
+o FIXED: Toy Story plays sample that walks off end of memory - was causing
   emulator crashes.
 o FIXED: Bubsy has corrupt graphics - it required register $4210 bit 7 to
   trigger at the end of h-blank of line 224, not at the start.
@@ -117,7 +117,7 @@ o Priority on snestest.smc Character Test are incorrect.
 o Clay Fighter 2 writes to $3007-8 and reads from $3211-4.
 o Shien The Blade Chase tests bit 0 of $4200 until it goes 0 - reading
   $4200 must reflect joypad reading status.
-o FIXED: NBAJam (not Tournament Edition) has an odd memory map - accesses 
+o FIXED: NBAJam (not Tournament Edition) has an odd memory map - accesses
   code at $3Dxxxx. (corrupt ROM image).
 o Super Bases Loaded uses Mode 5 and the background offset mode.
 o FIXED: Super Bases Loaded 2 has an odd memory map: writes to $E00000 and reads from
@@ -180,14 +180,14 @@ o FIXED: SKI PARADISE (skiparad.fig) uses mode 7 priority per pixel
 o The Magical Quest (smmouse.smc) has an intro with bad raster glitches - uses
   exact CPU timing!
 o FIXED: Madden 96 needs -FH and has new Antherox intro.
-o FIXED: College Slam (collslam.1 on CD) thinks non-standard controllers are 
+o FIXED: College Slam (collslam.1 on CD) thinks non-standard controllers are
   connected. It writes $12 and $02 to $4016.
 o The sound on Speedy Gonzales sounds out of tune - seems to vary the
   frequency a lot - first low byte then the high byte.
 o Stargate has sound clicks on channels 5 and 6 on title page.
 o FIXED: Ranman1/2 Part 1 (ranma121.smc) crashes SPC700 at start up - looks like a
   65c816 addressing mode/instruction bug! - corrupt ROM image.
-o Speedy Gonzales starts a long DMA to $2180 at v-line 1 with the screen not 
+o Speedy Gonzales starts a long DMA to $2180 at v-line 1 with the screen not
   blanked.
 o FIXED: acc-elf.smc works on v0.1 but crashes with a STP instruction in v0.24.
 o FIXED: FLYING HERO BUGYURU flyhero.smc does not work and image is odd size so code
@@ -265,7 +265,7 @@ o Lost Vikings locks or resets on all versions.
 o Uniracers enables sub-screen addition on bg # 2 but with nothing on the
   the sub-screen. Should it be either the fixed colour or back-drop
   colour get added instead?
-o Wile E's Revenge has missing music, and very quite sound. Also displays 
+o Wile E's Revenge has missing music, and very quite sound. Also displays
   rotated mode 7 character picture during titles.
 o Pilot Wings tries to set up a V-IRQ to happen on the line its already on,
   uses IRQ to switch to mode 7. -h 120 fixes problem. Cycle timing must be
@@ -330,7 +330,7 @@ o FIXED: Commodore 64 emulator doesn't work with asm CPU core - works fine with
   C code.
 o FIXED: Chrono Trigger: crash bug in clipping code - use snapshot F6 and press 's'.
   Corrupts stack causing crash.
-o FIXED: Toy Story only updates screen every-other frame and woody flashes 
+o FIXED: Toy Story only updates screen every-other frame and woody flashes
   continuously. (Woody flashing is due to hacked ROM)
   Toy Story requires NMI to happen immediately after a WAI instruction.
 o Toy Story has garbled sound output just before game starts. DOS port only.
@@ -346,7 +346,7 @@ o FIXED: King of the Rally has missing music on the car-feature selection screen
 o FIXED: (again) Lufia I locks is shutdown is enabled waiting for SPC700.
   made the SPC700 wake up if the 65c816 reads from the one of the 4 comm ports.
   The SPC700 used to only wake up when the 65c816 wrote to the ports.
-o WWF-Arcade crashes - calls a subroutine at address $EE758D which only 
+o WWF-Arcade crashes - calls a subroutine at address $EE758D which only
   contains zeros at that address. Memory map bug?
 o WWF-Super Wrestlemania and WWF-Raw both seem to display junk background
   layers - the ROM enables the layers but does not set up any background data.
@@ -364,7 +364,7 @@ o Stargate sometimes has a slight click sound at the end of each rapid soft
   problem, has attack rate of 10ms, decay 1200ms, infinate sustain and a
   sustain level of 5.
 o Kirby Superstar - SA-1 game? YEP!
-o The Lion King: under sound test, continue long song contains some odd 
+o The Lion King: under sound test, continue long song contains some odd
   sounding notes. Is a particular type of sample not being decoded correctly?
 o Clicks on the title music of Madden 98.
 o Bugs Bunny has sound repeat problems when Bugs kicks a dog. - not a problem,
@@ -399,7 +399,7 @@ o FIXED: Dragon Quest 5: the monsters disappear during fight sequences when the
   fireball is used (freeze file 004).
   - H-DMA needs to continue for one extra line, e.g. for screen height of
     239 H-DMA needs to run from line 0 to line 239, inclusive.
-o Stargate sound click problem during some music - makes large changes to 
+o Stargate sound click problem during some music - makes large changes to
   channel volume levels while the sound is still playing, but other problems
   seem to be causing the click.
 o Super Air Diver 2, Pilotwings and SD Racing DSP all suffer from the same
@@ -427,7 +427,7 @@ o FIXED: Primal Rage v1.20 - major graphics problem problems, not in v1.19.
 o FIXED: Mario Kart - single player mode, pressing select to use rear view mirror
   results in corrupt graphics. - inverse of an empty colour window should be
   whole screen.
-o FIXED:Missing logo from FF5 start up screen. - mode 7 was always using 
+o FIXED:Missing logo from FF5 start up screen. - mode 7 was always using
   main-screen z-buffer.
 o FIXED: Something is zeroing the ZSNES SfxnRamBanks variable in Yoshi's Island,
   allowing the code to set junk values in the ROMBR register which in turn
@@ -435,7 +435,7 @@ o FIXED: Something is zeroing the ZSNES SfxnRamBanks variable in Yoshi's Island,
   - ZSNES code bug.
 o FIXED: Background scrolling glitches on Stargate.
   - skipping NMIs. Stopped NMI retriggering in same screen.
-o Metal Combat -  in the title screen speech the '93 of the 1993 words get cut 
+o Metal Combat -  in the title screen speech the '93 of the 1993 words get cut
   off earily
 o POWER RANGERS FIGHT during the game the score area breaks up and scrolls when
   it shouldn't and there is corruption in the character graphics.

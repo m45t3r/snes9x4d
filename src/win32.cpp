@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -216,7 +216,7 @@ bool8 S9xOpenSnapshotFile( const char *fname, bool8 read_only, STREAM *file)
         else
         {
             sprintf (String, "Cannot create freeze file \"%s\". Directory is read-only or does not exist.", filename);
-            
+
             S9xMessage (S9X_ERROR, S9X_FREEZE_FILE_NOT_FOUND, String);
         }
     }
@@ -268,33 +268,33 @@ bool8 SetupSound (long rate, bool8 sixteen_bit, bool8 stereo)
             delete SoundBuffer;
             SoundBuffer = NULL;
         }
-        
+
         _interval = 20;
         if (Settings.SoundBufferSize < 1)
             Settings.SoundBufferSize = 1;
         if (Settings.SoundBufferSize > 64)
             Settings.SoundBufferSize = 64;
-        
+
         _buffernos = 4 * Settings.SoundBufferSize;
         int s = (rate * _interval *
-                 (Settings.Stereo ? 2 : 1) * 
+                 (Settings.Stereo ? 2 : 1) *
                  (Settings.SixteenBitSound ? 2 : 1)) / 1000;
-        
+
         _blocksize = 64;
         while (_blocksize < s)
             _blocksize *= 2;
-        
+
         _buffersize = _blocksize * _buffernos;
         _lastblock = 0;
-        
+
         StartPlaying = false;
-        
+
         so.playback_rate = Settings.SoundPlaybackRate;
         so.stereo = Settings.Stereo;
         so.sixteen_bit = Settings.SixteenBitSound;
         so.buffer_size = _blocksize;
         so.encoded = FALSE;
-        
+
         if (DirectX.SetSoundMode ())
         {
             SoundBuffer = new uint8 [_blocksize * _buffernos + 1024 * 64];
@@ -308,7 +308,7 @@ bool8 SetupSound (long rate, bool8 sixteen_bit, bool8 stereo)
             _maxsamplecount /= 2;
         if (so.stereo)
             _maxsamplecount /= 2;
-        
+
         if (so.samples_mixed_so_far >= _maxsamplecount)
             so.samples_mixed_so_far = 0;
         so.mute_sound = FALSE;
@@ -360,8 +360,8 @@ bool8 RealSetupSound (long rate, bool8 sixteen_bit, bool8 stereo)
         Settings.SoundBufferSize = 64;
 
     _buffernos = 4 * Settings.SoundBufferSize;
-    int s = (rate * _interval * 
-             (Settings.Stereo ? 2 : 1) * 
+    int s = (rate * _interval *
+             (Settings.Stereo ? 2 : 1) *
              (Settings.SixteenBitSound ? 2 : 1)) / 1000;
 
     _blocksize = 64;
@@ -446,7 +446,7 @@ extern "C" void S9xGenerateSound(void)
 	}
 	else
 	    byte_offset = so.samples_mixed_so_far;
-	    
+	
         while (sample_count > _maxsamplecount)
         {
             S9xMixSamplesO (SoundBuffer, _maxsamplecount, byte_offset);
@@ -525,20 +525,20 @@ void ProcessSound (void)
         write_pos = curr_block * _blocksize;
         _lastblock = curr_block;
 
-        hResult = DirectX.lpDSB->Lock (write_pos, _blocksize, (void **)&B1, 
+        hResult = DirectX.lpDSB->Lock (write_pos, _blocksize, (void **)&B1,
                                        &S1, (void **)&B2, &S2, 0);
         if (hResult == DSERR_BUFFERLOST)
         {
             DirectX.lpDSB->Restore ();
-            hResult = DirectX.lpDSB->Lock (write_pos, _blocksize, 
-                                           (void **)&B1, &S1, (void **)&B2, 
+            hResult = DirectX.lpDSB->Lock (write_pos, _blocksize,
+                                           (void **)&B1, &S1, (void **)&B2,
                                            &S2, 0);
         }
 
         if( hResult != DS_OK)
             return;
 
-        if( mute || Settings.ForcedPause || 
+        if( mute || Settings.ForcedPause ||
             Settings.Paused || Settings.StopEmulation)
         {
             if (so.sixteen_bit)
@@ -638,7 +638,7 @@ bool8 S9xReadSuperScopePosition (int &x, int &y, uint32 &buttons)
 {
     x = (int) ((GUI.MouseX - dstRect.left) * (256.0 / (dstRect.right - dstRect.left)));
     y = (int) ((GUI.MouseY - dstRect.top) * (224.0 / (dstRect.bottom - dstRect.top)));
-    buttons = GUI.MouseButtons | (superscope_turbo << 2) | 
+    buttons = GUI.MouseButtons | (superscope_turbo << 2) |
               (superscope_pause << 3);
 
     return (TRUE);
@@ -837,14 +837,14 @@ bool S9xGetState (WORD KeyIdent)
             case 46:return !Joystick [j].UDown;
             case 47:return !Joystick [j].VUp;
             case 48:return !Joystick [j].VDown;
-            
+
             default:
                 if ((KeyIdent & 0xff) > 40)
                     return false;
-                
+
                 return !Joystick [j].Button [(KeyIdent & 0xff) - 8];
         }
-    } 
+    }
 
     return ((GetKeyState (KeyIdent) & 0x80) == 0);
 }
@@ -874,7 +874,7 @@ void CheckAxis (int val, int min, int max, bool &first, bool &second)
     }
     else
         first = false;
-    
+
     if (Normalize (val, min, max) > S9X_JOY_NEUTRAL)
     {
         first = false;
@@ -888,21 +888,21 @@ static void S9xWinScanJoypads ()
 {
     uint8 PadState[2];
     JOYINFOEX jie;
-    
+
     for (int C = 0; C != 16; C ++)
     {
         if (Joystick[C].Attached)
         {
             jie.dwSize = sizeof (jie);
             jie.dwFlags = JOY_RETURNALL;
-            
+
             if (joyGetPosEx (JOYSTICKID1+C, &jie) != JOYERR_NOERROR)
             {
                 Joystick[C].Attached = false;
                 continue;
             }
-            
-            CheckAxis (jie.dwXpos, 
+
+            CheckAxis (jie.dwXpos,
                        Joystick[C].Caps.wXmin, Joystick[C].Caps.wXmax,
                        Joystick[C].Left, Joystick[C].Right);
             CheckAxis (jie.dwYpos,
@@ -929,28 +929,28 @@ static void S9xWinScanJoypads ()
                     Joystick[C].PovLeft = false;
                     Joystick[C].PovRight = false;
                     break;
-                    
+
                 case JOY_POVFORWARD:
                     Joystick[C].PovDown = false;
                     Joystick[C].PovUp = true;
                     Joystick[C].PovLeft = false;
                     Joystick[C].PovRight = false;
                     break;
-                    
+
                 case JOY_POVLEFT:
                     Joystick[C].PovDown = false;
                     Joystick[C].PovUp = false;
                     Joystick[C].PovLeft = true;
                     Joystick[C].PovRight = false;
                     break;
-                    
+
                 case JOY_POVRIGHT:
                     Joystick[C].PovDown = false;
                     Joystick[C].PovUp = false;
                     Joystick[C].PovLeft = false;
                     Joystick[C].PovRight = true;
                     break;
-                    
+
                 default:
                     Joystick[C].PovDown = false;
                     Joystick[C].PovUp = false;
@@ -958,7 +958,7 @@ static void S9xWinScanJoypads ()
                     Joystick[C].PovRight = false;
                     break;
             }
-            
+
             for (int B = 0; B < 32; B ++)
                 Joystick[C].Button[B] = (jie.dwButtons & (1 << B)) != 0;
         }
@@ -973,7 +973,7 @@ static void S9xWinScanJoypads ()
             PadState[0] |= !S9xGetState (Joypad[J].L)      ?  32 : 0;
             PadState[0] |= !S9xGetState (Joypad[J].X)      ?  64 : 0;
             PadState[0] |= !S9xGetState (Joypad[J].A)      ? 128 : 0;
-    
+
             PadState[1]  = 0;
             PadState[1] |= !S9xGetState (Joypad[J].Right)  ?   1 : 0;
             PadState[1] |= !S9xGetState (Joypad[J].Right_Up)  ? 1 + 8 : 0;
@@ -1164,25 +1164,25 @@ bool8 S9xDeinitUpdate (int Width, int Height, bool8 sixteen_bit)
         {
             DDSCAPS caps;
             caps.dwCaps = DDSCAPS_BACKBUFFER;
-            
+
             if (DirectX.lpDDSPrimary2->GetAttachedSurface (&caps, &pDDSurface) != DD_OK ||
                 pDDSurface == NULL)
             {
                 lpDDSurface2 = DirectX.lpDDSPrimary2;
             }
-            else 
+            else
                 lpDDSurface2 = pDDSurface;
-            
+
             if (GUI.Stretch || GUI.Scale == 1 || !GUI.FullScreen ||
                 !LockSurface2 (lpDDSurface2, &Dst))
             {
                 lpDDSurface2 = DirectX.lpDDSOffScreen2;
                 if (!LockSurface2 (lpDDSurface2, &Dst))
                     return (false);
-                
+
                 PrimarySurfaceLockFailed = true;
             }
-            
+
             if (Settings.SixteenBit && GUI.Scale >= 3 && GUI.Scale <= 6)
             {
                 // Clear the old areas of the SNES rendered image otherwise the
@@ -1190,7 +1190,7 @@ bool8 S9xDeinitUpdate (int Width, int Height, bool8 sixteen_bit)
                 // data.
                 static int LastWidth;
                 static int LastHeight;
-                
+
                 if (Width < LastWidth)
                 {
                     for (int i = 0; i < Height; i++)
@@ -1218,7 +1218,7 @@ bool8 S9xDeinitUpdate (int Width, int Height, bool8 sixteen_bit)
                 {
                     SSurface tmp;
                     BYTE buf [MAX_SNES_WIDTH * MAX_SNES_HEIGHT * 4];
-                    
+
                     tmp.Surface = buf;
                     tmp.Pitch = MAX_SNES_WIDTH * 4;
                     tmp.Width = MAX_SNES_WIDTH;
@@ -1230,12 +1230,12 @@ bool8 S9xDeinitUpdate (int Width, int Height, bool8 sixteen_bit)
             else
                 RenderMethod (Src, Dst, &srcRect);
         }
-        
+
         RECT lastRect = GUI.SizeHistory [GUI.FlipCounter % GUI.NumFlipFrames];
         if (PrimarySurfaceLockFailed)
         {
             POINT p;
-            
+
             if (GUI.Stretch)
             {
                 GetClientRect (GUI.hWnd, &dstRect);
@@ -1251,7 +1251,7 @@ bool8 S9xDeinitUpdate (int Width, int Height, bool8 sixteen_bit)
                 GetClientRect (GUI.hWnd, &dstRect);
                 int width = srcRect.right - srcRect.left;
                 int height = srcRect.bottom - srcRect.top;
-                
+
                 if (GUI.Scale == 1)
                 {
                     width = MAX_SNES_WIDTH;
@@ -1261,7 +1261,7 @@ bool8 S9xDeinitUpdate (int Width, int Height, bool8 sixteen_bit)
                 p.x = ((dstRect.right - dstRect.left) - width) >> 1;
                 p.y = ((dstRect.bottom - dstRect.top) - height) >> 1;
                 ClientToScreen (GUI.hWnd, &p);
-                
+
                 dstRect.top = p.y;
                 dstRect.left = p.x;
                 dstRect.bottom = dstRect.top + height;
@@ -1276,25 +1276,25 @@ bool8 S9xDeinitUpdate (int Width, int Height, bool8 sixteen_bit)
         {
             DDSCAPS caps;
             caps.dwCaps = DDSCAPS_BACKBUFFER;
-            
+
             if (DirectX.lpDDSPrimary2->GetAttachedSurface (&caps, &pDDSurface) != DD_OK ||
                 pDDSurface == NULL)
             {
                 lpDDSurface2 = DirectX.lpDDSPrimary2;
             }
-            else 
+            else
                 lpDDSurface2 = pDDSurface;
-            
+
             while (lpDDSurface2->Blt (&dstRect, DirectX.lpDDSOffScreen2, &srcRect, DDBLT_WAIT, NULL) == DDERR_SURFACELOST)
                 lpDDSurface2->Restore ();
         }
-        
+
         RECT rect;
         DDBLTFX fx;
-        
+
         memset (&fx, 0, sizeof (fx));
         fx.dwSize = sizeof (fx);
-        
+
         if (GUI.FlipCounter >= GUI.NumFlipFrames)
         {
             if (lastRect.top < dstRect.top)
@@ -1334,7 +1334,7 @@ bool8 S9xDeinitUpdate (int Width, int Height, bool8 sixteen_bit)
                                    DDBLT_WAIT | DDBLT_COLORFILL, &fx);
             }
         }
-        
+
         DirectX.lpDDSPrimary2->Flip (NULL, DDFLIP_WAIT);
     }
     else
@@ -1346,7 +1346,7 @@ bool8 S9xDeinitUpdate (int Width, int Height, bool8 sixteen_bit)
         dstRect = srcRect;
 	RenderMethod (Src, Dst, &srcRect);
     }
-    
+
     GUI.SizeHistory [GUI.FlipCounter % GUI.NumFlipFrames] = dstRect;
     GUI.FlipCounter++;
 
@@ -1531,15 +1531,15 @@ void S9xSetWinPixelFormat ()
                             S9xSetRenderPixelFormat (RGB565);
                             Init_2xSaI (565);
                         }
-        
+
         if (!VOODOO_MODE &&
             !OPENGL_MODE &&
             ((GUI.ScreenDepth == 8 && Settings.SixteenBit) ||
              (GUI.ScreenDepth == 16 && !Settings.SixteenBit) ||
              GUI.ScreenDepth == 24 || GUI.ScreenDepth == 32))
             GUI.NeedDepthConvert = TRUE;
-        
-        if (Settings.SixteenBit && 
+
+        if (Settings.SixteenBit &&
             (GUI.ScreenDepth == 24 || GUI.ScreenDepth == 32))
         {
             GUI.RedShift += 3;
@@ -1558,7 +1558,7 @@ void S9xSetWinPixelFormat ()
 	{
 	    int g = (j * 31) / (6 - 1);
 	    for (int k = 0; k < 6; k++)
-	    { 
+	    {
 		int b = (k * 31) / (6 - 1);
 
 		FixedColours [l].red = r << 3;
@@ -1574,24 +1574,24 @@ void S9xSetWinPixelFormat ()
     for (r = 0; r <= (int) MAX_RED; r++)
     {
 	int cr, g, q;
-      
+
 	int k = 6 - 1;
 	cr = (r * k) / MAX_RED;
 	q  = (r * k) % MAX_RED;
-	if (q > d && cr < k) 
+	if (q > d && cr < k)
 	    cr++;
 	diffr = abs (cr * k - r);
 	for (g = 0; g <= (int) MAX_GREEN; g++)
 	{
 	    int cg, b;
-	  
+	
 	    k  = 6 - 1;
 	    cg = (g * k) / MAX_GREEN;
 	    q  = (g * k) % MAX_GREEN;
 	    if(q > d && cg < k)
 		cg++;
 	    diffg = abs (cg * k - g);
-	    for (b = 0; b <= (int) MAX_BLUE; b++) 
+	    for (b = 0; b <= (int) MAX_BLUE; b++)
 	    {
 		int cb;
 		int rgb = BUILD_PIXEL2(r, g, b);
@@ -1617,12 +1617,12 @@ void S9xSetWinPixelFormat ()
 	for (r = MAX_RED; r >= 0; r--)
 	{
 	    int g;
-      
+
 	    for (g = MAX_GREEN; g >= 0; g--)
 	    {
 		int b;
-	  
-		for (b = MAX_BLUE; b >= 0; b--) 
+	
+		for (b = MAX_BLUE; b >= 0; b--)
 		{
 		    int rgb = BUILD_PIXEL2(r, g, b);
 
@@ -1642,7 +1642,7 @@ void S9xSetWinPixelFormat ()
 		    else
 			if (color_diff[rgb] > newmaxdiff)
 			    newmaxdiff = color_diff[rgb];
-		    
+		
 		}
 	    }
 	}
@@ -1671,7 +1671,7 @@ void Convert8To24 (SSurface *src, SSurface *dst, RECT *srect)
     for (register int y = 0; y < height; y++)
     {
         register uint8 *s = ((uint8 *) src->Surface + y * src->Pitch + offset1);
-        register uint32 *d = (uint32 *) ((uint8 *) dst->Surface + 
+        register uint32 *d = (uint32 *) ((uint8 *) dst->Surface +
                                          y * dst->Pitch + offset2);
         for (register int x = 0; x < width; x++)
             *d++ = conv [PPU.CGDATA [*s++]];
@@ -1689,7 +1689,7 @@ void Convert16To24 (SSurface *src, SSurface *dst, RECT *srect)
     for (register int y = 0; y < height; y++)
     {
         register uint16 *s = (uint16 *) ((uint8 *) src->Surface + y * src->Pitch + offset1);
-        register uint32 *d = (uint32 *) ((uint8 *) dst->Surface + 
+        register uint32 *d = (uint32 *) ((uint8 *) dst->Surface +
                                          y * dst->Pitch + offset2);
         for (register int x = 0; x < width; x++)
         {
@@ -1718,10 +1718,10 @@ void Convert8To24Packed (SSurface *src, SSurface *dst, RECT *srect)
     {
         register uint8 *s = ((uint8 *) src->Surface + y * src->Pitch + offset1);
         register uint8 *d = ((uint8 *) dst->Surface + y * dst->Pitch + offset2);
-        
+
 #ifdef LSB_FIRST
         if (GUI.RedShift < GUI.BlueShift)
-#else	    
+#else	
 	if (GUI.RedShift > GUI.BlueShift)
 #endif
         {
@@ -1762,10 +1762,10 @@ void Convert16To24Packed (SSurface *src, SSurface *dst, RECT *srect)
     {
         register uint16 *s = (uint16 *) ((uint8 *) src->Surface + y * src->Pitch + offset1);
         register uint8 *d = ((uint8 *) dst->Surface + y * dst->Pitch + offset2);
-        
+
 #ifdef LSB_FIRST
         if (GUI.RedShift < GUI.BlueShift)
-#else	    
+#else	
 	if (GUI.RedShift > GUI.BlueShift)
 #endif
         {
@@ -1828,7 +1828,7 @@ void Convert8To16 (SSurface *src, SSurface *dst, RECT *srect)
     for (int p = 0; p < 256; p++)
     {
         uint32 pixel = PPU.CGDATA [p];
-        
+
         conv [p] = (levels [pixel & 0x1f] << GUI.RedShift) |
                    (levels [(pixel >> 5) & 0x1f] << GUI.GreenShift) |
                    (levels [(pixel >> 10) & 0x1f] << GUI.BlueShift);
@@ -1836,7 +1836,7 @@ void Convert8To16 (SSurface *src, SSurface *dst, RECT *srect)
     for (register int y = 0; y < height; y++)
     {
         register uint8 *s = ((uint8 *) src->Surface + y * src->Pitch + offset1);
-        register uint16 *d = (uint16 *) ((uint8 *) dst->Surface + 
+        register uint16 *d = (uint16 *) ((uint8 *) dst->Surface +
                                          y * dst->Pitch + offset2);
         for (register int x = 0; x < width; x += 2)
         {
@@ -1950,7 +1950,7 @@ void S9xLoadSDD1Data ()
 
     FILE *fs = fopen (index, "rb");
     int len = 0;
-    
+
     if (fs)
     {
         // Index is stored as a sequence of entries, each entry being
@@ -1965,7 +1965,7 @@ void S9xLoadSDD1Data ()
         fread (Memory.SDD1Index, 1, len, fs);
         fclose (fs);
         Memory.SDD1Entries = len / 12;
-        
+
         if (!(fs = fopen (data, "rb")))
         {
             free ((char *) Memory.SDD1Index);
@@ -1980,7 +1980,7 @@ void S9xLoadSDD1Data ()
             Memory.SDD1Data = (uint8 *) malloc (len);
             fread (Memory.SDD1Data, 1, len, fs);
             fclose (fs);
-            
+
             qsort (Memory.SDD1Index, Memory.SDD1Entries, 12,
                    S9xCompareSDD1IndexEntries);
         }

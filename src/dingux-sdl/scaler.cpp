@@ -129,7 +129,7 @@ void upscale_256x224_to_384x240_for_400x240(uint32_t *dst, uint32_t *src, int wi
             source += 2;
 
         }
-        dst += (400 - 384) / 2; 
+        dst += (400 - 384) / 2;
         Eh += 224; if(Eh >= 240) { Eh -= 240; dh++; }
     }
 }
@@ -190,8 +190,7 @@ void upscale_256x224_to_384x272_for_480x272(uint32_t *dst, uint32_t *src, int wi
             source += 2;
 
         }
-        dst += (480 - 384) / 2; 
+        dst += (480 - 384) / 2;
         Eh += 224; if(Eh >= 272) { Eh -= 272; dh++; }
     }
 }
- 

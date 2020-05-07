@@ -109,7 +109,7 @@ contained inside one module.
 
 The SPC700 and the 65c816 communicate via 4 bi-directional, 8-bit I/O ports.
 The SPC700 has its own 64k RAM used to store a program downloaded from 65c816
-and sound sample data. 
+and sound sample data.
 
 The CPU has a built-in, small, 64 byte ROM used as boot-strap code to
 download a more complex program and sample data from the game ROM via the
@@ -143,7 +143,7 @@ Interrupts
 ----------
 
 The 65c816 provides two external interrupt sources: IRQ, which can be masked,
-and NMI, which cannot. 
+and NMI, which cannot.
 
 The IRQ line is connected to an output on one of the graphics chips, that,
 it turn can be programmed to generate an IRQ at the start of a scanline, at
@@ -402,7 +402,7 @@ H-DMA
 H-DMA is like DMA in that data is transferred from ROM or RAM to PPU
 registers without the intervention of the CPU. However, instead of all the
 data being transferred in one block, a few bytes are transferred at a time,
-just before the start of the each scanline. 
+just before the start of the each scanline.
 
 H-DMA shares the same channels as normal DMA, so each channel can be set up
 for DMA or H-DMA, but since normal DMA only occurs during v-blank and H-DMA
@@ -438,13 +438,13 @@ work RAM for the 'FX chip and as save-game positions, if the ROM supports it.
 The 'FX chip has 16 16-bit registers and built-in fast integer multiply.
 Although the Super FX and the 65c816 can run in parallel, the 'FX chip can't
 access the game pack ROM or RAM at the same time as the main SNES CPU, so most
-games just get the SNES CPU to execute a wait loop in the SNES work RAM. 
+games just get the SNES CPU to execute a wait loop in the SNES work RAM.
 
 The 'FX can't access the SNES custom hardware chips, so if the 'FX has
 rendered a screen image in its work RAM, it has to go to sleep while the SNES
 CPU copies the screen to video RAM, usually using DMA. The SNES CPU can pass
 parameters to 'FX routines either by writing them into the 'FX work RAM or
-writing directly into the 'FX registers, which it can be accessed by the CPU 
+writing directly into the 'FX registers, which it can be accessed by the CPU
 only when the 'FX chip is sleeping.
 
 There are two versions of the 'FX chip, the original 10MHz chip used in Star

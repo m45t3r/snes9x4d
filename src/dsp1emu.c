@@ -223,7 +223,7 @@ double SinTable2[INCR];
 
 double Atan(double x)
 {
-	if ((x>=1) || (x<=1)) 
+	if ((x>=1) || (x<=1))
 		return (x/(1+0.28*x*x));
 	else
 		return (PI/2 - Atan(1/x));
@@ -675,7 +675,7 @@ short SinAzs;
 short CosAzs;
 
 // Clipped Zenith angle
-short SinAZS; 
+short SinAZS;
 short CosAZS;
 short SecAZS_C1;
 short SecAZS_E1;
@@ -683,7 +683,7 @@ short SecAZS_C2;
 short SecAZS_E2;
 
 const short MaxAZS_Exp[16] = {
-	0x38b4, 0x38b7, 0x38ba, 0x38be, 0x38c0, 0x38c4, 0x38c7, 0x38ca, 
+	0x38b4, 0x38b7, 0x38ba, 0x38be, 0x38c0, 0x38c4, 0x38c7, 0x38ca,
 	0x38ce,	0x38d0, 0x38d4, 0x38d7, 0x38da, 0x38dd, 0x38e0, 0x38e4
 };
 
@@ -739,7 +739,7 @@ void DSP1_Parameter(short Fx, short Fy, short Fz, short Lfe, short Les, short Aa
 	// Raster number of imaginary center and horizontal line
 	*Vof = 0;
 
-	if ((Azs != AZS) || (Azs == MaxAZS)) 
+	if ((Azs != AZS) || (Azs == MaxAZS))
 	{
 		if (Azs == -32768) Azs = -32767;
 
@@ -959,7 +959,7 @@ void DSPOp06()
       Log_Message("OP06 H:%d V:%d S:%d",Op06H,Op06V,Op06S);
    #endif
 }
-#endif 
+#endif
 
 
 short matrixC[3][3];
@@ -1259,7 +1259,7 @@ void DSPOp0B()
 }
 
 void DSPOp1B()
-{   
+{
     Op1BS = (Op1BX * matrixB[0][0] + Op1BY * matrixB[0][1] + Op1BZ * matrixB[0][2]) >> 15;
 
 	#ifdef DebugDSP1

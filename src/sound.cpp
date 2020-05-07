@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -121,7 +121,7 @@ int AudioOpen(unsigned long freq, unsigned long minbufsize, unsigned long bitrat
         Frequency = freq;
 
     so.playback_rate = Frequency;
-    
+
     if(stereo) so.stereo = TRUE;
     else so.stereo = FALSE;
 
@@ -161,8 +161,8 @@ int AudioOpen(unsigned long freq, unsigned long minbufsize, unsigned long bitrat
         }
 
     if(prelude) prelude = OpenPrelude(Type, freq, minbufsize);
-    
-    
+
+
     if(prelude) return 1; else printf("Defaulting to AHI...\n");
 
     /* only 1 channel right? */
@@ -180,7 +180,7 @@ int AudioOpen(unsigned long freq, unsigned long minbufsize, unsigned long bitrat
         printf("AHI failed to open: %d\n", AHIData);
         return 0;
     }
-    
+
     so.buffer_size = AHIData->BufferSize; // in bytes
         if (so.buffer_size > MAX_BUFFER_SIZE) so.buffer_size = MAX_BUFFER_SIZE;
 
@@ -206,7 +206,7 @@ int AudioOpen(unsigned long freq, unsigned long minbufsize, unsigned long bitrat
         mixsamples=AHIData->BufferSamples;
 
         SoundSignal = AHIData->SoundFuncSignal;
-    
+
     return 1;
 }
 

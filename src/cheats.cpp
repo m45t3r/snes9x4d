@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -98,7 +98,7 @@ const char *S9xGoldFingerToRaw (const char *code, uint32 &address, bool8 &sram,
 const char *S9xGameGenieToRaw (const char *code, uint32 &address, uint8 &byte)
 {
     char new_code [12];
-    
+
     if (strlen (code) != 9 || *(code + 4) != '-' || !S9xAllHex (code, 4) ||
         !S9xAllHex (code + 5, 4))
 	return ("Invalid Game Genie(tm) code - should be 'xxxx-xxxx'.");
@@ -109,7 +109,7 @@ const char *S9xGameGenieToRaw (const char *code, uint32 &address, uint8 &byte)
 
     const char *real_hex  = "0123456789ABCDEF";
     const char *genie_hex = "DF4709156BC8A23E";
-    
+
     for (int i = 2; i < 10; i++)
     {
 	if (islower (new_code [i]))
@@ -180,7 +180,7 @@ void S9xStartCheatSearch (SCheatData *d)
  (s) == S9X_24_BITS ? (((int32) ((*((m) + (o)) + (*((m) + (o) + 1) << 8) + (*((m) + (o) + 2) << 16)) << 8)) >> 8): \
  ((int32) (*((m) + (o)) + (*((m) + (o) + 1) << 8) + (*((m) + (o) + 2) << 16) + (*((m) + (o) + 3) << 24))))
 
-void S9xSearchForChange (SCheatData *d, S9xCheatComparisonType cmp, 
+void S9xSearchForChange (SCheatData *d, S9xCheatComparisonType cmp,
                          S9xCheatDataSize size, bool8 is_signed, bool8 update)
 {
     int l;
@@ -208,7 +208,7 @@ void S9xSearchForChange (SCheatData *d, S9xCheatComparisonType cmp,
             else
                 BIT_CLEAR (d->WRAM_BITS, i);
         }
-        
+
         for (i = 0; i < 0x10000 - l; i++)
         {
             if (TEST_BIT (d->SRAM_BITS, i) &&
@@ -220,7 +220,7 @@ void S9xSearchForChange (SCheatData *d, S9xCheatComparisonType cmp,
             else
                 BIT_CLEAR (d->SRAM_BITS, i);
         }
-        
+
         for (i = 0; i < 0x2000 - l; i++)
         {
             if (TEST_BIT (d->IRAM_BITS, i) &&
@@ -246,7 +246,7 @@ void S9xSearchForChange (SCheatData *d, S9xCheatComparisonType cmp,
             else
                 BIT_CLEAR (d->WRAM_BITS, i);
         }
-        
+
         for (i = 0; i < 0x10000 - l; i++)
         {
             if (TEST_BIT (d->SRAM_BITS, i) &&
@@ -258,7 +258,7 @@ void S9xSearchForChange (SCheatData *d, S9xCheatComparisonType cmp,
             else
                 BIT_CLEAR (d->SRAM_BITS, i);
         }
-        
+
         for (i = 0; i < 0x2000 - l; i++)
         {
             if (TEST_BIT (d->IRAM_BITS, i) &&
@@ -273,8 +273,8 @@ void S9xSearchForChange (SCheatData *d, S9xCheatComparisonType cmp,
     }
 }
 
-void S9xSearchForValue (SCheatData *d, S9xCheatComparisonType cmp, 
-                        S9xCheatDataSize size, uint32 value, 
+void S9xSearchForValue (SCheatData *d, S9xCheatComparisonType cmp,
+                        S9xCheatDataSize size, uint32 value,
                         bool8 is_signed, bool8 update)
 {
     int l;
@@ -303,7 +303,7 @@ void S9xSearchForValue (SCheatData *d, S9xCheatComparisonType cmp,
             else
                 BIT_CLEAR (d->WRAM_BITS, i);
         }
-        
+
         for (i = 0; i < 0x10000 - l; i++)
         {
             if (TEST_BIT (d->SRAM_BITS, i) &&
@@ -315,7 +315,7 @@ void S9xSearchForValue (SCheatData *d, S9xCheatComparisonType cmp,
             else
                 BIT_CLEAR (d->SRAM_BITS, i);
         }
-        
+
         for (i = 0; i < 0x2000 - l; i++)
         {
             if (TEST_BIT (d->IRAM_BITS, i) &&
@@ -341,7 +341,7 @@ void S9xSearchForValue (SCheatData *d, S9xCheatComparisonType cmp,
             else
                 BIT_CLEAR (d->WRAM_BITS, i);
         }
-        
+
         for (i = 0; i < 0x10000 - l; i++)
         {
             if (TEST_BIT (d->SRAM_BITS, i) &&
@@ -353,7 +353,7 @@ void S9xSearchForValue (SCheatData *d, S9xCheatComparisonType cmp,
             else
                 BIT_CLEAR (d->SRAM_BITS, i);
         }
-        
+
         for (i = 0; i < 0x2000 - l; i++)
         {
             if (TEST_BIT (d->IRAM_BITS, i) &&

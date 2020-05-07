@@ -1,6 +1,6 @@
 /*******************************************************************************
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
- 
+
   (c) Copyright 1996 - 2002 Gary Henderson (gary.henderson@ntlworld.com) and
                             Jerremy Koot (jkoot@snes9x.com)
 
@@ -43,46 +43,46 @@
   S-DD1 C emulator code
   (c) Copyright 2003 Brad Jorsch with research by
                      Andreas Naive and John Weidman
- 
+
   S-RTC C emulator code
   (c) Copyright 2001 John Weidman
-  
+
   ST010 C++ emulator code
   (c) Copyright 2003 Feather, Kris Bleakley, John Weidman and Matthew Kendora
 
-  Super FX x86 assembler emulator code 
-  (c) Copyright 1998 - 2003 zsKnight, _Demo_, and pagefault 
+  Super FX x86 assembler emulator code
+  (c) Copyright 1998 - 2003 zsKnight, _Demo_, and pagefault
 
-  Super FX C emulator code 
+  Super FX C emulator code
   (c) Copyright 1997 - 1999 Ivar, Gary Henderson and John Weidman
 
 
   SH assembler code partly based on x86 assembler code
-  (c) Copyright 2002 - 2004 Marcus Comstedt (marcus@mc.pp.se) 
+  (c) Copyright 2002 - 2004 Marcus Comstedt (marcus@mc.pp.se)
 
- 
+
   Specific ports contains the works of other authors. See headers in
   individual files.
- 
+
   Snes9x homepage: http://www.snes9x.com
- 
+
   Permission to use, copy, modify and distribute Snes9x in both binary and
   source form, for non-commercial purposes, is hereby granted without fee,
   providing that this license information and copyright notice appear with
   all copies and any derived work.
- 
+
   This software is provided 'as-is', without any express or implied
   warranty. In no event shall the authors be held liable for any damages
   arising from the use of this software.
- 
+
   Snes9x is freeware for PERSONAL USE only. Commercial users should
   seek permission of the copyright holders first. Commercial use includes
   charging money for Snes9x or software derived from Snes9x.
- 
+
   The copyright holders request that bug fixes and improvements to the code
   should be forwarded to them so everyone can benefit from the modifications
   in future versions.
- 
+
   Super NES and Super Nintendo Entertainment System are trademarks of
   Nintendo Co., Limited and its subsidiary companies.
 *******************************************************************************/
@@ -113,8 +113,8 @@ void DSP4_Multiply(short Multiplicand, short Multiplier, int &Product)
 void DSP4_UnknownOP11(short A, short B, short C, short D, short &M)
 {
 	// 0x155 = 341 = Horizontal Width of the Screen
-	M = ((A * 0x0155 >>  2) & 0xf000) | ((B * 0x0155 >>  6) & 0x0f00) | 
-	    ((C * 0x0155 >> 10) & 0x00f0) | ((D * 0x0155 >> 14) & 0x000f); 
+	M = ((A * 0x0155 >>  2) & 0xf000) | ((B * 0x0155 >>  6) & 0x0f00) |
+	    ((C * 0x0155 >> 10) & 0x00f0) | ((D * 0x0155 >> 14) & 0x000f);
 }
 
 const unsigned short Op0A_Values[16] = {
@@ -292,7 +292,7 @@ void DSP4_Op01()
 		project_y2 = project_focaly * plane / view_plane;
 
 		// quadratic regression (rough)
-		if(project_focaly>=-0x0f) 
+		if(project_focaly>=-0x0f)
 			py_dy = project_focaly * project_focaly * -0.20533553
 							- 1.08330005 * project_focaly - 69.61094639;
 		else
@@ -497,7 +497,7 @@ void DSP4_Op07()
 		project_focaly = multi_focaly[multi_index2];
 
 		// quadratic regression (rough)
-		if(project_focaly>=-0x0f) 
+		if(project_focaly>=-0x0f)
 			py_dy = project_focaly * project_focaly * -0.20533553
 							- 1.08330005 * project_focaly - 69.61094639;
 		else
@@ -1059,7 +1059,7 @@ void DSP4_Op0D()
 		project_y2 = project_focaly * plane / view_plane;
 
 		// quadratic regression (rough)
-		if(project_focaly>=-0x0f) 
+		if(project_focaly>=-0x0f)
 			py_dy = project_focaly * project_focaly * -0.20533553
 							- 1.08330005 * project_focaly - 69.61094639;
 		else

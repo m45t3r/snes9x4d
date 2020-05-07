@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -49,7 +49,7 @@ bool8 S9xOpenSoundDevice (int, bool8, int);
 void S9xSetPlaybackRate (uint32 rate)
 {
     DOpt		SmpOpt;
-    
+
     SmpOpt.Smp8bit=false;
     SmpOpt.SmpMono=false;
     SmpOpt.IntType=IntC;
@@ -99,7 +99,7 @@ void TraceSPC (unsigned char *PC, unsigned short YA, unsigned char X,
 bool8 S9xInitAPU ()
 {
     void		*SPCBase;               //Base pointer and aligned pointer to SPC RAM
-    
+
     SPCBase=malloc(131072);                  //Allocate memory for SPC RAM
 
     IAPU.RAM=(uint8 *) InitSPU(SPCBase);                 //Initialize SPU w/ ptr to SPC RAM (Call only once)

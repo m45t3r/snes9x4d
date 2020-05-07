@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -92,7 +92,7 @@ extern uint32 HIGH_BITS_SHIFTED_TWO_MASK;
 #define FIRST_COLOR_MASK_RGB565   0xF800
 #define SECOND_COLOR_MASK_RGB565  0x07E0
 #define THIRD_COLOR_MASK_RGB565   0x001F
-#define ALPHA_BITS_MASK_RGB565    0x0000 
+#define ALPHA_BITS_MASK_RGB565    0x0000
 
 /* RGB555 format */
 #define BUILD_PIXEL_RGB555(R,G,B) (((int) (R) << 10) | ((int) (G) << 5) | (int) (B))

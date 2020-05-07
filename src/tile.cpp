@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -1083,7 +1083,7 @@ void DrawClippedTile16FixedAdd1_2 (uint32 Tile, uint32 Offset,
     register uint8 *bp;
 
     TILE_CLIP_PREAMBLE
-    RENDER_CLIPPED_TILE(WRITE_4PIXELS16_ADDF1_2, 
+    RENDER_CLIPPED_TILE(WRITE_4PIXELS16_ADDF1_2,
 			WRITE_4PIXELS16_FLIPPED_ADDF1_2, 4)
 }
 
@@ -1104,7 +1104,7 @@ void DrawClippedTile16FixedSub1_2 (uint32 Tile, uint32 Offset,
     register uint8 *bp;
 
     TILE_CLIP_PREAMBLE
-    RENDER_CLIPPED_TILE(WRITE_4PIXELS16_SUBF1_2, 
+    RENDER_CLIPPED_TILE(WRITE_4PIXELS16_SUBF1_2,
 			WRITE_4PIXELS16_FLIPPED_SUBF1_2, 4)
 }
 
@@ -1123,7 +1123,7 @@ void DrawLargePixel16Add (uint32 Tile, uint32 Offset,
 			       COLOR_ADD (p, *(s + gfx->Delta))    : \
 			       COLOR_ADD (p, gfx->FixedColour)) \
 			    : p)
-			      
+			
     RENDER_TILE_LARGE (gfx->ScreenColors [pixel], LARGE_ADD_PIXEL)
 }
 
@@ -1142,7 +1142,7 @@ void DrawLargePixel16Add1_2 (uint32 Tile, uint32 Offset,
 			       COLOR_ADD1_2 (p, *(s + gfx->Delta))    : \
 			       COLOR_ADD (p, gfx->FixedColour)) \
 			    : p))
-			      
+			
     RENDER_TILE_LARGE (gfx->ScreenColors [pixel], LARGE_ADD_PIXEL1_2)
 }
 
@@ -1161,7 +1161,7 @@ void DrawLargePixel16Sub (uint32 Tile, uint32 Offset,
 			       COLOR_SUB (p, *(s + gfx->Delta))    : \
 			       COLOR_SUB (p, gfx->FixedColour)) \
 			    : p)
-			      
+			
     RENDER_TILE_LARGE (gfx->ScreenColors [pixel], LARGE_SUB_PIXEL)
 }
 
@@ -1180,7 +1180,7 @@ void DrawLargePixel16Sub1_2 (uint32 Tile, uint32 Offset,
 			       COLOR_SUB1_2 (p, *(s + gfx->Delta))    : \
 			       COLOR_SUB (p, gfx->FixedColour)) \
 			    : p)
-			      
+			
     RENDER_TILE_LARGE (gfx->ScreenColors [pixel], LARGE_SUB_PIXEL1_2)
 }
 

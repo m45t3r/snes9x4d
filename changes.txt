@@ -1,12 +1,12 @@
 1.39
 
 - Added SDD-1 unknown graphics data logging at the dumper's request. A bit late
-  but might help with Street Fighter 2 Alpha's data dumping. Creates a 
+  but might help with Street Fighter 2 Alpha's data dumping. Creates a
   romname.dat file in the freeze file folder.
 - Implemented 16-bit texture support for OpenGL modes in Windows and Linux.
   Had to support a new pixel format type to do it - RGB5551 (one bit of alpha)
   which caused me some major problems - black was no longer always pixel value
-  zero! 
+  zero!
 - Removed the Bump map OpenGL mode from the Windows port (didn't look so good
   anyway and was slow).
 - Added a hidden novelty OpenGL mode (clue: a keyboard shortcut activates it)
@@ -73,7 +73,7 @@
   UNIX port after loading a ZSNES freeze file.
 - Included the unofficial Windows port emulation fixes for several games including
   Kentouou World championship and TKO Super Championship.
-- Included Iwashi San's improved Anti Res. sound sample decoding routine and 
+- Included Iwashi San's improved Anti Res. sound sample decoding routine and
   updated the C version to match.
 - Included Anti Res. improved sample decompression code he sent me ages ago,
   but for some reason I didn't include. Sorry. This version seems good enough
@@ -86,7 +86,7 @@
   way down the screen while using the 3dfx bi-linear filter mode. The code
   basically has to back out of the speed up hack it was using when the game
   switches resolutions.
-- Fixed support for games that have mixed lo-res. (256x224), medium res. 
+- Fixed support for games that have mixed lo-res. (256x224), medium res.
   (512x224) and hi-res. (512x448) all on the same screen - corrects the display
   of Majin Tensei 2.
 - Added support for games that use sub-screen addition to the back-drop layer
@@ -352,7 +352,7 @@
   to C so other, non-Intel ports can have C4 emulation.
 - Shuffled the keyboard mapping a bit on the Linux port so now Tab key acts as
   an emulation speed turbo button, `, # and ~ act as superscope turbo and
-  / acts as the superscope pause button. 
+  / acts as the superscope pause button.
 - Fixed asm CPU_SHUTDOWN code that I accidentally broke while trying to
   optimise it! Thanks to all the people who noticed Snes9x's frame skipping
   had changed between releases. Frames rates should be improved again for more
@@ -371,7 +371,7 @@
   OpenGL initialisation code to fail. Reverted back to normal DDL loading but
   with the side effect that Windows 95 users must visit the Microsoft web site
   and download the OpenGL add-on before Snes9x will work for them.
-- Corrected the OpenGL bump-map display option - my attempt to get the 
+- Corrected the OpenGL bump-map display option - my attempt to get the
   bi-linear OpenGL display option to work with Voodoo card's limited texture
   size had broken the bump-map mode.
 1.32
@@ -513,13 +513,13 @@
 - Included an option to use Anti Resonance's alternate sample decoding routine;
   it can approximate the wind and noise sound effects heard in several Square
   Soft games.
-- Thanks to Lindsey Dubb for the mode 7 bi-linear filtering code - it 
+- Thanks to Lindsey Dubb for the mode 7 bi-linear filtering code - it
   generates a nice smooth image when a game scales the screen using the SNES'
   mode 7, but you'll a fast machine if you don't want the frame rate to drop.
 - Thanks again to Lindsey Dubb, he improved the colour addition/subtraction
   subtraction routines - they are just a little slower but now mostly perform
   full 15-bit precision addition and subtraction rather than the previous
-  13-bits of precision. Many more colour shades can be seen - look at the 
+  13-bits of precision. Many more colour shades can be seen - look at the
   improved shading on the Mario Kart or F-Zero track for example.
 - Added a reverse stereo option, for people with sound cards that swap the two
   channels.
@@ -533,11 +533,11 @@
   any value to be used from a large range, rather than just a select few, may
   be I ought to add text field so you could just type a value in?
 - Used Factory Setup 4 to build a new installer package for the Windows port -
-  just shipping a zip file was confusing novice users and many (mostly AOL 
+  just shipping a zip file was confusing novice users and many (mostly AOL
   users) seemed to have an odd program mapped to .zip files, further confusing
   the issue.
 1.29
-- Disabled the SPC700 noise feature simulation used by Chrono Trigger and 
+- Disabled the SPC700 noise feature simulation used by Chrono Trigger and
   Final Fantasy 3 until I work out why its being triggered by sound effects
   that don't use it.
 - Rewrote/reorganised the DirectX and 3D/fx handling code, now both are never
@@ -552,13 +552,13 @@
 - Clicking on the column headings in the OpenROM dialog in the Windows port
   now sorts by that column; plus added some slight screen update optimisations.
 - Added an optimisation to graphics rendering: don't add or subtract
-  sub-screen from background layers, or clear the sub-screen, if SNES fixed 
+  sub-screen from background layers, or clear the sub-screen, if SNES fixed
   colour is black and no background layers are enabled on sub-screen, even if
   ROM tries to enable translucency effects for every background layer.
   Discovered Sonic was doing this, there will be others.
 - Forgot to enable auto S-RAM save on Windows port, oops!
 1.28
-- Warning dialog added to the Windows port - if a ROM is loaded from a 
+- Warning dialog added to the Windows port - if a ROM is loaded from a
   read-only directory, e.g. a CD, and the freeze file folder is set to be the
   same as the ROM image folder, then a warning is displayed when the game first
   starts.
@@ -599,7 +599,7 @@
   when processing fractional offsets.
 - Added auto S-RAM save option; S-RAM is automatically written to a .srm file
   a few seconds (30 by default) after a ROM writes to it - useful for people
-  who were playing games long into to night, only to lose their progress 
+  who were playing games long into to night, only to lose their progress
   after a power cut or machine crash.
 - NMI delay code changed again - the fix for Cacoma Knight was breaking
   Tuff E Nuff; it would seem delaying NMI until the start of h-blank to too
@@ -622,7 +622,7 @@
   Pro Action Replay cheat codes, disabling sound CPU emulation for the
   corrupt copy of Star Fox 2, etc. Also allows ROM images to be dropped onto
   the Snes9x icon.
-- Cacoma Knight seems to provide proof that Snes9x triggers the SNES 
+- Cacoma Knight seems to provide proof that Snes9x triggers the SNES
   non-maskable interrupt (NMI) too early. Changed interrupt to trigger at the
   start of the next horizontal blank period. Will have to watch for it
   causing problems for other ROMs.
@@ -645,15 +645,15 @@
   removed it again because it causes my desktop machine to lock up. Back to
   the drawing board...
 1.26
-- Fixed memory leak that crept in when SA-1 support was added when loading a 
+- Fixed memory leak that crept in when SA-1 support was added when loading a
   game freeze file.
 - Added SPC dumping option based on code from Cyber Warrior X that he sent me
   ages ago but I've just found again while looking for something else!
-- Merged in most of the Amiga PPC port source code changes into the main 
+- Merged in most of the Amiga PPC port source code changes into the main
   source code tree.
 - Keying on a sound channel seems to clear its last-sound-sample-block-just-
   played flag. Chaos Engine/Soldiers of Fortune needs this.
-- Add multi-thread support to the UNIX ports for sound playing - required in 
+- Add multi-thread support to the UNIX ports for sound playing - required in
   the Linux port to work around a Sound Blaster Live driver bug and useful if
   you have multiple CPUs in your machine to help spread the emulation workload.
 1.25
@@ -689,7 +689,7 @@
 - Added a zero-frequency fix to the stereo sound mixing code that I'd already
   added to the mono code some time ago.
 - Changed the code to set the end-of-sample flag just before the last block is
-  played, rather than just after. Seems to help improve the sound on some 
+  played, rather than just after. Seems to help improve the sound on some
   games.
 - Sound sample start code now doesn't reset the channel's envelope volume level
   to zero before starting the sample - helps reduce the clicks being heard when
@@ -728,7 +728,7 @@
 - Made the Daffy Duck NMI fix only enable when Daffy Duck is loaded - fix was
   causing problems for Breath Of Fire 1 and 2.
 1.20
-- Windows port no longer sets DirectSound to exclusive mode, so its now 
+- Windows port no longer sets DirectSound to exclusive mode, so its now
   possible to hear sound output from Windows apps while Snes9x has focus.
 - Fixed the freeze file loading and saving on the Windows port.
 - More GUI settings are saved in the registry on the Windows port now.
@@ -747,7 +747,7 @@
   emulation code which is a lot slower.
 - Implemented interpolated and sync-sound options on the Windows port.
 - Added an image stretch option to the Windows port - stretches the SNES image
-  to fill the whole screen or the Window. Looks really good on my TNT card 
+  to fill the whole screen or the Window. Looks really good on my TNT card
   since that chips seems to filter the image as it scales it.
 - Implemented Windowed mode on the Windows port.
 - Added special SPC700 cycle timing for Empire Strikes Back.
@@ -761,16 +761,16 @@
   Mario Kart's rear-view mirror display needs it.
 - Fixed mode 7 render code to use correct z-buffer when rendering onto the
   sub-screen. Fixes Final Fantasy V title screen.
-- Added horizontal offset per tile support in the offset per tile modes 2 
-  and 6, and switchable horizontal/vertical offset in mode 4. Fixes Chrono 
+- Added horizontal offset per tile support in the offset per tile modes 2
+  and 6, and switchable horizontal/vertical offset in mode 4. Fixes Chrono
   Trigger in several places and Mario All Stars title screens.
 - Changed SPC700 relative cycle length to 14, needed for Stunt Car Racer.
 - Enabled immediate triggering of NMI if NMI enable flag set while scan-line
   was on first line of v-blank. Needed to fix a background jitter bug in
   Daffy Duck: The Marvin Missions.
 - Altered ROM load code to ignore corrupt ROM map type byte in ROM header,
-  preventing the code erroneously detecting what it thinks are interleaved 
-  ROMs. Fixes EEK! The cat, Formation Soccer, the corrupt copy of Donkey 
+  preventing the code erroneously detecting what it thinks are interleaved
+  ROMs. Fixes EEK! The cat, Formation Soccer, the corrupt copy of Donkey
   Kong Country, ...
 - Disabled IRQ re-triggering if V-IRQ registers set to the current line. Fixes
   Chuck Rock.
@@ -804,7 +804,7 @@
 - Added code to skip the rendering of completely transparent graphic tiles
   rather than comparing each pixel to see if it is transparent; helps the
   frame rate a bit on some games.
-- Added a fixed for Tetris & Dr. Mario - the game didn't like a multi-player 5 
+- Added a fixed for Tetris & Dr. Mario - the game didn't like a multi-player 5
   adaptor plugged in to the real SNES when being played, so turned off the
   adaptor emulation for this game.
 - Added hack for Final Fantasy II - if sync sound isn't on, make attack rate of
@@ -842,7 +842,7 @@
 - Implemented a sync-sound mode where sound data gets generated in sync with
   SPC700 instructions being executed. Finally the sound Williams Arcade
   classics can be heard. Also helps slight sound timing problems in many other
-  games but doesn't fix Mortal Kombat 2 like I thought it would - its 
+  games but doesn't fix Mortal Kombat 2 like I thought it would - its
   sound routine programmers must have been on drugs or something!
 - Added interpolated sound - gives low frequency sounds much more bass similar
   to a real SNES especially with the playback rate ramped up to 44KHz.
@@ -850,12 +850,12 @@
   using the in-game keys.
 - Fixed a PPU register read bug with the sprite register write position. Thanks
   to Takehiro TOMINAGA for the bug report.
-- Altered the auto-frame skip timing code to only wait and re-sync to the end 
+- Altered the auto-frame skip timing code to only wait and re-sync to the end
   of frame when frames haven't been skipped. Again thanks to Takehiro.
 - Speeded up the colour addition and subtraction code using ideas from
   Takehiro.
 1.17
-- Linux and UNIX sound code now driven directly from signal timer handler 
+- Linux and UNIX sound code now driven directly from signal timer handler
   rather than the timer handler just setting a flag which had to be polled in
   the main emulation code. Slightly faster execution.
 - Fixed the crash bug in the ZSNES Super FX asm code with Vortex - the game's
@@ -867,16 +867,16 @@
   been keyed-off, Pac-In-Time requires it. Changed code to allow it.
 - Quick mod to ZSNES Super FX code to get Winter Gold working - it was already
   working with the C Super FX code.
-- Added emulation of the extra 1/2 scan-line per frame on PAL and NTSC - 
+- Added emulation of the extra 1/2 scan-line per frame on PAL and NTSC -
   should help improve music speed emulation.
 - Worked around the click sound heard when ROMs use 0 volume envelope attack
   rate.
 - Removed the 'check for IRQ already happened' H-IRQ position register setting
   code - it was causing problems for Ninja Warriors and was not required by
   F1 Grand Prix.
-- Fixed a bug in the new sound code - the sustain part of the 
-  attack-decay-sustain-release volume envelope was being skipped if the 
-  sustain level wasn't at 100%. The fix has helped some music notes from 
+- Fixed a bug in the new sound code - the sustain part of the
+  attack-decay-sustain-release volume envelope was being skipped if the
+  sustain level wasn't at 100%. The fix has helped some music notes from
   being cut off early in a few games.
 - Added fix to Pro Action Reply support (again). Thanks to Paul Shoener III for
   the original fix and Gil Pedersen for reminding me to apply it!
@@ -892,7 +892,7 @@
   a pass-through FIR filter was defined by the ROM.
 - Modified V and H-IRQ register changing code to trigger an IRQ immediately if
   V-IRQ is enabled and the scan-lines match and either H-IRQ is not enabled or
-  the electron beam position has already gone past the trigger point. Fixes 
+  the electron beam position has already gone past the trigger point. Fixes
   the screen flicker in F1 Grand Prix.
 - Modified the priority-per-pixel mode 7 code to use BG#1's clipping data if
   the top bit of the mode 7 pixel is set. Fixes initial track drive-through
@@ -909,7 +909,7 @@
   from Takehiro TOMINAGA - many thanks go to him.
 1.16
 - Fixed a case where the -forcelorom option didn't work - the case was
-  required for Formation Soccer which claims in its ROM header to use the 
+  required for Formation Soccer which claims in its ROM header to use the
   same memory map as Super FX ROM, it doesn't.
 - Pulled apart a real SNES using a crowbar (great fun), just to look at what
   speed the SPC700 is actually clocked at for more accurate relative emulation
@@ -919,7 +919,7 @@
 - Implemented executing SPC700 instructions during DMA, fixes BSZelda and
   Goal lock up at start and music pausing briefly when ROMs do lots of DMA,
   usually between game screens.
-- Scrapped the i386 asm SPC700 code - it was the cause of the music not 
+- Scrapped the i386 asm SPC700 code - it was the cause of the music not
   restarting after a battle in Chrono Trigger and FF3 and I didn't realise
   because the bug had already occurred in the test freeze-file I had.
   Thanks to John Stiles for pointing out that the Mac port didn't have the
@@ -927,7 +927,7 @@
 - Fixed RGB subtraction bug on displays with only 5 bits for green, e.g. RGB555
   displays. The GREEN_HI_BIT variable was always set to a value for 6 bit
   green displays.
-- Added the SA-1 memory map, still a long way to go before any SA-1 game will 
+- Added the SA-1 memory map, still a long way to go before any SA-1 game will
   run.
 1.15
 - Jumped versions to keep in sync with the DOS port release.
@@ -947,7 +947,7 @@
 - Changed tile rendering code to use offsets into screen buffer rather than
   direct pointers ready for z-buffer implementation.
 1.12
-- Changed V-blank NMI to occur immediately after a WAI instruction, Toy Story 
+- Changed V-blank NMI to occur immediately after a WAI instruction, Toy Story
   required this.
 - Fixed reading of H-DMA line counter register, Top Gear 3000 needed this.
 - Ripped off large parts of ZSNES's DSP1 code (with _Demo_'s and zsKnight's
@@ -966,19 +966,19 @@
 - Implemented DOS netplay code - DOS server code still not working though.
 - Removed all floating point calculations from the sound generation code.
 - Fiddled with the pitch modulation code - my guess is the output of a
-  channel that is used to modulate the frequency of another channel is 
+  channel that is used to modulate the frequency of another channel is
   automatically muted by the SPC700 chip. Just a guess, but the wind from
   FF3 sounds 'better' but far from perfect.
 - Optimised the tile palette index calculation.
 - Optimised the planar to chunky tile conversion code.
 - Fixed X11 port to always scale SNES image if hi-res. only (no interpolation)
   support is enabled.
-- Added zipped ROM image support using Gilles Vollant unzip code and 
+- Added zipped ROM image support using Gilles Vollant unzip code and
   some code that Ivar (Lestat) sent me a long time ago.
 - 65c816 asm RTI instruction was destroying the program bank in emulation mode,
   the C code was already correct. Caused C64E to break.
 1.10
-- Finished NetPlay v1 - allows up to five networked machines to play 
+- Finished NetPlay v1 - allows up to five networked machines to play
   multi-player SNES games, one player on each machine.
 - Switchable full-screen mode added to Linux X11 port, some code and ideas
   nicked from Maciej Babinski's original Snes9x XFree86 DGA Linux port, the
@@ -988,7 +988,7 @@
 1.07
 - More DSP1 work. Mario Kart is now playable! The character projection code
   is still broken so the opponents and obstacles aren't always positioned
-  correctly on screen and you keep bumping into them, but I can still keep 
+  correctly on screen and you keep bumping into them, but I can still keep
   coming first!
 - Started work on NetPlay support.
 - Decreased sound card DMA buffer size on DOS port to improve sound generation
@@ -1045,7 +1045,7 @@
   'posh' spells look correct in Chrono Trigger.
 - Yet another window area inversion bug - off by one pixel on right-hand edge.
 - Forgot to put dummy start and end points for XOR window combination modes -
-  now Uniracers looks correct and Sailor Moon looks like it does on a real 
+  now Uniracers looks correct and Sailor Moon looks like it does on a real
   SNES.
 - Window clip code was using wrong index into a 2-dimensional array when
   the whole of the main or sub-screens were clipped.
@@ -1063,7 +1063,7 @@
 - Implemented the colour window on the main screen - now Zelda's oval zoom
   window displays correctly and Krusty's Super Fun House clips the left-most
   8 pixels as it does on the real SNES.
-- TERRANIGMA didn't like me returning a random value when it attempted to 
+- TERRANIGMA didn't like me returning a random value when it attempted to
   read a channel's the current sample byte.
 - Hacked in initial support for mode 7 priority-per-pixel - the priority bit
   doesn't actually change the priority of the pixel but the two games that I
@@ -1292,7 +1292,7 @@
 0.21
 - Fixed a noise channel volume bug - noise waveform was getting clipped.
 - Fixed 24bit X Window System server support on the Solaris port.
-- Sprites in priority level 1 on mode 7 were being drawn incorrectly behind 
+- Sprites in priority level 1 on mode 7 were being drawn incorrectly behind
   graphics screen.
 - BG 3 priority 1 tiles sometimes not drawn dependent on the $2105 bit 3
   setting.
@@ -1310,7 +1310,7 @@
   is actually read.
 - Sound enabled by default if compiled without DEBUGGER defined.
 - Tile redraw method made the default.
-- Fixed CPU_SHUTDOWN so SPC700 continues to execute even if main CPU is 
+- Fixed CPU_SHUTDOWN so SPC700 continues to execute even if main CPU is
   "skipping" cycles waiting for an event to happen.
 - More command line options added.
 - Default cycles-per-scan-line to execute lowered to 90% from 100%.
@@ -1441,7 +1441,7 @@
 - Fixed an uninitialised variable in graphics code - was causing random
   missing scan lines on Mode 7 screens.
 - Joysticks now scanned every 3rd frame (joystick scanning is slow in the PC).
-- Double-whoops, Metriod 3 had stopped working in v0.6 - fixed it 
+- Double-whoops, Metriod 3 had stopped working in v0.6 - fixed it
   (memory map bug).
 - Made bit 6 of $4211 set if v-counter == v-timer-position.
 - Made reading of $4200 read $4212 instead.
@@ -1480,21 +1480,21 @@
 - Fixed second joy-pad support and re-mapped keys and joysticks to actually
   make a match between what my docs said and a real SNES (SNES docs I'd
   seen were wrong!).
-- Fixed a bug in Relative Long CPU addressing mode. 
+- Fixed a bug in Relative Long CPU addressing mode.
 - Ported Snes96 to MS-DOS.
 - Snapshot loading and saving no longer uses external gzip binary.
 - Added support for registers at $21c2 and $21c3.
 - Made reading the software latch for the horizontal and vertical counters also
   clear any pending IRQ.
 - Added sprite priority rotation.
-- Rewrote parts of the graphics routines to fix a sprite-to-sprite priority 
+- Rewrote parts of the graphics routines to fix a sprite-to-sprite priority
   bug.
 - NMI flag changed again - now back to being reset by reading $4210 but
   actual NMI is delayed.
 - Made mode 7 background colour 0 transparent - this fixed several sprite
   priority problems a few games where having.
 - Finally worked out how sprite "Object Name Select" works and emulated it -
-  this fixes many (if not all) of the corrupted sprites some games 
+  this fixes many (if not all) of the corrupted sprites some games
   experienced.
 - Delayed NMI activation for one instruction to give time for loops that
   wait for bit 7 of $4210 to go high.
@@ -1602,7 +1602,7 @@
 - Debugged the odd slow down problem with the Linux port - it seems to be a
   bug in the X Window System server - starve the X server of keyboard presses
   or mouse clicks or movement and the X server slows down, slowing down the
-  emulator with it ! 
+  emulator with it !
 0.4 released
 - Fixed sprite vertical clipping at top of screen.
 - No need to invert the Mode 7 transformation matrix before use - the

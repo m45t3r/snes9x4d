@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -62,7 +62,7 @@ STATIC inline long Relative (struct SRegisters * reg, struct SICPU * icpu, struc
     int8 Int8 = *cpu->PC++;
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeed;
-#endif    
+#endif
 	return ((int) (cpu->PC - cpu->PCBase) + Int8) & 0xffff;
 }
 
@@ -266,7 +266,7 @@ STATIC inline long AbsoluteIndexedY (struct SRegisters * reg, struct SICPU * icp
 #else
     long OpAddress = icpu->ShiftedDB + *cpu->PC + (*(cpu->PC + 1) << 8) +
 		reg->Y.W;
-#endif    
+#endif
     cpu->PC += 2;
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2;

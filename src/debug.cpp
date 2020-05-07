@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -112,7 +112,7 @@ char *HelpMessage[] = {
     "bs [Number] [Address] - Enable/Disable Breakpoint",
     "                        [Enable example: BS #2 $02:8002]",
     "                        [Disable example: BS #2]",
-    "c		       - Dump SNES colour palette", 
+    "c		       - Dump SNES colour palette",
     "W		       - Show what SNES hardware features a ROM is using",
     "			 which might not be implemented yet.",
     "w		       - Show some SNES hardware features used so far in this frame",
@@ -1094,7 +1094,7 @@ void ProcessDebugCommand (char *Line)
 	    S9xAddCheat (TRUE, TRUE, Address, Byte);
 	return;
     }
-    
+
     if (strncasecmp (Line, "dump", 4) == 0)
     {
 	int Count;
@@ -1313,7 +1313,7 @@ void ProcessDebugCommand (char *Line)
 	printf ("SPC700 sample addresses at 0x%04x:\n", APU.DSP [APU_DIR] << 8);
 	for (int i = 0; i < 256; i++)
 	{
-	    uint8 *dir = IAPU.RAM + 
+	    uint8 *dir = IAPU.RAM +
 		    (((APU.DSP [APU_DIR] << 8) +
 		      i * 4) & 0xffff);
 	    int addr = *dir + (*(dir + 1) << 8);
@@ -1672,7 +1672,7 @@ static void WhatsUsed ()
     printf ("Screen mode: %d, ", PPU.BGMode);
     if (PPU.BGMode <= 1 && (Memory.FillRAM [0x2105] & 8))
 	printf ("(BG#2 Priority)");
-    
+
     printf ("Brightness: %d", PPU.Brightness);
     if (Memory.FillRAM[0x2100] & 0x80)
 	printf (" (screen blanked)");
@@ -1755,7 +1755,7 @@ static void WhatsUsed ()
     {
 	printf ("BG%d: VOffset:%d, HOffset:%d, W:%d, H:%d, TS:%d, BA:0x%04x, TA:0x%04X\n",
 		i, PPU.BG[i].VOffset, PPU.BG[i].HOffset,
-		(PPU.BG[i].SCSize & 1) * 32 + 32, 
+		(PPU.BG[i].SCSize & 1) * 32 + 32,
 		(PPU.BG[i].SCSize & 2) * 16 + 32,
 		PPU.BG[i].BGSize * 8 + 8,
 		PPU.BG[i].SCBase,
@@ -1790,7 +1790,7 @@ static void WhatsUsed ()
 		printf ("OBJ,");
 		break;
 	    }
-    
+
     switch ((Memory.FillRAM [0x2130] & 0x30) >> 4)
     {
     case 0: s = "always on";   break;

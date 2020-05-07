@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -65,7 +65,7 @@ bool8 LoadZip(const char* zipname,
 {
     *TotalFileSize = 0;
     *headers = 0;
-    
+
     unzFile file = unzOpen(zipname);
     if(file == NULL)
 	return (FALSE);
@@ -123,13 +123,13 @@ bool8 LoadZip(const char* zipname,
     char *ext = strrchr(filename,'.');
     if(ext) ext++;
     else ext = tmp;
-    
+
     uint8 *ptr = Memory.ROM;
     bool8 more = FALSE;
 
     unzLocateFile(file,filename,1);
     unzGetCurrentFileInfo(file, &info, filename,128, NULL,0, NULL,0);
-    
+
     if( unzOpenCurrentFile(file) != UNZ_OK )
     {
 	unzClose(file);
@@ -210,7 +210,7 @@ bool8 LoadZip(const char* zipname,
 	}
 	
     } while(more);
-    
+
     unzClose(file);
     return (TRUE);
 }

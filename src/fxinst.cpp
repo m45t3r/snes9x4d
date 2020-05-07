@@ -1,6 +1,6 @@
 /*******************************************************************************
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
- 
+
   (c) Copyright 1996 - 2002 Gary Henderson (gary.henderson@ntlworld.com) and
                             Jerremy Koot (jkoot@snes9x.com)
 
@@ -43,46 +43,46 @@
   S-DD1 C emulator code
   (c) Copyright 2003 Brad Jorsch with research by
                      Andreas Naive and John Weidman
- 
+
   S-RTC C emulator code
   (c) Copyright 2001 John Weidman
-  
+
   ST010 C++ emulator code
   (c) Copyright 2003 Feather, Kris Bleakley, John Weidman and Matthew Kendora
 
-  Super FX x86 assembler emulator code 
-  (c) Copyright 1998 - 2003 zsKnight, _Demo_, and pagefault 
+  Super FX x86 assembler emulator code
+  (c) Copyright 1998 - 2003 zsKnight, _Demo_, and pagefault
 
-  Super FX C emulator code 
+  Super FX C emulator code
   (c) Copyright 1997 - 1999 Ivar, Gary Henderson and John Weidman
 
 
   SH assembler code partly based on x86 assembler code
-  (c) Copyright 2002 - 2004 Marcus Comstedt (marcus@mc.pp.se) 
+  (c) Copyright 2002 - 2004 Marcus Comstedt (marcus@mc.pp.se)
 
- 
+
   Specific ports contains the works of other authors. See headers in
   individual files.
- 
+
   Snes9x homepage: http://www.snes9x.com
- 
+
   Permission to use, copy, modify and distribute Snes9x in both binary and
   source form, for non-commercial purposes, is hereby granted without fee,
   providing that this license information and copyright notice appear with
   all copies and any derived work.
- 
+
   This software is provided 'as-is', without any express or implied
   warranty. In no event shall the authors be held liable for any damages
   arising from the use of this software.
- 
+
   Snes9x is freeware for PERSONAL USE only. Commercial users should
   seek permission of the copyright holders first. Commercial use includes
   charging money for Snes9x or software derived from Snes9x.
- 
+
   The copyright holders request that bug fixes and improvements to the code
   should be forwarded to them so everyone can benefit from the modifications
   in future versions.
- 
+
   Super NES and Super Nintendo Entertainment System are trademarks of
   Nintendo Co., Limited and its subsidiary companies.
 *******************************************************************************/
@@ -334,7 +334,7 @@ static void fx_alt2() { SF(ALT2); CF(B); R15++; }
 
 /* 3f - alt3 - set alt3 mode */
 static void fx_alt3() { SF(ALT1); SF(ALT2); CF(B); R15++; }
-    
+
 /* 40-4b - ldw (rn) - load word from RAM */
 #define FX_LDW(reg) uint32 v; \
 GSU.vLastRamAdr = GSU.avReg[reg]; \
@@ -395,7 +395,7 @@ static void fx_plot_2bit()
 	c = (x^y)&1 ? (uint8)(GSU.vColorReg>>4) : (uint8)GSU.vColorReg;
     else
 	c = (uint8)GSU.vColorReg;
-    
+
     if( !(GSU.vPlotOptionReg & 0x01) && !(c & 0xf)) return;
     a = GSU.apvScreen[y >> 3] + GSU.x[x >> 3] + ((y & 7) << 1);
     v = 128 >> (x&7);
@@ -440,7 +440,7 @@ static void fx_plot_4bit()
     R15++;
     CLRFLAGS;
     R1++;
-    
+
 #ifdef CHECK_LIMITS
     if(y >= GSU.vScreenHeight) return;
 #endif
@@ -501,7 +501,7 @@ static void fx_plot_8bit()
     R15++;
     CLRFLAGS;
     R1++;
-    
+
 #ifdef CHECK_LIMITS
     if(y >= GSU.vScreenHeight) return;
 #endif
@@ -1008,7 +1008,7 @@ static void fx_umult_r12() { FX_UMULT(12); }
 static void fx_umult_r13() { FX_UMULT(13); }
 static void fx_umult_r14() { FX_UMULT(14); }
 static void fx_umult_r15() { FX_UMULT(15); }
-  
+
 /* 80-8f(ALT2) - mult #n - 8 bit to 16 bit signed multiply, register * immediate */
 #define FX_MULT_I(imm) \
 uint32 v = (uint32) (SEX8(SREG) * ((int32)imm)); \
@@ -1033,7 +1033,7 @@ static void fx_mult_i12() { FX_MULT_I(12); }
 static void fx_mult_i13() { FX_MULT_I(13); }
 static void fx_mult_i14() { FX_MULT_I(14); }
 static void fx_mult_i15() { FX_MULT_I(15); }
-  
+
 /* 80-8f(ALT3) - umult #n - 8 bit to 16 bit unsigned multiply, register * immediate */
 #define FX_UMULT_I(imm) \
 uint32 v = USEX8(SREG) * ((uint32)imm); \
@@ -1058,7 +1058,7 @@ static void fx_umult_i12() { FX_UMULT_I(12); }
 static void fx_umult_i13() { FX_UMULT_I(13); }
 static void fx_umult_i14() { FX_UMULT_I(14); }
 static void fx_umult_i15() { FX_UMULT_I(15); }
-  
+
 /* 90 - sbk - store word to last accessed RAM address */
 static void fx_sbk()
 {
@@ -1712,7 +1712,7 @@ void (*fx_apfOpcodeTable[])() =
     &fx_to_r0,   &fx_to_r1,   &fx_to_r2,    &fx_to_r3,    &fx_to_r4,    &fx_to_r5,    &fx_to_r6,    &fx_to_r7,
     &fx_to_r8,   &fx_to_r9,   &fx_to_r10,   &fx_to_r11,   &fx_to_r12,   &fx_to_r13,   &fx_to_r14,   &fx_to_r15,
     /* 20 - 2f */
-    &fx_with_r0, &fx_with_r1, &fx_with_r2,  &fx_with_r3,  &fx_with_r4,  &fx_with_r5,  &fx_with_r6,  &fx_with_r7, 
+    &fx_with_r0, &fx_with_r1, &fx_with_r2,  &fx_with_r3,  &fx_with_r4,  &fx_with_r5,  &fx_with_r6,  &fx_with_r7,
     &fx_with_r8, &fx_with_r9, &fx_with_r10, &fx_with_r11, &fx_with_r12, &fx_with_r13, &fx_with_r14, &fx_with_r15,
     /* 30 - 3f */
     &fx_stw_r0,  &fx_stw_r1,  &fx_stw_r2,   &fx_stw_r3,   &fx_stw_r4,   &fx_stw_r5,   &fx_stw_r6,   &fx_stw_r7,
@@ -1765,7 +1765,7 @@ void (*fx_apfOpcodeTable[])() =
     &fx_to_r0,   &fx_to_r1,   &fx_to_r2,    &fx_to_r3,    &fx_to_r4,    &fx_to_r5,    &fx_to_r6,    &fx_to_r7,
     &fx_to_r8,   &fx_to_r9,   &fx_to_r10,   &fx_to_r11,   &fx_to_r12,   &fx_to_r13,   &fx_to_r14,   &fx_to_r15,
     /* 20 - 2f */
-    &fx_with_r0, &fx_with_r1, &fx_with_r2,  &fx_with_r3,  &fx_with_r4,  &fx_with_r5,  &fx_with_r6,  &fx_with_r7, 
+    &fx_with_r0, &fx_with_r1, &fx_with_r2,  &fx_with_r3,  &fx_with_r4,  &fx_with_r5,  &fx_with_r6,  &fx_with_r7,
     &fx_with_r8, &fx_with_r9, &fx_with_r10, &fx_with_r11, &fx_with_r12, &fx_with_r13, &fx_with_r14, &fx_with_r15,
     /* 30 - 3f */
     &fx_stb_r0,  &fx_stb_r1,  &fx_stb_r2,   &fx_stb_r3,   &fx_stb_r4,   &fx_stb_r5,   &fx_stb_r6,   &fx_stb_r7,
@@ -1818,7 +1818,7 @@ void (*fx_apfOpcodeTable[])() =
     &fx_to_r0,   &fx_to_r1,   &fx_to_r2,    &fx_to_r3,    &fx_to_r4,    &fx_to_r5,    &fx_to_r6,    &fx_to_r7,
     &fx_to_r8,   &fx_to_r9,   &fx_to_r10,   &fx_to_r11,   &fx_to_r12,   &fx_to_r13,   &fx_to_r14,   &fx_to_r15,
     /* 20 - 2f */
-    &fx_with_r0, &fx_with_r1, &fx_with_r2,  &fx_with_r3,  &fx_with_r4,  &fx_with_r5,  &fx_with_r6,  &fx_with_r7, 
+    &fx_with_r0, &fx_with_r1, &fx_with_r2,  &fx_with_r3,  &fx_with_r4,  &fx_with_r5,  &fx_with_r6,  &fx_with_r7,
     &fx_with_r8, &fx_with_r9, &fx_with_r10, &fx_with_r11, &fx_with_r12, &fx_with_r13, &fx_with_r14, &fx_with_r15,
     /* 30 - 3f */
     &fx_stw_r0,  &fx_stw_r1,  &fx_stw_r2,   &fx_stw_r3,   &fx_stw_r4,   &fx_stw_r5,   &fx_stw_r6,   &fx_stw_r7,
@@ -1871,7 +1871,7 @@ void (*fx_apfOpcodeTable[])() =
     &fx_to_r0,   &fx_to_r1,   &fx_to_r2,    &fx_to_r3,    &fx_to_r4,    &fx_to_r5,    &fx_to_r6,    &fx_to_r7,
     &fx_to_r8,   &fx_to_r9,   &fx_to_r10,   &fx_to_r11,   &fx_to_r12,   &fx_to_r13,   &fx_to_r14,   &fx_to_r15,
     /* 20 - 2f */
-    &fx_with_r0, &fx_with_r1, &fx_with_r2,  &fx_with_r3,  &fx_with_r4,  &fx_with_r5,  &fx_with_r6,  &fx_with_r7, 
+    &fx_with_r0, &fx_with_r1, &fx_with_r2,  &fx_with_r3,  &fx_with_r4,  &fx_with_r5,  &fx_with_r6,  &fx_with_r7,
     &fx_with_r8, &fx_with_r9, &fx_with_r10, &fx_with_r11, &fx_with_r12, &fx_with_r13, &fx_with_r14, &fx_with_r15,
     /* 30 - 3f */
     &fx_stb_r0,  &fx_stb_r1,  &fx_stb_r2,   &fx_stb_r3,   &fx_stb_r4,   &fx_stb_r5,   &fx_stb_r6,   &fx_stb_r7,

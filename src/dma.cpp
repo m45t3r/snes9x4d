@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -221,11 +221,11 @@ void S9xDoDMA (uint8 Channel)
 			switch (depth)
 			{
 			case 2:
-				for (i = 0; i < count; i += inc, base += char_line_bytes, 
+				for (i = 0; i < count; i += inc, base += char_line_bytes,
 					inc = char_line_bytes, char_count = num_chars)
 				{
 					uint8 *line = base + (num_chars - char_count) * 2;
-					for (uint32 j = 0; j < char_count && p - buffer < count; 
+					for (uint32 j = 0; j < char_count && p - buffer < count;
 					j++, line += 2)
 					{
 						uint8 *q = line;
@@ -249,11 +249,11 @@ void S9xDoDMA (uint8 Channel)
 				}
 				break;
 			case 4:
-				for (i = 0; i < count; i += inc, base += char_line_bytes, 
+				for (i = 0; i < count; i += inc, base += char_line_bytes,
 					inc = char_line_bytes, char_count = num_chars)
 				{
 					uint8 *line = base + (num_chars - char_count) * 4;
-					for (uint32 j = 0; j < char_count && p - buffer < count; 
+					for (uint32 j = 0; j < char_count && p - buffer < count;
 					j++, line += 4)
 					{
 						uint8 *q = line;
@@ -278,11 +278,11 @@ void S9xDoDMA (uint8 Channel)
 				}
 				break;
 			case 8:
-				for (i = 0; i < count; i += inc, base += char_line_bytes, 
+				for (i = 0; i < count; i += inc, base += char_line_bytes,
 					inc = char_line_bytes, char_count = num_chars)
 				{
 					uint8 *line = base + (num_chars - char_count) * 8;
-					for (uint32 j = 0; j < char_count && p - buffer < count; 
+					for (uint32 j = 0; j < char_count && p - buffer < count;
 					j++, line += 8)
 					{
 						uint8 *q = line;
@@ -715,7 +715,7 @@ void S9xDoDMA (uint8 Channel)
 			CHECK_SOUND();
 		} while (count);
     }
-    
+
 #ifdef SPC700_C
     iapu->APUExecuting = Settings.APUEnabled;
     APU_EXECUTE ();
@@ -743,7 +743,7 @@ update_address:
 	
     DMA[Channel].IndirectAddress = 0;
     d->TransferBytes = 0;
-    
+
     cpu->InDMA = FALSE;
 
 
@@ -764,7 +764,7 @@ void S9xStartHDMA ()
 		CPU.Cycles+=ONE_CYCLE*3;
 		S9xUpdateAPUTimer();
 	}
-    
+
 	ippu->HDMAStarted = TRUE;
 
     for (uint8 i = 0; i < 8; i++)
@@ -800,7 +800,7 @@ uint8 S9xDoHDMA (struct InternalPPU *ippu, struct SPPU *ppu, struct SCPUState *c
 {
 	uint8 byte = ippu->HDMA;
 	struct SDMA *p = &DMA [0];
-    
+
     int d = 0;
 
     CPU.InDMA = TRUE;
@@ -854,7 +854,7 @@ uint8 S9xDoHDMA (struct InternalPPU *ippu, struct SPPU *ppu, struct SCPUState *c
 					p->IndirectBank = p->ABank;
 					p->IndirectAddress = p->Address;
 				}
-				HDMABasePointers [d] = HDMAMemPointers [d] = 
+				HDMABasePointers [d] = HDMAMemPointers [d] =
 					S9xGetMemPointer ((p->IndirectBank << 16) + p->IndirectAddress);
 			}
 			else
@@ -871,7 +871,7 @@ uint8 S9xDoHDMA (struct InternalPPU *ippu, struct SPPU *ppu, struct SCPUState *c
 					p->IndirectAddress = p->Address;
 				}
 
-				if (!(HDMABasePointers [d] = HDMAMemPointers [d] = 
+				if (!(HDMABasePointers [d] = HDMAMemPointers [d] =
 					S9xGetMemPointer ((p->IndirectBank << 16) + p->IndirectAddress)))
 				{
 					byte &= ~mask;
@@ -896,7 +896,7 @@ uint8 S9xDoHDMA (struct InternalPPU *ippu, struct SPPU *ppu, struct SCPUState *c
 			}
 
 #ifdef DEBUGGER
-			if (Settings.TraceSoundDSP && p->FirstLine && 
+			if (Settings.TraceSoundDSP && p->FirstLine &&
 				p->BAddress >= 0x40 && p->BAddress <= 0x43)
 				S9xTraceSoundDSP ("Spooling data!!!\n");
 			if (Settings.TraceHDMA && p->FirstLine)

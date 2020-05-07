@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -591,7 +591,7 @@ static void OpC9M1 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUSta
 
 static void OpC9M0 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS    
+#ifdef FAST_LSB_WORD_ACCESS
     int32 Int32 = (long) reg->A.W - (long) *(uint16 *) cpu->PC;
 #else
     int32 Int32 = (long) reg->A.W -
@@ -788,7 +788,7 @@ static void OpE0X1 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUSta
 
 static void OpE0X0 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS    
+#ifdef FAST_LSB_WORD_ACCESS
     int32 Int32 = (long) reg->X.W - (long) *(uint16 *) cpu->PC;
 #else
     int32 Int32 = (long) reg->X.W -
@@ -841,7 +841,7 @@ static void OpC0X1 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUSta
 
 static void OpC0X0 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS    
+#ifdef FAST_LSB_WORD_ACCESS
     int32 Int32 = (long) reg->Y.W - (long) *(uint16 *) cpu->PC;
 #else
     int32 Int32 = (long) reg->Y.W -
@@ -2517,7 +2517,7 @@ inline void CPUShutdown(struct SICPU * icpu, struct SCPUState * cpu)
 	// the delay could allow the shutdown code to cycle skip again.
 	// Was causing screen flashing on Top Gear 3000.
 
-	if (cpu->WaitCounter == 0 && 
+	if (cpu->WaitCounter == 0 &&
 	    !(cpu->Flags & (IRQ_PENDING_FLAG | NMI_FLAG)))
 	{
 	    cpu->WaitAddress = NULL;
@@ -3430,7 +3430,7 @@ void S9xOpcode_IRQ ()
 			 (Memory.FillRAM [0x2208] << 8), &SA1);
 #else
 	if (Settings.SA1 && (Memory.FillRAM [0x2209] & 0x40))
-	    S9xSetPCBase (Memory.FillRAM [0x220e] | 
+	    S9xSetPCBase (Memory.FillRAM [0x220e] |
 			  (Memory.FillRAM [0x220f] << 8), &CPU);
 	else
 	    S9xSetPCBase (S9xGetWord (0xFFEE, &CPU), &CPU);
@@ -3458,7 +3458,7 @@ void S9xOpcode_IRQ ()
 			 (Memory.FillRAM [0x2208] << 8), &SA1);
 #else
 	if (Settings.SA1 && (Memory.FillRAM [0x2209] & 0x40))
-	    S9xSetPCBase (Memory.FillRAM [0x220e] | 
+	    S9xSetPCBase (Memory.FillRAM [0x220e] |
 			  (Memory.FillRAM [0x220f] << 8), &CPU);
 	else
 	    S9xSetPCBase (S9xGetWord (0xFFFE, &CPU), &CPU);
@@ -3701,12 +3701,12 @@ static void Op54X1 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUSta
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2 + TWO_CYCLES;
 #endif
-    
+
     reg->DB = *cpu->PC++;
     icpu->ShiftedDB = (reg->DB & 0xff) << 16;
     SrcBank = *cpu->PC++;
 
-    S9xSetByte (S9xGetByte ((SrcBank << 16) + reg->X.W, cpu), 
+    S9xSetByte (S9xGetByte ((SrcBank << 16) + reg->X.W, cpu),
 	     icpu->ShiftedDB + reg->Y.W, cpu);
 
     reg->XL++;
@@ -3723,12 +3723,12 @@ static void Op54X0 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUSta
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2 + TWO_CYCLES;
 #endif
-    
+
     reg->DB = *cpu->PC++;
     icpu->ShiftedDB = (reg->DB & 0xff) << 16;
     SrcBank = *cpu->PC++;
 
-    S9xSetByte (S9xGetByte ((SrcBank << 16) + reg->X.W, cpu), 
+    S9xSetByte (S9xGetByte ((SrcBank << 16) + reg->X.W, cpu),
 	     icpu->ShiftedDB + reg->Y.W, cpu);
 
     reg->X.W++;
@@ -3744,11 +3744,11 @@ static void Op44X1 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUSta
 
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2 + TWO_CYCLES;
-#endif    
+#endif
     reg->DB = *cpu->PC++;
     icpu->ShiftedDB = (reg->DB & 0xff) << 16;
     SrcBank = *cpu->PC++;
-    S9xSetByte (S9xGetByte ((SrcBank << 16) + reg->X.W, cpu), 
+    S9xSetByte (S9xGetByte ((SrcBank << 16) + reg->X.W, cpu),
 	     icpu->ShiftedDB + reg->Y.W, cpu);
 
     reg->XL--;
@@ -3764,11 +3764,11 @@ static void Op44X0 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUSta
 
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2 + TWO_CYCLES;
-#endif    
+#endif
     reg->DB = *cpu->PC++;
     icpu->ShiftedDB = (reg->DB & 0xff) << 16;
     SrcBank = *cpu->PC++;
-    S9xSetByte (S9xGetByte ((SrcBank << 16) + reg->X.W, cpu), 
+    S9xSetByte (S9xGetByte ((SrcBank << 16) + reg->X.W, cpu),
 	     icpu->ShiftedDB + reg->Y.W, cpu);
 
     reg->X.W--;
@@ -3864,7 +3864,7 @@ static void Op40 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState
 	missing.emulate6502 = 1;
     }
     S9xSetPCBase (icpu->ShiftedPB + reg->PC, cpu);
-    
+
     if (CHECKINDEX ())
     {
 	reg->XH = 0;

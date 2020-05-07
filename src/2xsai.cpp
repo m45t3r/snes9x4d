@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -75,7 +75,7 @@ extern "C"
     void EndMMX ();
 
 #endif
-} 
+}
 
 bool8 cpu_mmx = 1;
 
@@ -368,7 +368,7 @@ void Super2xSaI (uint8 *srcPtr, uint32 srcPitch,
     }
 }
 
-void SuperEagle (uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, 
+void SuperEagle (uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 		 uint8 *dstPtr, uint32 dstPitch, int width, int height)
 {
     uint8  *dP;
@@ -752,7 +752,7 @@ void _2xSaI (uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 
 #ifdef MMX
 void Scale_2xSaI (uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
-		  uint8 *dstPtr, uint32 dstPitch, 
+		  uint8 *dstPtr, uint32 dstPitch,
 		  uint32 dstWidth, uint32 dstHeight, int width, int height)
 {
     uint8  *dP;
@@ -814,7 +814,7 @@ void Scale_2xSaI (uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
 		x1 = w & 0xffff;	// fraction part of fixed point
 		x2 = 0x10000 - x1;
 
-		/*1*/ 
+		/*1*/
 		if (A == D && B != C)
 		{
 		    f1 = (x1 >> 1) + (0x10000 >> 2);
@@ -881,7 +881,7 @@ void Scale_2xSaI (uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
 		    }
 		}
 		else
-		/*2*/ 
+		/*2*/
 		if (B == C && A != D)
 		{
 		    f1 = (x1 >> 1) + (0x10000 >> 2);
@@ -1015,7 +1015,7 @@ static uint32 Bilinear4 (uint32 A, uint32 B, uint32 C, uint32 D, uint32 x,
 }
 
 void Scale_2xSaI (uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
-		  uint8 *dstPtr, uint32 dstPitch, 
+		  uint8 *dstPtr, uint32 dstPitch,
 		  uint32 dstWidth, uint32 dstHeight, int width, int height)
 {
     uint8  *dP;
@@ -1071,11 +1071,11 @@ void Scale_2xSaI (uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
 	    x1 = w & 0xffff;	// fraction part of fixed point
 	    x2 = 0x10000 - x1;
 
-	    /*0*/ 
+	    /*0*/
 	    if (A == B && C == D && A == C)
 		product1 = A;
 	    else
-	    /*1*/ 
+	    /*1*/
 	    if (A == D && B != C)
 	    {
 		f1 = (x1 >> 1) + (0x10000 >> 2);
@@ -1112,7 +1112,7 @@ void Scale_2xSaI (uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
 		}
 	    }
 	    else
-	    /*2*/ 
+	    /*2*/
 	    if (B == C && A != D)
 	    {
 		f1 = (x1 >> 1) + (0x10000 >> 2);

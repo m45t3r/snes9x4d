@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -843,7 +843,7 @@ void S9xSetPPU (uint8 Byte, uint16 Address, struct SPPU *ppu, struct InternalPPU
 	#ifdef SPC700_SHUTDOWN
 				IAPU.APUExecuting = Settings.APUEnabled;
 				IAPU.WaitCounter++;
-	#endif 
+	#endif
 #endif // SPCTOOL
 				break;
 			case 0x2180 :
@@ -1300,7 +1300,7 @@ uint8 S9xGetPPU(uint16 Address, struct SPPU *ppu, CMemory *mem)
 						&& Address <= 0x2143
 						&& !CPU.V_Counter)
 					{
-						return (uint8) ((Address & 1) ? 
+						return (uint8) ((Address & 1) ?
 							((rand() & 0xff00) >> 8) : (rand() & 0xff));
 					}
 
@@ -1523,7 +1523,7 @@ void S9xSetCPU(uint8 byte, uint16 Address, struct SPPU *ppu, struct SCPUState *c
 					&& !(Memory.FillRAM[0x4200] & 0x80)
 					&& cpu->V_Counter >= ppu->ScreenHeight + FIRST_VISIBLE_LINE
 					&& cpu->V_Counter <= ppu->ScreenHeight + (SNESGameFixes.alienVSpredetorFix ? 25 : 15)
-					&& 
+					&&
 				// Panic Bomberman clears the NMI pending flag @ scanline 230 before enabling
 				// NMIs again. The NMI routine crashes the CPU if it is called without the NMI
 				// pending flag being set...
@@ -1535,7 +1535,7 @@ void S9xSetCPU(uint8 byte, uint16 Address, struct SPPU *ppu, struct SCPUState *c
 				}
 				break;
 			case 0x4201 :
-				// I/O port output 
+				// I/O port output
 			case 0x4202 :
 				// Multiplier (for multply)
 				break;

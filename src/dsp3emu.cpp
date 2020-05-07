@@ -1,6 +1,6 @@
 /*******************************************************************************
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
- 
+
   (c) Copyright 1996 - 2002 Gary Henderson (gary.henderson@ntlworld.com) and
                             Jerremy Koot (jkoot@snes9x.com)
 
@@ -43,46 +43,46 @@
   S-DD1 C emulator code
   (c) Copyright 2003 Brad Jorsch with research by
                      Andreas Naive and John Weidman
- 
+
   S-RTC C emulator code
   (c) Copyright 2001 John Weidman
-  
+
   ST010 C++ emulator code
   (c) Copyright 2003 Feather, Kris Bleakley, John Weidman and Matthew Kendora
 
-  Super FX x86 assembler emulator code 
-  (c) Copyright 1998 - 2003 zsKnight, _Demo_, and pagefault 
+  Super FX x86 assembler emulator code
+  (c) Copyright 1998 - 2003 zsKnight, _Demo_, and pagefault
 
-  Super FX C emulator code 
+  Super FX C emulator code
   (c) Copyright 1997 - 1999 Ivar, Gary Henderson and John Weidman
 
 
   SH assembler code partly based on x86 assembler code
-  (c) Copyright 2002 - 2004 Marcus Comstedt (marcus@mc.pp.se) 
+  (c) Copyright 2002 - 2004 Marcus Comstedt (marcus@mc.pp.se)
 
- 
+
   Specific ports contains the works of other authors. See headers in
   individual files.
- 
+
   Snes9x homepage: http://www.snes9x.com
- 
+
   Permission to use, copy, modify and distribute Snes9x in both binary and
   source form, for non-commercial purposes, is hereby granted without fee,
   providing that this license information and copyright notice appear with
   all copies and any derived work.
- 
+
   This software is provided 'as-is', without any express or implied
   warranty. In no event shall the authors be held liable for any damages
   arising from the use of this software.
- 
+
   Snes9x is freeware for PERSONAL USE only. Commercial users should
   seek permission of the copyright holders first. Commercial use includes
   charging money for Snes9x or software derived from Snes9x.
- 
+
   The copyright holders request that bug fixes and improvements to the code
   should be forwarded to them so everyone can benefit from the modifications
   in future versions.
- 
+
   Super NES and Super Nintendo Entertainment System are trademarks of
   Nintendo Co., Limited and its subsidiary companies.
 *******************************************************************************/
@@ -243,7 +243,7 @@ void DSP3_TestMemory()
 void DSP3_DumpDataROM()
 {
 	DSP3_DR = DSP3_DataROM[DSP3_MemoryIndex++];
-	if (DSP3_MemoryIndex == 1024) 
+	if (DSP3_MemoryIndex == 1024)
 		SetDSP3 = &DSP3_Reset;
 }
 
@@ -293,16 +293,16 @@ void DSP3_OP07_A()
 	DSP3_AddLo += Lo;
 	DSP3_AddHi += Hi;
 
-	if (DSP3_AddLo < 0) 
+	if (DSP3_AddLo < 0)
 		DSP3_AddLo += DSP3_WinLo;
 	else
-		if (DSP3_AddLo >= DSP3_WinLo) 
+		if (DSP3_AddLo >= DSP3_WinLo)
 			DSP3_AddLo -= DSP3_WinLo;
 
-	if (DSP3_AddHi < 0) 
+	if (DSP3_AddHi < 0)
 		DSP3_AddHi += DSP3_WinHi;
 	else
-		if (DSP3_AddHi >= DSP3_WinHi) 
+		if (DSP3_AddHi >= DSP3_WinHi)
 			DSP3_AddHi -= DSP3_WinHi;
 
 	DSP3_DR = DSP3_AddLo | (DSP3_AddHi << 8) | ((DSP3_AddHi >> 8) & 0xff);
@@ -316,7 +316,7 @@ void DSP3_OP07()
 	DSP3_AddHi = DSP3_DataROM[dataOfs];
 	DSP3_AddLo = DSP3_DataROM[dataOfs + 1];
 
-	SetDSP3 = &DSP3_OP07_A;  
+	SetDSP3 = &DSP3_OP07_A;
 	DSP3_SR = 0x0080;
 }
 
@@ -445,7 +445,7 @@ bool DSP3_GetBits(uint8 Count)
 		DSP3_ReqBits <<= 1;
 		if (DSP3_ReqData & 0x8000) DSP3_ReqBits++;
 		DSP3_ReqData <<= 1;
-        
+
 		DSP3_BitCount--;
 		DSP3_BitsLeft--;
 
@@ -519,7 +519,7 @@ void DSP3_Decode_Data()
 	else
 	{
 		DSP3_Outwords--;
-		if (!DSP3_Outwords) 
+		if (!DSP3_Outwords)
 			SetDSP3 = &DSP3_Reset;
 	}
 
@@ -654,7 +654,7 @@ void DSP3_Command()
 		case 0x02: SetDSP3 = &DSP3_Coordinate; break;
 		case 0x03: SetDSP3 = &DSP3_OP03; break;
 		case 0x06: SetDSP3 = &DSP3_OP06; break;
-		case 0x07: SetDSP3 = &DSP3_OP07; return;									 
+		case 0x07: SetDSP3 = &DSP3_OP07; return;									
 		case 0x0f: SetDSP3 = &DSP3_TestMemory; break;
 		case 0x18: SetDSP3 = &DSP3_Convert; break;
 		case 0x1f: SetDSP3 = &DSP3_MemoryDump; break;

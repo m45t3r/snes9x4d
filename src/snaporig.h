@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -209,7 +209,7 @@ struct SOrigPPU {
     } BG [4];
 
     bool8_32 CGFLIP;
-    uint16 CGDATA [256]; 
+    uint16 CGDATA [256];
     uint8 FirstSprite;
     uint8 LastSprite;
     struct SOrigOBJ OBJ [129];

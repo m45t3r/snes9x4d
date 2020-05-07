@@ -3,28 +3,28 @@ Dingoo: 320×240 Pixel, 16 Bit Farbtiefe
 512 (Width) x480 (Height)
 256 (Width) *224 (Height)
 
-bool8 S9xInitUpdate (void) 
+bool8 S9xInitUpdate (void)
 
 Called just before Snes9x begins to render an SNES screen.
-Use this function if you should prepare before drawing, otherwise let it empty. 
+Use this function if you should prepare before drawing, otherwise let it empty.
 
-bool8 S9xDeinitUpdate (int width, int height) 
+bool8 S9xDeinitUpdate (int width, int height)
 
 Called once a complete SNES screen has been rendered into the GFX.Screen memory buffer,
 now is your chance to copy the SNES rendered screen to the host computer's screen memory.
 The problem is that you have to cope with different sized SNES rendered screens:
-256*224, 256*239, 512*224, 512*239, 512*448 and 512*478. 
+256*224, 256*239, 512*224, 512*239, 512*448 and 512*478.
 
-Global Variables 
+Global Variables
 
-uint16 *GFX.Screen 
+uint16 *GFX.Screen
 
 A uint16 array pointer to (at least) 2*512*478 bytes buffer where Snes9x puts the rendered SNES screen.
 However, if your port will not support hires mode (Settings.SupportHiRes = false),
 then a 2*256*239 bytes buffer is allowed. You should allocate the space by yourself.
 As well you can change the GFX.Screen value after S9xDeinitUpdate function is called so that double-buffering will be easy.
 
-uint32 GFX.Pitch 
+uint32 GFX.Pitch
 
 Bytes per line (not pixels per line) of the GFX.Screen buffer. Typically set it to 1024.
 When the SNES screen is 256 pixels width and Settings.OpenGLEnable is false,
@@ -77,4 +77,4 @@ also set).
 
 Not many games use the feature due to the flicker introduced by the
 interlace, so its use is normally limited to title screens. However, one
-game I know of, RPM Racing, uses the effect during the game. 
+game I know of, RPM Racing, uses the effect during the game.

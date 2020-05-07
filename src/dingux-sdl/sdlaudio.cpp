@@ -103,4 +103,4 @@ void S9xReinitSound(int new_freq)
 
 void S9xGenerateSound ()
 {
-} 
+}

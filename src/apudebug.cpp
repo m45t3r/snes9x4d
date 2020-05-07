@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -227,7 +227,7 @@ void S9xTraceSoundDSP (const char *s, int i1 = 0, int i2 = 0, int i3 = 0,
 int S9xTraceAPU ()
 {
     char buffer [200];
-    
+
     uint8 b = S9xAPUOPrint (buffer, IAPU.PC - IAPU.RAM);
     if (apu_trace == NULL)
 	apu_trace = fopen ("apu_trace.log", "wb");
@@ -242,7 +242,7 @@ int S9xAPUOPrint (char *buffer, uint16 Address)
     uint8 *p = IAPU.RAM + Address;
     int mode = Modes [*p];
     int bytes = ModesToBytes [mode];
-    
+
     switch (bytes)
     {
     case 1:
@@ -374,7 +374,7 @@ void S9xPrintAPUState ()
 	    printf ("left: %d, right: %d, ",
 		    ch->volume_left, ch->volume_right);
 
-	    static char* envelope [] = 
+	    static char* envelope [] =
 	    {
 		"silent", "attack", "decay", "sustain", "release", "gain",
 		"inc_lin", "inc_bent", "dec_lin", "dec_exp"

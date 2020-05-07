@@ -107,7 +107,7 @@ What's Emulated
 - Direct colour mode - uses tile and palette-group data directly as RGB value.
 - Super FX, a 21/10MHz RISC CPU found in the cartridge of several games.
 - S-DD1, a data decompression chip used only in Star Ocean and Street Fighter 2
-  Alpha. Snes9x's implementation, like zsnes's, is a bit of a cheat - nobody 
+  Alpha. Snes9x's implementation, like zsnes's, is a bit of a cheat - nobody
   can figure out the compression algorithm the chip uses, so instead the
   actual chip was used decompress the data, the data saved and made available
   for download. The decompressed graphics packs must be downloaded in order to
@@ -136,17 +136,17 @@ What's Emulated
 What's Not
 ==========
 - Only partial DSP-1 support, enough to play Mario Kart, Pilotwings and a few
-  other DSP-1 games. The DSP-1 is a math co-processor chip that was inside the 
+  other DSP-1 games. The DSP-1 is a math co-processor chip that was inside the
   cartridge of several games. There are a few versions of the chip, but only
   the first version is supported by Snes9x.
 - Any other odd chips that manufactures sometimes placed inside the
-  cartridge to enhance games and as a nice side-effect, also act as an 
+  cartridge to enhance games and as a nice side-effect, also act as an
   anti-piracy measure.
 - Pseudo hi-res. mode - SNES hardware uses interpolation to give apparent
   increase in horizontal resolution, use one of the output image processing
   options to get the same effect.
 - Mosaic effect on mode 7.
-- A couple of SPC700 instructions that I can't work exactly out what they 
+- A couple of SPC700 instructions that I can't work exactly out what they
   should do.
 - Fixed colour and mosaic effects in SNES hi-res. (512x448) modes.
 - Offset-per-tile in mode 6. Luckily I haven't found a game that uses it, yet.
@@ -172,7 +172,7 @@ card - virtually all modern PCI sound cards are DirectSound compatible - or
 use FMOD's older Windows WAVE sound driver.
 
 Snes9x's full-screen mode uses DirectDraw to switch to the required resolution
-and depth, but if you intend to use the Windowed mode, for maximum emulation 
+and depth, but if you intend to use the Windowed mode, for maximum emulation
 speed you should have your desktop depth set to 256 colours if translucency
 emulation and 16-bit rendering are switched off and not required, or hi-colour
 mode (32768/65536 colours) if translucency effects are required.
@@ -202,14 +202,14 @@ Getting Started
 Launch Snes9x from the Windows Start menu if you used the package install
 method; alternatively use Windows explorer to locate the directory where you
 un-zipped the snes9xw.exe, fmod.dll and snes9xw.dll files and double-click on
-the snes9xw.exe executable. You could create a shortcut to Snes9x and drag 
+the snes9xw.exe executable. You could create a shortcut to Snes9x and drag
 that icon out onto your desktop.
 
 Loading Games
 -------------
 Use the Open option from the File menu to open the ROM load dialog. The dialog
 allows you to browse your computer to locate the directory where you have
-stored your SNES games. Double-click on a ROM image name or single-click and 
+stored your SNES games. Double-click on a ROM image name or single-click and
 then press Load to load and start the game.
 
 SNES ROM images come in lots of different formats, depending on the copier
@@ -246,20 +246,20 @@ special adaptor, although there are only a few games that actually supported
 that many players. Having five people crowd around the keyboard would not be
 much fun, and anyway, all keyboards have a limit on the number of keys that
 can be pressed simultaneously and still be detected correctly; much better to
-use multiple joysticks or NetPlay. 
+use multiple joysticks or NetPlay.
 
 Keyboard/Joystick Config
 ------------------------
 
 Add support for your joystick and calibrate it using Windows' joystick applet
-from the Windows control panel before starting Snes9x, then use Joy-pad 
-Configuration dialog in Snes9x to customise the keyboard/joystick to SNES 
+from the Windows control panel before starting Snes9x, then use Joy-pad
+Configuration dialog in Snes9x to customise the keyboard/joystick to SNES
 joy-pad mappings. The dialog is easy to use: select which SNES joy-pad you are
 configuring using the combo box (#1 to #5), click on the text box next to the
-'UP' SNES joy-pad button and then press the key on the keyboard or 
+'UP' SNES joy-pad button and then press the key on the keyboard or
 button on your joystick that you would like to perform the UP action. The
 focus will automatically move on to the 'RIGHT' text box, press the key or
-joystick button that you want to perform the RIGHT action, and so on until 
+joystick button that you want to perform the RIGHT action, and so on until
 you've customised all the SNES joy-pad buttons.
 
 If you're using the keyboard, you might want to also program four keys for
@@ -311,7 +311,7 @@ Shift+'-'               Decrease emulated frame time by 1ms - speeding up the
                         game. (auto-frame skip only)
 
 '+'                     Increase frame rendering skip rate, making the screen
-                        updates more jerky but speeding up the game. 
+                        updates more jerky but speeding up the game.
 '-'                     Decrease frame rendering skip rate, making the game
                         update more smoothly, but potentially slowing down the
                         game. Repeatedly pressing the key will eventually
@@ -326,7 +326,7 @@ Joystick Support
 ================
 
 Configure and calibrate your joystick/joy-pad using Windows joystick applet in
-the control panel BEFORE starting Snes9X, then use Snes9X's joy-pad config 
+the control panel BEFORE starting Snes9X, then use Snes9X's joy-pad config
 dialog available from the Options menu to map your joystick/joy-pad's buttons
 to the emulated SNES joy-pad(s) buttons. See 'Keyboard/Joystick Config' above
 for details.
@@ -349,7 +349,7 @@ game, and just F1 to F9 to load it again later.
 
 Freeze game files and Save-RAM (S-RAM) save files are normally written to and
 read from the folder where the ROM image was located, but sometimes this is not
-desirable or possible, especially if its a CD-ROM, which is of course 
+desirable or possible, especially if its a CD-ROM, which is of course
 read-only! You can change the folder where Snes9X saves and loads S-RAM and
 freeze-files using the Settings Dialog, available from the Options menu.
 
@@ -369,7 +369,7 @@ up to five players to sit in front of different computers and simultaneously
 play the same game, or just watch someone else play a game. All the computers
 have to be connected to a network that allows TCP/IP traffic to flow between
 them; this includes a local Ethernet-style network, a modem connection to
-another machine, a Windows direct-cable connection, or, if you're lucky and 
+another machine, a Windows direct-cable connection, or, if you're lucky and
 have short ping times, the Internet.
 
 Its currently easier if you use Snes9x in windowed mode while using Netplay,
@@ -377,7 +377,7 @@ mainly because Netplay currently displays status information in the window's
 title bar, and it might be necessary to setup a separate chat application so
 you can talk to the other players when deciding what game to play next.
 
-One machine has to act as a server which other players (client sessions) 
+One machine has to act as a server which other players (client sessions)
 connect to. The 'master' player, player 1, uses the server machine; the master
 decides what game to play. The server machine should be selected to be the
 fastest machine on the fastest connection in the group taking part due to the
@@ -385,7 +385,7 @@ extra functions it has to perform.
 
 Load up a game, then select the 'Act as server' option from the Netplay menu
 to become a Netplay server; the 'network', in whatever form it takes, will
-need to be initialised, if necessary, before you do this. Then just wait for 
+need to be initialised, if necessary, before you do this. Then just wait for
 other players to connect...
 
 Clients connect to the server using the 'Connect to server...' dialog, again
@@ -402,18 +402,18 @@ when using a modem! If the option is not checked the server will request the
 client loads up the correct game first before joining the game.
 
 Once the client has got a copy of the game the server is playing, the server
-will then either send it S-RAM data and reset all players' games if the 
+will then either send it S-RAM data and reset all players' games if the
 'Sync Using Reset Game' option is checked, or send it a freeze file to get the
 new client in sync with the other player's progress in a game.
 
-If the master player loads a different game, the server will either 
+If the master player loads a different game, the server will either
 automatically send remote clients a copy, or request that they load the game.
 If the master player loads a freeze file, the server will automatically send
 that to remote clients as well.
 
 Client sessions must be able to keep up with the server at all times - if they
 can't, either because the machine is just too slow, or its busy, the games
-will get out of sync and it will be impossible to successfully play a 
+will get out of sync and it will be impossible to successfully play a
 multi-player game...
 
 ...To make sure this doesn't happen, don't move the Snes9x window unnecessarily
@@ -422,15 +422,15 @@ any unnecessary applications and as many background tasks as possible. Even
 something as simple as a text editor might periodically write unsaved data to
 the disk, stealing CPU time away from Snes9x causing it to skip a frame or
 delay a sound effect; not a problem for most games, but the Bomberman series
-(the best multi-player games on the SNES) sync the game to sound samples 
+(the best multi-player games on the SNES) sync the game to sound samples
 finishing. Turning off 'Volume envelope height reading' from the Sound Options
 dialog might help with this problem.
 
 Cheat Support
 =============
 
-Use the Cheat Code Entry and Editor dialog from the Cheats menu to enter 
-Game Genie or Pro-Action Reply cheat codes. Cheat codes allow you to, 
+Use the Cheat Code Entry and Editor dialog from the Cheats menu to enter
+Game Genie or Pro-Action Reply cheat codes. Cheat codes allow you to,
 surprisingly, cheat at games; they might give you more lives, infinite health,
 enable special powers normally only activated when a special item is found,
 etc.
@@ -442,10 +442,10 @@ Type in a Game Genie or Pro-Action Reply code into the "Enter Cheat Code" text
 edit box and press <Return>. Be sure to include the '-' when typing in a Game
 Genie code. You can then type in an optional short description as a reminder
 to yourself what function the cheat performs. Press <Return> again or click the
-Add button to add the cheat to the list. 
+Add button to add the cheat to the list.
 
-Note that the Add button remains insensitive while "Enter Cheat Code" text 
-edit box is empty or contains an invalid code. The cheat code is always 
+Note that the Add button remains insensitive while "Enter Cheat Code" text
+edit box is empty or contains an invalid code. The cheat code is always
 translated into an address and value pair and displayed in the cheat list as
 such.
 
@@ -461,7 +461,7 @@ text edit box then type the value into the "Value" text edit box. The value is
 normally entered in decimal, but if you prefix the value with a '$' or append
 a 'h' then you can enter the value in hex.
 
-Double-clicking on an cheat line from the list in the dialog or clicking on 
+Double-clicking on an cheat line from the list in the dialog or clicking on
 the "En" column, toggles a individual cheat on and off. All cheats can be
 switched on and off by checking and unchecking the "Apply cheats" item from
 the Cheat menu.
@@ -475,7 +475,7 @@ whether you originally entered it as a Game Genie or Pro-Action Replay code.
 Selecting a cheat from the list then pressing the Delete button permanently
 removes that cheat.
 
-Cheats are saved in .cht files stored in the Freeze File Directory and are 
+Cheats are saved in .cht files stored in the Freeze File Directory and are
 automatically loaded the next time a game with the same filename is loaded.
 The format for the .cht files is the same format as used by the other excellent
 SNES emulator, ZSNES.
@@ -486,24 +486,24 @@ dialog is to walk through an example.
 
 Cheat Search Example
 --------------------
-Lets give ourselves infinite health and lives on Ocean's Addams Family 
+Lets give ourselves infinite health and lives on Ocean's Addams Family
 platform game:
 
-Load up the game, keep pressing the start button (Return key by default) to 
+Load up the game, keep pressing the start button (Return key by default) to
 skip past the title screens until you actually start playing the game. You'll
 notice the game starts with 2 health hearts and 5 lives. Remember that
 information, it will come in useful later.
 
 Launch the cheat search dialog for the first time, Alt+A is its accelerator.
-Press the Reset button just in case you've used the dialog before, leave the 
+Press the Reset button just in case you've used the dialog before, leave the
 Search Type and Data Size radio boxes at their default values and press OK.
 
-Play the game for a while until you loose a life by just keep walking into 
-baddies, when the game restarts and the life counter displays 4, launch the 
-cheat search dialog again but this time press the Search button rather than 
+Play the game for a while until you loose a life by just keep walking into
+baddies, when the game restarts and the life counter displays 4, launch the
+cheat search dialog again but this time press the Search button rather than
 Reset. The number of items in the list will reduce, each line shows a memory
 location, its current value and its previous value; what we're looking for is
-the memory location where the game stores its life counter. 
+the memory location where the game stores its life counter.
 
 Look at address line 7E00AC, its current value is 4 and its previous value was
 5. Didn't we start with 5 lives? Looks interesting...
@@ -512,7 +512,7 @@ Note that some games store the current life counter as displayed on the screen,
 while others store current number of lives minus 1. Looks like Addams Family
 stores the actual life count as displayed on the screen.
 
-Just to make sure you've found the correct location, press OK on the dialog, 
+Just to make sure you've found the correct location, press OK on the dialog,
 and play the game until you loose another life. Launch the search dialog again
 after the life counter on screen has been updated and press the Search
 button. Now there's even fewer items in the list, but 7E00AC is there again,
@@ -532,7 +532,7 @@ If the memory location you add a cheat on proves to be wrong, just go to the
 Cheat Code Editor dialog and delete the incorrect entry.
 
 Now lets try and find the Addams Family health counter. While two hearts are
-displayed on the screen, visit the cheat search dialog and press the Reset 
+displayed on the screen, visit the cheat search dialog and press the Reset
 button followed by OK. Play the game until you loose a heart by touching a
 baddie, then visit the cheat search dialog again.
 
@@ -544,13 +544,13 @@ with.
 Look at address line 7E00C3, its current value is 1 and its previous value was
 2. Scrolling through the list doesn't reveal any other likely memory locations,
 so lets try our luck. Click on the 7E00C3 line, press the Add Cheat button and
-type in a new value of say 4 into the dialog that appears and press OK. Press 
+type in a new value of say 4 into the dialog that appears and press OK. Press
 OK on the Search for New Cheats dialog to return to the game.
 
 At first sight it looks like 7E00C3 wasn't the correct memory location because
 the number of hearts displayed on screen hasn't gone up, but fear not, some
 games don't continually update health and life displays until they think they
-need to. Crash into another baddie - instead of dying, the number of hearts 
+need to. Crash into another baddie - instead of dying, the number of hearts
 displayed jumps up to 4! We've found the correct location after all!
 
 Now every time you play Addams Family you'll have infinite lives and health.
@@ -568,10 +568,10 @@ but its sound code is corrupt and you'll need to disable sound CPU emulation to
 play it.
 
 Lots of Super FX ROM images available are in an odd, interleaved format that I
-haven't worked out an easy way to auto-detect. If Snes9x detects that a 
-Super FX game crashes (by executing a BRK instruction), it automatically 
+haven't worked out an easy way to auto-detect. If Snes9x detects that a
+Super FX game crashes (by executing a BRK instruction), it automatically
 assumes the ROM is in this odd format and de-mangles the ROM and tries to run
-it again. If your ROM image isn't working, you could try selecting the 
+it again. If your ROM image isn't working, you could try selecting the
 Interleave mode 2 option on the ROM load dialog before loading the game to help
 out Snes9x.
 
@@ -581,9 +581,9 @@ The S-DD1 is a custom data decompression chip that can decompress data in real-
 time as the SNES DMA's data from the ROM to RAM. Only two games are known to
 use the chip: Star Ocean and Street Fighter Alpha 2.
 
-The chip uses some unknown compression algorithm, so to actually support the 
+The chip uses some unknown compression algorithm, so to actually support the
 two S-DD1 games, pre-decompressed graphics packs must be downloaded from
-http://dejap.zsnes.com, unpacked, and the resultant folder copied into the 
+http://dejap.zsnes.com, unpacked, and the resultant folder copied into the
 same folder that Snes9x normally loads and saves game freeze-files and S-RAM
 files. To prevent copyright problems, the packs must be unpacked and decoded
 using a special tool also available from the same site. The tool needs access
@@ -600,7 +600,7 @@ Nintendo which includes some very fast RAM, a memory mapper, DMA and, several
 real-time timers.
 
 Snes9X includes emulation of most features of the SA-1, enough to play all SA-1
-games I've located so far, these include Mario RPG, Kirby Superstar and 
+games I've located so far, these include Mario RPG, Kirby Superstar and
 Paradius 3.
 
 C4
@@ -621,10 +621,10 @@ If the emulator just displays a black screen for over 10 seconds after you've
 loaded a ROM image, then one of the following could be true:
 
 1) You just loaded some random ROM image you've downloaded from the Internet
-   and it isn't even a SNES game or you only downloaded part of the image. 
-   Snes9x only emulates games designed for the Super NES, not NES, or 
+   and it isn't even a SNES game or you only downloaded part of the image.
+   Snes9x only emulates games designed for the Super NES, not NES, or
    Master System, or Game Boy, or <insert your favourite old games system here>.
-2) If its a Super FX game, chances are its in interleaved2 format, try 
+2) If its a Super FX game, chances are its in interleaved2 format, try
    switching to "Interleaved mode 2" on the ROM load dialog before loading the
    game.
 3) Someone has edited the Nintendo ROM information area inside the ROM image
@@ -632,13 +632,13 @@ loaded a ROM image, then one of the following could be true:
    around with the ROM format options on the ROM load dialog.
 4) The ROM image is corrupt. If you're loading from CD, I know it might
    sound silly, but is the CD dirty? Clean, un-hacked ROM images will display
-   [checksum ok] when first loaded, corrupt or hacked ROMs display 
+   [checksum ok] when first loaded, corrupt or hacked ROMs display
    [bad checksum].
 5) The original SNES ROM cartridge had additional hardware inside that is not
    emulated yet and might never be.
 
 The following ROMs are known to currently not to work with any version of Snes9x:
-- All games that use later versions of the DSP-1 chip (e.g. Ballz 3d, 
+- All games that use later versions of the DSP-1 chip (e.g. Ballz 3d,
   Topgear 3000)
 - Exhaust Heat2 (custom co-processor)
 - Metal Combat (OBC1)
@@ -651,23 +651,23 @@ these:
 
 - If all sound menu options are greyed out, or an error dialog about Snes9x not
   being able to initialise DirectSound is displayed - then DirectSound could
-  not initialise itself. Make sure DirectX 6 or above is installed and your 
+  not initialise itself. Make sure DirectX 6 or above is installed and your
   sound card is supported by DirectX.
 
-  Installing the latest drivers for your sound card might help. Another 
-  Windows application might have opened DirectSound in exclusive mode or 
-  opened the Windows WAVE device - WinAmp uses the Windows WAVE device by 
-  default - in which case you will need to stop that application and then 
+  Installing the latest drivers for your sound card might help. Another
+  Windows application might have opened DirectSound in exclusive mode or
+  opened the Windows WAVE device - WinAmp uses the Windows WAVE device by
+  default - in which case you will need to stop that application and then
   restart Snes9x. It is possible to switch WinAmp to use DirectSound, in
   which case both Snes9x and WinAmp output can be heard at the same time.
 
   If your sound card isn't supported by DirectX very well (or not at all) you
-  will have to use FMOD's WAVE output option; but WAVE output introduces a 
-  0.15s delay between Snes9x generating sample data and you hearing it. 
+  will have to use FMOD's WAVE output option; but WAVE output introduces a
+  0.15s delay between Snes9x generating sample data and you hearing it.
   Select FMOD's WAVE output by choosing the "FMOD Windows Multimedia" sound
   driver option from the Sound Settings dialog.
 
-- The sound card's volume level might be set too low. Snes9x doesn't alter the 
+- The sound card's volume level might be set too low. Snes9x doesn't alter the
   card's master volume level so you might need to adjust it using the sound
   card's mixer/volume controls usually available from the task bar or start
   menu.
@@ -683,32 +683,32 @@ General sound problems:
   two sound emulation bugs that cause the odd pop, crackle and buzz in a few
   games.
 
-  Once you're happy that it is not just the game you're playing, set the 
+  Once you're happy that it is not just the game you're playing, set the
   playback rate in the Sound Settings dialog to 22KHz, and uncheck "Stereo" and
   "16bit playback". Next set both sound buffer length and mix values to 10ms,
-  then try slowly increasing both values until clear sound can be heard. The 
+  then try slowly increasing both values until clear sound can be heard. The
   ideal is that the mix interval and sound buffer length values should be as
   small as possible. The mix interval value must always be smaller than the
   sound buffer length otherwise sound data will be lost.
-  
+
   If your sound card requires larger values, above, say, 40ms, then it might
   also be necessary to enable the "Generate sample data in sync with sound CPU"
   option to maintain accurate sound emulation.
-  
-  If all else fails, try selecting the "FMOD Window Multimedia" sound driver 
-  option and live with the 0.15s lagged sound that is unavoidable when using 
+
+  If all else fails, try selecting the "FMOD Window Multimedia" sound driver
+  option and live with the 0.15s lagged sound that is unavoidable when using
   the older Windows WAVE sound API.
 
-  Once you have clear sound, set the playback rate, 16bit sound and stereo 
-  settings to quality you would like - it might be necessary to tweak the 
+  Once you have clear sound, set the playback rate, 16bit sound and stereo
+  settings to quality you would like - it might be necessary to tweak the
   sound buffer length and mix interval values again.
 
 - Sound the lagged/delayed compared to on-screen action. If you're using the
   "FMOD Windows Multimedia" sound driver then delayed sound is unavoidable;
   otherwise your sound buffer length/mix interval settings are too large - if
   you can, reduce their values.
-- Sound quality is poor on all games. You might have a noisy sound card 
-  (usually cheaper sound cards), turning on 16-bit, interpolated sound, 
+- Sound quality is poor on all games. You might have a noisy sound card
+  (usually cheaper sound cards), turning on 16-bit, interpolated sound,
   sync-sound and/or increasing the playback rate might help.
 - Sound seems to have gaps. Using larger sound buffer or mix interval values
   can cause this; reduce them if you can, or click on the "Generate sample data
@@ -716,11 +716,11 @@ General sound problems:
 - Sound is awful in all games. You might have selected a playback rate/stereo/
   8-bit/16-bit combination that your sound card can't cope with. Try setting
   8-bit (uncheck the 16bit playback option), mono (uncheck the Stereo option)
-  22KHz from the sound menu and if that cures the problem, try other 
+  22KHz from the sound menu and if that cures the problem, try other
   combinations until you find the best setting that works on your sound card.
 
-If all else fails, try posting a message describing your problem and 
-requesting help on the Snes9X message board at the Snes9X web site, 
+If all else fails, try posting a message describing your problem and
+requesting help on the Snes9X message board at the Snes9X web site,
 http://www.snes9x.com
 
 Converting ROM Images
@@ -732,14 +732,14 @@ loading the ROM image, just specify the name of the first part; the remaining
 parts will be loaded automatically.
 
 If they are already in the form sf32xxxa, sf32xxxb, etc., you don't even have
-to rename them; just choose the name of the first part from the ROM load 
+to rename them; just choose the name of the first part from the ROM load
 dialog, as above.
 
 Emulation speed
 ===============
 
 Emulating an SNES is very processor intensive, with its two or sometimes three
-CPUs, an 8 channel digital sound processor with real-time sound sample 
+CPUs, an 8 channel digital sound processor with real-time sound sample
 decompression and stereo sound, two custom graphics processors, etc.
 
 If you only have a 486 machine, you will need to stick to using only 8-bit
@@ -764,22 +764,22 @@ will also help boost emulation speed.
 Credits
 -------
 
-- Jerremy Koot for all his hard work on previous versions of Snes96, Snes97 
+- Jerremy Koot for all his hard work on previous versions of Snes96, Snes97
   and Snes9x.
-- Ivar for the original Super FX C emulation, DSP-1 emulation work and 
+- Ivar for the original Super FX C emulation, DSP-1 emulation work and
   information on both chips.
 - zsKnight and _Demo_ for the Intel Super FX assembler, DSP-1 and C4 emulation
   code.
-- zsKnight and _Demo_ for all the other ideas and code I've nicked off them; 
+- zsKnight and _Demo_ for all the other ideas and code I've nicked off them;
   they've nicked lots of my ideas and information too!
 - John Weidman and Darkforce for the S-RTC emulation information and code.
 - Kreed for his excellent image enhancer routines.
 - Nose000 for code changes to support various Japanese SNES games.
 - Neill Corlett for the IPS patching support code.
-- DiskDude's SNES Kart v1.6 document for the Game Genie(TM) and Pro-Action 
+- DiskDude's SNES Kart v1.6 document for the Game Genie(TM) and Pro-Action
   Replay cheat system information.
 - Lord ESNES for some nice chats and generally useful stuff.
-- Lee Hyde (lee@jlp1.demon.co.uk) for his quest for sound information and 
+- Lee Hyde (lee@jlp1.demon.co.uk) for his quest for sound information and
   the Windows 95 icon.
 - Shawn Hargreaves for the rather good Allegro 3.0 DOS library.
 - Robert Grubbs for the SideWinder information - although I didn't use his
@@ -792,14 +792,14 @@ Credits
   due to problems).
 - Takehiro TOMINAGA for many speed up suggestions and bug fixes.
 - Predicador for the Windows icon.
-- Lindsey Dubb for the mode 7 bi-linear filter code and the improved 
+- Lindsey Dubb for the mode 7 bi-linear filter code and the improved
   colour addition and subtraction code.
 - Anti Resonance for his super-human efforts to help get his fast sound CPU
   core and sound DSP core working in Snes9x.
 
 Nintendo is a trademark.
-Super NES, SuperScope and Super FX are a trademarks of Nintendo. 
-Sun, Solaris and Sparc are all trademarks of Sun Microsystems, Inc.  
+Super NES, SuperScope and Super FX are a trademarks of Nintendo.
+Sun, Solaris and Sparc are all trademarks of Sun Microsystems, Inc.
 Game Genie is a trademark of Lewis Galoob Toys, Inc.
 MS-DOS and Windows 95 are trademarks of Microsoft Corp.
 Intel, Pentium and MMX are all trademarks of Intel Corp.

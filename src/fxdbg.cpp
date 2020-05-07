@@ -1,6 +1,6 @@
 /*******************************************************************************
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
- 
+
   (c) Copyright 1996 - 2002 Gary Henderson (gary.henderson@ntlworld.com) and
                             Jerremy Koot (jkoot@snes9x.com)
 
@@ -43,46 +43,46 @@
   S-DD1 C emulator code
   (c) Copyright 2003 Brad Jorsch with research by
                      Andreas Naive and John Weidman
- 
+
   S-RTC C emulator code
   (c) Copyright 2001 John Weidman
-  
+
   ST010 C++ emulator code
   (c) Copyright 2003 Feather, Kris Bleakley, John Weidman and Matthew Kendora
 
-  Super FX x86 assembler emulator code 
-  (c) Copyright 1998 - 2003 zsKnight, _Demo_, and pagefault 
+  Super FX x86 assembler emulator code
+  (c) Copyright 1998 - 2003 zsKnight, _Demo_, and pagefault
 
-  Super FX C emulator code 
+  Super FX C emulator code
   (c) Copyright 1997 - 1999 Ivar, Gary Henderson and John Weidman
 
 
   SH assembler code partly based on x86 assembler code
-  (c) Copyright 2002 - 2004 Marcus Comstedt (marcus@mc.pp.se) 
+  (c) Copyright 2002 - 2004 Marcus Comstedt (marcus@mc.pp.se)
 
- 
+
   Specific ports contains the works of other authors. See headers in
   individual files.
- 
+
   Snes9x homepage: http://www.snes9x.com
- 
+
   Permission to use, copy, modify and distribute Snes9x in both binary and
   source form, for non-commercial purposes, is hereby granted without fee,
   providing that this license information and copyright notice appear with
   all copies and any derived work.
- 
+
   This software is provided 'as-is', without any express or implied
   warranty. In no event shall the authors be held liable for any damages
   arising from the use of this software.
- 
+
   Snes9x is freeware for PERSONAL USE only. Commercial users should
   seek permission of the copyright holders first. Commercial use includes
   charging money for Snes9x or software derived from Snes9x.
- 
+
   The copyright holders request that bug fixes and improvements to the code
   should be forwarded to them so everyone can benefit from the modifications
   in future versions.
- 
+
   Super NES and Super Nintendo Entertainment System are trademarks of
   Nintendo Co., Limited and its subsidiary companies.
 *******************************************************************************/
@@ -118,7 +118,7 @@ extern struct FxRegs_s GSU;
   in this debug function. (See the diffrence of how the values
   vPipe1 and vPipe2 are read, compared to the values vByte1 and
   vByte2)
-   
+
   */
 void FxPipeString(char * pvString)
 {
@@ -131,7 +131,7 @@ void FxPipeString(char * pvString)
     /* The next two bytes after the pipe's address */
     vPipe1 = GSU.apvRomBank[vPipeBank][USEX16(GSU.vPipeAdr+1)];
     vPipe2 = GSU.apvRomBank[vPipeBank][USEX16(GSU.vPipeAdr+2)];
-    
+
     /* The actual next two bytes to be read */
     vByte1 = PRGBANK(USEX16(R15));
     vByte2 = PRGBANK(USEX16(R15+1));
@@ -140,7 +140,7 @@ void FxPipeString(char * pvString)
     sprintf(pvString, "%02x:%04x %02x       ",
 	    USEX8(vPipeBank), USEX16(GSU.vPipeAdr), USEX8(PIPE));
     p = &pvString[strlen(pvString)];
- 
+
     /* Check if it's a branch instruction */
     if( PIPE >= 0x05 && PIPE <= 0x0f )
     {
@@ -189,7 +189,7 @@ const char *fx_apvMnemonicTable[] =
     "to r0",   "to r1",   "to r2",    "to r3",    "to r4",    "to r5",    "to r6",    "to r7",
     "to r8",   "to r9",   "to r10",   "to r11",   "to r12",   "to r13",   "to r14",   "to r15",
     /* 20 - 2f */
-    "with r0", "with r1", "with r2",  "with r3",  "with r4",  "with r5",  "with r6",  "with r7", 
+    "with r0", "with r1", "with r2",  "with r3",  "with r4",  "with r5",  "with r6",  "with r7",
     "with r8", "with r9", "with r10", "with r11", "with r12", "with r13", "with r14", "with r15",
     /* 30 - 3f */
     "stw (r0)","stw (r1)","stw (r2)", "stw (r3)", "stw (r4)", "stw (r5)", "stw (r6)", "stw (r7)",
@@ -246,7 +246,7 @@ const char *fx_apvMnemonicTable[] =
     "to r0",   "to r1",   "to r2",    "to r3",    "to r4",    "to r5",    "to r6",    "to r7",
     "to r8",   "to r9",   "to r10",   "to r11",   "to r12",   "to r13",   "to r14",   "to r15",
     /* 20 - 2f */
-    "with r0", "with r1", "with r2",  "with r3",  "with r4",  "with r5",  "with r6",  "with r7", 
+    "with r0", "with r1", "with r2",  "with r3",  "with r4",  "with r5",  "with r6",  "with r7",
     "with r8", "with r9", "with r10", "with r11", "with r12", "with r13", "with r14", "with r15",
     /* 30 - 3f */
     "stb (r0)","stb (r1)","stb (r2)", "stb (r3)", "stb (r4)", "stb (r5)", "stb (r6)", "stb (r7)",
@@ -303,7 +303,7 @@ const char *fx_apvMnemonicTable[] =
     "to r0",   "to r1",   "to r2",    "to r3",    "to r4",    "to r5",    "to r6",    "to r7",
     "to r8",   "to r9",   "to r10",   "to r11",   "to r12",   "to r13",   "to r14",   "to r15",
     /* 20 - 2f */
-    "with r0", "with r1", "with r2",  "with r3",  "with r4",  "with r5",  "with r6",  "with r7", 
+    "with r0", "with r1", "with r2",  "with r3",  "with r4",  "with r5",  "with r6",  "with r7",
     "with r8", "with r9", "with r10", "with r11", "with r12", "with r13", "with r14", "with r15",
     /* 30 - 3f */
     "stw (r0)","stw (r1)","stw (r2)", "stw (r3)", "stw (r4)", "stw (r5)", "stw (r6)", "stw (r7)",
@@ -360,7 +360,7 @@ const char *fx_apvMnemonicTable[] =
     "to r0",   "to r1",   "to r2",    "to r3",    "to r4",    "to r5",    "to r6",    "to r7",
     "to r8",   "to r9",   "to r10",   "to r11",   "to r12",   "to r13",   "to r14",   "to r15",
     /* 20 - 2f */
-    "with r0", "with r1", "with r2",  "with r3",  "with r4",  "with r5",  "with r6",  "with r7", 
+    "with r0", "with r1", "with r2",  "with r3",  "with r4",  "with r5",  "with r6",  "with r7",
     "with r8", "with r9", "with r10", "with r11", "with r12", "with r13", "with r14", "with r15",
     /* 30 - 3f */
     "stb (r0)","stb (r1)","stb (r2)", "stb (r3)", "stb (r4)", "stb (r5)", "stb (r6)", "stb (r7)",

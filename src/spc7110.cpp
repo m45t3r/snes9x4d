@@ -4,7 +4,7 @@
 * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
 *                           Jerremy Koot (jkoot@snes9x.com)
 *
-* Super FX C emulator code 
+* Super FX C emulator code
 * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
 *                           Gary Henderson.
 * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -579,7 +579,7 @@ uint8 S9xGetSPC7110(uint16 Address)
 	case 0x480B:
 		return s7r.reg480B;
 	//decompression finished: just emulated by switching each read.
-	case 0x480C: 
+	case 0x480C:
 		s7r.reg480C^=0x80;
 		return s7r.reg480C^0x80;
 	
@@ -1497,7 +1497,7 @@ void	S9xUpdateRTC ()
 		
         time_diff = (long) (cur_systime - rtc_f9.last_used);
 		rtc_f9.last_used = cur_systime;
-        
+
         if ( time_diff > 0 )
         {
 			int		seconds;
@@ -1811,7 +1811,7 @@ void SPC7110Open(char* dirname)
     {
         //splitpath (Memory.ROMFilename, drive, dir, fname, ext);
         strcpy (filename, FREEZEFOLDER);
-        
+
 #ifndef _XBOX
 		strcat (filename, "/");
 		chdir(filename);
@@ -2326,7 +2326,7 @@ void Do7110Logging()
 						ent_temp=k&0xFF;
 						fwrite(&ent_temp,1,1,flog);//804
 						ent_temp=decompack->tableEnts[j].location[k].used_len&0xFF;
-						fwrite(&ent_temp,1,1,flog);//lsb of 
+						fwrite(&ent_temp,1,1,flog);//lsb of
 						ent_temp=(decompack->tableEnts[j].location[k].used_len>>8)&0xFF;
 						fwrite(&ent_temp,1,1,flog);//msb of
 						ent_temp=(decompack->tableEnts[j].location[k].used_offset)&0xFF;

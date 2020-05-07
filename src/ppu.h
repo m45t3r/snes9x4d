@@ -4,7 +4,7 @@
  * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
  *                           Jerremy Koot (jkoot@snes9x.com)
  *
- * Super FX C emulator code 
+ * Super FX C emulator code
  * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
  *                           Gary Henderson.
  * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
@@ -139,7 +139,7 @@ struct SPPU {
     } BG [4];
 
     bool8_32  CGFLIP;
-    uint16 CGDATA [256]; 
+    uint16 CGDATA [256];
     uint8  FirstSprite;
     uint8  LastSprite;
     struct SOBJ OBJ [128];
@@ -287,14 +287,14 @@ STATIC inline uint8 REGISTER_4212()
     if (ippu->PreviousLine != ippu->CurrentLine) \
 	S9xUpdateScreen ();
 
-STATIC inline void REGISTER_2104 (uint8 byte, 
+STATIC inline void REGISTER_2104 (uint8 byte,
 		CMemory * mem, struct InternalPPU * ippu, struct SPPU * ppu)
 {
     if (ppu->OAMAddr >= 0x110)
 	return;
 	
     int addr = (ppu->OAMAddr << 1) + (ppu->OAMFlip & 1);
-    
+
     if (byte != ppu->OAMData [addr])
     {
 	FLUSH_REDRAW ();
@@ -340,7 +340,7 @@ STATIC inline void REGISTER_2104 (uint8 byte,
 		if (addr & 2)
 		{
 		    // Tile group
-		    
+		
 		    ppu->OBJ[addr = ppu->OAMAddr >> 1].Name &= 0x100;
 		    ppu->OBJ[addr].Name |= byte;
 		}
@@ -360,7 +360,7 @@ STATIC inline void REGISTER_2104 (uint8 byte,
     mem->FillRAM [0x2104] = byte;
 }
 
-STATIC inline void REGISTER_2118 (uint8 Byte, 
+STATIC inline void REGISTER_2118 (uint8 Byte,
 		CMemory * mem, struct InternalPPU * ippu, struct SPPU * ppu)
 {
     uint32 address;
@@ -394,7 +394,7 @@ STATIC inline void REGISTER_2118 (uint8 Byte,
 //    mem->FillRAM [0x2118] = Byte;
 }
 
-STATIC inline void REGISTER_2118_tile (uint8 Byte, 
+STATIC inline void REGISTER_2118_tile (uint8 Byte,
 		CMemory * mem, struct InternalPPU * ippu, struct SPPU * ppu)
 {
     uint32 address;
@@ -424,7 +424,7 @@ STATIC inline void REGISTER_2118_linear (uint8 Byte,
 //    mem->FillRAM [0x2118] = Byte;
 }
 
-STATIC inline void REGISTER_2119 (uint8 Byte, 
+STATIC inline void REGISTER_2119 (uint8 Byte,
 		CMemory * mem, struct InternalPPU * ippu, struct SPPU * ppu)
 {
     uint32 address;
@@ -458,7 +458,7 @@ STATIC inline void REGISTER_2119 (uint8 Byte,
 //    mem->FillRAM [0x2119] = Byte;
 }
 
-STATIC inline void REGISTER_2119_tile (uint8 Byte, 
+STATIC inline void REGISTER_2119_tile (uint8 Byte,
 		CMemory * mem, struct InternalPPU * ippu, struct SPPU * ppu)
 {
     uint32 rem = ppu->VMA.Address & ppu->VMA.Mask1;
@@ -474,7 +474,7 @@ STATIC inline void REGISTER_2119_tile (uint8 Byte,
 //    mem->FillRAM [0x2119] = Byte;
 }
 
-STATIC inline void REGISTER_2119_linear (uint8 Byte, 
+STATIC inline void REGISTER_2119_linear (uint8 Byte,
 		CMemory * mem, struct InternalPPU * ippu, struct SPPU * ppu)
 {
     uint32 address;
@@ -487,7 +487,7 @@ STATIC inline void REGISTER_2119_linear (uint8 Byte,
 //    mem->FillRAM [0x2119] = Byte;
 }
 
-STATIC inline void REGISTER_2122(uint8 Byte, 
+STATIC inline void REGISTER_2122(uint8 Byte,
 		CMemory * mem, struct InternalPPU * ippu, struct SPPU * ppu)
 {
     // CG-RAM (palette) write
@@ -543,7 +543,7 @@ STATIC inline void REGISTER_2122(uint8 Byte,
 //    mem->FillRAM [0x2122] = Byte;
 }
 
-STATIC inline void REGISTER_2180(uint8 Byte, 
+STATIC inline void REGISTER_2180(uint8 Byte,
 		CMemory * mem, struct InternalPPU * ippu, struct SPPU * ppu)
 {
     mem->RAM[ppu->WRAM++] = Byte;

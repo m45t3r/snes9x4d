@@ -1,19 +1,19 @@
 /*******************************************************************************
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
- 
+
   (c) Copyright 1996 - 2003 Gary Henderson (gary.henderson@ntlworld.com) and
                             Jerremy Koot (jkoot@snes9x.com)
 
   (c) Copyright 2002 - 2003 Matthew Kendora and
                             Brad Jorsch (anomie@users.sourceforge.net)
- 
 
-                      
+
+
   C4 x86 assembler and some C emulation code
   (c) Copyright 2000 - 2003 zsKnight (zsknight@zsnes.com),
                             _Demo_ (_demo_@zsnes.com), and
                             Nach (n-a-c-h@users.sourceforge.net)
-                                          
+
   C4 C++ code
   (c) Copyright 2003 Brad Jorsch
 
@@ -22,7 +22,7 @@
                             John Weidman (jweidman@slip.net),
                             neviksti (neviksti@hotmail.com), and
                             Kris Bleakley (stinkfish@bigpond.com)
- 
+
   DSP-2 emulator code
   (c) Copyright 2003 Kris Bleakley, John Weidman, neviksti, Matthew Kendora, and
                      Lord Nightmare (lord_nightmare@users.sourceforge.net
@@ -37,38 +37,38 @@
 
   S-RTC C emulator code
   (c) Copyright 2001 John Weidman
-  
-  Super FX x86 assembler emulator code 
-  (c) Copyright 1998 - 2003 zsKnight, _Demo_, and pagefault 
 
-  Super FX C emulator code 
+  Super FX x86 assembler emulator code
+  (c) Copyright 1998 - 2003 zsKnight, _Demo_, and pagefault
+
+  Super FX C emulator code
   (c) Copyright 1997 - 1999 Ivar and Gary Henderson.
 
 
 
- 
+
   Specific ports contains the works of other authors. See headers in
   individual files.
- 
+
   Snes9x homepage: http://www.snes9x.com
- 
+
   Permission to use, copy, modify and distribute Snes9x in both binary and
   source form, for non-commercial purposes, is hereby granted without fee,
   providing that this license information and copyright notice appear with
   all copies and any derived work.
- 
+
   This software is provided 'as-is', without any express or implied
   warranty. In no event shall the authors be held liable for any damages
   arising from the use of this software.
- 
+
   Snes9x is freeware for PERSONAL USE only. Commercial users should
   seek permission of the copyright holders first. Commercial use includes
   charging money for Snes9x or software derived from Snes9x.
- 
+
   The copyright holders request that bug fixes and improvements to the code
   should be forwarded to them so everyone can benefit from the modifications
   in future versions.
- 
+
   Super NES and Super Nintendo Entertainment System are trademarks of
   Nintendo Co., Limited and its subsidiary companies.
 *******************************************************************************/
@@ -344,7 +344,7 @@ void S9xFixSoundAfterSnapshotLoad ()
 void S9xSetFilterCoefficient (int tap, int value)
 {
     FilterTaps [tap & 7] = value;
-    SoundData.no_filter = (FilterTaps [0] == 127 || FilterTaps [0] == 0) && 
+    SoundData.no_filter = (FilterTaps [0] == 127 || FilterTaps [0] == 0) &&
 		FilterTaps [1] == 0   &&
 		FilterTaps [2] == 0   &&
 		FilterTaps [3] == 0   &&
@@ -420,7 +420,7 @@ int S9xGetEnvelopeHeight (int channel)
 }
 
 #if 1
-void S9xSetSoundSample (int, uint16) 
+void S9xSetSoundSample (int, uint16)
 {
 }
 #else
@@ -428,7 +428,7 @@ void S9xSetSoundSample (int channel, uint16 sample_number)
 {
     register Channel *ch = &SoundData.channels[channel];
 	
-    if (ch->state != SOUND_SILENT && 
+    if (ch->state != SOUND_SILENT &&
 		sample_number != ch->sample_number)
     {
 		int keep = ch->state;
@@ -456,7 +456,7 @@ void S9xSetSoundFrequency (int channel, int hertz)
 			(((int64) hertz * FIXED_POINT) / so.playback_rate);
 		if (Settings.FixFrequency)
 		{
-			SoundData.channels[channel].frequency = 
+			SoundData.channels[channel].frequency =
 				(unsigned long) ((double)  SoundData.channels[channel].frequency * 0.980);
 		}
     }
@@ -515,7 +515,7 @@ void AltDecodeBlock (Channel *ch)
 
     compressed++;
     signed short *raw = ch->block = ch->decoded;
-    
+
     int32 prev0 = ch->previous [0];
     int32 prev1 = ch->previous [1];
     shift = filter >> 4;
@@ -559,7 +559,7 @@ void AltDecodeBlock (Channel *ch)
 			out = (sample1 << shift) - prev1 + (prev1 >> 4);
 			prev1 = (int16) prev0;
 			prev0 &= ~3;
-			*raw++ = prev0 = out + (prev0 << 1) - (prev0 >> 5) - 
+			*raw++ = prev0 = out + (prev0 << 1) - (prev0 >> 5) -
 				(prev0 >> 4);
 			
 			out = (sample2 << shift) - prev1 + (prev1 >> 4);
@@ -581,14 +581,14 @@ void AltDecodeBlock (Channel *ch)
 			out = out - prev1 + (prev1 >> 3) + (prev1 >> 4);
 			prev1 = (int16) prev0;
 			prev0 &= ~3;
-			*raw++ = prev0 = out + (prev0 << 1) - (prev0 >> 3) - 
+			*raw++ = prev0 = out + (prev0 << 1) - (prev0 >> 3) -
 				(prev0 >> 4) - (prev1 >> 6);
 			
 			out = (sample2 << shift);
 			out = out - prev1 + (prev1 >> 3) + (prev1 >> 4);
 			prev1 = (int16) prev0;
 			prev0 &= ~3;
-			*raw++ = prev0 = out + (prev0 << 1) - (prev0 >> 3) - 
+			*raw++ = prev0 = out + (prev0 << 1) - (prev0 >> 3) -
 				(prev0 >> 4) - (prev1 >> 6);
 		}
 		break;
@@ -625,7 +625,7 @@ void AltDecodeBlock2 (Channel *ch)
 	
     compressed++;
     signed short *raw = ch->block = ch->decoded;
-    
+
     shift = filter >> 4;
     int32 prev0 = ch->previous [0];
     int32 prev1 = ch->previous [1];
@@ -879,7 +879,7 @@ void MixStereo (int sample_count)
 #endif
     int pitch_mod = SoundData.pitch_mod & ~APU.DSP[APU_NON];
 	
-    for (uint32 J = 0; J < NUM_CHANNELS; J++) 
+    for (uint32 J = 0; J < NUM_CHANNELS; J++)
     {
 		int32 VL, VR;
 		Channel *ch = &SoundData.channels[J];
@@ -893,7 +893,7 @@ void MixStereo (int sample_count)
 		
 		bool8_32 mod = pitch_mod & (1 << J);
 		
-		if (ch->needs_decode) 
+		if (ch->needs_decode)
 		{
 			DecodeBlock(ch);
 			ch->needs_decode = FALSE;
@@ -906,9 +906,9 @@ void MixStereo (int sample_count)
 
 			ch->next_sample=ch->block[ch->sample_pointer];
 			ch->interpolate = 0;
-			  
+			
 			   if (Settings.InterpolatedSound && freq0 < FIXED_POINT && !mod)
-			   ch->interpolate = ((ch->next_sample - ch->sample) * 
+			   ch->interpolate = ((ch->next_sample - ch->sample) *
 			   (long) freq0) / (long) FIXED_POINT;
 		}
 		VL = (ch->sample * ch-> left_vol_level) / 128;
@@ -922,7 +922,7 @@ void MixStereo (int sample_count)
 				freq = PITCH_MOD(freq, wave [I / 2]);
 			
 			ch->env_error += ch->erate;
-			if (ch->env_error >= FIXED_POINT) 
+			if (ch->env_error >= FIXED_POINT)
 			{
 				uint32 step = ch->env_error >> FIXED_POINT_SHIFT;
 				
@@ -938,7 +938,7 @@ void MixStereo (int sample_count)
 						ch->envx = 127;
 						ch->envxx = 127 << ENVX_SHIFT;
 						ch->state = SOUND_DECAY;
-						if (ch->sustain_level != 8) 
+						if (ch->sustain_level != 8)
 						{
 							S9xSetEnvRate (ch, ch->decay_rate, -1,
 								(MAX_ENVELOPE_HEIGHT * ch->sustain_level)
@@ -1120,11 +1120,11 @@ void MixStereo (int sample_count)
 			{
 				if (Settings.InterpolatedSound && freq < FIXED_POINT && !mod)
 				{
-					ch->interpolate = ((ch->next_sample - ch->sample) * 
+					ch->interpolate = ((ch->next_sample - ch->sample) *
 					(long) freq) / (long) FIXED_POINT;
-					ch->sample = (int16) (ch->sample + (((ch->next_sample - ch->sample) * 
+					ch->sample = (int16) (ch->sample + (((ch->next_sample - ch->sample) *
 					(long) (ch->count)) / (long) FIXED_POINT));
-				}		  
+				}		
 				else
 					ch->interpolate = 0;
 			}
@@ -1171,7 +1171,7 @@ void MixMono (int sample_count)
     int wave[SOUND_BUFFER_SIZE];
     int pitch_mod = SoundData.pitch_mod & (~APU.DSP[APU_NON]);
 	
-    for (uint32 J = 0; J < NUM_CHANNELS; J++) 
+    for (uint32 J = 0; J < NUM_CHANNELS; J++)
     {
 		Channel *ch = &SoundData.channels[J];
 		unsigned long freq0 = ch->frequency;
@@ -1183,7 +1183,7 @@ void MixMono (int sample_count)
 		
 		bool8_32 mod = pitch_mod & (1 << J);
 		
-		if (ch->needs_decode) 
+		if (ch->needs_decode)
 		{
 			DecodeBlock(ch);
 			ch->needs_decode = FALSE;
@@ -1197,7 +1197,7 @@ void MixMono (int sample_count)
 			ch->interpolate = 0;
 			
 			if (Settings.InterpolatedSound && freq0 < FIXED_POINT && !mod)
-				ch->interpolate = ((ch->next_sample - ch->sample) * 
+				ch->interpolate = ((ch->next_sample - ch->sample) *
 				(long) freq0) / (long) FIXED_POINT;
 		}
 		int32 V = (ch->sample * ch->left_vol_level) / 128;
@@ -1210,7 +1210,7 @@ void MixMono (int sample_count)
 				freq = PITCH_MOD(freq, wave [I]);
 			
 			ch->env_error += ch->erate;
-			if (ch->env_error >= FIXED_POINT) 
+			if (ch->env_error >= FIXED_POINT)
 			{
 				uint32 step = ch->env_error >> FIXED_POINT_SHIFT;
 				
@@ -1226,7 +1226,7 @@ void MixMono (int sample_count)
 						ch->envx = 127;
 						ch->envxx = 127 << ENVX_SHIFT;
 						ch->state = SOUND_DECAY;
-						if (ch->sustain_level != 8) 
+						if (ch->sustain_level != 8)
 						{
 							S9xSetEnvRate (ch, ch->decay_rate, -1,
 								(MAX_ENVELOPE_HEIGHT * ch->sustain_level)
@@ -1406,11 +1406,11 @@ void MixMono (int sample_count)
 			{
 				if (Settings.InterpolatedSound && freq < FIXED_POINT && !mod)
 				{
-					ch->interpolate = ((ch->next_sample - ch->sample) * 
+					ch->interpolate = ((ch->next_sample - ch->sample) *
 						(long) freq) / (long) FIXED_POINT;
-					ch->sample = (int16) (ch->sample + (((ch->next_sample - ch->sample) * 
+					ch->sample = (int16) (ch->sample + (((ch->next_sample - ch->sample) *
 						(long) (ch->count)) / (long) FIXED_POINT));
-				}		  
+				}		
 				else
 					ch->interpolate = 0;
 			}
@@ -1507,7 +1507,7 @@ void S9xMixSamplesO (uint8 *buffer, int sample_count, int byte_offset)
 							if ((sd->echo_ptr += 1) >= sd->echo_buffer_size)
 								sd->echo_ptr = 0;
 							
-							I = (MixBuffer [J] * 
+							I = (MixBuffer [J] *
 								sd->master_volume [J & 1] +
 								E * sd->echo_volume [J & 1]) / VOL_DIV16;
 							
@@ -1540,7 +1540,7 @@ void S9xMixSamplesO (uint8 *buffer, int sample_count, int byte_offset)
 							if ((sd->echo_ptr += 1) >= sd->echo_buffer_size)
 								sd->echo_ptr = 0;
 							
-							I = (MixBuffer [J] * 
+							I = (MixBuffer [J] *
 								sd->master_volume [J & 1] +
 								E * sd->echo_volume [J & 1]) / VOL_DIV16;
 							
@@ -1610,7 +1610,7 @@ void S9xMixSamplesO (uint8 *buffer, int sample_count, int byte_offset)
 			// 16-bit mono or stereo sound, no echo
 			for (J = 0; J < sample_count; J++)
 			{
-				I = (MixBuffer [J] * 
+				I = (MixBuffer [J] *
 					sd->master_volume [J & 1]) / VOL_DIV16;
 				
 				CLIP16(I);
@@ -1655,13 +1655,13 @@ void S9xMixSamplesO (uint8 *buffer, int sample_count, int byte_offset)
 							{
 								int E = Echo [sd->echo_ptr];
 								
-								Echo [sd->echo_ptr] = (E * sd->echo_feedback) / 128 + 
+								Echo [sd->echo_ptr] = (E * sd->echo_feedback) / 128 +
 									EchoBuffer [J];
 								
 								if ((sd->echo_ptr += 1) >= sd->echo_buffer_size)
 									sd->echo_ptr = 0;
 								
-								I = (MixBuffer [J] * 
+								I = (MixBuffer [J] *
 									sd->master_volume [J & 1] +
 									E * sd->echo_volume [J & 1]) / VOL_DIV8;
 								CLIP8(I);
@@ -1687,13 +1687,13 @@ void S9xMixSamplesO (uint8 *buffer, int sample_count, int byte_offset)
 								E /= 128;
 								Z++;
 								
-								Echo [sd->echo_ptr] = (E * sd->echo_feedback) / 128 + 
+								Echo [sd->echo_ptr] = (E * sd->echo_feedback) / 128 +
 									EchoBuffer [J];
 								
 								if ((sd->echo_ptr += 1) >= sd->echo_buffer_size)
 									sd->echo_ptr = 0;
 								
-								I = (MixBuffer [J] * 
+								I = (MixBuffer [J] *
 									sd->master_volume [J & 1] +
 									E * sd->echo_volume [J & 1]) / VOL_DIV8;
 								CLIP8(I);
@@ -1711,7 +1711,7 @@ void S9xMixSamplesO (uint8 *buffer, int sample_count, int byte_offset)
 							{
 								int E = Echo [sd->echo_ptr];
 								
-								Echo [sd->echo_ptr] = (E * sd->echo_feedback) / 128 + 
+								Echo [sd->echo_ptr] = (E * sd->echo_feedback) / 128 +
 									EchoBuffer [J];
 								
 								if ((sd->echo_ptr += 1) >= sd->echo_buffer_size)
@@ -1742,7 +1742,7 @@ void S9xMixSamplesO (uint8 *buffer, int sample_count, int byte_offset)
 								E /= 128;
 								Z++;
 								
-								Echo [sd->echo_ptr] = (E * sd->echo_feedback) / 128 + 
+								Echo [sd->echo_ptr] = (E * sd->echo_feedback) / 128 +
 									EchoBuffer [J];
 								
 								if ((sd->echo_ptr += 1) >= sd->echo_buffer_size)
@@ -1761,7 +1761,7 @@ void S9xMixSamplesO (uint8 *buffer, int sample_count, int byte_offset)
 			// 8-bit mono or stereo sound, no echo
 			for (J = 0; J < sample_count; J++)
 			{
-				I = (MixBuffer [J] * 
+				I = (MixBuffer [J] *
 					sd->master_volume [J & 1]) / VOL_DIV8;
 				CLIP8(I);
 				buffer [J + O] = I + 128;
@@ -1865,7 +1865,7 @@ bool8_32 S9xInitSound (int mode, bool8_32 stereo, int buffer_size)
     so.stereo = stereo;
     so.sixteen_bit = Settings.SixteenBitSound;
     so.encoded = FALSE;
-    
+
     S9xResetSound (TRUE);
 	
     if (!(mode & 7))
@@ -1940,14 +1940,14 @@ void S9xSetSoundControl (int sound_switch)
 void S9xPlaySample (int channel, struct SAPU *apu)
 {
     Channel *ch = &SoundData.channels[channel];
-    
+
     ch->state = SOUND_SILENT;
     ch->mode = MODE_NONE;
     ch->envx = 0;
     ch->envxx = 0;
 	
     S9xFixEnvelope (channel,
-		apu->DSP [APU_GAIN  + (channel << 4)], 
+		apu->DSP [APU_GAIN  + (channel << 4)],
 		apu->DSP [APU_ADSR1 + (channel << 4)],
 		apu->DSP [APU_ADSR2 + (channel << 4)]);
 	
@@ -1983,7 +1983,7 @@ void S9xPlaySample (int channel, struct SAPU *apu)
 			{
 				ch->state = SOUND_DECAY;
 				ch->envx = MAX_ENVELOPE_HEIGHT;
-				S9xSetEnvRate (ch, ch->decay_rate, -1, 
+				S9xSetEnvRate (ch, ch->decay_rate, -1,
 					(MAX_ENVELOPE_HEIGHT * ch->sustain_level) >> 3);
 			}
 			ch-> left_vol_level = (ch->envx * ch->volume_left) / 128;
@@ -2025,7 +2025,7 @@ void S9xPlaySample (int channel, struct SAPU *apu)
     }
 	
     S9xFixEnvelope (channel,
-		apu->DSP [APU_GAIN  + (channel << 4)], 
+		apu->DSP [APU_GAIN  + (channel << 4)],
 		apu->DSP [APU_ADSR1 + (channel << 4)],
 		apu->DSP [APU_ADSR2 + (channel << 4)]);
 }

@@ -1,19 +1,19 @@
 /*******************************************************************************
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
- 
+
   (c) Copyright 1996 - 2003 Gary Henderson (gary.henderson@ntlworld.com) and
                             Jerremy Koot (jkoot@snes9x.com)
 
   (c) Copyright 2002 - 2003 Matthew Kendora and
                             Brad Jorsch (anomie@users.sourceforge.net)
- 
 
-                      
+
+
   C4 x86 assembler and some C emulation code
   (c) Copyright 2000 - 2003 zsKnight (zsknight@zsnes.com),
                             _Demo_ (_demo_@zsnes.com), and
                             Nach (n-a-c-h@users.sourceforge.net)
-                                          
+
   C4 C++ code
   (c) Copyright 2003 Brad Jorsch
 
@@ -22,7 +22,7 @@
                             John Weidman (jweidman@slip.net),
                             neviksti (neviksti@hotmail.com), and
                             Kris Bleakley (stinkfish@bigpond.com)
- 
+
   DSP-2 emulator code
   (c) Copyright 2003 Kris Bleakley, John Weidman, neviksti, Matthew Kendora, and
                      Lord Nightmare (lord_nightmare@users.sourceforge.net
@@ -37,38 +37,38 @@
 
   S-RTC C emulator code
   (c) Copyright 2001 John Weidman
-  
-  Super FX x86 assembler emulator code 
-  (c) Copyright 1998 - 2003 zsKnight, _Demo_, and pagefault 
 
-  Super FX C emulator code 
+  Super FX x86 assembler emulator code
+  (c) Copyright 1998 - 2003 zsKnight, _Demo_, and pagefault
+
+  Super FX C emulator code
   (c) Copyright 1997 - 1999 Ivar and Gary Henderson.
 
 
 
- 
+
   Specific ports contains the works of other authors. See headers in
   individual files.
- 
+
   Snes9x homepage: http://www.snes9x.com
- 
+
   Permission to use, copy, modify and distribute Snes9x in both binary and
   source form, for non-commercial purposes, is hereby granted without fee,
   providing that this license information and copyright notice appear with
   all copies and any derived work.
- 
+
   This software is provided 'as-is', without any express or implied
   warranty. In no event shall the authors be held liable for any damages
   arising from the use of this software.
- 
+
   Snes9x is freeware for PERSONAL USE only. Commercial users should
   seek permission of the copyright holders first. Commercial use includes
   charging money for Snes9x or software derived from Snes9x.
- 
+
   The copyright holders request that bug fixes and improvements to the code
   should be forwarded to them so everyone can benefit from the modifications
   in future versions.
- 
+
   Super NES and Super Nintendo Entertainment System are trademarks of
   Nintendo Co., Limited and its subsidiary companies.
 *******************************************************************************/
@@ -94,7 +94,7 @@ struct Band
 #define OR_BANDS(R,A,B) {\
     R.Left = MIN(A.Left, B.Left); \
     R.Right = MAX(A.Right, B.Right);}
-    
+
 #define AND_BANDS(R,A,B) {\
     R.Left = MAX(A.Left, B.Left); \
     R.Right = MIN(A.Right, B.Right);}
@@ -178,14 +178,14 @@ void ComputeClipWindows ()
 	    if (!Settings.DisableGraphicWindows)
 	    {
 		if (w == 5 || pClip->Count [5] ||
-		    (Memory.FillRAM [0x212c + c] & 
+		    (Memory.FillRAM [0x212c + c] &
 		     Memory.FillRAM [0x212e + c] & (1 << w)))
 		{
 		    struct Band Win1[3];
 		    struct Band Win2[3];
 		    uint32 Window1Enabled = 0;
 		    uint32 Window2Enabled = 0;
-		    bool8_32 invert = (w == 5 && 
+		    bool8_32 invert = (w == 5 &&
 				    ((c == 1 && (Memory.FillRAM [0x2130] & 0x30) == 0x10) ||
 				     (c == 0 && (Memory.FillRAM [0x2130] & 0xc0) == 0x40)));
 
@@ -221,7 +221,7 @@ void ComputeClipWindows ()
 				}
 				else
 				{
-				    // 'outside' a window with no range - 
+				    // 'outside' a window with no range -
 				    // appears to be the whole screen.
 				    Win1[Window1Enabled].Left = 0;
 				    Win1[Window1Enabled++].Right = 256;
@@ -497,7 +497,7 @@ void ComputeClipWindows ()
 				    if (points [i] == points [i + 1])
 					continue;
 				    Bands [B].Left = points [i];
-				    while (i + 2 < p && 
+				    while (i + 2 < p &&
 					   points [i + 1] == points [i + 2])
 				    {
 					i += 2;
@@ -525,7 +525,7 @@ void ComputeClipWindows ()
 				else
 				    empty_band_count++;
 			    }
-			    
+			
 			    if (j > 0)
 			    {
 				if (j == 1)
@@ -744,9 +744,9 @@ void ComputeClipWindows ()
 					// Intersect the bands of the two windows.
 					if (pClip->Count [5] == pClip->Count [w])
 					{
-					    pClip->Left [i][w] = MAX(pClip->Left [i][w], 
+					    pClip->Left [i][w] = MAX(pClip->Left [i][w],
 								     pClip->Left [i][5]);
-					    pClip->Right [i][w] = MIN(pClip->Right [i][w], 
+					    pClip->Right [i][w] = MIN(pClip->Right [i][w],
 								      pClip->Right [i][5]);
 					}
 				    }
