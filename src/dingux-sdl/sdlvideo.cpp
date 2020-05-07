@@ -85,11 +85,7 @@ void S9xTextMode ()
 
 void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
 {	
-#ifdef CAANOO
-	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_JOYSTICK /*|(Settings.NextAPUEnabled ? SDL_INIT_AUDIO : 0)*/) < 0 )
-#else
 	if (SDL_Init(SDL_INIT_VIDEO /*| (Settings.NextAPUEnabled ? SDL_INIT_AUDIO : 0)*/) < 0 )
-#endif
  	{
 		printf("Could not initialize SDL(%s)\n", SDL_GetError());
 		S9xExit();

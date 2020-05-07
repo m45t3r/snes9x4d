@@ -58,9 +58,7 @@
 	#include "../netplay.h"
 #endif
 
-#ifdef CAANOO
-	#include "caanoo.h"
-#elif MIYOO
+#ifdef MIYOO
 	#include "miyoo.h"
 #else
 	#include "dingoo.h"
@@ -82,11 +80,7 @@
 static void sync() { }
 #endif
 
-#ifdef CAANOO
-	SDL_Joystick* keyssnes;
-#else
-	uint8 *keyssnes;
-#endif
+uint8 *keyssnes;
 
 #ifdef NETPLAY_SUPPORT
 	static uint32	joypads[8];
@@ -443,9 +437,7 @@ int main (int argc, char **argv)
 #endif
 
 	//Handheld Key Infos
-#ifdef CAANOO
-	sprintf(msg,"Press HOME to Show MENU");
-#elif MIYOO
+#ifdef MIYOO
 	sprintf(msg,"Press R to Show MENU");
 #elif CYGWIN32
 	sprintf(msg,"Press ESC+LALT to Show MENU");
@@ -606,31 +598,11 @@ void S9xExit()
 Uint16 sfc_key[256];
 void S9xInitInputDevices ()
 {
-#ifdef CAANOO
-	keyssnes = SDL_JoystickOpen(0);
-#else
 	keyssnes = SDL_GetKeyState(NULL);
-#endif
 
 	memset(sfc_key, 0, 256);
 
-#ifdef CAANOO
-	// Caanoo mapping
-	sfc_key[A_1] = CAANOO_BUTTON_B;	//Snes A
-	sfc_key[B_1] = CAANOO_BUTTON_X;	//Snes B
-	sfc_key[X_1] = CAANOO_BUTTON_Y;	//Snes X
-	sfc_key[Y_1] = CAANOO_BUTTON_A;	//Snes Y
-	sfc_key[L_1] = CAANOO_BUTTON_L;
-	sfc_key[R_1] = CAANOO_BUTTON_R;
-	sfc_key[START_1] = CAANOO_BUTTON_HELP1;
-	sfc_key[SELECT_1] = CAANOO_BUTTON_HELP2;
-	sfc_key[LEFT_1] = CAANOO_BUTTON_LEFT;
-	sfc_key[RIGHT_1] = CAANOO_BUTTON_RIGHT;
-	sfc_key[UP_1] = CAANOO_BUTTON_UP;
-	sfc_key[DOWN_1] = CAANOO_BUTTON_DOWN;
-
-	sfc_key[QUIT] = CAANOO_BUTTON_HOME;
-#elif MIYOO
+#ifdef MIYOO
 	// Miyoo mapping
 	sfc_key[A_1] = MIYOO_BUTTON_A;
 	sfc_key[B_1] = MIYOO_BUTTON_B;
@@ -695,15 +667,7 @@ void S9xInitInputDevices ()
 
 const char *GetHomeDirectory ()
 {
-#if CAANOO
-	return (".");
-#elif CYGWIN32
-	return (".");
-#elif WIN32
-	return (".");
-#else
 	return (getenv ("HOME"));
-#endif
 }
 
 const char *S9xGetSnapshotDirectory ()
@@ -1109,32 +1073,6 @@ void S9xProcessEvents (bool8_32 block)
 	{
 		switch(event.type)
 		{
-#ifdef CAANOO
-			// CAANOO -------------------------------------------------------------
-			case SDL_JOYBUTTONDOWN:
-				keyssnes = SDL_JoystickOpen(0);
-				//QUIT Emulator
-				if ( SDL_JoystickGetButton(keyssnes, sfc_key[QUIT]) && SDL_JoystickGetButton(keyssnes, sfc_key[B_1] ) )
-				{
-					S9xExit();
-				}
-				// MAINMENU
-				else if ( SDL_JoystickGetButton(keyssnes, sfc_key[QUIT]) )
-				{
-					S9xSetSoundMute (TRUE);
-					menu_loop();
-					S9xSetSoundMute(FALSE);
-				}
-				break;
-
-			case SDL_JOYBUTTONUP:
-				keyssnes = SDL_JoystickOpen(0);
-				switch(event.jbutton.button)
-				{
-				}
-				break;
-#elif MIYOO
-			//MIYOO ------------------------------------------------------
 			case SDL_KEYDOWN:
 				keyssnes = SDL_GetKeyState(NULL);
 
@@ -1174,58 +1112,11 @@ void S9xProcessEvents (bool8_32 block)
 					S9xSetSoundMute(false);
 				}
 				// MAINMENU
+#ifdef MIYOO
 				else if ( keyssnes[sfc_key[QUIT]] == SDL_PRESSED )
-				{
-					S9xSetSoundMute(true);
-					menu_loop();
-					S9xSetSoundMute(false);
-				}
-				break;
-			case SDL_KEYUP:
-				keyssnes = SDL_GetKeyState(NULL);
-				break;
 #else
-			//DINGOO ------------------------------------------------------
-			case SDL_KEYDOWN:
-				keyssnes = SDL_GetKeyState(NULL);
-
-				//QUIT Emulator
-				if ( (keyssnes[sfc_key[SELECT_1]] == SDL_PRESSED) &&(keyssnes[sfc_key[START_1]] == SDL_PRESSED) && (keyssnes[sfc_key[X_1]] == SDL_PRESSED) )
-				{
-					S9xExit();
-				}
-				//RESET ROM Playback
-				else if ((keyssnes[sfc_key[SELECT_1]] == SDL_PRESSED) && (keyssnes[sfc_key[START_1]] == SDL_PRESSED) && (keyssnes[sfc_key[B_1]] == SDL_PRESSED))
-				{
-					S9xReset();
-				}
-				//SAVE State
-				else if ( (keyssnes[sfc_key[START_1]] == SDL_PRESSED) && (keyssnes[sfc_key[R_1]] == SDL_PRESSED) )
-				{
-					//extern char snapscreen;
-					char fname[256], ext[20];
-					S9xSetSoundMute(true);
-					sprintf(ext, ".00%d", SaveSlotNum);
-					strcpy(fname, S9xGetFilename (ext));
-					S9xFreezeGame (fname);
-					capt_screenshot();
-					sprintf(ext, ".s0%d", SaveSlotNum);
-					strcpy(fname, S9xGetFilename (ext));
-					save_screenshot(fname);
-					S9xSetSoundMute(false);
-				}
-				//LOAD State
-				else if ( (keyssnes[sfc_key[START_1]] == SDL_PRESSED) && (keyssnes[sfc_key[L_1]] == SDL_PRESSED) )
-				{
-					char fname[256], ext[8];
-					S9xSetSoundMute(true);
-					sprintf(ext, ".00%d", SaveSlotNum);
-					strcpy(fname, S9xGetFilename (ext));
-					S9xLoadSnapshot (fname);
-					S9xSetSoundMute(false);
-				}
-				// MAINMENU
-				else if ((keyssnes[sfc_key[SELECT_1]] == SDL_PRESSED)&&(keyssnes[sfc_key[START_1]] == SDL_PRESSED) )
+				else if ((keyssnes[sfc_key[SELECT_1]] == SDL_PRESSED) && (keyssnes[sfc_key[START_1]] == SDL_PRESSED) )
+#endif
 				{
 					S9xSetSoundMute(true);
 					menu_loop();
@@ -1235,7 +1126,6 @@ void S9xProcessEvents (bool8_32 block)
 			case SDL_KEYUP:
 				keyssnes = SDL_GetKeyState(NULL);
 				break;
-#endif //CAANOO
 		}
 	}
 }
@@ -1259,21 +1149,6 @@ uint32 S9xReadJoypad (int which1)
 	if (which1 > 4)
 		return 0;
 
-#ifdef CAANOO
-	//player1
-	if (SDL_JoystickGetButton(keyssnes, sfc_key[L_1]))			val |= SNES_TL_MASK;
-	if (SDL_JoystickGetButton(keyssnes, sfc_key[R_1]))			val |= SNES_TR_MASK;
-	if (SDL_JoystickGetButton(keyssnes, sfc_key[X_1]))			val |= SNES_X_MASK;
-	if (SDL_JoystickGetButton(keyssnes, sfc_key[Y_1]))			val |= SNES_Y_MASK;
-	if (SDL_JoystickGetButton(keyssnes, sfc_key[B_1]))			val |= SNES_B_MASK;
-	if (SDL_JoystickGetButton(keyssnes, sfc_key[A_1]))			val |= SNES_A_MASK;
-	if (SDL_JoystickGetButton(keyssnes, sfc_key[START_1]))		val |= SNES_START_MASK;
-	if (SDL_JoystickGetButton(keyssnes, sfc_key[SELECT_1]))		val |= SNES_SELECT_MASK;
-	if (SDL_JoystickGetAxis(keyssnes, 1) < -20000)				val |= SNES_UP_MASK;
-	if (SDL_JoystickGetAxis(keyssnes, 1) > 20000)				val |= SNES_DOWN_MASK;
-	if (SDL_JoystickGetAxis(keyssnes, 0) < -20000)				val |= SNES_LEFT_MASK;
-	if (SDL_JoystickGetAxis(keyssnes, 0) > 20000)				val |= SNES_RIGHT_MASK;
-#else
 	//player1
 	if (keyssnes[sfc_key[L_1]] == SDL_PRESSED)		val |= SNES_TL_MASK;
 	if (keyssnes[sfc_key[R_1]] == SDL_PRESSED)		val |= SNES_TR_MASK;
@@ -1298,7 +1173,6 @@ uint32 S9xReadJoypad (int which1)
 	if (keyssnes[sfc_key[RU_2]] == SDL_PRESSED)	val |= SNES_RIGHT_MASK | SNES_UP_MASK;
 	if (keyssnes[sfc_key[RD_2]] == SDL_PRESSED)	val |= SNES_RIGHT_MASK | SNES_DOWN_MASK;
 	*/
-#endif
 
 #ifdef NETPLAY_SUPPORT
 	if (Settings.NetPlay)

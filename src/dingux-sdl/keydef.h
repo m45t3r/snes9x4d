@@ -1,25 +1,6 @@
 #ifndef ___KEYDEF_h_
 #define ___KEYDEF_h_
 
-/*
-#ifdef CAANOO
-
-#define A_1 0
-#define X_1 1
-#define B_1 2
-#define Y_1 3
-#define L_1 4
-#define R_1 5
-#define QUIT 6			//CAANOO_BUTTON_HOME
-#define START_1 8		//CAANOO_BUTTON_HELP1
-#define SELECT_1 9		//CAANOO_BUTTON_HELP2
-#define UP_1 11
-#define DOWN_1 12
-#define LEFT_1 13
-#define RIGHT_1 14
-
-#else
-*/
 #define A_1 0
 #define B_1 1
 #define X_1 2
