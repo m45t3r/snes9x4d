@@ -67,7 +67,7 @@ void menu_title()
 	//draw blue screen
 	for(int y=12;y<=212;y++){
 		for(int x=10;x<246*2;x+=2){
-			memset(GFX.Screen + GFX.Pitch*y+x,0x11,2);
+			memset(GFX.Screen + GFX.Pitch*y+x,0x0,2);
 		}	
 	}
 
@@ -332,8 +332,9 @@ void menu_dispupdate(void)
 	strcpy(disptxt[8],"Full Screen         ");
 	strcpy(disptxt[9],"Frameskip              ");
 	strcpy(disptxt[10],"Sound Rate           ");
-	strcpy(disptxt[11],"Credit              ");
-	strcpy(disptxt[12],"Exit");
+	strcpy(disptxt[11],"Stereo                ");
+	strcpy(disptxt[12],"Credit              ");
+	strcpy(disptxt[13],"Exit");
 
 	sprintf(temp,"%s%d",disptxt[5],SaveSlotNum);
 	strcpy(disptxt[5],temp);
@@ -343,7 +344,7 @@ void menu_dispupdate(void)
 	else
 		sprintf(temp,"%sFalse",disptxt[6]);
 	strcpy(disptxt[6],temp);
-	
+
 	if(Settings.Transparency)
 		sprintf(temp,"%s   On",disptxt[7]);
 	else
@@ -370,11 +371,13 @@ void menu_dispupdate(void)
 	sprintf(temp,"%s  %s",disptxt[10], Rates[Settings.SoundPlaybackRate]);
 	strcpy(disptxt[10],temp);
 
-#ifdef DINGOO
-	for(int i=0;i<=14;i++)
-#else
-	for(int i=0;i<=12;i++)
-#endif
+	if(Settings.Stereo)
+		sprintf(temp,"%s  True",disptxt[11]);
+	else
+		sprintf(temp,"%s False",disptxt[11]);
+	strcpy(disptxt[11],temp);
+
+	for(int i=0;i<=13;i++)
 	{
 		if(i==cursor)
 			sprintf(temp," >%s",disptxt[i]);
@@ -403,7 +406,8 @@ void menu_dispupdate(void)
 
 void menu_loop(void)
 {
-	int old_frame_rate = Settings.SoundPlaybackRate;
+	bool old_stereo = Settings.Stereo;
+	int old_sound_playback_rate = Settings.SoundPlaybackRate;
 	bool8_32 exit_loop = false;
 	char fname[256], ext[8];
 	char snapscreen_tmp[17120];
@@ -613,12 +617,12 @@ void menu_loop(void)
 						case 9:
 							if (Settings.SkipFrames == AUTO_FRAMERATE)
 								Settings.SkipFrames = 10;
-	
+
 							if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED)
 								Settings.SkipFrames--;
 							else
 								Settings.SkipFrames++;
-	
+
 							if(Settings.SkipFrames>=10)
 								Settings.SkipFrames = AUTO_FRAMERATE;
 							else if (Settings.SkipFrames<=1)
@@ -632,10 +636,13 @@ void menu_loop(void)
 							}
 						break;
 						case 11:
+							Settings.Stereo = !Settings.Stereo;
+						break;
+						case 12:
 							if (keyssnes[sfc_key[A_1]] == SDL_PRESSED)
 								ShowCredit();
 						break;
-						case 12:
+						case 13:
 							if (keyssnes[sfc_key[A_1]] == SDL_PRESSED)
 								S9xExit();
 						break;
@@ -644,10 +651,10 @@ void menu_loop(void)
 #endif
 
 				if(cursor==1)
-					cursor=12;	//11
-				else if(cursor==13)	//12
+					cursor=13;	//11
+				else if(cursor==14)	//12
 					cursor=2;
-				
+
 				menu_dispupdate();
 				sys_sleep(1000);
 
@@ -663,7 +670,8 @@ void menu_loop(void)
 	Settings.SupportHiRes=highres_current;
 	S9xDeinitDisplay();
 	S9xInitDisplay(0, 0);
-	if(old_frame_rate != Settings.SoundPlaybackRate) S9xReinitSound(Settings.SoundPlaybackRate);
+	if (old_sound_playback_rate != Settings.SoundPlaybackRate || old_stereo != Settings.Stereo)
+		S9xReinitSound(Settings.SoundPlaybackRate);
 }
 
 void save_screenshot(char *fname){
@@ -740,7 +748,7 @@ void show_screenshot()
 {
 	int s=0;
 //	for(int y=126;y<126+80;y++){
-	for(int y=132;y<130+80;y++){
+	for(int y=146;y<130+80;y++){
 		for(int x=248; x<248+107*2; x+=2){
 			uint8 *d = GFX.Screen + y*GFX.Pitch + x;
 			*d++ = snapscreen[s++];
