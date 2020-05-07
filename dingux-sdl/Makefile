@@ -1,6 +1,8 @@
 # derived from "Makefile", 01 June 2010
 # blame Skeezix
 
+GIT_VERSION := "$(shell git describe --abbrev=4 --dirty --always --tags)"
+
 UNZIP=1
 CHEATS=1
 
@@ -44,8 +46,8 @@ OBJECTS += ../loadzip.o ../unzip/unzip.o ../unzip/explode.o ../unzip/unreduce.o 
 UNZIPDEFINES = -DUNZIP_SUPPORT
 endif
 
-TOOLCHAINDIR := 
-BINPATH    := 
+TOOLCHAINDIR :=
+BINPATH    :=
 
 ARCH :=
 
@@ -71,6 +73,7 @@ CCFLAGS = $(OPTIMISE) $(PROFILE) \
 -DVAR_CYCLES \
 -DCPU_SHUTDOWN \
 -DSPC700_SHUTDOWN \
+-DBUILD_VERSION=\"$(GIT_VERSION)\" \
 $(FXDEFINES) \
 $(C4DEFINES) \
 $(CPUDEFINES) \
@@ -92,7 +95,7 @@ LDLIBS  = -lSDL -lz -lm
 
 all: snes9x4d.dge
 
-snes9x4d.dge: $(OBJECTS) 
+snes9x4d.dge: $(OBJECTS)
 	$(CCC) -o $@ $(OBJECTS) $(EXTRALIBS) $(LDLIBS) $(PROFILE)
 	$(STRIP) snes9x4d.dge
 
