@@ -78,6 +78,7 @@ endif
 CXXFLAGS = $(OPTIMISE) $(PROFILE) $(INCLUDE) \
 --std=gnu++98 \
 -fno-exceptions -fno-rtti -fno-math-errno -fno-threadsafe-statics \
+-D__ARM__ \
 -D_ZAURUS \
 -D_FAST_GFX \
 -D__SDL__ \
