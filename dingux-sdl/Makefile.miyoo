@@ -64,15 +64,20 @@ SDL_LIBS := $(shell $(SYSROOT)/usr/bin/sdl-config --libs)
 
 INCLUDE = -I. -I../ -I../unzip
 
-OPTIMISE = -O3 -march=armv5te -mtune=arm926ej-s \
+OPTIMISE = -Ofast -march=armv5te -mtune=arm926ej-s \
 			-ffast-math -fomit-frame-pointer -fno-strength-reduce \
-			-finline-functions -funroll-loops -funswitch-loops \
-			-ftree-vectorize -fno-strict-aliasing \
-			-falign-functions=2 -fno-stack-protector \
-			-fprofile-use -fprofile-dir=./profile
+			-falign-functions=2 -fno-stack-protector
+
+ifeq ($(PGO), GENERATE)
+  OPTIMISE += -fprofile-generate -fprofile-dir=./profile
+  PROFILE += -lgcov
+else ifeq ($(PGO), APPLY)
+  OPTIMISE += -fprofile-use -fbranch-probabilities
+endif
 
 CXXFLAGS = $(OPTIMISE) $(PROFILE) $(INCLUDE) \
 --std=gnu++98 \
+-fno-exceptions -fno-rtti -fno-math-errno -fno-threadsafe-statics \
 -D_ZAURUS \
 -D_FAST_GFX \
 -D__SDL__ \
@@ -117,7 +122,7 @@ $(KREEDDEFINES) \
 $(CHEATDEFINES) \
 $(SDL_CFLAGS) \
 
-LDLIBS  = -lSDL -lz -lm -lgcov $(SDL_LIBS)
+LDLIBS  = -lSDL -lz -lm $(SDL_LIBS)
 
 .SUFFIXES: .o .cpp .c .cc .h .m .i .S .asm .obj
 
