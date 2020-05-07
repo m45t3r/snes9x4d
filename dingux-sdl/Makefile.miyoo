@@ -64,7 +64,7 @@ SDL_LIBS := $(shell $(SYSROOT)/usr/bin/sdl-config --libs)
 
 INCLUDE = -I. -I../ -I../unzip
 
-OPTIMISE = -D_ZAURUS -O3 -march=armv5te -mtune=arm926ej-s \
+OPTIMISE = -O3 -march=armv5te -mtune=arm926ej-s \
 			-ffast-math -fomit-frame-pointer -fno-strength-reduce \
 			-finline-functions -funroll-loops -funswitch-loops \
 			-ftree-vectorize -fno-strict-aliasing \
@@ -73,6 +73,8 @@ OPTIMISE = -D_ZAURUS -O3 -march=armv5te -mtune=arm926ej-s \
 
 CXXFLAGS = $(OPTIMISE) $(PROFILE) $(INCLUDE) \
 --std=gnu++98 \
+-D_ZAURUS \
+-D_FAST_GFX \
 -D__SDL__ \
 -DMIYOO \
 -DZLIB \

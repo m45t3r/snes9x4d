@@ -41,6 +41,7 @@
 #ifndef _GFX_H_
 #define _GFX_H_
 
+#include <stdint.h>
 #include "port.h"
 
 struct SGFX{
@@ -53,8 +54,10 @@ struct SGFX{
 
     // Setup in call to S9xGraphicsInit()
     int   Delta;
+    #ifndef _FAST_GFX
     uint16 *X2;
     uint16 *ZERO_OR_X2;
+    #endif
     uint16 *ZERO;
     uint32 RealPitch; // True pitch of Screen buffer.
     uint32 Pitch2;    // Same as RealPitch except while using speed up hack for Glide.
@@ -168,38 +171,93 @@ extern uint8 mul_brightness [16][32];
 #define SUB_SCREEN_DEPTH 0
 #define MAIN_SCREEN_DEPTH 32
 
-#if defined(OLD_COLOUR_BLENDING)
+//for rs-90 light COLOR_ADD
+//    #define MASK1 0b1111011111011110
+//    #define MASK2 0b0111101111101111
+//
+//    c1 = C1 & MASK1;
+//    c2 = C2 & MASK1;
+//    a = (c1>>1) + (c2>>1);
+//    b = a & 0x8410
+//    c = b- (b >> 4);
+//    z = ((a | c) & MASK2)<<1;
+//
+    #define MASK1 0xF7DE
+    #define MASK2 0x7BEF
+/*
+__inline uint16_t COLOR_ADD(uint16_t C1, uint16_t C2){
+    uint16_t a, b, c, z, c1, c2;
+
+    c1 = C1 & MASK1;
+    c2 = C2 & MASK1;
+    a = (c1>>1) + (c2>>1);
+    b = a & 0x8410;
+    c = b- (b >> 4);
+    z = ((a | c) & MASK2)<<1;
+    return z;
+}
+*/
+
 #define COLOR_ADD(C1, C2) \
-GFX.X2 [((((C1) & RGB_REMOVE_LOW_BITS_MASK) + \
-	  ((C2) & RGB_REMOVE_LOW_BITS_MASK)) >> 1) + \
-	((C1) & (C2) & RGB_LOW_BITS_MASK)]
-#else
-#define COLOR_ADD(C1, C2) \
-(GFX.X2 [((((C1) & RGB_REMOVE_LOW_BITS_MASK) + \
-	  ((C2) & RGB_REMOVE_LOW_BITS_MASK)) >> 1) + \
-	 ((C1) & (C2) & RGB_LOW_BITS_MASK)] | \
- (((C1) ^ (C2)) & RGB_LOW_BITS_MASK))	   
-#endif
+((((((C1 & 0xF7DE)>>1) + ((C2 & 0xF7DE)>>1)) | (((((C1 & 0xF7DE)>>1) + ((C2 & 0xF7DE)>>1)) & 0x8410)- (((((C1 & 0xF7DE)>>1) + ((C2 & 0xF7DE)>>1)) & 0x8410) >> 4))) & 0x7BEF)<<1)
 
 #define COLOR_ADD1_2(C1, C2) \
 (((((C1) & RGB_REMOVE_LOW_BITS_MASK) + \
           ((C2) & RGB_REMOVE_LOW_BITS_MASK)) >> 1) + \
          ((C1) & (C2) & RGB_LOW_BITS_MASK) | ALPHA_BITS_MASK)
 
-#if defined(OLD_COLOUR_BLENDING)
-#define COLOR_SUB(C1, C2) \
-GFX.ZERO_OR_X2 [(((C1) | RGB_HI_BITS_MASKx2) - \
-		 ((C2) & RGB_REMOVE_LOW_BITS_MASK)) >> 1]
-#else
-#define COLOR_SUB(C1, C2) \
-(GFX.ZERO_OR_X2 [(((C1) | RGB_HI_BITS_MASKx2) - \
-                  ((C2) & RGB_REMOVE_LOW_BITS_MASK)) >> 1] + \
-((C1) & RGB_LOW_BITS_MASK) - ((C2) & RGB_LOW_BITS_MASK))
-#endif
+//for rs-90 light COLOR_SUB (really fast?)
+//    #define MASK1 0xF7DE
+//    #define MASK2 0x7BEF
+//
+//    c1 = (C1 & MASK1)>>1;
+//    c2 = (C2 & MASK1)>>1;
+//    c2 = (c2 ^ 0xffff) + 0x0821;
+//    a = c1 + c2;
+//    b = a & 0x8410;
+//    c = b - (b>>4);
+//    c = c ^ 0x7bcf;
+//    z = ((a & c) & MASK2)<<1;
+//
 
+inline uint16_t COLOR_SUB(uint16_t C1, uint16_t C2)
+{
+    uint16_t a, b, c, z, c1, c2;
+    c1 = (C1 & MASK1)>>1;
+    c2 = (C2 & MASK1)>>1;
+    c2 = (c2 ^ 0xffff) + 0x0821;
+    a = c1 + c2;
+    b = a & 0x8410;
+    c = b - (b>>4);
+    c = c ^ 0x7bcf;
+    z = ((a & c) & MASK2)<<1;
+
+    return z;
+}
+
+/*#define COLOR_SUB(C1, C2) \
+((((((C1 & 0xF7DE)>>1) + ((((C2 & 0xF7DE)>>1) ^ 0xffff) + 0x0821)) & ((((((C1 & 0xF7DE)>>1) + ((((C2 & 0xF7DE)>>1) ^ 0xffff) + 0x0821)) & 0x8410) - (((((C1 & 0xF7DE)>>1) + ((((C2 & 0xF7DE)>>1) ^ 0xffff) + 0x0821)) & 0x8410)>>4)) ^ 0x7bcf)) & 0x7BEF)<<1)
+*/
+
+inline uint16_t COLOR_SUB1_2(uint16_t C1, uint16_t C2)
+{
+    uint16_t a, b, c, z, c1, c2;
+    c1 = (C1 & MASK1)>>1;
+    c2 = (C2 & MASK1)>>1;
+    c2 = (c2 ^ 0xffff) + 0x0821;
+    a = c1 + c2;
+    b = a & 0x8410;
+    c = b - (b>>4);
+    c = c ^ 0x7bcf;
+    z = (a & c) & MASK2;
+
+    return z;
+}
+/*
 #define COLOR_SUB1_2(C1, C2) \
 GFX.ZERO [(((C1) | RGB_HI_BITS_MASKx2) - \
 	   ((C2) & RGB_REMOVE_LOW_BITS_MASK)) >> 1]
+*/
 
 typedef void (*NormalTileRenderer) (uint32 Tile, uint32 Offset, 
 				    uint32 StartLine, uint32 LineCount, struct SGFX * gfx);
