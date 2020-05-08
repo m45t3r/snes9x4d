@@ -95,36 +95,31 @@ void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
 	// No more MOUSE-CURSOR
 	SDL_ShowCursor(SDL_DISABLE);
 
-	//screen = SDL_SetVideoMode(xs, ys, 16, SDL_HWSURFACE|SDL_DOUBLEBUF);
-	{
-		int i = 0; // 0 - 320x240, 1 - 400x240, 2 - 480x272
-		int surfacewidth, surfaceheight;
-		#define NUMOFVIDEOMODES 3
-		struct {
-			int x;
-			int y;
-			void (*p)(uint32_t *, uint32_t *, int);
-		} vm[NUMOFVIDEOMODES] = {
-#ifdef BILINEAR_SCALE
-			{320, 240, upscale_256x224_to_320x240_bilinearish},
-#else
-			{320, 240, upscale_256x224_to_320x240},
-#endif
-			{400, 240, upscale_256x224_to_384x240_for_400x240},
-			{480, 272, upscale_256x224_to_384x272_for_480x272}
-		};
+	int surfacewidth, surfaceheight;
 
-		// check 3 videomodes: 480x272, 400x240, 320x240
-		for(i = NUMOFVIDEOMODES-1; i >= 0; i--) {
-			if(SDL_VideoModeOK(vm[i].x, vm[i].y, 16, SDL_HWSURFACE|SDL_DOUBLEBUF) != 0) {
-				surfacewidth = vm[i].x;
-				surfaceheight = vm[i].y;
-				upscale_p = vm[i].p;
-				break;
-			}
-		}
-		screen = SDL_SetVideoMode(surfacewidth, surfaceheight, 16, SDL_HWSURFACE|SDL_DOUBLEBUF);
-	}
+#if VIDEO_MODE == 1
+	surfacewidth = 320;
+	surfaceheight = 240;
+#ifdef BILINEAR_SCALE
+	upscale_p = upscale_256x224_to_320x240_bilinearish;
+#else
+	upscale_p = upscale_256x224_to_320x240;
+#endif
+#elif VIDEO_MODE == 2
+	surfacewidth = 400;
+	surfaceheight = 240;
+	upscale_p = upscale_256x224_to_384x240_for_400x240;
+#elif VIDEO_MODE == 3
+	surfacewidth = 480;
+	surfaceheight = 272;
+	upscale_p = upscale_256x224_to_384x272_for_480x272;
+#else
+	surfacewidth = SURFACE_WIDTH;
+	surfaceheight = SURFACE_HEIGHT;
+	upscale_p = UPSCALE_P;
+#endif
+
+	screen = SDL_SetVideoMode(surfacewidth, surfaceheight, 16, SDL_HWSURFACE|SDL_DOUBLEBUF);
 
 	if (screen == NULL)
 	{

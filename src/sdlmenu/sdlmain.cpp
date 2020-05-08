@@ -698,51 +698,42 @@ bool8 S9xOpenSnapshotFile (const char *fname, bool8 read_only, STREAM *file)
 
 	_splitpath (fname, drive, dir, filename, ext);
 
-	if (*drive || *dir == '/' ||
-	(*dir == '.' && (*(dir + 1) == '/'
-		)))
-	{
-	strcpy (filename, fname);
-	if (!*ext)
-		strcat (filename, ".s96");
+	if (*drive || *dir == '/' || (*dir == '.' && (*(dir + 1) == '/'))) {
+	   strcpy (filename, fname);
+	   if (!*ext)
+		   strcat (filename, ".s96");
 	}
-	else
-	{
-	strcpy (filename, S9xGetSnapshotDirectory ());
-	strcat (filename, SLASH_STR);
-	strcat (filename, fname);
-	if (!*ext)
-		strcat (filename, ".s96");
+	else {
+	   strcpy (filename, S9xGetSnapshotDirectory ());
+	   strcat (filename, SLASH_STR);
+	   strcat (filename, fname);
+	   if (!*ext)
+		   strcat (filename, ".s96");
 	}
 
 #ifdef ZLIB
-	if (read_only)
-	{
-	if ((*file = OPEN_STREAM (filename, "rb")))
-		return (TRUE);
+	if (read_only) {
+	   if ((*file = OPEN_STREAM (filename, "rb")))
+		   return (TRUE);
 	}
-	else
-	{
-	if ((*file = OPEN_STREAM (filename, "wb")))
-	{
-		//chown (filename, getuid (), getgid ());
-		return (TRUE);
-	}
+	else {
+	   if ((*file = OPEN_STREAM (filename, "wb"))) {
+	      //chown (filename, getuid (), getgid ());
+	      return (TRUE);
+	   }
 	}
 #else
 	char command [PATH_MAX];
 
-	if (read_only)
-	{
-	sprintf (command, "gzip -d <\"%s\"", filename);
-	if (*file = popen (command, "r"))
-		return (TRUE);
+	if (read_only) {
+	   sprintf (command, "gzip -d <\"%s\"", filename);
+	   if (*file = popen (command, "r"))
+	      return (TRUE);
 	}
-	else
-	{
-	sprintf (command, "gzip --best >\"%s\"", filename);
-	if (*file = popen (command, "wb"))
-		return (TRUE);
+	else {
+	   sprintf (command, "gzip --best >\"%s\"", filename);
+	   if (*file = popen (command, "wb"))
+	      return (TRUE);
 	}
 #endif
 	return (FALSE);
@@ -771,10 +762,8 @@ bool8_32 S9xDeinitUpdate (int Width, int Height)
 
 	SDL_LockSurface(screen);
 
-	if (Settings.SupportHiRes)
-	{
-		if (Width > 256)
-		{
+	if (Settings.SupportHiRes) {
+		if (Width > 256) {
 			// If SupportHiRes is active and HighRes Frame
 			uint16 *dp16 = (uint16 *)(screen->pixels) + dpo*2;
 			uint32 *sp32 = (uint32 *)(GFX.Screen);
@@ -785,16 +774,13 @@ bool8_32 S9xDeinitUpdate (int Width, int Height)
 				dp16 += dpd*2;
 			}
 		}
-		else
-		{
-			if(Scale) {
+		else {
+			if (Scale) {
 				// put here upscale to 400x240 and 480x272
 				(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 512);
 			} else goto __jump;
 		}
-	}
-	else
-	{
+	} else {
 		// if scaling for non-highres (is centered)
 		if(Scale) {
 			// put here upscale to 400x240 and 480x272
