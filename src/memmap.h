@@ -43,26 +43,6 @@
 
 #include "snes9x.h"
 
-#ifdef FAST_LSB_WORD_ACCESS
-#define READ_WORD(s) (*(uint16 *) (s))
-#define READ_DWORD(s) (*(uint32 *) (s))
-#define WRITE_WORD(s, d) (*(uint16 *) (s)) = (d)
-#define WRITE_DWORD(s, d) (*(uint32 *) (s)) = (d)
-#else
-#define READ_WORD(s) ( *(uint8 *) (s) |\
-		      (*((uint8 *) (s) + 1) << 8))
-#define READ_DWORD(s) ( *(uint8 *) (s) |\
-		       (*((uint8 *) (s) + 1) << 8) |\
-		       (*((uint8 *) (s) + 2) << 16) |\
-		       (*((uint8 *) (s) + 3) << 24))
-#define WRITE_WORD(s, d) *(uint8 *) (s) = (d), \
-                         *((uint8 *) (s) + 1) = (d) >> 8
-#define WRITE_DWORD(s, d) *(uint8 *) (s) = (uint8) (d), \
-                          *((uint8 *) (s) + 1) = (uint8) ((d) >> 8),\
-                          *((uint8 *) (s) + 2) = (uint8) ((d) >> 16),\
-                          *((uint8 *) (s) + 3) = (uint8) ((d) >> 24)
-#endif
-
 #define MEMMAP_BLOCK_SIZE (0x1000)
 #define MEMMAP_NUM_BLOCKS (0x1000000 / MEMMAP_BLOCK_SIZE)
 #define MEMMAP_BLOCKS_PER_BANK (0x10000 / MEMMAP_BLOCK_SIZE)

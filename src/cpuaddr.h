@@ -68,11 +68,7 @@ STATIC inline long Relative (struct SRegisters * reg, struct SICPU * icpu, struc
 
 STATIC inline long RelativeLong (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    long OpAddress = *(uint16 *) cpu->PC;
-#else
-    long OpAddress = *cpu->PC + (*(cpu->PC + 1) << 8);
-#endif
+    long OpAddress = READ_WORD(cpu->PC);
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2 + ONE_CYCLE;
 #endif
@@ -84,11 +80,7 @@ STATIC inline long RelativeLong (struct SRegisters * reg, struct SICPU * icpu, s
 
 STATIC inline long AbsoluteIndexedIndirect (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    long OpAddress = (reg->X.W + *(uint16 *) cpu->PC) & 0xffff;
-#else
-    long OpAddress = (reg->X.W + *cpu->PC + (*(cpu->PC + 1) << 8)) & 0xffff;
-#endif
+    long OpAddress = (reg->X.W + READ_WORD(CPU.PC)) & 0xffff;
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2;
 #endif
@@ -98,12 +90,7 @@ STATIC inline long AbsoluteIndexedIndirect (struct SRegisters * reg, struct SICP
 
 STATIC inline long AbsoluteIndirectLong (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    long OpAddress = *(uint16 *) cpu->PC;
-#else
-    long OpAddress = *cpu->PC + (*(cpu->PC + 1) << 8);
-#endif
-
+    long OpAddress = READ_WORD(cpu->PC);
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2;
 #endif
@@ -113,12 +100,7 @@ STATIC inline long AbsoluteIndirectLong (struct SRegisters * reg, struct SICPU *
 
 STATIC inline long AbsoluteIndirect (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    long OpAddress = *(uint16 *) cpu->PC;
-#else
-    long OpAddress = *cpu->PC + (*(cpu->PC + 1) << 8);
-#endif
-
+    long OpAddress = READ_WORD(cpu->PC);
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2;
 #endif
@@ -128,11 +110,7 @@ STATIC inline long AbsoluteIndirect (struct SRegisters * reg, struct SICPU * icp
 
 STATIC inline long Absolute (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    long OpAddress = *(uint16 *) cpu->PC + icpu->ShiftedDB;
-#else
-    long OpAddress = *cpu->PC + (*(cpu->PC + 1) << 8) + icpu->ShiftedDB;
-#endif
+    long OpAddress = READ_WORD(cpu->PC) + icpu->ShiftedDB;
     cpu->PC += 2;
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2;
@@ -142,11 +120,7 @@ STATIC inline long Absolute (struct SRegisters * reg, struct SICPU * icpu, struc
 
 STATIC inline long AbsoluteLong (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    long OpAddress = (*(uint32 *) cpu->PC) & 0xffffff;
-#else
-    long OpAddress = *cpu->PC + (*(cpu->PC + 1) << 8) + (*(cpu->PC + 2) << 16);
-#endif
+    long OpAddress = READ_3WORD(cpu->PC);
     cpu->PC += 3;
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2 + cpu->MemSpeed;
@@ -244,12 +218,7 @@ STATIC inline long DirectIndexedY (struct SRegisters * reg, struct SICPU * icpu,
 
 STATIC inline long AbsoluteIndexedX (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    long OpAddress = icpu->ShiftedDB + *(uint16 *) cpu->PC + reg->X.W;
-#else
-    long OpAddress = icpu->ShiftedDB + *cpu->PC + (*(cpu->PC + 1) << 8) +
-		reg->X.W;
-#endif
+    long OpAddress = icpu->ShiftedDB + READ_WORD(cpu->PC) + reg->X.W;
     cpu->PC += 2;
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2;
@@ -261,12 +230,7 @@ STATIC inline long AbsoluteIndexedX (struct SRegisters * reg, struct SICPU * icp
 
 STATIC inline long AbsoluteIndexedY (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    long OpAddress = icpu->ShiftedDB + *(uint16 *) cpu->PC + reg->Y.W;
-#else
-    long OpAddress = icpu->ShiftedDB + *cpu->PC + (*(cpu->PC + 1) << 8) +
-		reg->Y.W;
-#endif
+    long OpAddress = icpu->ShiftedDB + READ_WORD(cpu->PC) + reg->Y.W;
     cpu->PC += 2;
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2;
@@ -278,11 +242,7 @@ STATIC inline long AbsoluteIndexedY (struct SRegisters * reg, struct SICPU * icp
 
 STATIC inline long AbsoluteLongIndexedX (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    long OpAddress = (*(uint32 *) cpu->PC + reg->X.W) & 0xffffff;
-#else
-    long OpAddress = (*cpu->PC + (*(cpu->PC + 1) << 8) + (*(cpu->PC + 2) << 16) + reg->X.W) & 0xffffff;
-#endif
+    long OpAddress = (READ_3WORD(cpu->PC) + reg->X.W) & 0x00ffffff;
     cpu->PC += 3;
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2 + cpu->MemSpeed;

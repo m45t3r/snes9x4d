@@ -874,18 +874,9 @@ void DSP2SetByte(uint8 byte, uint16 address)
 			case 0x09:
 				// Multiply - don't yet know if this is signed or unsigned
 				DSP2Op09Word1 = DSP1.parameters[0] | (DSP1.parameters[1]<<8);
-                DSP2Op09Word2 = DSP1.parameters[2] | (DSP1.parameters[3]<<8);
+				DSP2Op09Word2 = DSP1.parameters[2] | (DSP1.parameters[3]<<8);
 				DSP1.out_count=4;
-#ifdef FAST_LSB_WORD_ACCESS
-                *(uint32 *)DSP1.output = DSP2Op09Word1 * DSP2Op09Word2;
-#else
-				uint32 temp;
-				temp=DSP2Op09Word1 * DSP2Op09Word2;
-				DSP1.output[0]=temp&0xFF;
-				DSP1.output[1]=(temp>>8)&0xFF;
-				DSP1.output[2]=(temp>>16)&0xFF;
-				DSP1.output[3]=(temp>>24)&0xFF;
-#endif
+				WRITE_DWORD(DSP1.output, DSP2Op09Word1 * DSP2Op09Word2);
 				break;
 			case 0x05:
 				if(DSP2Op05HasLen)

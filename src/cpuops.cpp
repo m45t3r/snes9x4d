@@ -266,11 +266,7 @@ static void Op29M1 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUSta
 
 static void Op29M0 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    reg->A.W &= *(uint16 *) cpu->PC;
-#else
-    reg->A.W &= *cpu->PC + (*(cpu->PC + 1) << 8);
-#endif
+    reg->A.W &= READ_WORD(cpu->PC);
     cpu->PC += 2;
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2;
@@ -518,11 +514,7 @@ static void Op89M1 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUSta
 
 static void Op89M0 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    icpu->_Zero = (reg->A.W & *(uint16 *) cpu->PC) != 0;
-#else
-    icpu->_Zero = (reg->A.W & (*cpu->PC + (*(cpu->PC + 1) << 8))) != 0;
-#endif
+    icpu->_Zero = (reg->A.W & READ_WORD(cpu->PC)) != 0;
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2;
 #endif
@@ -591,12 +583,7 @@ static void OpC9M1 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUSta
 
 static void OpC9M0 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    int32 Int32 = (long) reg->A.W - (long) *(uint16 *) cpu->PC;
-#else
-    int32 Int32 = (long) reg->A.W -
-	    (long) (*cpu->PC + (*(cpu->PC + 1) << 8));
-#endif
+    int32 Int32 = (long) reg->A.W - (long) READ_WORD(cpu->PC);
     icpu->_Carry = Int32 >= 0;
     SETZN16 ((uint16) Int32);
     cpu->PC += 2;
@@ -788,12 +775,7 @@ static void OpE0X1 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUSta
 
 static void OpE0X0 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    int32 Int32 = (long) reg->X.W - (long) *(uint16 *) cpu->PC;
-#else
-    int32 Int32 = (long) reg->X.W -
-	    (long) (*cpu->PC + (*(cpu->PC + 1) << 8));
-#endif
+    int32 Int32 = (long) reg->X.W - (long) READ_WORD(cpu->PC);
     icpu->_Carry = Int32 >= 0;
     SETZN16 ((uint16) Int32);
     cpu->PC += 2;
@@ -841,12 +823,7 @@ static void OpC0X1 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUSta
 
 static void OpC0X0 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    int32 Int32 = (long) reg->Y.W - (long) *(uint16 *) cpu->PC;
-#else
-    int32 Int32 = (long) reg->Y.W -
-	    (long) (*cpu->PC + (*(cpu->PC + 1) << 8));
-#endif
+    int32 Int32 = (long) reg->Y.W - (long) READ_WORD(cpu->PC);
     icpu->_Carry = Int32 >= 0;
     SETZN16 ((uint16) Int32);
     cpu->PC += 2;
@@ -954,11 +931,7 @@ static void Op49M1 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUSta
 
 static void Op49M0 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    reg->A.W ^= *(uint16 *) cpu->PC;
-#else
-    reg->A.W ^= *cpu->PC + (*(cpu->PC + 1) << 8);
-#endif
+    reg->A.W ^= READ_WORD(cpu->PC);
     cpu->PC += 2;
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2;
@@ -1208,12 +1181,7 @@ static void OpA9M1 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUSta
 
 static void OpA9M0 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    reg->A.W = *(uint16 *) cpu->PC;
-#else
-    reg->A.W = *cpu->PC + (*(cpu->PC + 1) << 8);
-#endif
-
+    reg->A.W = READ_WORD(cpu->PC);
     cpu->PC += 2;
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2;
@@ -1403,11 +1371,7 @@ static void OpA2X1 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUSta
 
 static void OpA2X0 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    reg->X.W = *(uint16 *) cpu->PC;
-#else
-    reg->X.W = *cpu->PC + (*(cpu->PC + 1) << 8);
-#endif
+    reg->X.W = READ_WORD(cpu->PC);
     cpu->PC += 2;
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2;
@@ -1476,12 +1440,7 @@ static void OpA0X1 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUSta
 
 static void OpA0X0 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    reg->Y.W = *(uint16 *) cpu->PC;
-#else
-    reg->Y.W = *cpu->PC + (*(cpu->PC + 1) << 8);
-#endif
-
+    reg->Y.W = READ_WORD(cpu->PC);
     cpu->PC += 2;
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2;
@@ -1611,11 +1570,7 @@ static void Op09M1 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUSta
 
 static void Op09M0 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-#ifdef FAST_LSB_WORD_ACCESS
-    reg->A.W |= *(uint16 *) cpu->PC;
-#else
-    reg->A.W |= *cpu->PC + (*(cpu->PC + 1) << 8);
-#endif
+    reg->A.W |= READ_WORD(cpu->PC);
     cpu->PC += 2;
 #ifdef VAR_CYCLES
     cpu->Cycles += cpu->MemSpeedx2;

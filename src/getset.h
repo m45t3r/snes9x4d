@@ -83,16 +83,6 @@
 #include "spc7110.h"
 #include "obc1.h"
 
-#ifdef FAST_LSB_WORD_ACCESS
-#define READ_WORD(s) (*(uint16 *) (s))
-#define WRITE_WORD(s, d) (*(uint16 *) (s)) = (d)
-#else
-#define READ_WORD(s) ( *(uint8 *) (s) |\
-		      (*((uint8 *) (s) + 1) << 8))
-#define WRITE_WORD(s, d) *(uint8 *) (s) = (d), \
-                         *((uint8 *) (s) + 1) = (d) >> 8
-#endif
-
 INLINE uint8 S9xGetByte (uint32 Address, struct SCPUState * cpu)
 {
 #if defined(VAR_CYCLES) || defined(CPU_SHUTDOWN)

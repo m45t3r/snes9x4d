@@ -82,38 +82,6 @@
 #include "ppu.h"
 #include "c4.h"
 
-#ifdef FAST_LSB_WORD_ACCESS
-#define READ_WORD(s) (*(uint16 *) (s))
-#define READ_DWORD(s) (*(uint32 *) (s))
-#define WRITE_WORD(s, d) (*(uint16 *) (s)) = (d)
-#define WRITE_DWORD(s, d) (*(uint32 *) (s)) = (d)
-
-#define READ_3WORD(s) (0x00ffffff & *(uint32 *) (s))
-#define WRITE_3WORD(s, d) *(uint16 *) (s) = (uint16)(d),\
-                          *((uint8 *) (s) + 2) = (uint8) ((d) >> 16)
-
-
-#else
-#define READ_WORD(s) ( *(uint8 *) (s) |\
-		      (*((uint8 *) (s) + 1) << 8))
-#define READ_DWORD(s) ( *(uint8 *) (s) |\
-		       (*((uint8 *) (s) + 1) << 8) |\
-		       (*((uint8 *) (s) + 2) << 16) |\
-		       (*((uint8 *) (s) + 3) << 24))
-#define WRITE_WORD(s, d) *(uint8 *) (s) = (d), \
-                         *((uint8 *) (s) + 1) = (d) >> 8
-#define WRITE_DWORD(s, d) *(uint8 *) (s) = (uint8) (d), \
-                          *((uint8 *) (s) + 1) = (uint8) ((d) >> 8),\
-                          *((uint8 *) (s) + 2) = (uint8) ((d) >> 16),\
-                          *((uint8 *) (s) + 3) = (uint8) ((d) >> 24)
-#define WRITE_3WORD(s, d) *(uint8 *) (s) = (uint8) (d), \
-                          *((uint8 *) (s) + 1) = (uint8) ((d) >> 8),\
-                          *((uint8 *) (s) + 2) = (uint8) ((d) >> 16)
-#define READ_3WORD(s) ( *(uint8 *) (s) |\
-                       (*((uint8 *) (s) + 1) << 8) |\
-                       (*((uint8 *) (s) + 2) << 16))
-#endif
-
 void S9xInitC4 ()
 {
     // Stupid zsnes code, we can't do the logical thing without breaking
