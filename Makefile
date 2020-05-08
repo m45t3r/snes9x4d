@@ -30,8 +30,8 @@ endif
 OBJECTS = $(CPUOBJ) $(FXOBJ) $(C4OBJ) $(CHEAT) \
 	src/cpu.o src/tile.o src/gfx.o src/clip.o \
 	src/memmap.o src/ppu.o src/dma.o \
-	src/dingux-sdl/sdlmenu.o src/dingux-sdl/sdlmain.o src/dingux-sdl/sdlaudio.o src/dingux-sdl/scaler.o \
-	$(SOUNDOBJ) src/dingux-sdl/sdlvideo.o \
+	src/sdlmenu/sdlmenu.o src/sdlmenu/sdlmain.o src/sdlmenu/sdlaudio.o src/sdlmenu/scaler.o \
+	$(SOUNDOBJ) src/sdlmenu/sdlvideo.o \
 	src/sdd1.o src/sdd1emu.o src/dsp1.o src/sa1.o src/sa1cpu.o src/obc1.o \
 	src/snes9x.o src/snapshot.o src/data.o src/globals.o \
 
@@ -182,9 +182,9 @@ src/snapshot.o: src/snapshot.h src/memmap.h src/snes9x.h src/65c816.h src/ppu.h 
 src/snes96.o: src/port.h src/snes9x.h src/memmap.h
 src/memmap.o: src/cpuexec.h src/snes9x.h src/memmap.h src/ppu.h src/port.h src/cheats.h src/getset.h src/apu.h \
 			src/spc700.h
-src/dingux-sdl/sdlmain.o: src/cpuexec.h src/snes9x.h src/port.h src/snapshot.h src/display.h src/apu.h src/gfx.h src/cheats.h src/soundux.h
-src/dingux-sdl/sdlmenu.o: src/cpuexec.h src/snes9x.h src/port.h src/snapshot.h src/display.h src/apu.h src/gfx.h
-src/dingux-sdl/sdlvideo.o: src/display.h src/snes9x.h src/memmap.h src/debug.h src/ppu.h src/snapshot.h src/gfx.h src/soundux.h
+src/sdlmenu/sdlmain.o: src/cpuexec.h src/snes9x.h src/port.h src/snapshot.h src/display.h src/apu.h src/gfx.h src/cheats.h src/soundux.h
+src/sdlmenu/sdlmenu.o: src/cpuexec.h src/snes9x.h src/port.h src/snapshot.h src/display.h src/apu.h src/gfx.h
+src/sdlmenu/sdlvideo.o: src/display.h src/snes9x.h src/memmap.h src/debug.h src/ppu.h src/snapshot.h src/gfx.h src/soundux.h
 src/gfx.o: src/memmap.h src/snes9x.h src/ppu.h src/gfx.h src/display.h src/port.h
 src/tile.o: src/memmap.h src/snes9x.h src/ppu.h src/display.h src/gfx.h src/tile.h
 src/spc700.o: src/spc700.h src/apu.h src/apumem.h src/snes9x.h src/memmap.h
