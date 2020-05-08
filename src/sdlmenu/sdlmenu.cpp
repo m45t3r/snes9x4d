@@ -32,13 +32,11 @@ void ShowCredit(void);
 int cursor = 3;
 int loadcursor = 0;
 int romcount_maxrows = 16;
+const int max_menu_items = 14;
 
 char SaveSlotNum_old=255;
 bool8_32 highres_current = FALSE;
 char snapscreen[17120]={};
-
-char temp[256];
-char disptxt[20][256];
 
 void sys_sleep(int us)
 {
@@ -71,8 +69,11 @@ void menu_init()
 void menu_dispupdate(void)
 {
 	const char *Rates[8] = { "off", "8192", "11025", "16000", "22050", "32000", "44100", "48000" };
+	char temp[256];
+	char disptxt[max_menu_items][256];
 
 	menu_init();
+
 	strcpy(disptxt[0],"  Snes9x4D v" BUILD_VERSION);
 	strcpy(disptxt[1],"");
 	strcpy(disptxt[2],"Reset Game           ");
@@ -129,9 +130,9 @@ void menu_dispupdate(void)
 		sprintf(temp,"%s False",disptxt[11]);
 	strcpy(disptxt[11],temp);
 
-	for(int i=0;i<=13;i++)
+	for(int i = 0; i < max_menu_items; i++)
 	{
-		if(i==cursor)
+		if(i == cursor)
 			sprintf(temp," >%s",disptxt[i]);
 		else
 			sprintf(temp,"  %s",disptxt[i]);
@@ -288,10 +289,10 @@ void menu_loop(void)
 					}
 				}
 
-				if(cursor==1)
-					cursor=13;	//11
-				else if(cursor==14)	//12
-					cursor=2;
+				if(cursor <= 1)
+					cursor = max_menu_items - 1;
+				else if(cursor >= max_menu_items)
+					cursor = 2;
 
 				menu_dispupdate();
 				sys_sleep(1000);

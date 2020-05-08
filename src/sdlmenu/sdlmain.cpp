@@ -255,11 +255,7 @@ int main (int argc, char **argv)
 	Settings.APUEnabled = Settings.NextAPUEnabled = TRUE;
 	Settings.InterpolatedSound = TRUE;
 	Settings.H_Max = SNES_CYCLES_PER_SCANLINE;
-#ifdef PANDORA
-	Settings.SkipFrames = 1;
-#else
 	Settings.SkipFrames = AUTO_FRAMERATE;
-#endif
 	Settings.DisplayFrameRate = FALSE;
 	Settings.ShutdownMaster = TRUE;
 	Settings.FrameTimePAL = 20000;
