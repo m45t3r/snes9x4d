@@ -167,14 +167,8 @@ extern uint8 mul_brightness [16][32];
 		            ((dw & 0xff0000) >> 8) | ((dw & 0xff000000) >> 24)
 #endif
 
-#ifdef FAST_LSB_WORD_ACCESS
-#define READ_2BYTES(s) (*(uint16 *) (s))
-#define WRITE_2BYTES(s, d) *(uint16 *) (s) = (d)
-#else
-#define READ_2BYTES(s) (*(uint8 *) (s) | (*((uint8 *) (s) + 1) << 8))
-#define WRITE_2BYTES(s, d) *(uint8 *) (s) = (d), \
-			   *((uint8 *) (s) + 1) = (d) >> 8
-#endif
+#define READ_2BYTES(s) READ_WORD(s)
+#define WRITE_2BYTES(s, d) WRITE_WORD(s, d)
 
 #define SUB_SCREEN_DEPTH 0
 #define MAIN_SCREEN_DEPTH 32
