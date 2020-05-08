@@ -311,30 +311,6 @@ int main (int argc, char **argv)
 	S9xSetRenderPixelFormat (RGB565);
 #endif
 
-#ifndef DINGOO
-	// ROM selector if no rom filename is available!!!!!!!!!!!!!!
-	if (!rom_filename)
-	{
-		S9xInitDisplay (argc, argv);
-		if (!S9xGraphicsInit ())
-		{
-			OutOfMemory ();
-		}
-		S9xInitInputDevices ();
-
-		// just to init Font here for ROM selector
-		S9xReset ();
-
-		do
-		{
-			rom_filename = menu_romselector();
-		} while(rom_filename==NULL);
-
-		S9xDeinitDisplay();
-		printf ("Romfile selected: %s\n", rom_filename);
-	}
-#endif
-
 	if (rom_filename)
 	{
 		if (!Memory.LoadROM (rom_filename))

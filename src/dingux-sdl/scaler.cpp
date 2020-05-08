@@ -1,4 +1,3 @@
-
 #include "scaler.h"
 
 #define AVERAGE(z, x) ((((z) & 0xF7DEF7DE) >> 1) + (((x) & 0xF7DEF7DE) >> 1))
