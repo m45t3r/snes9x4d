@@ -27,16 +27,25 @@ void load_screenshot(char *fname);
 void show_screenshot(void);
 void capt_screenshot(void);
 void menu_dispupdate(void);
-void ShowCredit(void);
+void show_credits(void);
 
 int cursor = 3;
 int loadcursor = 0;
 int romcount_maxrows = 16;
 const int max_menu_items = 14;
+const int max_save_state_slots = 3;
 
 char SaveSlotNum_old=255;
 bool8_32 highres_current = FALSE;
 char snapscreen[17120]={};
+
+#define strfmt(str, format, args...) \
+	do { \
+		char tmp[256]; \
+		snprintf(tmp, sizeof(tmp) - 1, format, args); \
+		strncpy(str, tmp, sizeof(tmp)); \
+	} while (0)
+
 
 void sys_sleep(int us)
 {
@@ -58,10 +67,10 @@ void menu_flip()
 
 void menu_init()
 {
-	//draw black screen
-	for(int y=12;y<=212;y++){
-		for(int x=10;x<246*2;x+=2){
-			memset(GFX.Screen + GFX.Pitch*y+x,0x0,2);
+	const int color = 0x0; // black
+	for(int y = 0; y <= 224; y++){
+		for(int x = 0; x<256*2; x += 2){
+			memset(GFX.Screen + GFX.Pitch * y + x, color, 2);
 		}
 	}
 }
@@ -69,74 +78,64 @@ void menu_init()
 void menu_dispupdate(void)
 {
 	const char *Rates[8] = { "off", "8192", "11025", "16000", "22050", "32000", "44100", "48000" };
-	char temp[256];
-	char disptxt[max_menu_items][256];
+	char disptxt[max_menu_items][256] = {
+#ifdef MIYOO
+		"  Snes9x4D " BUILD_VERSION " for Miyoo  ",
+#elif
+		"  Snes9x4D " BUILD_VERSION " for SDL  ",
+#endif
+		"",
+		"Reset Game               ",
+		"Save State               ",
+		"Load State               ",
+		"State Slot               ",
+		"Display Frame Rate       ",
+		"Transparency             ",
+		"Full Screen              ",
+		"Frameskip                ",
+		"Sound Rate               ",
+		"Stereo                   ",
+		"Credits                  ",
+		"Exit                     "
+	};
 
 	menu_init();
 
-	strcpy(disptxt[0],"  Snes9x4D v" BUILD_VERSION);
-	strcpy(disptxt[1],"");
-	strcpy(disptxt[2],"Reset Game           ");
-	strcpy(disptxt[3],"Save State           ");
-	strcpy(disptxt[4],"Load State           ");
-	strcpy(disptxt[5],"State Slot              No.");
-	strcpy(disptxt[6],"Display Frame Rate     ");
-	strcpy(disptxt[7],"Transparency           ");
-	strcpy(disptxt[8],"Full Screen         ");
-	strcpy(disptxt[9],"Frameskip              ");
-	strcpy(disptxt[10],"Sound Rate           ");
-	strcpy(disptxt[11],"Stereo                ");
-	strcpy(disptxt[12],"Credit              ");
-	strcpy(disptxt[13],"Exit");
-
-	sprintf(temp,"%s%d",disptxt[5],SaveSlotNum);
-	strcpy(disptxt[5],temp);
+	strfmt(disptxt[5], "%s No. %d", disptxt[5], SaveSlotNum);
 
 	if(Settings.DisplayFrameRate)
-		sprintf(temp,"%s True",disptxt[6]);
+		strfmt(disptxt[6], "%s True", disptxt[6]);
 	else
-		sprintf(temp,"%sFalse",disptxt[6]);
-	strcpy(disptxt[6],temp);
+		strfmt(disptxt[6], "%s False", disptxt[6]);
 
 	if(Settings.Transparency)
-		sprintf(temp,"%s   On",disptxt[7]);
+		strfmt(disptxt[7], "%s On", disptxt[7]);
 	else
-		sprintf(temp,"%s  Off",disptxt[7]);
-	strcpy(disptxt[7],temp);
+		strfmt(disptxt[7], "%s Off", disptxt[7]);
 
 	if(Scale)
-		sprintf(temp,"%s    True",disptxt[8]);
+		strfmt(disptxt[8], "%s True", disptxt[8]);
 	else
-		sprintf(temp,"%s   False",disptxt[8]);
-	strcpy(disptxt[8],temp);
+		strfmt(disptxt[8], "%s False", disptxt[8]);
 
 	if (Settings.SkipFrames == AUTO_FRAMERATE)
-	{
-		sprintf(temp,"%s Auto",disptxt[9]);
-		strcpy(disptxt[9],temp);
-	}
+		strfmt(disptxt[9],"%s Auto",disptxt[9]);
 	else
-	{
-		sprintf(temp,"%s %02d/%d",disptxt[9],(int) Memory.ROMFramesPerSecond, Settings.SkipFrames);
-		strcpy(disptxt[9],temp);
-	}
+		strfmt(disptxt[9], "%s %02d/%d", disptxt[9], (int) Memory.ROMFramesPerSecond, Settings.SkipFrames);
 
-	sprintf(temp,"%s  %s",disptxt[10], Rates[Settings.SoundPlaybackRate]);
-	strcpy(disptxt[10],temp);
+	strfmt(disptxt[10], "%s %s", disptxt[10], Rates[Settings.SoundPlaybackRate]);
 
 	if(Settings.Stereo)
-		sprintf(temp,"%s  True",disptxt[11]);
+		strfmt(disptxt[11],"%s True",disptxt[11]);
 	else
-		sprintf(temp,"%s False",disptxt[11]);
-	strcpy(disptxt[11],temp);
+		strfmt(disptxt[11],"%s False",disptxt[11]);
 
 	for(int i = 0; i < max_menu_items; i++)
 	{
 		if(i == cursor)
-			sprintf(temp," >%s",disptxt[i]);
+			strfmt(disptxt[i]," >%s",disptxt[i]);
 		else
-			sprintf(temp,"  %s",disptxt[i]);
-		strcpy(disptxt[i],temp);
+			strfmt(disptxt[i],"  %s",disptxt[i]);
 
 		S9xDisplayString (disptxt[i], GFX.Screen, GFX.Pitch ,i*10+64);
 	}
@@ -144,6 +143,7 @@ void menu_dispupdate(void)
 	//show screen shot for snapshot
 	if(SaveSlotNum_old != SaveSlotNum)
 	{
+		char temp[256];
 		strcpy(temp,"Loading...");
 		S9xDisplayString (temp, GFX.Screen + 280, GFX.Pitch, 210/*204*/);
 		menu_flip();
@@ -193,10 +193,7 @@ void menu_loop(void)
 					cursor--;
 				else if(keyssnes[sfc_key[DOWN_1]] == SDL_PRESSED)
 					cursor++;
-				else if( (keyssnes[sfc_key[A_1]] == SDL_PRESSED) ||
-						 (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED) ||
-						 (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED) )
-				{
+				else {
 					switch(cursor)
 					{
 						case 2:
@@ -236,23 +233,28 @@ void menu_loop(void)
 						case 5:
 							if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED)
 								SaveSlotNum--;
-							else
-							if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
+							else if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
 								SaveSlotNum++;
 
-							if(SaveSlotNum>=3)
-								SaveSlotNum=3;		//3
-							else if(SaveSlotNum<=0)
-								SaveSlotNum=0;		//3
+							if (SaveSlotNum >= max_save_state_slots)
+								SaveSlotNum = max_save_state_slots;
+							else if (SaveSlotNum <= 0)
+								SaveSlotNum = 0;
 						break;
 						case 6:
-							Settings.DisplayFrameRate = !Settings.DisplayFrameRate;
+							if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED
+							    || keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
+								Settings.DisplayFrameRate = !Settings.DisplayFrameRate;
 						break;
 						case 7:
-							Settings.Transparency = !Settings.Transparency;
+							if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED
+							    || keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
+								Settings.Transparency = !Settings.Transparency;
 						break;
 						case 8:
-							Scale = !Scale;
+							if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED
+							    || keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
+								Scale = !Scale;
 						break;
 						case 9:
 							if (Settings.SkipFrames == AUTO_FRAMERATE)
@@ -260,12 +262,12 @@ void menu_loop(void)
 
 							if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED)
 								Settings.SkipFrames--;
-							else
+							else if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
 								Settings.SkipFrames++;
 
-							if(Settings.SkipFrames>=10)
+							if (Settings.SkipFrames >= 10)
 								Settings.SkipFrames = AUTO_FRAMERATE;
-							else if (Settings.SkipFrames<=1)
+							else if (Settings.SkipFrames <= 1)
 								Settings.SkipFrames = 1;
 						break;
 						case 10:
@@ -276,11 +278,13 @@ void menu_loop(void)
 							}
 						break;
 						case 11:
-							Settings.Stereo = !Settings.Stereo;
+							if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED
+							    || keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
+								Settings.Stereo = !Settings.Stereo;
 						break;
 						case 12:
 							if (keyssnes[sfc_key[A_1]] == SDL_PRESSED)
-								ShowCredit();
+								show_credits();
 						break;
 						case 13:
 							if (keyssnes[sfc_key[A_1]] == SDL_PRESSED)
@@ -381,18 +385,17 @@ void capt_screenshot() //107px*80px
 
 void show_screenshot()
 {
-	int s=0;
-//	for(int y=126;y<126+80;y++){
-	for(int y=146;y<130+80;y++){
-		for(int x=248; x<248+107*2; x+=2){
-			uint8 *d = GFX.Screen + y*GFX.Pitch + x;
+	int s = 0;
+	for(int y = 146; y < 146+80; y++) {
+		for(int x = 248; x < 248 + 107 * 2; x += 2) {
+			uint8 *d = GFX.Screen + y * GFX.Pitch + x;
 			*d++ = snapscreen[s++];
 			*d++ = snapscreen[s++];
 		}
 	}
 }
 
-void ShowCredit()
+void show_credits()
 {
 	uint8 *keyssnes = 0;
 	int line=0,ypix=0;
