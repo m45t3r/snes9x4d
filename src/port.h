@@ -101,15 +101,9 @@ typedef long		int16_32;
 #define _MAX_PATH PATH_MAX
 #endif
 
-/* #define ZeroMemory(a,b) memset((a),0,(b)) */
-#define ZeroMemory(a,b) \
-{ \
-	register uint32 *jj = ((uint32 *)(a)); \
-	for(register uint32 ii=(b)/8; ii ; --ii) { \
-		*jj++ = 0; \
-		*jj++ = 0; \
-	} \
-}
+#define ZeroMemory(a,b) memset((a),0,(b))
+#define LSB_FIRST
+/* #define FAST_LSB_WORD_ACCESS */
 
 void _makepath (char *path, const char *drive, const char *dir,
 		const char *fname, const char *ext);
@@ -143,9 +137,6 @@ EXTERN_C void S9xGenerateSound ();
 typedef void (*SignalHandler)(int);
 #define SIG_PF SignalHandler
 #endif
-
-#define LSB_FIRST
-//#define FAST_LSB_WORD_ACCESS
 
 #ifdef __linux
 #define TITLE "Snes9X: Linux"
