@@ -105,7 +105,11 @@ void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
 			int y;
 			void (*p)(uint32_t *, uint32_t *, int);
 		} vm[NUMOFVIDEOMODES] = {
+#ifdef BILINEAR_SCALE
+			{320, 240, upscale_256x224_to_320x240_bilinearish},
+#else
 			{320, 240, upscale_256x224_to_320x240},
+#endif
 			{400, 240, upscale_256x224_to_384x240_for_400x240},
 			{480, 272, upscale_256x224_to_384x272_for_480x272}
 		};
