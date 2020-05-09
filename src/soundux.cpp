@@ -1165,7 +1165,6 @@ stereo_exit: ;
     }
 }
 
-#ifndef _ZAURUS
 void MixMono (int sample_count)
 {
     int wave[SOUND_BUFFER_SIZE];
@@ -1451,7 +1450,6 @@ void S9xMixSamples (uint8 *buffer, int sample_count)
 {
     S9xMixSamplesO (buffer, sample_count, 0);
 }
-#endif
 
 void S9xMixSamplesO (uint8 *buffer, int sample_count, int byte_offset)
 {
@@ -1464,14 +1462,10 @@ void S9xMixSamplesO (uint8 *buffer, int sample_count, int byte_offset)
 		memset (MixBuffer, 0, sample_count * sizeof (MixBuffer [0]));
 		if (sd->echo_enable)
 			memset (EchoBuffer, 0, sample_count * sizeof (EchoBuffer [0]));
-#ifndef _ZAURUS
 		if (so.stereo)
 			MixStereo (sample_count);
 		else
 			MixMono (sample_count);
-#else
-			MixStereo (sample_count);
-#endif
     }
 
     /* Mix and convert waveforms */

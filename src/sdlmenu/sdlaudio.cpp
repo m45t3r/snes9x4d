@@ -37,7 +37,8 @@ int sound_i = FALSE;
 static void sdl_audio_callback (void *userdata, Uint8 *stream, int len)
 {
 	SDL_LockMutex(sound_mutex);
-	if(!so.mute_sound) S9xMixSamplesO (stream, len/2, 0);
+	if (!so.mute_sound)
+		S9xMixSamplesO(stream, len >> (so.sixteen_bit ? 1 : 0), 0);
 	SDL_CondSignal(sound_cv);
 	SDL_UnlockMutex(sound_mutex);
 	return;
@@ -98,8 +99,13 @@ void S9xReinitSound()
 	}
 
 	if(Settings.SoundPlaybackRate)
-		S9xOpenSoundDevice(Settings.SoundPlaybackRate, Settings.Stereo, BufferSizes[Settings.SoundPlaybackRate]);
-	else so.mute_sound = TRUE;
+		S9xOpenSoundDevice(
+			Settings.SoundPlaybackRate,
+			Settings.Stereo,
+			BufferSizes[Settings.SoundPlaybackRate]
+		);
+	else
+		so.mute_sound = TRUE;
 }
 
 void S9xGenerateSound ()
