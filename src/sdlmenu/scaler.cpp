@@ -1,12 +1,13 @@
-#include <cstddef>
-
 #include "scaler.h"
 
 #define AVERAGE(z, x) ((((z) & 0xF7DEF7DE) >> 1) + (((x) & 0xF7DEF7DE) >> 1))
 #define AVERAGEHI(AB) ((((AB) & 0xF7DE0000) >> 1) + (((AB) & 0xF7DE) << 15))
 #define AVERAGELO(CD) ((((CD) & 0xF7DE) >> 1) + (((CD) & 0xF7DE0000) >> 17))
 
-void (*upscale_p)(uint32_t *dst, uint32_t *src, int width) = NULL;
+void (*upscale_p)(uint32_t *dst, uint32_t *src, int width) = 0;
+
+#ifdef BILINEAR_SCALE
+void (*upscale_p_bilinear)(uint32_t *dst, uint32_t *src, int width) = 0;
 
 /*
  * Approximately bilinear scaler, 256x224 to 320x240
@@ -290,45 +291,7 @@ void upscale_256x224_to_320x240_bilinearish(uint32_t* dst, uint32_t* src, int wi
 		}
 	}
 }
-
-void upscale_256x240_to_320x240_bilinearish(uint32_t* dst, uint32_t* src, int width)
-{
-	uint16_t* Src16 = (uint16_t*) src;
-	uint16_t* Dst16 = (uint16_t*) dst;
-	// There are 64 blocks of 4 pixels horizontally, and 239 of 1 vertically.
-	// Each block of 4x1 becomes 5x1.
-	uint32_t BlockX, BlockY;
-	uint16_t* BlockSrc;
-	uint16_t* BlockDst;
-	for (BlockY = 0; BlockY < 239; BlockY++)
-	{
-		BlockSrc = Src16 + BlockY * 256 * 1;
-		BlockDst = Dst16 + BlockY * 320 * 1;
-		for (BlockX = 0; BlockX < 64; BlockX++)
-		{
-			/* Horizontally:
-			 * Before(4):
-			 * (a)(b)(c)(d)
-			 * After(5):
-			 * (a)(abbb)(bc)(cccd)(d)
-			 */
-
-			// -- Row 1 --
-			uint16_t  _1 = *(BlockSrc               );
-			*(BlockDst               ) = _1;
-			uint16_t  _2 = *(BlockSrc            + 1);
-			*(BlockDst            + 1) = Weight1_3( _1,  _2);
-			uint16_t  _3 = *(BlockSrc            + 2);
-			*(BlockDst            + 2) = Weight1_1( _2,  _3);
-			uint16_t  _4 = *(BlockSrc            + 3);
-			*(BlockDst            + 3) = Weight3_1( _3,  _4);
-			*(BlockDst            + 4) = _4;
-
-			BlockSrc += 4;
-			BlockDst += 5;
-		}
-	}
-}
+#endif // BILINEAR_SCALE
 
 /*
     Upscale 256x224 -> 320x240

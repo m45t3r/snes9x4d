@@ -55,13 +55,13 @@
 #include "scaler.h"
 
 #ifdef NETPLAY_SUPPORT
-	#include "../netplay.h"
+#include "../netplay.h"
 #endif
 
 #ifdef MIYOO
-	#include "miyoo.h"
+#include "miyoo.h"
 #else
-	#include "dingoo.h"
+#include "dingoo.h"
 #endif
 
 #include "snes9x.h"
@@ -79,14 +79,17 @@
 uint8 *keyssnes;
 
 #ifdef NETPLAY_SUPPORT
-	static uint32	joypads[8];
-	static uint32	old_joypads[8];
+static uint32 joypads[8];
+static uint32 old_joypads[8];
 #endif
 
 // SaveSlotNumber
 char SaveSlotNum = 0;
 
 bool8_32 Scale = FALSE;
+#ifdef BILINEAR_SCALE
+bool8_32 Bilinear = FALSE;
+#endif
 char msg[256];
 short vol=50;
 static int mixerdev = 0;
@@ -214,6 +217,9 @@ void S9xWriteConfig()
 	if(!fp) return;
 	fwrite(&Settings, 1, sizeof(Settings), fp);
 	fwrite(&Scale, 1, sizeof(Scale), fp);
+#ifdef BILINEAR_SCALE
+	fwrite(&Bilinear, 1, sizeof(Bilinear), fp);
+#endif
 	fclose(fp);
 }
 
@@ -231,6 +237,9 @@ void S9xReadConfig()
 	}
 	fread(&Settings, 1, sizeof(Settings), fp);
 	fread(&Scale, 1, sizeof(Scale), fp);
+#ifdef BILINEAR_SCALE
+	fread(&Bilinear, 1, sizeof(Bilinear), fp);
+#endif
 	fclose(fp);
 }
 
@@ -718,8 +727,8 @@ bool8 S9xOpenSnapshotFile (const char *fname, bool8 read_only, STREAM *file)
 	}
 	else {
 	   if ((*file = OPEN_STREAM (filename, "wb"))) {
-	      //chown (filename, getuid (), getgid ());
-	      return (TRUE);
+		  //chown (filename, getuid (), getgid ());
+		  return (TRUE);
 	   }
 	}
 #else
@@ -728,12 +737,12 @@ bool8 S9xOpenSnapshotFile (const char *fname, bool8 read_only, STREAM *file)
 	if (read_only) {
 	   sprintf (command, "gzip -d <\"%s\"", filename);
 	   if (*file = popen (command, "r"))
-	      return (TRUE);
+		  return (TRUE);
 	}
 	else {
 	   sprintf (command, "gzip --best >\"%s\"", filename);
 	   if (*file = popen (command, "wb"))
-	      return (TRUE);
+		  return (TRUE);
 	}
 #endif
 	return (FALSE);
@@ -773,18 +782,25 @@ bool8_32 S9xDeinitUpdate (int Width, int Height)
 				}
 				dp16 += dpd*2;
 			}
-		}
-		else {
+		} else {
 			if (Scale) {
-				// put here upscale to 400x240 and 480x272
-				(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 512);
+#ifdef BILINEAR_SCALE
+				if (Bilinear)
+					   (*upscale_p_bilinear)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 512);
+				else
+#endif
+					   (*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 512);
 			} else goto __jump;
 		}
 	} else {
 		// if scaling for non-highres (is centered)
 		if(Scale) {
-			// put here upscale to 400x240 and 480x272
-			(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 256);
+#ifdef BILINEAR_SCALE
+			   if (Bilinear)
+				  (*upscale_p_bilinear)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 256);
+			   else
+#endif
+				  (*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 256);
 
 		} else {
 		__jump:

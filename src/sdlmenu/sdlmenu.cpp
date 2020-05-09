@@ -18,6 +18,9 @@
 
 extern Uint16 sfc_key[256];
 extern bool8_32 Scale;
+#ifdef BILINEAR_SCALE
+extern bool8_32 Bilinear;
+#endif
 extern char SaveSlotNum;
 extern short vol;
 
@@ -30,9 +33,7 @@ void menu_dispupdate(void);
 void show_credits(void);
 
 int cursor = 3;
-int loadcursor = 0;
-int romcount_maxrows = 16;
-const int max_menu_items = 14;
+const int max_menu_items = 15;
 const int max_save_state_slots = 3;
 
 char SaveSlotNum_old=255;
@@ -49,8 +50,7 @@ char snapscreen[17120]={};
 
 void sys_sleep(int us)
 {
-	if(us>0)
-		SDL_Delay(us/100);
+	if (us > 0) SDL_Delay(us / 100);
 }
 
 extern SDL_Surface *screen, *gfxscreen;
@@ -92,6 +92,11 @@ void menu_dispupdate(void)
 		"Display Frame Rate       ",
 		"Transparency             ",
 		"Full Screen              ",
+#ifdef BILINEAR_SCALE
+		"Bilinear Filtering       ",
+#else
+		"N/A",
+#endif
 		"Frameskip                ",
 		"Sound Rate               ",
 		"Stereo                   ",
@@ -118,17 +123,24 @@ void menu_dispupdate(void)
 	else
 		strfmt(disptxt[8], "%s False", disptxt[8]);
 
-	if (Settings.SkipFrames == AUTO_FRAMERATE)
-		strfmt(disptxt[9],"%s Auto",disptxt[9]);
+#ifdef BILINEAR_SCALE
+	if(Bilinear)
+		strfmt(disptxt[9], "%s True", disptxt[9]);
 	else
-		strfmt(disptxt[9], "%s %02d/%d", disptxt[9], (int) Memory.ROMFramesPerSecond, Settings.SkipFrames);
+		strfmt(disptxt[9], "%s False", disptxt[9]);
+#endif
 
-	strfmt(disptxt[10], "%s %s", disptxt[10], Rates[Settings.SoundPlaybackRate]);
+	if (Settings.SkipFrames == AUTO_FRAMERATE)
+		strfmt(disptxt[10],"%s Auto",disptxt[10]);
+	else
+		strfmt(disptxt[10], "%s %02d/%d", disptxt[10], (int) Memory.ROMFramesPerSecond, Settings.SkipFrames);
+
+	strfmt(disptxt[11], "%s %s", disptxt[11], Rates[Settings.SoundPlaybackRate]);
 
 	if(Settings.Stereo)
-		strfmt(disptxt[11],"%s True",disptxt[11]);
+		strfmt(disptxt[12],"%s True",disptxt[12]);
 	else
-		strfmt(disptxt[11],"%s False",disptxt[11]);
+		strfmt(disptxt[12],"%s False",disptxt[12]);
 
 	for(int i = 0; i < max_menu_items; i++)
 	{
@@ -257,6 +269,13 @@ void menu_loop(void)
 								Scale = !Scale;
 						break;
 						case 9:
+#ifdef BILINEAR_SCALE
+							if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED
+							    || keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
+								Bilinear = !Bilinear;
+#endif
+						break;
+						case 10:
 							if (Settings.SkipFrames == AUTO_FRAMERATE)
 								Settings.SkipFrames = 10;
 
@@ -270,23 +289,23 @@ void menu_loop(void)
 							else if (Settings.SkipFrames <= 1)
 								Settings.SkipFrames = 1;
 						break;
-						case 10:
+						case 11:
 							if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED) {
 								Settings.SoundPlaybackRate = (Settings.SoundPlaybackRate - 1) & 7;
 							} else if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED) {
 								Settings.SoundPlaybackRate = (Settings.SoundPlaybackRate + 1) & 7;
 							}
 						break;
-						case 11:
+						case 12:
 							if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED
 							    || keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
 								Settings.Stereo = !Settings.Stereo;
 						break;
-						case 12:
+						case 13:
 							if (keyssnes[sfc_key[A_1]] == SDL_PRESSED)
 								show_credits();
 						break;
-						case 13:
+						case 14:
 							if (keyssnes[sfc_key[A_1]] == SDL_PRESSED)
 								S9xExit();
 						break;
@@ -386,7 +405,7 @@ void capt_screenshot() //107px*80px
 void show_screenshot()
 {
 	int s = 0;
-	for(int y = 146; y < 146+80; y++) {
+	for(int y = 156; y < 156+80; y++) {
 		for(int x = 248; x < 248 + 107 * 2; x += 2) {
 			uint8 *d = GFX.Screen + y * GFX.Pitch + x;
 			*d++ = snapscreen[s++];

@@ -100,10 +100,9 @@ void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
 #if VIDEO_MODE == 1
 	surfacewidth = 320;
 	surfaceheight = 240;
-#ifdef BILINEAR_SCALE
-	upscale_p = upscale_256x224_to_320x240_bilinearish;
-#else
 	upscale_p = upscale_256x224_to_320x240;
+#ifdef BILINEAR_SCALE
+	upscale_p_bilinear = upscale_256x224_to_320x240_bilinearish;
 #endif
 #elif VIDEO_MODE == 2
 	surfacewidth = 400;
