@@ -10,7 +10,7 @@ FXOBJ = src/fxinst.o src/fxemu.o src/fxdbg.o
 FXDEFINES = -DEXECUTE_SUPERFX_PER_LINE
 FXNO_DEPENDS = zsnes_fx
 
-SOUNDOBJ = src/spc700.o src/spc700a.o src/spc_decode.o src/soundux.o src/apu.o
+SOUNDOBJ = src/spc700.o src/spc_decode.o src/soundux.o src/apu.o
 SOUNDDEFINES = -DSPC700_C
 
 CPUOBJ = src/cpuops.o src/cpuexec.o

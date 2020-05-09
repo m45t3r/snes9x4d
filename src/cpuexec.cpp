@@ -65,11 +65,7 @@ void S9xMainLoop (void)
 
     for (;;)
     {
-#ifdef __ARM__
-		asm_APU_EXECUTE ();
-#else
 		APU_EXECUTE ();
-#endif
 
 		if (cpu->Flags)
 		{

@@ -163,16 +163,4 @@ if (iapu->APUExecuting) \
 }
 #endif
 
-#ifdef __ARM__
-EXTERN_C int32 spc700_execute(int32 cycles);
-
-#define asm_APU_EXECUTE()\
-{\
-	int32 cycles = (CPU.Cycles - APU.Cycles); \
-	if(cycles > 0) {\
-		APU.Cycles += cycles - spc700_execute(cycles);\
-	}\
-}
-#endif
-
 #endif
