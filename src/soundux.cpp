@@ -889,7 +889,7 @@ void MixStereo (int sample_count)
 			continue;
 
 //		freq0 = (unsigned long) ((double) freq0 * 0.985);//uncommented by jonathan gevaryahu, as it is necessary for most cards in linux
-		freq0 = freq0 * 985 / 1000;
+		freq0 = freq0 - (freq0>>6);
 
 		bool8_32 mod = pitch_mod & (1 << J);
 

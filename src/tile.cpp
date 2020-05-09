@@ -1158,7 +1158,7 @@ void DrawLargePixel16Sub (uint32 Tile, uint32 Offset,
 
 #define LARGE_SUB_PIXEL(s, p) \
 (Depth [z + gfx->DepthDelta] ? (Depth [z + gfx->DepthDelta] != 1 ? \
-			       COLOR_SUB (p, *(s + gfx->Delta))    : \
+			       COLOR_SUB1_2 (p, *(s + gfx->Delta))    : \
 			       COLOR_SUB (p, gfx->FixedColour)) \
 			    : p)
 
