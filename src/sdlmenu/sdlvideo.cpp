@@ -60,6 +60,7 @@
 #include "apu.h"
 #include "keydef.h"
 #include "scaler.h"
+#include "sdlvideo.h"
 
 #define COUNT(a) (sizeof(a) / sizeof(a[0]))
 
@@ -97,25 +98,11 @@ void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
 
 	int surfacewidth, surfaceheight;
 
-#if VIDEO_MODE == 1
-	surfacewidth = 320;
-	surfaceheight = 240;
-	upscale_p = upscale_256x224_to_320x240;
-#ifdef BILINEAR_SCALE
-	upscale_p_bilinear = upscale_256x224_to_320x240_bilinearish;
-#endif
-#elif VIDEO_MODE == 2
-	surfacewidth = 400;
-	surfaceheight = 240;
-	upscale_p = upscale_256x224_to_384x240_for_400x240;
-#elif VIDEO_MODE == 3
-	surfacewidth = 480;
-	surfaceheight = 272;
-	upscale_p = upscale_256x224_to_384x272_for_480x272;
-#else
 	surfacewidth = SURFACE_WIDTH;
 	surfaceheight = SURFACE_HEIGHT;
 	upscale_p = UPSCALE_P;
+#ifdef BILINEAR_SCALE
+	upscale_p_bilinear = UPSCALE_P_BILINEAR;
 #endif
 
 	screen = SDL_SetVideoMode(surfacewidth, surfaceheight, 16, SDL_HWSURFACE|SDL_DOUBLEBUF);

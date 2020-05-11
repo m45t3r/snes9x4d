@@ -14,9 +14,11 @@
 #include "gfx.h"
 #include "unistd.h"
 
+#include "sdlmenu.h"
 #include "sdlaudio.h"
+#include "sdlvideo.h"
 
-extern Uint16 sfc_key[256];
+extern Uint16 sfc_key[SBUFFER];
 extern bool8_32 Scale;
 #ifdef BILINEAR_SCALE
 extern bool8_32 Bilinear;
@@ -33,16 +35,13 @@ void menu_dispupdate(void);
 void show_credits(void);
 
 int cursor = 3;
-const int max_menu_items = 15;
-const int max_save_state_slots = 3;
-
 char SaveSlotNum_old=255;
 bool8_32 highres_current = FALSE;
 char snapscreen[17120]={};
 
 #define strfmt(str, format, args...) \
 	do { \
-		char tmp[256]; \
+		char tmp[SBUFFER]; \
 		snprintf(tmp, sizeof(tmp) - 1, format, args); \
 		strncpy(str, tmp, sizeof(tmp)); \
 	} while (0)
@@ -59,8 +58,8 @@ void menu_flip()
 {
 	SDL_Rect dst;
 
-	dst.x = (screen->w - 256) / 2;
-	dst.y = (screen->h - 224) / 2;
+	dst.x = (screen->w - MENU_WIDTH) / 2;
+	dst.y = (screen->h - MENU_HEIGHT) / 2;
 	SDL_BlitSurface(gfxscreen, NULL, screen, &dst);
 	SDL_Flip(screen);
 }
@@ -68,8 +67,8 @@ void menu_flip()
 void menu_init()
 {
 	const int color = 0x0; // black
-	for(int y = 0; y <= 224; y++){
-		for(int x = 0; x<256*2; x += 2){
+	for(int y = 0; y <= MENU_HEIGHT; y++){
+		for(int x = 0; x < MENU_WIDTH * 2; x += 2){
 			memset(GFX.Screen + GFX.Pitch * y + x, color, 2);
 		}
 	}
@@ -78,7 +77,7 @@ void menu_init()
 void menu_dispupdate(void)
 {
 	const char *Rates[8] = { "off", "8192", "11025", "16000", "22050", "32000", "44100", "48000" };
-	char disptxt[max_menu_items][256] = {
+	char disptxt[MAX_MENU_ITEMS][SBUFFER] = {
 #ifdef MIYOO
 		"  Snes9x4D " BUILD_VERSION " for Miyoo  ",
 #elif
@@ -142,7 +141,7 @@ void menu_dispupdate(void)
 	else
 		strfmt(disptxt[12],"%s False",disptxt[12]);
 
-	for(int i = 0; i < max_menu_items; i++)
+	for(int i = 0; i < MAX_MENU_ITEMS; i++)
 	{
 		if(i == cursor)
 			strfmt(disptxt[i]," >%s",disptxt[i]);
@@ -155,11 +154,11 @@ void menu_dispupdate(void)
 	//show screen shot for snapshot
 	if(SaveSlotNum_old != SaveSlotNum)
 	{
-		char temp[256];
+		char temp[SBUFFER];
 		strcpy(temp,"Loading...");
 		S9xDisplayString (temp, GFX.Screen + 280, GFX.Pitch, 210/*204*/);
 		menu_flip();
-		char fname[256], ext[8];
+		char fname[SBUFFER], ext[8];
 		sprintf(ext, ".s0%d", SaveSlotNum);
 		strcpy(fname, S9xGetFilename (ext));
 		load_screenshot(fname);
@@ -174,8 +173,8 @@ void menu_loop(void)
 	bool old_stereo = Settings.Stereo;
 	int old_sound_playback_rate = Settings.SoundPlaybackRate;
 	bool8_32 exit_loop = false;
-	char fname[256], ext[8];
-	char snapscreen_tmp[17120];
+	char fname[SBUFFER], ext[8];
+	char snapscreen_tmp[sizeof(snapscreen)];
 
 	uint8 *keyssnes = 0;
 
@@ -184,7 +183,7 @@ void menu_loop(void)
 	highres_current=Settings.SupportHiRes;
 
 	capt_screenshot();
-	memcpy(snapscreen_tmp,snapscreen,17120);
+	memcpy(snapscreen_tmp, snapscreen, sizeof(snapscreen));
 
 	Settings.SupportHiRes=FALSE;
 	S9xDeinitDisplay();
@@ -248,8 +247,8 @@ void menu_loop(void)
 							else if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
 								SaveSlotNum++;
 
-							if (SaveSlotNum >= max_save_state_slots)
-								SaveSlotNum = max_save_state_slots;
+							if (SaveSlotNum >= MAX_SAVE_STATE_SLOTS)
+								SaveSlotNum = MAX_SAVE_STATE_SLOTS;
 							else if (SaveSlotNum <= 0)
 								SaveSlotNum = 0;
 						break;
@@ -313,8 +312,8 @@ void menu_loop(void)
 				}
 
 				if(cursor <= 1)
-					cursor = max_menu_items - 1;
-				else if(cursor >= max_menu_items)
+					cursor = MAX_MENU_ITEMS - 1;
+				else if(cursor >= MAX_MENU_ITEMS)
 					cursor = 2;
 
 				menu_dispupdate();
@@ -322,8 +321,7 @@ void menu_loop(void)
 
 				break;
 		}
-	}
-	while( exit_loop!=TRUE && keyssnes[sfc_key[B_1]] != SDL_PRESSED );
+	} while(exit_loop!=TRUE && keyssnes[sfc_key[B_1]] != SDL_PRESSED);
 
 	Settings.SupportHiRes=highres_current;
 	S9xDeinitDisplay();
@@ -333,80 +331,64 @@ void menu_loop(void)
 }
 
 void save_screenshot(char *fname){
-	FILE  *fs = fopen (fname,"wb");
-	if(fs==NULL)
+	FILE *fs = fopen (fname,"wb");
+	if(fs==NULL) {
+		S9xSetInfoString("Failed to save screenshot");
 		return;
+	}
 
-	fwrite(snapscreen,17120,1,fs);
-	fclose (fs);
-	sync();
+	fwrite(snapscreen, sizeof(snapscreen), 1, fs);
+	fflush(fs);
+	fclose(fs);
 }
 
 void load_screenshot(char *fname)
 {
-	FILE *fs = fopen (fname,"rb");
-	if(fs==NULL){
-		for(int i=0;i<17120;i++){
-			snapscreen[i] = 0;
-		}
+	FILE *fs = fopen (fname, "rb");
+	if(fs == NULL){
+		memset(&snapscreen, 0x0, sizeof(snapscreen));
 		return;
 	}
-	fread(snapscreen,17120,1,fs);
+	fread(snapscreen, sizeof(snapscreen), 1, fs);
 	fclose(fs);
 }
 
 void capt_screenshot() //107px*80px
 {
-	bool8_32 Scale_disp=Scale;
+	bool8_32 Scale_disp = Scale;
 	int s = 0;
 	int yoffset = 0;
 	struct InternalPPU *ippu = &IPPU;
 
-	for(int i=0;i<17120;i++)
-	{
-		snapscreen[i] = 0x00;
-	}
+	memset(&snapscreen, 0x0, sizeof(snapscreen));
 
-	if(ippu->RenderedScreenHeight == 224)
+	if(ippu->RenderedScreenHeight == MENU_HEIGHT)
 		yoffset = 8;
 
-	if (highres_current==TRUE)
+	if (highres_current == TRUE)
+		Scale_disp = FALSE;
+
+	for(int y = yoffset; y < SURFACE_HEIGHT - yoffset; y += 3) // 240/3=80
 	{
-		//working but in highres mode
-		for(int y=yoffset;y<240-yoffset;y+=3) //80,1 //240,3
+		s += 22 * (Scale_disp != TRUE);
+		for(int x = 0; x < SURFACE_WIDTH * 2 - 128 * (Scale_disp != TRUE); x += 3 * 2) // 640/6=107
 		{
-			s += 22 * 1 /*(Scale_disp!=TRUE)*/;
-			for(int x = 0; x < 640-128*1/*(Scale_disp!=TRUE)*/;x+=6) //107,1 //214,2 //428,4 +42+42
-			{
-				uint8 *d = GFX.Screen + y*GFX.Pitch + x; //1024
-				snapscreen[s++] = *d++;
-				snapscreen[s++] = *d++;
-			}
-			s+=20*1/*(Scale_disp!=TRUE)*/;
+			uint8 *d = GFX.Screen + y*GFX.Pitch + x;
+			snapscreen[s++] = *d++;
+			snapscreen[s++] = *d++;
 		}
-	}
-	else
-	{
-		//original
-		for(int y=yoffset;y<240-yoffset;y+=3) // 240/3=80
-		{
-			s+=22*(Scale_disp!=TRUE);
-			for(int x=0 ;x<640-128*(Scale_disp!=TRUE);x+=3*2) // 640/6=107
-			{
-				uint8 *d = GFX.Screen + y*GFX.Pitch + x;
-				snapscreen[s++] = *d++;
-				snapscreen[s++] = *d++;
-			}
-			s+=20*(Scale_disp!=TRUE);
-		}
+		s += 20 * (Scale_disp != TRUE);
 	}
 }
 
 void show_screenshot()
 {
 	int s = 0;
-	for(int y = 156; y < 156+80; y++) {
-		for(int x = 248; x < 248 + 107 * 2; x += 2) {
+	const int start_y = SURFACE_HEIGHT - 88;
+	const int start_x = SURFACE_WIDTH - 72;
+
+	for(int y = start_y; y < start_y + 80; y++) {
+		for(int x = start_x; x < start_x + 107 * 2; x += 2) {
 			uint8 *d = GFX.Screen + y * GFX.Pitch + x;
 			*d++ = snapscreen[s++];
 			*d++ = snapscreen[s++];
@@ -417,8 +399,8 @@ void show_screenshot()
 void show_credits()
 {
 	uint8 *keyssnes = 0;
-	int line=0,ypix=0;
-	char disptxt[100][256]={
+	int line = 0, ypix = 0;
+	char disptxt[100][SBUFFER]={
 	"",
 	"",
 	"",
@@ -440,10 +422,17 @@ void show_credits()
 	" regards to joyrider & g17",
 	"",
 	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	" ported by m45t3r",
+	"",
+	" with optimizations from drowsnug95 and snes9x2002",
 	};
 
-	do
-	{
+	do {
 		SDL_Event event;
 		SDL_PollEvent(&event);
 
@@ -451,22 +440,21 @@ void show_credits()
 
 		menu_init();
 
-		for(int i=0;i<=16;i++){
-			int j=i+line;
-			if(j>=20) j-=20;
-			S9xDisplayString (disptxt[j], GFX.Screen, GFX.Pitch, i*10+80-ypix);
+		for(int i = 0; i <= 16; i++){
+			int j = i + line;
+			if(j >= 20) j -= 20;
+			S9xDisplayString(disptxt[j], GFX.Screen, GFX.Pitch, i * 10 + 80 - ypix);
 		}
 
-		ypix+=2;
-		if(ypix==12) {
+		ypix += 2;
+		if(ypix == 12) {
 			line++;
-			ypix=0;
+			ypix = 0;
 		}
 		if(line == 20) line = 0;
 		menu_flip();
 		sys_sleep(3000);
-	}
-	while(keyssnes[sfc_key[B_1]] != SDL_PRESSED);
+	} while(keyssnes[sfc_key[B_1]] != SDL_PRESSED);
 
 	return;
 }
