@@ -84,7 +84,7 @@ static uint32 old_joypads[8];
 #endif
 
 // SaveSlotNumber
-char SaveSlotNum = 0;
+short SaveSlotNum = 0;
 
 bool8_32 Scale = FALSE;
 #ifdef BILINEAR_SCALE

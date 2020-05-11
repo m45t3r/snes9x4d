@@ -23,7 +23,7 @@ extern bool8_32 Scale;
 #ifdef BILINEAR_SCALE
 extern bool8_32 Bilinear;
 #endif
-extern char SaveSlotNum;
+extern short SaveSlotNum;
 extern short vol;
 
 extern void S9xDisplayString (const char *string, uint8 *, uint32, int ypos);
@@ -247,10 +247,10 @@ void menu_loop(void)
 							else if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
 								SaveSlotNum++;
 
-							if (SaveSlotNum >= MAX_SAVE_STATE_SLOTS)
-								SaveSlotNum = MAX_SAVE_STATE_SLOTS;
-							else if (SaveSlotNum <= 0)
+							if (SaveSlotNum > MAX_SAVE_STATE_SLOTS)
 								SaveSlotNum = 0;
+							else if (SaveSlotNum < 0)
+								SaveSlotNum = MAX_SAVE_STATE_SLOTS;
 						break;
 						case 6:
 							if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED
