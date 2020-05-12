@@ -255,7 +255,7 @@ int main (int argc, char **argv)
 	ZeroMemory (&Settings, sizeof (Settings));
 
 	Settings.JoystickEnabled = FALSE;
-	Settings.SoundPlaybackRate = 3;
+	Settings.SoundPlaybackRate = 5;
 	Settings.Stereo = TRUE;
 	Settings.SoundSync = TRUE;
 	Settings.SoundBufferSize = 256;
@@ -277,7 +277,7 @@ int main (int argc, char **argv)
 	Settings.MultiPlayer5 = FALSE;
 	Settings.ControllerOption = SNES_MULTIPLAYER5;
 	Settings.ControllerOption = 0;
-	Settings.Transparency = FALSE; //TRUE;
+	Settings.Transparency = TRUE;
 	Settings.SixteenBit = TRUE;
 	Settings.SupportHiRes = FALSE; //autodetected for known highres roms
 	Settings.NetPlay = FALSE;
