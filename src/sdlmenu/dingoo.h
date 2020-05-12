@@ -2,16 +2,16 @@
 	Dingoo Keys
 */
 
-#define DINGOO_BUTTON_UP            273
-#define DINGOO_BUTTON_DOWN          274
-#define DINGOO_BUTTON_RIGHT         275
-#define DINGOO_BUTTON_LEFT          276
-#define DINGOO_BUTTON_R             8
-#define DINGOO_BUTTON_L             9
-#define DINGOO_BUTTON_A             306
-#define DINGOO_BUTTON_B             308
-#define DINGOO_BUTTON_X             32
-#define DINGOO_BUTTON_Y             304
-#define DINGOO_BUTTON_SELECT        27
-#define DINGOO_BUTTON_START         13
-#define DINGOO_BUTTON_END           0
+#define BUTTON_UP     273
+#define BUTTON_DOWN   274
+#define BUTTON_RIGHT  275
+#define BUTTON_LEFT   276
+#define BUTTON_R      8
+#define BUTTON_L      9
+#define BUTTON_A      306
+#define BUTTON_B      308
+#define BUTTON_X      32
+#define BUTTON_Y      304
+#define BUTTON_SELECT 27
+#define BUTTON_START  13
+#define BUTTON_END    0

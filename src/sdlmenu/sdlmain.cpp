@@ -573,36 +573,22 @@ void S9xInitInputDevices ()
 
 	memset(sfc_key, 0, 256);
 
-#ifdef MIYOO
-	// Miyoo mapping
-	sfc_key[A_1] = MIYOO_BUTTON_A;
-	sfc_key[B_1] = MIYOO_BUTTON_B;
-	sfc_key[X_1] = MIYOO_BUTTON_X;
-	sfc_key[Y_1] = MIYOO_BUTTON_Y;
-	sfc_key[L_1] = MIYOO_BUTTON_L;
-	sfc_key[R_1] = MIYOO_BUTTON_R;
-	sfc_key[START_1] = MIYOO_BUTTON_START;
-	sfc_key[SELECT_1] = MIYOO_BUTTON_SELECT;
-	sfc_key[LEFT_1] = MIYOO_BUTTON_LEFT;
-	sfc_key[RIGHT_1] = MIYOO_BUTTON_RIGHT;
-	sfc_key[UP_1] = MIYOO_BUTTON_UP;
-	sfc_key[DOWN_1] = MIYOO_BUTTON_DOWN;
+	// Controller mapping
+	sfc_key[A_1] = BUTTON_A;
+	sfc_key[B_1] = BUTTON_B;
+	sfc_key[X_1] = BUTTON_X;
+	sfc_key[Y_1] = BUTTON_Y;
+	sfc_key[L_1] = BUTTON_L;
+	sfc_key[R_1] = BUTTON_R;
+	sfc_key[START_1] = BUTTON_START;
+	sfc_key[SELECT_1] = BUTTON_SELECT;
+	sfc_key[LEFT_1] = BUTTON_LEFT;
+	sfc_key[RIGHT_1] = BUTTON_RIGHT;
+	sfc_key[UP_1] = BUTTON_UP;
+	sfc_key[DOWN_1] = BUTTON_DOWN;
 
-	sfc_key[QUIT] = MIYOO_BUTTON_RESET;
-#else
-	// Dingoo mapping
-	sfc_key[A_1] = DINGOO_BUTTON_A;
-	sfc_key[B_1] = DINGOO_BUTTON_B;
-	sfc_key[X_1] = DINGOO_BUTTON_X;
-	sfc_key[Y_1] = DINGOO_BUTTON_Y;
-	sfc_key[L_1] = DINGOO_BUTTON_L;
-	sfc_key[R_1] = DINGOO_BUTTON_R;
-	sfc_key[START_1] = DINGOO_BUTTON_START;
-	sfc_key[SELECT_1] = DINGOO_BUTTON_SELECT;
-	sfc_key[LEFT_1] = DINGOO_BUTTON_LEFT;
-	sfc_key[RIGHT_1] = DINGOO_BUTTON_RIGHT;
-	sfc_key[UP_1] = DINGOO_BUTTON_UP;
-	sfc_key[DOWN_1] = DINGOO_BUTTON_DOWN;
+#ifdef BUTTON_QUIT
+	sfc_key[QUIT] = BUTTON_QUIT;
 #endif
 
 	int i = 0;
@@ -1072,7 +1058,7 @@ void S9xProcessEvents (bool8_32 block)
 					S9xSetSoundMute(false);
 				}
 				// MAINMENU
-#ifdef MIYOO
+#ifdef BUTTON_QUIT
 				else if ( keyssnes[sfc_key[QUIT]] == SDL_PRESSED )
 #else
 				else if ((keyssnes[sfc_key[SELECT_1]] == SDL_PRESSED) && (keyssnes[sfc_key[START_1]] == SDL_PRESSED) )
