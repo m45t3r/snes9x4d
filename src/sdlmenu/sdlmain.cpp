@@ -76,6 +76,8 @@
 #include "soundux.h"
 #include "spc700.h"
 
+#include "sdlvideo.h"
+
 uint8 *keyssnes;
 
 #ifdef NETPLAY_SUPPORT
@@ -103,8 +105,8 @@ extern void S9xDisplayString (const char *string, uint8 *, uint32, int);
 extern SDL_Surface *screen, *gfxscreen;
 
 static uint32 ffc = 0;
-uint32 xs = 320; //width
-uint32 ys = 240; //height
+uint32 xs = SURFACE_WIDTH; //width
+uint32 ys = SURFACE_HEIGHT; //height
 uint32 cl = 12; //ypos in highres mode
 uint32 cs = 0;
 uint32 mfs = 10; //skippedframes
