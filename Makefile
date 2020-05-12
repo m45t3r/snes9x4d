@@ -7,8 +7,6 @@ UNZIP=1
 CHEATS=1
 
 FXOBJ = src/fxinst.o src/fxemu.o src/fxdbg.o
-FXDEFINES = -DEXECUTE_SUPERFX_PER_LINE
-FXNO_DEPENDS = zsnes_fx
 
 SOUNDOBJ = src/spc700.o src/spc_decode.o src/soundux.o src/apu.o
 SOUNDDEFINES = -DSPC700_C
@@ -17,7 +15,6 @@ CPUOBJ = src/cpuops.o src/cpuexec.o
 
 C4OBJ = src/c4.o src/c4emu.o
 C4DEFINES =
-C4NO_DEPENDS = zsnes_c4
 
 ifdef CHEATS
 CHEAT = src/cheats.o src/cheats2.o
@@ -46,11 +43,6 @@ OBJECTS += src/loadzip.o src/unzip/unzip.o src/unzip/explode.o src/unzip/unreduc
 UNZIPDEFINES = -DUNZIP_SUPPORT
 endif
 
-TOOLCHAINDIR :=
-BINPATH    :=
-
-ARCH :=
-
 PREFIX  = arm-linux
 
 CXX	= $(PREFIX)-g++
@@ -65,76 +57,53 @@ SDL_LIBS := $(shell $(SYSROOT)/usr/bin/sdl-config --libs)
 
 INCLUDE = -I. -Isrc/ -Isrc/unzip
 
-OPTIMISE = -Ofast -march=armv5te -mtune=arm926ej-s \
+LDLIBS  = -lSDL -lz -lm $(SDL_LIBS)
+
+OFLAGS = -Ofast -march=armv5te -mtune=arm926ej-s \
 			-ffast-math -fomit-frame-pointer -fno-strength-reduce \
 			-falign-functions=2 -fno-stack-protector
 
 ifeq ($(PGO), GENERATE)
-  OPTIMISE += -fprofile-generate -fprofile-dir=./profile
-  PROFILE += -lgcov
+  OFLAGS += -fprofile-generate -fprofile-dir=./profile
+  LDLIBS += -lgcov
 else ifeq ($(PGO), APPLY)
-  OPTIMISE += -fprofile-use -fprofile-dir=./profile -fbranch-probabilities
+  OFLAGS += -fprofile-use -fprofile-dir=./profile -fbranch-probabilities
 endif
 
-CXXFLAGS = $(OPTIMISE) $(PROFILE) $(INCLUDE) \
---std=gnu++98 \
--fno-exceptions -fno-rtti -fno-math-errno -fno-threadsafe-statics \
--D__ARM__ \
--D_ZAURUS \
--D_FAST_GFX \
--D__SDL__ \
--DMIYOO \
--DVIDEO_MODE=1 \
+CCFLAGS = $(OFLAGS) \
+$(C4DEFINES) \
+$(CHEATDEFINES) \
+$(INCLUDE) \
+$(NETPLAYDEFINES) \
+$(SDL_CFLAGS) \
+$(SOUNDDEFINES) \
+$(UNZIPDEFINES) \
 -DBILINEAR_SCALE \
--DZLIB \
--DVAR_CYCLES \
--DCPU_SHUTDOWN \
--DSPC700_SHUTDOWN \
 -DBUILD_VERSION=\"$(GIT_VERSION)\" \
-$(FXDEFINES) \
-$(C4DEFINES) \
-$(CPUDEFINES) \
-$(SOUNDDEFINES) \
-$(NETPLAYDEFINES) \
-$(UNZIPDEFINES) \
-$(GLIDEDEFINES) \
-$(OPENGLDEFINES) \
-$(GUIDEFINES) \
-$(KREEDDEFINES) \
-$(CHEATDEFINES) \
-$(SDL_CFLAGS) \
-
-CFLAGS = $(OPTIMISE) $(PROFILE) $(INCLUDE) \
---std=gnu89 \
--D__SDL__ \
+-DCPU_SHUTDOWN \
 -DMIYOO \
--DZLIB \
--DVAR_CYCLES \
--DCPU_SHUTDOWN \
 -DSPC700_SHUTDOWN \
--DBUILD_VERSION=\"$(GIT_VERSION)\" \
-$(FXDEFINES) \
-$(C4DEFINES) \
-$(CPUDEFINES) \
-$(SOUNDDEFINES) \
-$(NETPLAYDEFINES) \
-$(UNZIPDEFINES) \
-$(GLIDEDEFINES) \
-$(OPENGLDEFINES) \
-$(GUIDEFINES) \
-$(KREEDDEFINES) \
-$(CHEATDEFINES) \
-$(SDL_CFLAGS) \
+-DVAR_CYCLES \
+-DVIDEO_MODE=1 \
+-DZLIB \
+-D_FAST_GFX \
+-D_ZAURUS \
+-D__ARM__ \
+-D__SDL__ \
 
-LDLIBS  = -lSDL -lz -lm $(SDL_LIBS)
+CXXFLAGS = --std=gnu++03 \
+-fno-exceptions -fno-rtti -fno-math-errno -fno-threadsafe-statics \
+$(CCFLAGS)
+
+CFLAGS = --std=gnu11 $(CCFLAGS)
 
 .SUFFIXES: .o .cpp .c .cc .h .m .i .S .asm .obj
 
 all: snes9x4d
 
 snes9x4d: $(OBJECTS)
-	$(CXX) -o $@ $(OBJECTS) $(EXTRALIBS) $(LDLIBS) $(PROFILE)
-	$(STRIP) snes9x4d
+	$(CXX) -o $@ $(OBJECTS) $(LDLIBS)
+	$(STRIP) $@
 
 .cpp.o:
 	$(CXX) -c $(CXXFLAGS) $*.cpp -o $@
@@ -153,9 +122,6 @@ snes9x4d: $(OBJECTS)
 
 .S.i:
 	$(CXX) -c -E $(CXXFLAGS) $*.S -o $@
-
-.asm.o:
-	$(NASM) -f elf $(FXDEFINES) -i . -i i386 -o $@ $*.asm
 
 clean:
 	rm -f $(OBJECTS)
@@ -204,4 +170,3 @@ src/xf86.o: src/display.h src/snes9x.h src/memmap.h src/debug.h src/ppu.h src/sn
 src/server.o: src/snes9x.h src/port.h src/memmap.h src/netplay.h
 src/netplay.o: src/snes9x.h src/port.h src/memmap.h src/netplay.h
 src/snaporig.o: src/cpuexec.h
-
