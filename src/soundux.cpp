@@ -487,7 +487,7 @@ void AltDecodeBlock(Channel *ch)
 	if ((ch->last_block = filter & 1))
 		ch->loop = (filter & 2) != 0;
 
-#if defined(__ARM__)
+#ifdef __ARM__
 	int16 *raw = ch->block = ch->decoded;
 
 	//  if ((Settings.AltSampleDecode) == 1)

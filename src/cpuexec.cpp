@@ -64,7 +64,7 @@ void S9xMainLoop(void)
 	struct SAPURegisters *areg = &APURegisters;
 
 	for (;;) {
-#ifdef __ARM__
+#ifdef SPC700_ASM
 		asm_APU_EXECUTE();
 #else
 		APU_EXECUTE();

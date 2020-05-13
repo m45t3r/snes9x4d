@@ -2893,7 +2893,7 @@ inline void CPUShutdown(struct SICPU *icpu, struct SCPUState *cpu)
 			if (IAPU.APUExecuting) {
 				icpu->CPUExecuting = FALSE;
 				do {
-#ifdef __ARM__
+#ifdef SPC700_ASM
 					asm_APU_EXECUTE1();
 #else
 					APU_EXECUTE1();
@@ -4364,7 +4364,7 @@ static void OpCB(struct SRegisters *reg, struct SICPU *icpu,
             SA1.Executing = FALSE;
             do
             {
-#ifdef __ARM__
+#ifdef SPC700_ASM
                 asm_APU_EXECUTE1 ();
 #else
                 APU_EXECUTE1 ();
@@ -4399,7 +4399,7 @@ static void OpCB(struct SRegisters *reg, struct SICPU *icpu,
 			if (iapu->APUExecuting) {
 				icpu->CPUExecuting = FALSE;
 				do {
-#ifdef __ARM__
+#ifdef SPC700_ASM
 					asm_APU_EXECUTE1();
 #else
 					APU_EXECUTE1();

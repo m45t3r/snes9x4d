@@ -55,7 +55,7 @@ void S9xAPUSetByte(uint8, uint32 address, struct SIAPU *, struct SAPU *);
 
 #else
 #undef INLINE
-#ifdef __ARM__
+#ifdef SPC700_ASM
 #define INLINE extern "C"
 #else
 #define INLINE inline

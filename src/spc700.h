@@ -164,7 +164,7 @@ EXTERN_C int32 ESPC(int32);
 	}
 #endif
 
-#ifdef __ARM__
+#ifdef SPC700_ASM
 EXTERN_C int32 spc700_execute(int32 cycles);
 
 #define asm_APU_EXECUTE()                                                      \
