@@ -2,10 +2,11 @@ GIT_VERSION := "$(shell git describe --abbrev=7 --dirty --always --tags)"
 
 UNZIP=1
 CHEATS=1
+ARM_ASM = 1
 
 FXOBJ = src/fxinst.o src/fxemu.o src/fxdbg.o
 
-SOUNDOBJ = src/spc700.o src/spc700a.o src/spc_decode.o src/soundux.o src/apu.o
+SOUNDOBJ = src/spc700.o src/soundux.o src/apu.o
 SOUNDDEFINES = -DSPC700_C
 
 CPUOBJ = src/cpuops.o src/cpuexec.o
@@ -21,7 +22,15 @@ CHEAT =
 CHEATDEFINES =
 endif
 
-OBJECTS = $(CPUOBJ) $(FXOBJ) $(C4OBJ) $(CHEAT) \
+ifdef ARM_ASM
+ASM = src/arm/spc700a.o src/arm/spc_decode.o
+ASMDEFINES = -D__ARM__
+else
+ASM =
+ASMDEFINES =
+endif
+
+OBJECTS = $(CPUOBJ) $(FXOBJ) $(C4OBJ) $(CHEAT) $(ASM) \
 	src/cpu.o src/tile.o src/gfx.o src/clip.o \
 	src/memmap.o src/ppu.o src/dma.o \
 	src/sdlmenu/sdlmenu.o src/sdlmenu/sdlmain.o src/sdlmenu/sdlaudio.o src/sdlmenu/scaler.o \
@@ -68,6 +77,7 @@ else ifeq ($(PGO), APPLY)
 endif
 
 CCFLAGS = $(OFLAGS) \
+$(ASMDEFINES) \
 $(C4DEFINES) \
 $(CHEATDEFINES) \
 $(INCLUDE) \
@@ -85,7 +95,6 @@ $(UNZIPDEFINES) \
 -DZLIB \
 -D_FAST_GFX \
 -D_ZAURUS \
--D__ARM__ \
 -D__SDL__ \
 
 CXXFLAGS = --std=gnu++03 \
