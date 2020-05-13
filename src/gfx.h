@@ -185,6 +185,7 @@ extern uint8 mul_brightness[16][32];
 #define MASK1 0xF7DE
 #define MASK2 0x7BEF
 
+#ifdef _FAST_GFX
 inline uint16_t COLOR_ADD(uint16_t C1, uint16_t C2)
 {
 	uint16_t a, b, c, z, c1, c2;
@@ -197,6 +198,14 @@ inline uint16_t COLOR_ADD(uint16_t C1, uint16_t C2)
 	z = ((a | c) & MASK2) << 1;
 	return z;
 }
+#else
+#define COLOR_ADD(C1, C2)                                                      \
+	(GFX.X2[((((C1)&RGB_REMOVE_LOW_BITS_MASK) +                            \
+		  ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >>                          \
+		 1) +                                                          \
+		((C1) & (C2)&RGB_LOW_BITS_MASK)] |                             \
+	 (((C1) ^ (C2)) & RGB_LOW_BITS_MASK))
+#endif
 
 #define COLOR_ADD1_2(C1, C2)                                                   \
 	(((((C1)&RGB_REMOVE_LOW_BITS_MASK) +                                   \
@@ -219,6 +228,7 @@ inline uint16_t COLOR_ADD(uint16_t C1, uint16_t C2)
 //    z = ((a & c) & MASK2)<<1;
 //
 
+#ifdef _FAST_GFX
 inline uint16_t COLOR_SUB(uint16_t C1, uint16_t C2)
 {
 	uint16_t a, b, c, z, c1, c2;
@@ -233,7 +243,15 @@ inline uint16_t COLOR_SUB(uint16_t C1, uint16_t C2)
 
 	return z;
 }
+#else
+#define COLOR_SUB(C1, C2)                                                      \
+	(GFX.ZERO_OR_X2[(((C1) | RGB_HI_BITS_MASKx2) -                         \
+			 ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >>                   \
+			1] +                                                   \
+	 ((C1)&RGB_LOW_BITS_MASK) - ((C2)&RGB_LOW_BITS_MASK))
+#endif
 
+#ifdef _FAST_GFX
 inline uint16_t COLOR_SUB1_2(uint16_t C1, uint16_t C2)
 {
 	uint16_t a, b, c, z, c1, c2;
@@ -248,6 +266,12 @@ inline uint16_t COLOR_SUB1_2(uint16_t C1, uint16_t C2)
 
 	return z;
 }
+#else
+#define COLOR_SUB1_2(C1, C2)                                                   \
+	GFX.ZERO[(((C1) | RGB_HI_BITS_MASKx2) -                                \
+		  ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >>                          \
+		 1]
+#endif
 
 typedef void (*NormalTileRenderer)(uint32 Tile, uint32 Offset, uint32 StartLine,
 				   uint32 LineCount, struct SGFX *gfx);

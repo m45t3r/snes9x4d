@@ -381,7 +381,6 @@ bool8_32 S9xGraphicsInit()
 				}
 			}
 		}
-		free((char *)GFX.X2);
 #endif
 
 #ifndef _FAST_GFX
@@ -425,7 +424,6 @@ bool8_32 S9xGraphicsInit()
 				}
 			}
 		}
-		free((char *)GFX.ZERO_OR_X2);
 #endif
 
 #ifndef _FAST_GFX
