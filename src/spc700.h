@@ -174,6 +174,15 @@ EXTERN_C int32 spc700_execute(int32 cycles);
 			APU.Cycles += cycles - spc700_execute(cycles);         \
 		}                                                              \
 	}
+
+#define asm_APU_EXECUTE1()                                                     \
+	{                                                                      \
+		int32 cycles = (APU.Cycles - CPU.NextEvent);                   \
+		if (cycles > 0) {                                              \
+			APU.Cycles += cycles - spc700_execute(cycles);         \
+		}                                                              \
+	}
+
 #endif
 
 #endif

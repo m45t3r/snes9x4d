@@ -853,7 +853,7 @@ void S9xSetAPUTimer(uint16 Address, uint8 byte)
 
 void S9xUpdateAPUTimer(void)
 {
-	/*
+#if 0
 		while (CPU.Cycles * 10000L >= IAPU.NextAPUTimerPos)
 		//if (CPU.Cycles * 10000L >= IAPU.NextAPUTimerPos)
 		{
@@ -869,7 +869,6 @@ void S9xUpdateAPUTimer(void)
 				    IAPU.RAM [0xff] = (IAPU.RAM [0xff] + 1) &
 	   0xf; APU.Timer [2] = 0; #ifdef SPC700_SHUTDOWN IAPU.WaitCounter++;
 				    IAPU.APUExecuting = TRUE;
-				#endif
 				}
 			}
 
@@ -886,7 +885,6 @@ void S9xUpdateAPUTimer(void)
 	   [0xfd] + 1) & 0xf; APU.Timer [0] = 0; #ifdef SPC700_SHUTDOWN
 						IAPU.WaitCounter++;
 						IAPU.APUExecuting = TRUE;
-					#endif
 				    }
 				}
 
@@ -899,12 +897,11 @@ void S9xUpdateAPUTimer(void)
 	   [0xfe] + 1) & 0xf; APU.Timer [1] = 0; #ifdef SPC700_SHUTDOWN
 						IAPU.WaitCounter++;
 						IAPU.APUExecuting = TRUE;
-					#endif
 				    }
 				}
 			}
 		}
-	*/
+#endif
 }
 
 uint8 S9xGetAPUDSP()

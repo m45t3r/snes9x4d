@@ -55,7 +55,11 @@ void S9xAPUSetByte(uint8, uint32 address, struct SIAPU *, struct SAPU *);
 
 #else
 #undef INLINE
+#ifdef __ARM__
+#define INLINE extern "C"
+#else
 #define INLINE inline
+#endif
 #include "apumem.h"
 #endif
 

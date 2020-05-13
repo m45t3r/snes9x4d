@@ -2893,7 +2893,11 @@ inline void CPUShutdown(struct SICPU *icpu, struct SCPUState *cpu)
 			if (IAPU.APUExecuting) {
 				icpu->CPUExecuting = FALSE;
 				do {
+#ifdef __ARM__
+					asm_APU_EXECUTE1();
+#else
 					APU_EXECUTE1();
+#endif
 				} while (apu->Cycles < cpu->NextEvent);
 				icpu->CPUExecuting = TRUE;
 			}
@@ -4360,7 +4364,11 @@ static void OpCB(struct SRegisters *reg, struct SICPU *icpu,
             SA1.Executing = FALSE;
             do
             {
+#ifdef __ARM__
+                asm_APU_EXECUTE1 ();
+#else
                 APU_EXECUTE1 ();
+#endif
             } while (APU.Cycles < SA1.NextEvent);
             SA1.Executing = TRUE;
         }
@@ -4391,7 +4399,11 @@ static void OpCB(struct SRegisters *reg, struct SICPU *icpu,
 			if (iapu->APUExecuting) {
 				icpu->CPUExecuting = FALSE;
 				do {
+#ifdef __ARM__
+					asm_APU_EXECUTE1();
+#else
 					APU_EXECUTE1();
+#endif
 				} while (APU.Cycles < CPU.NextEvent);
 				icpu->CPUExecuting = TRUE;
 			}
