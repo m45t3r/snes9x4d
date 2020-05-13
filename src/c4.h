@@ -2,30 +2,30 @@
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
 
   (c) Copyright 1996 - 2003 Gary Henderson (gary.henderson@ntlworld.com) and
-                            Jerremy Koot (jkoot@snes9x.com)
+			    Jerremy Koot (jkoot@snes9x.com)
 
   (c) Copyright 2002 - 2003 Matthew Kendora and
-                            Brad Jorsch (anomie@users.sourceforge.net)
+			    Brad Jorsch (anomie@users.sourceforge.net)
 
 
 
   C4 x86 assembler and some C emulation code
   (c) Copyright 2000 - 2003 zsKnight (zsknight@zsnes.com),
-                            _Demo_ (_demo_@zsnes.com), and
-                            Nach (n-a-c-h@users.sourceforge.net)
+			    _Demo_ (_demo_@zsnes.com), and
+			    Nach (n-a-c-h@users.sourceforge.net)
 
   C4 C++ code
   (c) Copyright 2003 Brad Jorsch
 
   DSP-1 emulator code
   (c) Copyright 1998 - 2003 Ivar (ivar@snes9x.com), _Demo_, Gary Henderson,
-                            John Weidman (jweidman@slip.net),
-                            neviksti (neviksti@hotmail.com), and
-                            Kris Bleakley (stinkfish@bigpond.com)
+			    John Weidman (jweidman@slip.net),
+			    neviksti (neviksti@hotmail.com), and
+			    Kris Bleakley (stinkfish@bigpond.com)
 
   DSP-2 emulator code
   (c) Copyright 2003 Kris Bleakley, John Weidman, neviksti, Matthew Kendora, and
-                     Lord Nightmare (lord_nightmare@users.sourceforge.net
+		     Lord Nightmare (lord_nightmare@users.sourceforge.net
 
   OBC1 emulator code
   (c) Copyright 2001 - 2003 zsKnight, pagefault (pagefault@zsnes.com)
@@ -33,7 +33,7 @@
 
   SPC7110 and RTC C++ emulator code
   (c) Copyright 2002 Matthew Kendora with research by
-                     zsKnight, John Weidman, and Dark Force
+		     zsKnight, John Weidman, and Dark Force
 
   S-RTC C emulator code
   (c) Copyright 2001 John Weidman
@@ -103,7 +103,6 @@ void C4Op0D();
 
 extern int16 C4CosTable[];
 extern int16 C4SinTable[];
-
 }
 
 #endif

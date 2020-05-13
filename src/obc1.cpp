@@ -2,30 +2,30 @@
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
 
   (c) Copyright 1996 - 2003 Gary Henderson (gary.henderson@ntlworld.com) and
-                            Jerremy Koot (jkoot@snes9x.com)
+			    Jerremy Koot (jkoot@snes9x.com)
 
   (c) Copyright 2002 - 2003 Matthew Kendora and
-                            Brad Jorsch (anomie@users.sourceforge.net)
+			    Brad Jorsch (anomie@users.sourceforge.net)
 
 
 
   C4 x86 assembler and some C emulation code
   (c) Copyright 2000 - 2003 zsKnight (zsknight@zsnes.com),
-                            _Demo_ (_demo_@zsnes.com), and
-                            Nach (n-a-c-h@users.sourceforge.net)
+			    _Demo_ (_demo_@zsnes.com), and
+			    Nach (n-a-c-h@users.sourceforge.net)
 
   C4 C++ code
   (c) Copyright 2003 Brad Jorsch
 
   DSP-1 emulator code
   (c) Copyright 1998 - 2003 Ivar (ivar@snes9x.com), _Demo_, Gary Henderson,
-                            John Weidman (jweidman@slip.net),
-                            neviksti (neviksti@hotmail.com), and
-                            Kris Bleakley (stinkfish@bigpond.com)
+			    John Weidman (jweidman@slip.net),
+			    neviksti (neviksti@hotmail.com), and
+			    Kris Bleakley (stinkfish@bigpond.com)
 
   DSP-2 emulator code
   (c) Copyright 2003 Kris Bleakley, John Weidman, neviksti, Matthew Kendora, and
-                     Lord Nightmare (lord_nightmare@users.sourceforge.net
+		     Lord Nightmare (lord_nightmare@users.sourceforge.net
 
   OBC1 emulator code
   (c) Copyright 2001 - 2003 zsKnight, pagefault (pagefault@zsnes.com)
@@ -33,7 +33,7 @@
 
   SPC7110 and RTC C++ emulator code
   (c) Copyright 2002 Matthew Kendora with research by
-                     zsKnight, John Weidman, and Dark Force
+		     zsKnight, John Weidman, and Dark Force
 
   S-RTC C emulator code
   (c) Copyright 2001 John Weidman
@@ -79,8 +79,8 @@
 
 //#define OBC1_DEBUG
 
-#define OBC1_REG_FLIP  0x0000
-#define OBC1_OAM_ADDR  0x0008
+#define OBC1_REG_FLIP 0x0000
+#define OBC1_OAM_ADDR 0x0008
 
 static uint8 *obc1ram = NULL;
 
@@ -127,119 +127,125 @@ static FILE *obc1_fs = NULL;
 ; bit1 sprite size (x4)
 ; 2bit * 128 == 10h word.
 */
-extern "C"
-{
-uint8 GetOBC1 (uint16 Address)
+extern "C" {
+uint8 GetOBC1(uint16 Address)
 {
 #ifdef OBC1_DEBUG
-	fprintf(obc1_fs, "0x%04X r 0x%02X\n", Address, obc1ram[Address & 0x1FFF]);
+	fprintf(obc1_fs, "0x%04X r 0x%02X\n", Address,
+		obc1ram[Address & 0x1FFF]);
 #endif
 	return obc1ram[Address & 0x1FFF];
 }
 
-void SetOBC1 (uint8 Byte, uint16 Address)
+void SetOBC1(uint8 Byte, uint16 Address)
 {
-	switch(Address) {
-		case 0x7FF0:
-		{
-			obc1ram[0x1FF0] = Byte;
-			obc1ram[READ_WORD(&Memory.FillRAM[OBC1_OAM_ADDR]) + 0x00] = Byte;
+	switch (Address) {
+	case 0x7FF0: {
+		obc1ram[0x1FF0] = Byte;
+		obc1ram[READ_WORD(&Memory.FillRAM[OBC1_OAM_ADDR]) + 0x00] =
+		    Byte;
 
-			obc1ram[((uint16)obc1ram[0x1FF6] << 4) + Memory.FillRAM[OBC1_REG_FLIP + 0] + 0] = Byte;
-			Memory.FillRAM[OBC1_REG_FLIP + 0] ^= 0x08;
-			break;
+		obc1ram[((uint16)obc1ram[0x1FF6] << 4) +
+			Memory.FillRAM[OBC1_REG_FLIP + 0] + 0] = Byte;
+		Memory.FillRAM[OBC1_REG_FLIP + 0] ^= 0x08;
+		break;
+	}
+
+	case 0x7FF1: {
+		obc1ram[0x1FF1] = Byte;
+		obc1ram[READ_WORD(&Memory.FillRAM[OBC1_OAM_ADDR]) + 0x01] =
+		    Byte;
+
+		obc1ram[((uint16)obc1ram[0x1FF6] << 4) +
+			Memory.FillRAM[OBC1_REG_FLIP + 1] + 1] = Byte;
+		Memory.FillRAM[OBC1_REG_FLIP + 1] ^= 0x08;
+		break;
+	}
+
+	case 0x7FF2: {
+		obc1ram[0x1FF2] = Byte;
+		obc1ram[READ_WORD(&Memory.FillRAM[OBC1_OAM_ADDR]) + 0x02] =
+		    Byte;
+
+		obc1ram[((uint16)obc1ram[0x1FF6] << 4) +
+			Memory.FillRAM[OBC1_REG_FLIP + 2] + 2] = Byte;
+		Memory.FillRAM[OBC1_REG_FLIP + 2] ^= 0x08;
+		break;
+	}
+
+	case 0x7FF3: {
+		obc1ram[0x1FF3] = Byte;
+		if (!Memory.FillRAM[OBC1_REG_FLIP + 3]) {
+			obc1ram[READ_WORD(&Memory.FillRAM[OBC1_OAM_ADDR]) +
+				0x00] = Byte;
+		} else {
+			obc1ram[READ_WORD(&Memory.FillRAM[OBC1_OAM_ADDR]) +
+				0x03] = Byte;
 		}
 
-		case 0x7FF1:
-		{
-			obc1ram[0x1FF1] = Byte;
-			obc1ram[READ_WORD(&Memory.FillRAM[OBC1_OAM_ADDR]) + 0x01] = Byte;
+		obc1ram[((uint16)obc1ram[0x1FF6] << 4) +
+			Memory.FillRAM[OBC1_REG_FLIP + 3] + 3] = Byte;
+		Memory.FillRAM[OBC1_REG_FLIP + 3] ^= 0x08;
+		break;
+	}
 
-			obc1ram[((uint16)obc1ram[0x1FF6] << 4) + Memory.FillRAM[OBC1_REG_FLIP + 1] + 1] = Byte;
-			Memory.FillRAM[OBC1_REG_FLIP + 1] ^= 0x08;
-			break;
-		}
+	case 0x7FF4: {
+		obc1ram[0x1FF4] = Byte;
+		uint16 oami = 0x1800 + 0x200 + ((uint16)obc1ram[0x1FF6] >> 2);
+		uint8 oams = ((obc1ram[0x1FF6] & 3) << 1);
+		obc1ram[oami] =
+		    (obc1ram[oami] & ~(3 << oams)) | ((Byte & 3) << oams);
 
-		case 0x7FF2:
-		{
-			obc1ram[0x1FF2] = Byte;
-			obc1ram[READ_WORD(&Memory.FillRAM[OBC1_OAM_ADDR]) + 0x02] = Byte;
+		obc1ram[((uint16)obc1ram[0x1FF6] << 4) +
+			Memory.FillRAM[OBC1_REG_FLIP + 4] + 4] = Byte;
+		Memory.FillRAM[OBC1_REG_FLIP + 4] ^= 0x08;
+		break;
+	}
 
-			obc1ram[((uint16)obc1ram[0x1FF6] << 4) + Memory.FillRAM[OBC1_REG_FLIP + 2] + 2] = Byte;
-			Memory.FillRAM[OBC1_REG_FLIP + 2] ^= 0x08;
-			break;
-		}
+	case 0x7FF5: {
+		obc1ram[0x1FF5] = Byte;
 
-		case 0x7FF3:
-		{
-			obc1ram[0x1FF3] = Byte;
-			if(!Memory.FillRAM[OBC1_REG_FLIP + 3]) {
-				obc1ram[READ_WORD(&Memory.FillRAM[OBC1_OAM_ADDR]) + 0x00] = Byte;
-			}
-			else {
-				obc1ram[READ_WORD(&Memory.FillRAM[OBC1_OAM_ADDR]) + 0x03] = Byte;
-			}
+		obc1ram[((uint16)obc1ram[0x1FF6] << 4) +
+			Memory.FillRAM[OBC1_REG_FLIP + 5] + 5] = Byte;
+		Memory.FillRAM[OBC1_REG_FLIP + 5] ^= 0x08;
+		break;
+	}
 
-			obc1ram[((uint16)obc1ram[0x1FF6] << 4) + Memory.FillRAM[OBC1_REG_FLIP + 3] + 3] = Byte;
-			Memory.FillRAM[OBC1_REG_FLIP + 3] ^= 0x08;
-			break;
-		}
+	case 0x7FF6: {
+		Byte &= 0x7F;
+		obc1ram[0x1FF6] = Byte;
+		WRITE_WORD(&Memory.FillRAM[OBC1_OAM_ADDR],
+			   0x1800 + (Byte << 2));
+		*((uint32 *)&Memory.FillRAM[OBC1_REG_FLIP]) &= 0xF7F7F7F7;
+		*((uint32 *)&Memory.FillRAM[OBC1_REG_FLIP + 4]) &= 0xF7F7F7F7;
 
-		case 0x7FF4:
-		{
-			obc1ram[0x1FF4] = Byte;
-			uint16 oami = 0x1800 + 0x200 + ((uint16)obc1ram[0x1FF6] >> 2);
-			uint8 oams = ((obc1ram[0x1FF6] & 3) << 1);
-			obc1ram[oami] = (obc1ram[oami] & ~(3 << oams)) | ((Byte & 3) << oams);
+		uint16 obci = (uint16)obc1ram[0x1FF6] << 4;
+		uint16 oami = 0x1800 + (obci >> 2);
+		obc1ram[oami + 0x00] = obc1ram[obci + 0x03];
+		obc1ram[oami + 0x01] = obc1ram[obci + 0x09];
+		obc1ram[oami + 0x02] = obc1ram[obci + 0x0A];
+		obc1ram[oami + 0x03] = obc1ram[obci + 0x0B];
+		uint16 oamii = 0x1800 + 0x200 + (oami >> 4);
+		uint8 oams = ((obc1ram[0x1FF6] & 3) << 1);
+		obc1ram[oamii] = (obc1ram[oamii] & ~(3 << oams)) |
+				 ((obc1ram[obci + 0x04] & 3) << oams);
 
-			obc1ram[((uint16)obc1ram[0x1FF6] << 4) + Memory.FillRAM[OBC1_REG_FLIP + 4] + 4] = Byte;
-			Memory.FillRAM[OBC1_REG_FLIP + 4] ^= 0x08;
-			break;
-		}
+		obc1ram[((uint16)obc1ram[0x1FF6] << 4) + 6] = Byte;
+		break;
+	}
 
-		case 0x7FF5:
-		{
-			obc1ram[0x1FF5] = Byte;
+	case 0x7FF7: {
+		obc1ram[0x1FF7] = Byte;
 
-			obc1ram[((uint16)obc1ram[0x1FF6] << 4) + Memory.FillRAM[OBC1_REG_FLIP + 5] + 5] = Byte;
-			Memory.FillRAM[OBC1_REG_FLIP + 5] ^= 0x08;
-			break;
-		}
+		obc1ram[((uint16)obc1ram[0x1FF6] << 4) +
+			Memory.FillRAM[OBC1_REG_FLIP + 7] + 7] = Byte;
+		Memory.FillRAM[OBC1_REG_FLIP + 7] ^= 0x08;
+		break;
+	}
 
-		case 0x7FF6:
-		{
-			Byte &= 0x7F;
-			obc1ram[0x1FF6] = Byte;
-			WRITE_WORD(&Memory.FillRAM[OBC1_OAM_ADDR], 0x1800 + (Byte << 2));
-			*((uint32 *)&Memory.FillRAM[OBC1_REG_FLIP]) &= 0xF7F7F7F7;
-			*((uint32 *)&Memory.FillRAM[OBC1_REG_FLIP + 4]) &= 0xF7F7F7F7;
-
-			uint16 obci = (uint16)obc1ram[0x1FF6] << 4;
-			uint16 oami = 0x1800 + (obci >> 2);
-			obc1ram[oami + 0x00] = obc1ram[obci + 0x03];
-			obc1ram[oami + 0x01] = obc1ram[obci + 0x09];
-			obc1ram[oami + 0x02] = obc1ram[obci + 0x0A];
-			obc1ram[oami + 0x03] = obc1ram[obci + 0x0B];
-			uint16 oamii = 0x1800 + 0x200 + (oami >> 4);
-			uint8 oams = ((obc1ram[0x1FF6] & 3) << 1);
-			obc1ram[oamii] = (obc1ram[oamii] & ~(3 << oams)) | ((obc1ram[obci + 0x04] & 3) << oams);
-
-			obc1ram[((uint16)obc1ram[0x1FF6] << 4) + 6] = Byte;
-			break;
-		}
-
-		case 0x7FF7:
-		{
-			obc1ram[0x1FF7] = Byte;
-
-			obc1ram[((uint16)obc1ram[0x1FF6] << 4) + Memory.FillRAM[OBC1_REG_FLIP + 7] + 7] = Byte;
-			Memory.FillRAM[OBC1_REG_FLIP + 7] ^= 0x08;
-			break;
-		}
-
-		default:
-			obc1ram[Address & 0x1FFF] = Byte;
-			break;
+	default:
+		obc1ram[Address & 0x1FFF] = Byte;
+		break;
 	}
 #ifdef OBC1_DEBUG
 	fprintf(obc1_fs, "0x%04X w 0x%02X\n", Address, Byte);
@@ -247,27 +253,23 @@ void SetOBC1 (uint8 Byte, uint16 Address)
 	return;
 }
 
-uint8 *GetBasePointerOBC1(uint32 Address)
-{
-	return Memory.FillRAM;
-}
+uint8 *GetBasePointerOBC1(uint32 Address) { return Memory.FillRAM; }
 
 uint8 *GetMemPointerOBC1(uint32 Address)
 {
 	return (Memory.FillRAM + (Address & 0xFFFF));
 }
 
-void ResetOBC1()//bool8 full)
+void ResetOBC1() // bool8 full)
 {
 	obc1ram = &Memory.FillRAM[0x6000];
 	memset(obc1ram, 0x00, 0x2000);
 	memset(&Memory.FillRAM[OBC1_REG_FLIP], 0x00, 8);
 	WRITE_WORD(&Memory.FillRAM[OBC1_OAM_ADDR], 0x1800);
 #ifdef OBC1_DEBUG
-	if(!obc1_fs)
+	if (!obc1_fs)
 		obc1_fs = fopen(obc1_log_name, "w");
 #endif
 	return;
 }
-
 }

@@ -2,30 +2,30 @@
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
 
   (c) Copyright 1996 - 2003 Gary Henderson (gary.henderson@ntlworld.com) and
-                            Jerremy Koot (jkoot@snes9x.com)
+			    Jerremy Koot (jkoot@snes9x.com)
 
   (c) Copyright 2002 - 2003 Matthew Kendora and
-                            Brad Jorsch (anomie@users.sourceforge.net)
+			    Brad Jorsch (anomie@users.sourceforge.net)
 
 
 
   C4 x86 assembler and some C emulation code
   (c) Copyright 2000 - 2003 zsKnight (zsknight@zsnes.com),
-                            _Demo_ (_demo_@zsnes.com), and
-                            Nach (n-a-c-h@users.sourceforge.net)
+			    _Demo_ (_demo_@zsnes.com), and
+			    Nach (n-a-c-h@users.sourceforge.net)
 
   C4 C++ code
   (c) Copyright 2003 Brad Jorsch
 
   DSP-1 emulator code
   (c) Copyright 1998 - 2003 Ivar (ivar@snes9x.com), _Demo_, Gary Henderson,
-                            John Weidman (jweidman@slip.net),
-                            neviksti (neviksti@hotmail.com), and
-                            Kris Bleakley (stinkfish@bigpond.com)
+			    John Weidman (jweidman@slip.net),
+			    neviksti (neviksti@hotmail.com), and
+			    Kris Bleakley (stinkfish@bigpond.com)
 
   DSP-2 emulator code
   (c) Copyright 2003 Kris Bleakley, John Weidman, neviksti, Matthew Kendora, and
-                     Lord Nightmare (lord_nightmare@users.sourceforge.net
+		     Lord Nightmare (lord_nightmare@users.sourceforge.net
 
   OBC1 emulator code
   (c) Copyright 2001 - 2003 zsKnight, pagefault (pagefault@zsnes.com)
@@ -33,7 +33,7 @@
 
   SPC7110 and RTC C++ emulator code
   (c) Copyright 2002 Matthew Kendora with research by
-                     zsKnight, John Weidman, and Dark Force
+		     zsKnight, John Weidman, and Dark Force
 
   S-RTC C emulator code
   (c) Copyright 2001 John Weidman
@@ -77,7 +77,7 @@
 #define _SAR_H_
 
 #ifdef HAVE_CONFIG_H
-	#include <config.h>
+#include <config.h>
 #endif
 
 #include "port.h"
@@ -87,35 +87,43 @@
 #endif
 
 #ifdef RIGHTSHIFT_IS_SAR
-#define SAR(b, n) ((b)>>(n))
+#define SAR(b, n) ((b) >> (n))
 #else
 
-static inline int8 SAR(const int8 b, const int n){
+static inline int8 SAR(const int8 b, const int n)
+{
 #ifndef RIGHTSHIFT_INT8_IS_SAR
-    if(b<0) return (b>>n)|(-1<<(8-n));
+	if (b < 0)
+		return (b >> n) | (-1 << (8 - n));
 #endif
-    return b>>n;
+	return b >> n;
 }
 
-static inline int16 SAR(const int16 b, const int n){
+static inline int16 SAR(const int16 b, const int n)
+{
 #ifndef RIGHTSHIFT_INT16_IS_SAR
-    if(b<0) return (b>>n)|(-1<<(16-n));
+	if (b < 0)
+		return (b >> n) | (-1 << (16 - n));
 #endif
-    return b>>n;
+	return b >> n;
 }
 
-static inline int32 SAR(const int32 b, const int n){
+static inline int32 SAR(const int32 b, const int n)
+{
 #ifndef RIGHTSHIFT_INT32_IS_SAR
-    if(b<0) return (b>>n)|(-1<<(32-n));
+	if (b < 0)
+		return (b >> n) | (-1 << (32 - n));
 #endif
-    return b>>n;
+	return b >> n;
 }
 
-static inline int64 SAR(const int64 b, const int n){
+static inline int64 SAR(const int64 b, const int n)
+{
 #ifndef RIGHTSHIFT_INT64_IS_SAR
-    if(b<0) return (b>>n)|(-1<<(64-n));
+	if (b < 0)
+		return (b >> n) | (-1 << (64 - n));
 #endif
-    return b>>n;
+	return b >> n;
 }
 
 #endif

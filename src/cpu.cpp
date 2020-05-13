@@ -60,111 +60,111 @@
 
 extern struct FxInit_s SuperFX;
 
-void S9xResetSuperFX ()
+void S9xResetSuperFX()
 {
-    SuperFX.vFlags = 0; //FX_FLAG_ROM_BUFFER;// | FX_FLAG_ADDRESS_CHECKING;
-    FxReset (&SuperFX);
+	SuperFX.vFlags = 0; // FX_FLAG_ROM_BUFFER;// | FX_FLAG_ADDRESS_CHECKING;
+	FxReset(&SuperFX);
 }
 #endif
 
-void S9xResetCPU ()
+void S9xResetCPU()
 {
-    Registers.PB = 0;
-    Registers.PC = S9xGetWord (0xFFFC, &CPU);
-    Registers.D.W = 0;
-    Registers.DB = 0;
-    Registers.SH = 1;
-    Registers.SL = 0xFF;
-    Registers.XH = 0;
-    Registers.YH = 0;
-    Registers.P.W = 0;
+	Registers.PB = 0;
+	Registers.PC = S9xGetWord(0xFFFC, &CPU);
+	Registers.D.W = 0;
+	Registers.DB = 0;
+	Registers.SH = 1;
+	Registers.SL = 0xFF;
+	Registers.XH = 0;
+	Registers.YH = 0;
+	Registers.P.W = 0;
 
-    ICPU.ShiftedPB = 0;
-    ICPU.ShiftedDB = 0;
-    SETFLAGS (MemoryFlag | IndexFlag | IRQ | Emulation);
-    CLEARFLAGS (Decimal);
+	ICPU.ShiftedPB = 0;
+	ICPU.ShiftedDB = 0;
+	SETFLAGS(MemoryFlag | IndexFlag | IRQ | Emulation);
+	CLEARFLAGS(Decimal);
 
-    CPU.Flags = CPU.Flags & (DEBUG_MODE_FLAG | TRACE_FLAG);
-    CPU.BranchSkip = FALSE;
-    CPU.NMIActive = FALSE;
-    CPU.IRQActive = FALSE;
-    CPU.WaitingForInterrupt = FALSE;
-    CPU.InDMA = FALSE;
-    CPU.WhichEvent = HBLANK_START_EVENT;
-    CPU.PC = NULL;
-    CPU.PCBase = NULL;
-    CPU.PCAtOpcodeStart = NULL;
-    CPU.WaitAddress = NULL;
-    CPU.WaitCounter = 0;
-    CPU.Cycles = 0;
-    CPU.NextEvent = Settings.HBlankStart;
-    CPU.V_Counter = 0;
-    CPU.MemSpeed = SLOW_ONE_CYCLE;
-    CPU.MemSpeedx2 = SLOW_ONE_CYCLE * 2;
-    CPU.FastROMSpeed = SLOW_ONE_CYCLE;
-    CPU.AutoSaveTimer = 0;
-    CPU.SRAMModified = FALSE;
-    // CPU.NMITriggerPoint = 4; // Set when ROM image loaded
-    CPU.BRKTriggered = FALSE;
-    //CPU.TriedInterleavedMode2 = FALSE; // Reset when ROM image loaded
-    CPU.NMICycleCount = 0;
-    CPU.IRQCycleCount = 0;
-    S9xSetPCBase (Registers.PC, &CPU);
+	CPU.Flags = CPU.Flags & (DEBUG_MODE_FLAG | TRACE_FLAG);
+	CPU.BranchSkip = FALSE;
+	CPU.NMIActive = FALSE;
+	CPU.IRQActive = FALSE;
+	CPU.WaitingForInterrupt = FALSE;
+	CPU.InDMA = FALSE;
+	CPU.WhichEvent = HBLANK_START_EVENT;
+	CPU.PC = NULL;
+	CPU.PCBase = NULL;
+	CPU.PCAtOpcodeStart = NULL;
+	CPU.WaitAddress = NULL;
+	CPU.WaitCounter = 0;
+	CPU.Cycles = 0;
+	CPU.NextEvent = Settings.HBlankStart;
+	CPU.V_Counter = 0;
+	CPU.MemSpeed = SLOW_ONE_CYCLE;
+	CPU.MemSpeedx2 = SLOW_ONE_CYCLE * 2;
+	CPU.FastROMSpeed = SLOW_ONE_CYCLE;
+	CPU.AutoSaveTimer = 0;
+	CPU.SRAMModified = FALSE;
+	// CPU.NMITriggerPoint = 4; // Set when ROM image loaded
+	CPU.BRKTriggered = FALSE;
+	// CPU.TriedInterleavedMode2 = FALSE; // Reset when ROM image loaded
+	CPU.NMICycleCount = 0;
+	CPU.IRQCycleCount = 0;
+	S9xSetPCBase(Registers.PC, &CPU);
 
 #ifndef VAR_CYCLES
-    ICPU.Speed = S9xE1M1X1;
+	ICPU.Speed = S9xE1M1X1;
 #endif
-    ICPU.S9xOpcodes = S9xOpcodesM1X1;
-    ICPU.CPUExecuting = TRUE;
+	ICPU.S9xOpcodes = S9xOpcodesM1X1;
+	ICPU.CPUExecuting = TRUE;
 
-    S9xUnpackStatus();
+	S9xUnpackStatus();
 }
 
 #ifdef ZSNES_FX
 START_EXTERN_C
-void S9xResetSuperFX ();
+void S9xResetSuperFX();
 bool8_32 WinterGold = 0;
-//extern uint8 *C4Ram;
+// extern uint8 *C4Ram;
 END_EXTERN_C
 #endif
 
-void S9xReset (void)
+void S9xReset(void)
 {
 
-    if (Settings.SuperFX)
-        S9xResetSuperFX ();
+	if (Settings.SuperFX)
+		S9xResetSuperFX();
 
 #ifdef ZSNES_FX
-    WinterGold = Settings.WinterGold;
+	WinterGold = Settings.WinterGold;
 #endif
 
-    ZeroMemory (Memory.FillRAM, 0x8000);
-    memset (Memory.VRAM, 0x00, 0x10000);
-    memset (Memory.RAM, 0x55, 0x20000);
+	ZeroMemory(Memory.FillRAM, 0x8000);
+	memset(Memory.VRAM, 0x00, 0x10000);
+	memset(Memory.RAM, 0x55, 0x20000);
 
-    S9xResetCPU ();
-    S9xResetPPU ();
+	S9xResetCPU();
+	S9xResetPPU();
 
-//S9xResetSRTC ();
+	// S9xResetSRTC ();
 
-    if (Settings.SDD1)
-        S9xResetSDD1 ();
+	if (Settings.SDD1)
+		S9xResetSDD1();
 
-    S9xResetDMA ();
-    S9xResetAPU ();
-    S9xResetDSP1 ();
+	S9xResetDMA();
+	S9xResetAPU();
+	S9xResetDSP1();
 
-    S9xSA1Init ();
+	S9xSA1Init();
 
-    if (Settings.C4)
-        S9xInitC4 ();
+	if (Settings.C4)
+		S9xInitC4();
 
 #ifdef CHEATS
-    S9xInitCheatData ();
-    S9xApplyCheats ();
+	S9xInitCheatData();
+	S9xApplyCheats();
 #endif
 
-	if(Settings.OBC1)
+	if (Settings.OBC1)
 		ResetOBC1();
-    Settings.Paused = FALSE;
+	Settings.Paused = FALSE;
 }

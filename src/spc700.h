@@ -48,14 +48,14 @@
 //#include "spctool/soundmod.h"
 #endif
 
-#define Carry       1
-#define Zero        2
-#define Interrupt   4
-#define HalfCarry   8
-#define BreakFlag  16
+#define Carry 1
+#define Zero 2
+#define Interrupt 4
+#define HalfCarry 8
+#define BreakFlag 16
 #define DirectPageFlag 32
-#define Overflow   64
-#define Negative  128
+#define Overflow 64
+#define Negative 128
 
 #define APUClearCarry() (iapu->_Carry = 0)
 #define APUSetCarry() (iapu->_Carry = 1)
@@ -81,25 +81,28 @@
 #define APUCheckNegative() (iapu->_Zero & 0x80)
 
 #define APUClearFlags(f) (areg->P &= ~(f))
-#define APUSetFlags(f)   (areg->P |=  (f))
-#define APUCheckFlag(f)  (areg->P &   (f))
+#define APUSetFlags(f) (areg->P |= (f))
+#define APUCheckFlag(f) (areg->P & (f))
 
-typedef union
-{
+typedef union {
 #ifdef LSB_FIRST
-    struct { uint8 A, Y; } B;
+	struct {
+		uint8 A, Y;
+	} B;
 #else
-    struct { uint8 Y, A; } B;
+	struct {
+		uint8 Y, A;
+	} B;
 #endif
-    uint16 W;
+	uint16 W;
 } YAndA;
 
-struct SAPURegisters{
-    uint16_32	PC;
-    uint8_32	P;
-    YAndA		YA;
-    uint8_32	X;
-    uint8_32	S;
+struct SAPURegisters {
+	uint16_32 PC;
+	uint8_32 P;
+	YAndA YA;
+	uint8_32 X;
+	uint8_32 S;
 };
 
 /*
@@ -125,42 +128,40 @@ EXTERN_C struct SAPURegisters APURegisters;
 // 1.953us := 1.024065.54MHz
 
 #ifdef SPCTOOL
-EXTERN_C int32 ESPC (int32);
+EXTERN_C int32 ESPC(int32);
 
-#define APU_EXECUTE() \
-{ \
-    int32 l = (CPU.Cycles - APU.Cycles) / 14; \
-    if (l > 0) \
-    { \
-        l -= _EmuSPC(l); \
-        APU.Cycles += l * 14; \
-    } \
-}
+#define APU_EXECUTE()                                                          \
+	{                                                                      \
+		int32 l = (CPU.Cycles - APU.Cycles) / 14;                      \
+		if (l > 0) {                                                   \
+			l -= _EmuSPC(l);                                       \
+			APU.Cycles += l * 14;                                  \
+		}                                                              \
+	}
 
 #else
 
 #ifdef DEBUGGER
-#define APU_EXECUTE1() \
-{ \
-    if (APU.Flags & TRACE_FLAG) \
-	S9xTraceAPU ();\
-    APU.Cycles += S9xAPUCycles [*IAPU.PC]; \
-    (*S9xApuOpcodes[*IAPU.PC]) (&APURegisters, &IAPU, &APU); \
-}
+#define APU_EXECUTE1()                                                         \
+	{                                                                      \
+		if (APU.Flags & TRACE_FLAG)                                    \
+			S9xTraceAPU();                                         \
+		APU.Cycles += S9xAPUCycles[*IAPU.PC];                          \
+		(*S9xApuOpcodes[*IAPU.PC])(&APURegisters, &IAPU, &APU);        \
+	}
 #else
-#define APU_EXECUTE1() \
-{ \
-    apu->Cycles += S9xAPUCycles [*iapu->PC]; \
-    (*S9xApuOpcodes[*iapu->PC]) (&APURegisters, iapu, apu); \
-}
+#define APU_EXECUTE1()                                                         \
+	{                                                                      \
+		apu->Cycles += S9xAPUCycles[*iapu->PC];                        \
+		(*S9xApuOpcodes[*iapu->PC])(&APURegisters, iapu, apu);         \
+	}
 #endif
 
-#define APU_EXECUTE() \
-if (iapu->APUExecuting) \
-{\
-    while (apu->Cycles <= cpu->Cycles) \
-	APU_EXECUTE1(); \
-}
+#define APU_EXECUTE()                                                          \
+	if (iapu->APUExecuting) {                                              \
+		while (apu->Cycles <= cpu->Cycles)                             \
+			APU_EXECUTE1();                                        \
+	}
 #endif
 
 #endif

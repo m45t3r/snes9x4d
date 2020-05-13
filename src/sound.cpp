@@ -60,7 +60,8 @@
 
 extern SoundStatus so;
 
-extern int AudioOpen(unsigned long freq, unsigned long bufsize, unsigned long bitrate, unsigned long stereo);
+extern int AudioOpen(unsigned long freq, unsigned long bufsize,
+		     unsigned long bitrate, unsigned long stereo);
 extern void AudioClose(void);
 
 extern int OpenPrelude(ULONG Type, ULONG DefaultFreq, ULONG MinBuffSize);
@@ -68,163 +69,160 @@ extern void ClosePrelude(void);
 
 extern int SoundSignal;
 unsigned long DoubleBuffer;
-//extern struct AHISampleInfo Sample0;
-//extern struct AHISampleInfo Sample1;
-//extern unsigned long BufferSize;
+// extern struct AHISampleInfo Sample0;
+// extern struct AHISampleInfo Sample1;
+// extern unsigned long BufferSize;
 
-struct Library    *AHIPPCBase;
-struct Library    *AHIBase;
-struct MsgPort    *AHImp=NULL;
-struct AHIRequest *AHIio=NULL;
-BYTE               AHIDevice=-1;
+struct Library *AHIPPCBase;
+struct Library *AHIBase;
+struct MsgPort *AHImp = NULL;
+struct AHIRequest *AHIio = NULL;
+BYTE AHIDevice = -1;
 
 struct AHIData *AHIData;
 
 unsigned long Frequency = 0;
-//unsigned long BufferSize = 0;
+// unsigned long BufferSize = 0;
 unsigned long BitRate = 0;
 unsigned long Stereo = 0;
-//unsigned long AHIError = 9;
+// unsigned long AHIError = 9;
 
-BYTE InternSignal=-1;
+BYTE InternSignal = -1;
 
 int mixsamples;
 extern int prelude;
 
-#define REALSIZE (BitRate*Stereo)
+#define REALSIZE (BitRate * Stereo)
 
-struct AHIAudioModeRequester *req=NULL;
-struct AHIAudioCtrl *actrl=NULL;
+struct AHIAudioModeRequester *req = NULL;
+struct AHIAudioCtrl *actrl = NULL;
 
-ULONG BufferLen=NULL;
-
+ULONG BufferLen = NULL;
 
 /* this really should be dynamically allocated... */
-#undef  MAX_BUFFER_SIZE
+#undef MAX_BUFFER_SIZE
 #define MAX_BUFFER_SIZE 65536
 #define MIN_BUFFER_SIZE 65536
 
-#define MODE_MONO       0
-#define MODE_STEREO     1
+#define MODE_MONO 0
+#define MODE_STEREO 1
 
-#define QUAL_8BIT       8
-#define QUAL_16BIT      16
+#define QUAL_8BIT 8
+#define QUAL_16BIT 16
 
+int test = 0;
+int test2 = 0;
 
-int test=0;
-int test2=0;
-
-int AudioOpen(unsigned long freq, unsigned long minbufsize, unsigned long bitrate, unsigned long stereo)
+int AudioOpen(unsigned long freq, unsigned long minbufsize,
+	      unsigned long bitrate, unsigned long stereo)
 {
-        ULONG Type;
+	ULONG Type;
 
-        Frequency = freq;
+	Frequency = freq;
 
-    so.playback_rate = Frequency;
+	so.playback_rate = Frequency;
 
-    if(stereo) so.stereo = TRUE;
-    else so.stereo = FALSE;
+	if (stereo)
+		so.stereo = TRUE;
+	else
+		so.stereo = FALSE;
 
-        switch(bitrate)
-        {
-                case 8:
-            so.sixteen_bit = FALSE;
-                        BitRate=1;
-                        if(stereo)
-                        {
-                                Stereo=2;
-                                Type = AHIST_S8S;
-                        }
-                        else
-                        {
-                                Stereo=1;
-                                Type = AHIST_M8S;
-                        }
+	switch (bitrate) {
+	case 8:
+		so.sixteen_bit = FALSE;
+		BitRate = 1;
+		if (stereo) {
+			Stereo = 2;
+			Type = AHIST_S8S;
+		} else {
+			Stereo = 1;
+			Type = AHIST_M8S;
+		}
 
-                break;
+		break;
 
-                default:        //defaulting to 16bit, because it means it won't crash atleast
-                case QUAL_16BIT:
-            so.sixteen_bit = TRUE;
-                        BitRate=2;
-                        if(stereo)
-                        {
-                                Stereo=2;
-                                Type = AHIST_S16S;
-                        }
-                        else
-                        {
-                                Stereo=1;
-                                Type = AHIST_M16S;
-                        }
-                break;
-        }
+	default: // defaulting to 16bit, because it means it won't crash atleast
+	case QUAL_16BIT:
+		so.sixteen_bit = TRUE;
+		BitRate = 2;
+		if (stereo) {
+			Stereo = 2;
+			Type = AHIST_S16S;
+		} else {
+			Stereo = 1;
+			Type = AHIST_M16S;
+		}
+		break;
+	}
 
-    if(prelude) prelude = OpenPrelude(Type, freq, minbufsize);
+	if (prelude)
+		prelude = OpenPrelude(Type, freq, minbufsize);
 
+	if (prelude)
+		return 1;
+	else
+		printf("Defaulting to AHI...\n");
 
-    if(prelude) return 1; else printf("Defaulting to AHI...\n");
+	/* only 1 channel right? */
+	/* NOTE: The buffersize will not always be what you requested
+	 * it finds the minimun AHI requires and then rounds it up to
+	 * nearest 32 bytes.  Check AHIData->BufferSize or
+	 * Samples[n].something_Length
+	 */
+	if (AHIData = OpenAHI(1, Type, AHI_INVALID_ID, AHI_DEFAULT_FREQ, 0,
+			      minbufsize)) {
+		printf("AHI opened\n");
+		printf("BuffSize %d\n", AHIData->BufferSize);
+	} else {
+		printf("AHI failed to open: %d\n", AHIData);
+		return 0;
+	}
 
-    /* only 1 channel right? */
-    /* NOTE: The buffersize will not always be what you requested
-     * it finds the minimun AHI requires and then rounds it up to
-     * nearest 32 bytes.  Check AHIData->BufferSize or Samples[n].something_Length
-     */
-    if(AHIData = OpenAHI(1, Type, AHI_INVALID_ID, AHI_DEFAULT_FREQ, 0, minbufsize))
-    {
-        printf("AHI opened\n");
-        printf("BuffSize %d\n", AHIData->BufferSize);
-    }
-    else
-    {
-        printf("AHI failed to open: %d\n", AHIData);
-        return 0;
-    }
+	so.buffer_size = AHIData->BufferSize; // in bytes
+	if (so.buffer_size > MAX_BUFFER_SIZE)
+		so.buffer_size = MAX_BUFFER_SIZE;
 
-    so.buffer_size = AHIData->BufferSize; // in bytes
-        if (so.buffer_size > MAX_BUFFER_SIZE) so.buffer_size = MAX_BUFFER_SIZE;
+	/* Lots of useful fields in the AHIData struct, have a look */
+	AHIBase = AHIData->AHIBase;
+	actrl = AHIData->AudioCtrl;
+	Frequency = AHIData->MixingFreq;
 
-    /* Lots of useful fields in the AHIData struct, have a look */
-    AHIBase = AHIData->AHIBase;
-    actrl = AHIData->AudioCtrl;
-    Frequency = AHIData->MixingFreq;
+	printf("signal %ld\n", AHIData->SoundFuncSignal);
 
-        printf("signal %ld\n", AHIData->SoundFuncSignal);
+	Wait(AHIData->SoundFuncSignal);
 
-        Wait(AHIData->SoundFuncSignal);
+	/* I don't think it should start playing until there is something
+	 * In the buffer, however to set off the SoundFunc it should
+	 * probably go through the buffer at least once, just silently.
+	 */
+	AHI_SetFreq(0, Frequency, actrl, AHISF_IMM);
 
-        /* I don't think it should start playing until there is something
-         * In the buffer, however to set off the SoundFunc it should
-         * probably go through the buffer at least once, just silently.
-         */
-        AHI_SetFreq(0, Frequency, actrl, AHISF_IMM);
+	Wait(AHIData->SoundFuncSignal);
 
-        Wait(AHIData->SoundFuncSignal);
+	AHI_SetVol(0, 0x10000, 0x8000, actrl, AHISF_IMM);
 
-        AHI_SetVol(0, 0x10000, 0x8000, actrl, AHISF_IMM);
+	mixsamples = AHIData->BufferSamples;
 
-        mixsamples=AHIData->BufferSamples;
+	SoundSignal = AHIData->SoundFuncSignal;
 
-        SoundSignal = AHIData->SoundFuncSignal;
-
-    return 1;
+	return 1;
 }
 
-void AudioClose( void )
+void AudioClose(void)
 {
-    if(prelude) ClosePrelude();
-        else ;//CloseAHI(AHIData);
+	if (prelude)
+		ClosePrelude();
+	else
+		; // CloseAHI(AHIData);
 }
-
 
 #include <wbstartup.h>
 
 extern int main(int argc, char **argv);
 
-void wbmain(struct WBStartup * argmsg)
+void wbmain(struct WBStartup *argmsg)
 {
- char argv[1][]={"WarpSNES"};
- int argc=1;
- main(argc,(char **)argv);
+	char argv[1][] = {"WarpSNES"};
+	int argc = 1;
+	main(argc, (char **)argv);
 }
-

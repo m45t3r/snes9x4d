@@ -44,127 +44,125 @@
 #include <stdint.h>
 #include "port.h"
 
-struct SGFX{
-    // Initialize these variables
-    uint8  *Screen;
-    uint8  *SubScreen;
-    uint8  *ZBuffer;
-    uint8  *SubZBuffer;
-    uint32 Pitch;
+struct SGFX {
+	// Initialize these variables
+	uint8 *Screen;
+	uint8 *SubScreen;
+	uint8 *ZBuffer;
+	uint8 *SubZBuffer;
+	uint32 Pitch;
 
-    // Setup in call to S9xGraphicsInit()
-    int   Delta;
-    #ifndef _FAST_GFX
-    uint16 *X2;
-    uint16 *ZERO_OR_X2;
-    #endif
-    uint16 *ZERO;
-    uint32 RealPitch; // True pitch of Screen buffer.
-    uint32 Pitch2;    // Same as RealPitch except while using speed up hack for Glide.
-    uint32 ZPitch;    // Pitch of ZBuffer
-    uint32 PPL;	      // Number of pixels on each of Screen buffer
-    uint32 PPLx2;
-    uint32 PixSize;
-    uint8  *S;
-    uint8  *DB;
-    uint16 *ScreenColors;
-    uint32 DepthDelta;
-    uint32 Z1;
-    uint32 Z2;
-    uint32 FixedColour;
-    const char *InfoString;
-    uint32 InfoStringTimeout;
-    uint32 StartY;
-    uint32 EndY;
-    struct ClipData *pCurrentClip;
-    uint32 Mode7Mask;
-    uint32 Mode7PriorityMask;
-    int	   OBJList [129];
-    uint32 Sizes [129];
-    int    VPositions [129];
+	// Setup in call to S9xGraphicsInit()
+	int Delta;
+#ifndef _FAST_GFX
+	uint16 *X2;
+	uint16 *ZERO_OR_X2;
+#endif
+	uint16 *ZERO;
+	uint32 RealPitch; // True pitch of Screen buffer.
+	uint32 Pitch2; // Same as RealPitch except while using speed up hack for
+		       // Glide.
+	uint32 ZPitch; // Pitch of ZBuffer
+	uint32 PPL;    // Number of pixels on each of Screen buffer
+	uint32 PPLx2;
+	uint32 PixSize;
+	uint8 *S;
+	uint8 *DB;
+	uint16 *ScreenColors;
+	uint32 DepthDelta;
+	uint32 Z1;
+	uint32 Z2;
+	uint32 FixedColour;
+	const char *InfoString;
+	uint32 InfoStringTimeout;
+	uint32 StartY;
+	uint32 EndY;
+	struct ClipData *pCurrentClip;
+	uint32 Mode7Mask;
+	uint32 Mode7PriorityMask;
+	int OBJList[129];
+	uint32 Sizes[129];
+	int VPositions[129];
 
-    uint8	r212c;
-    uint8	r212d;
-    uint8	r2130;
-    uint8	r2131;
-    bool8_32  Pseudo;
+	uint8 r212c;
+	uint8 r212d;
+	uint8 r2130;
+	uint8 r2131;
+	bool8_32 Pseudo;
 
 #ifdef GFX_MULTI_FORMAT
-    uint32 PixelFormat;
-    uint32 (*BuildPixel) (uint32 R, uint32 G, uint32 B);
-    uint32 (*BuildPixel2) (uint32 R, uint32 G, uint32 B);
-    void   (*DecomposePixel) (uint32 Pixel, uint32 &R, uint32 &G, uint32 &B);
+	uint32 PixelFormat;
+	uint32 (*BuildPixel)(uint32 R, uint32 G, uint32 B);
+	uint32 (*BuildPixel2)(uint32 R, uint32 G, uint32 B);
+	void (*DecomposePixel)(uint32 Pixel, uint32 &R, uint32 &G, uint32 &B);
 #endif
 };
 
 struct SLineData {
-    struct {
-	uint16 VOffset;
-	uint16 HOffset;
-    } BG [4];
+	struct {
+		uint16 VOffset;
+		uint16 HOffset;
+	} BG[4];
 };
 
 #define H_FLIP 0x4000
 #define V_FLIP 0x8000
 #define BLANK_TILE 2
 
-struct SBG
-{
-    uint32 TileSize;
-    uint32 BitShift;
-    uint32 TileShift;
-    uint32 TileAddress;
-    uint32 NameSelect;
-    uint32 SCBase;
+struct SBG {
+	uint32 TileSize;
+	uint32 BitShift;
+	uint32 TileShift;
+	uint32 TileAddress;
+	uint32 NameSelect;
+	uint32 SCBase;
 
-    uint32 StartPalette;
-    uint32 PaletteShift;
-    uint32 PaletteMask;
+	uint32 StartPalette;
+	uint32 PaletteShift;
+	uint32 PaletteMask;
 
-    uint8 *Buffer;
-    uint8 *Buffered;
-    bool8_32  DirectColourMode;
+	uint8 *Buffer;
+	uint8 *Buffered;
+	bool8_32 DirectColourMode;
 };
 
-struct SLineMatrixData
-{
-    uint32 MatrixA;
-    uint32 MatrixB;
-    uint32 MatrixC;
-    uint32 MatrixD;
-    uint32 CentreX;
-    uint32 CentreY;
+struct SLineMatrixData {
+	uint32 MatrixA;
+	uint32 MatrixB;
+	uint32 MatrixC;
+	uint32 MatrixD;
+	uint32 CentreX;
+	uint32 CentreY;
 };
 
-extern uint32 odd_high [4][16];
-extern uint32 odd_low [4][16];
-extern uint32 even_high [4][16];
-extern uint32 even_low [4][16];
+extern uint32 odd_high[4][16];
+extern uint32 odd_low[4][16];
+extern uint32 even_high[4][16];
+extern uint32 even_low[4][16];
 extern SBG BG;
-extern uint16 DirectColourMaps [8][256];
+extern uint16 DirectColourMaps[8][256];
 
-//extern uint8 add32_32 [32][32];
-//extern uint8 add32_32_half [32][32];
-//extern uint8 sub32_32 [32][32];
-//extern uint8 sub32_32_half [32][32];
-extern uint8 mul_brightness [16][32];
+// extern uint8 add32_32 [32][32];
+// extern uint8 add32_32_half [32][32];
+// extern uint8 sub32_32 [32][32];
+// extern uint8 sub32_32_half [32][32];
+extern uint8 mul_brightness[16][32];
 
 #ifdef __ARM__
 // by Harald Kipp, from http://www.ethernut.de/en/documents/arm-inline-asm.html
-#define SWAP_DWORD(val) \
-    __asm__ __volatile__ ( \
-        "eor     r3, %1, %1, ror #16\n\t" \
-        "bic     r3, r3, #0x00FF0000\n\t" \
-        "mov     %0, %1, ror #8\n\t" \
-        "eor     %0, %0, r3, lsr #8" \
-        : "=r" (val) \
-        : "0"(val) \
-        : "r3", "cc" \
-    );
+#define SWAP_DWORD(val)                                                        \
+	__asm__ __volatile__("eor     r3, %1, %1, ror #16\n\t"                 \
+			     "bic     r3, r3, #0x00FF0000\n\t"                 \
+			     "mov     %0, %1, ror #8\n\t"                      \
+			     "eor     %0, %0, r3, lsr #8"                      \
+			     : "=r"(val)                                       \
+			     : "0"(val)                                        \
+			     : "r3", "cc");
 #else
 // Could use BSWAP instruction on Intel port...
-#define SWAP_DWORD(dw) dw = ((dw & 0xff) << 24) | ((dw & 0xff00) << 8) | \
-		            ((dw & 0xff0000) >> 8) | ((dw & 0xff000000) >> 24)
+#define SWAP_DWORD(dw)                                                         \
+	dw = ((dw & 0xff) << 24) | ((dw & 0xff00) << 8) |                      \
+	     ((dw & 0xff0000) >> 8) | ((dw & 0xff000000) >> 24)
 #endif
 
 #define READ_2BYTES(s) READ_WORD(s)
@@ -173,7 +171,7 @@ extern uint8 mul_brightness [16][32];
 #define SUB_SCREEN_DEPTH 0
 #define MAIN_SCREEN_DEPTH 32
 
-//for rs-90 light COLOR_ADD
+// for rs-90 light COLOR_ADD
 //    #define MASK1 0b1111011111011110
 //    #define MASK2 0b0111101111101111
 //
@@ -184,27 +182,30 @@ extern uint8 mul_brightness [16][32];
 //    c = b- (b >> 4);
 //    z = ((a | c) & MASK2)<<1;
 //
-    #define MASK1 0xF7DE
-    #define MASK2 0x7BEF
+#define MASK1 0xF7DE
+#define MASK2 0x7BEF
 
-inline uint16_t COLOR_ADD(uint16_t C1, uint16_t C2) {
-    uint16_t a, b, c, z, c1, c2;
+inline uint16_t COLOR_ADD(uint16_t C1, uint16_t C2)
+{
+	uint16_t a, b, c, z, c1, c2;
 
-    c1 = C1 & MASK1;
-    c2 = C2 & MASK1;
-    a = (c1>>1) + (c2>>1);
-    b = a & 0x8410;
-    c = b- (b >> 4);
-    z = ((a | c) & MASK2)<<1;
-    return z;
+	c1 = C1 & MASK1;
+	c2 = C2 & MASK1;
+	a = (c1 >> 1) + (c2 >> 1);
+	b = a & 0x8410;
+	c = b - (b >> 4);
+	z = ((a | c) & MASK2) << 1;
+	return z;
 }
 
-#define COLOR_ADD1_2(C1, C2) \
-(((((C1) & RGB_REMOVE_LOW_BITS_MASK) + \
-          ((C2) & RGB_REMOVE_LOW_BITS_MASK)) >> 1) + \
-         ((C1) & (C2) & RGB_LOW_BITS_MASK) | ALPHA_BITS_MASK)
+#define COLOR_ADD1_2(C1, C2)                                                   \
+	(((((C1)&RGB_REMOVE_LOW_BITS_MASK) +                                   \
+	   ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >>                                 \
+	  1) +                                                                 \
+	     ((C1) & (C2)&RGB_LOW_BITS_MASK) |                                 \
+	 ALPHA_BITS_MASK)
 
-//for rs-90 light COLOR_SUB (really fast?)
+// for rs-90 light COLOR_SUB (really fast?)
 //    #define MASK1 0xF7DE
 //    #define MASK2 0x7BEF
 //
@@ -220,65 +221,67 @@ inline uint16_t COLOR_ADD(uint16_t C1, uint16_t C2) {
 
 inline uint16_t COLOR_SUB(uint16_t C1, uint16_t C2)
 {
-    uint16_t a, b, c, z, c1, c2;
-    c1 = (C1 & MASK1)>>1;
-    c2 = (C2 & MASK1)>>1;
-    c2 = (c2 ^ 0xffff) + 0x0821;
-    a = c1 + c2;
-    b = a & 0x8410;
-    c = b - (b>>4);
-    c = c ^ 0x7bcf;
-    z = ((a & c) & MASK2)<<1;
+	uint16_t a, b, c, z, c1, c2;
+	c1 = (C1 & MASK1) >> 1;
+	c2 = (C2 & MASK1) >> 1;
+	c2 = (c2 ^ 0xffff) + 0x0821;
+	a = c1 + c2;
+	b = a & 0x8410;
+	c = b - (b >> 4);
+	c = c ^ 0x7bcf;
+	z = ((a & c) & MASK2) << 1;
 
-    return z;
+	return z;
 }
 
 inline uint16_t COLOR_SUB1_2(uint16_t C1, uint16_t C2)
 {
-    uint16_t a, b, c, z, c1, c2;
-    c1 = (C1 & MASK1)>>1;
-    c2 = (C2 & MASK1)>>1;
-    c2 = (c2 ^ 0xffff) + 0x0821;
-    a = c1 + c2;
-    b = a & 0x8410;
-    c = b - (b>>4);
-    c = c ^ 0x7bcf;
-    z = (a & c) & MASK2;
+	uint16_t a, b, c, z, c1, c2;
+	c1 = (C1 & MASK1) >> 1;
+	c2 = (C2 & MASK1) >> 1;
+	c2 = (c2 ^ 0xffff) + 0x0821;
+	a = c1 + c2;
+	b = a & 0x8410;
+	c = b - (b >> 4);
+	c = c ^ 0x7bcf;
+	z = (a & c) & MASK2;
 
-    return z;
+	return z;
 }
 
-typedef void (*NormalTileRenderer) (uint32 Tile, uint32 Offset,
-				    uint32 StartLine, uint32 LineCount, struct SGFX * gfx);
-typedef void (*ClippedTileRenderer) (uint32 Tile, uint32 Offset,
-				     uint32 StartPixel, uint32 Width,
-				     uint32 StartLine, uint32 LineCount, struct SGFX * gfx);
-typedef void (*LargePixelRenderer) (uint32 Tile, uint32 Offset,
-				    uint32 StartPixel, uint32 Pixels,
-				    uint32 StartLine, uint32 LineCount, struct SGFX * gfx);
+typedef void (*NormalTileRenderer)(uint32 Tile, uint32 Offset, uint32 StartLine,
+				   uint32 LineCount, struct SGFX *gfx);
+typedef void (*ClippedTileRenderer)(uint32 Tile, uint32 Offset,
+				    uint32 StartPixel, uint32 Width,
+				    uint32 StartLine, uint32 LineCount,
+				    struct SGFX *gfx);
+typedef void (*LargePixelRenderer)(uint32 Tile, uint32 Offset,
+				   uint32 StartPixel, uint32 Pixels,
+				   uint32 StartLine, uint32 LineCount,
+				   struct SGFX *gfx);
 
 START_EXTERN_C
-void S9xStartScreenRefresh ();
-void S9xDrawScanLine (uint8 Line);
-void S9xEndScreenRefresh (struct SPPU *);
-void S9xSetupOBJ (struct SOBJ *);
-void S9xUpdateScreen ();
-void RenderLine (uint8 line, struct SPPU *);
-void S9xBuildDirectColourMaps ();
+void S9xStartScreenRefresh();
+void S9xDrawScanLine(uint8 Line);
+void S9xEndScreenRefresh(struct SPPU *);
+void S9xSetupOBJ(struct SOBJ *);
+void S9xUpdateScreen();
+void RenderLine(uint8 line, struct SPPU *);
+void S9xBuildDirectColourMaps();
 
 // External port interface which must be implemented or initialised for each
 // port.
 extern struct SGFX GFX;
 
-bool8_32 S9xGraphicsInit ();
+bool8_32 S9xGraphicsInit();
 void S9xGraphicsDeinit();
-bool8_32 S9xInitUpdate (void);
-bool8_32 S9xDeinitUpdate (int Width, int Height);
-void S9xSetPalette ();
-void S9xSyncSpeed ();
+bool8_32 S9xInitUpdate(void);
+bool8_32 S9xDeinitUpdate(int Width, int Height);
+void S9xSetPalette();
+void S9xSyncSpeed();
 
 #ifdef GFX_MULTI_FORMAT
-bool8_32 S9xSetRenderPixelFormat (int format);
+bool8_32 S9xSetRenderPixelFormat(int format);
 #endif
 
 END_EXTERN_C

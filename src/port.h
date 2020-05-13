@@ -53,19 +53,19 @@
 #ifndef snes9x_types_defined
 #define snes9x_types_defined
 
-typedef unsigned char 	bool8;
-typedef unsigned char 	uint8;
-typedef unsigned short 	uint16;
-typedef signed char 	int8;
-typedef signed short 	int16;
-typedef int 		int32;
-typedef unsigned int 	uint32;
-typedef long long 	int64;
-typedef unsigned long	bool8_32;
-typedef unsigned long	uint8_32;
-typedef unsigned long	uint16_32;
-typedef long		int8_32;
-typedef long		int16_32;
+typedef unsigned char bool8;
+typedef unsigned char uint8;
+typedef unsigned short uint16;
+typedef signed char int8;
+typedef signed short int16;
+typedef int int32;
+typedef unsigned int uint32;
+typedef long long int64;
+typedef unsigned long bool8_32;
+typedef unsigned long uint8_32;
+typedef unsigned long uint16_32;
+typedef long int8_32;
+typedef long int16_32;
 #endif // snes9x_types_defined
 #include "pixform.h"
 
@@ -101,31 +101,42 @@ typedef long		int16_32;
 #define _MAX_PATH PATH_MAX
 #endif
 
-#define ZeroMemory(a,b) memset((a),0,(b))
+#define ZeroMemory(a, b) memset((a), 0, (b))
 #define LSB_FIRST
 /* #define FAST_LSB_WORD_ACCESS */
 
-void _makepath (char *path, const char *drive, const char *dir,
-		const char *fname, const char *ext);
-void _splitpath (const char *path, char *drive, char *dir, char *fname,
-		 char *ext);
+void _makepath(char *path, const char *drive, const char *dir,
+	       const char *fname, const char *ext);
+void _splitpath(const char *path, char *drive, char *dir, char *fname,
+		char *ext);
 
-EXTERN_C void S9xGenerateSound ();
+EXTERN_C void S9xGenerateSound();
 
 #ifdef FAST_LSB_WORD_ACCESS
-#define READ_WORD(s)		(*(uint16 *) (s))
-#define READ_3WORD(s)		(*(uint32 *) (s) & 0x00ffffff)
-#define READ_DWORD(s)		(*(uint32 *) (s))
-#define WRITE_WORD(s, d)	*(uint16 *) (s) = (d)
-#define WRITE_3WORD(s, d)	*(uint16 *) (s) = (uint16) (d), *((uint8 *) (s) + 2) = (uint8) ((d) >> 16)
-#define WRITE_DWORD(s, d)	*(uint32 *) (s) = (d)
+#define READ_WORD(s) (*(uint16 *)(s))
+#define READ_3WORD(s) (*(uint32 *)(s)&0x00ffffff)
+#define READ_DWORD(s) (*(uint32 *)(s))
+#define WRITE_WORD(s, d) *(uint16 *)(s) = (d)
+#define WRITE_3WORD(s, d)                                                      \
+	*(uint16 *)(s) = (uint16)(d), *((uint8 *)(s) + 2) = (uint8)((d) >> 16)
+#define WRITE_DWORD(s, d) *(uint32 *)(s) = (d)
 #else
-#define READ_WORD(s)		(*(uint8 *) (s) | (*((uint8 *) (s) + 1) << 8))
-#define READ_3WORD(s)		(*(uint8 *) (s) | (*((uint8 *) (s) + 1) << 8) | (*((uint8 *) (s) + 2) << 16))
-#define READ_DWORD(s)		(*(uint8 *) (s) | (*((uint8 *) (s) + 1) << 8) | (*((uint8 *) (s) + 2) << 16) | (*((uint8 *) (s) + 3) << 24))
-#define WRITE_WORD(s, d)	*(uint8 *) (s) = (uint8) (d), *((uint8 *) (s) + 1) = (uint8) ((d) >> 8)
-#define WRITE_3WORD(s, d)	*(uint8 *) (s) = (uint8) (d), *((uint8 *) (s) + 1) = (uint8) ((d) >> 8), *((uint8 *) (s) + 2) = (uint8) ((d) >> 16)
-#define WRITE_DWORD(s, d)	*(uint8 *) (s) = (uint8) (d), *((uint8 *) (s) + 1) = (uint8) ((d) >> 8), *((uint8 *) (s) + 2) = (uint8) ((d) >> 16), *((uint8 *) (s) + 3) = (uint8) ((d) >> 24)
+#define READ_WORD(s) (*(uint8 *)(s) | (*((uint8 *)(s) + 1) << 8))
+#define READ_3WORD(s)                                                          \
+	(*(uint8 *)(s) | (*((uint8 *)(s) + 1) << 8) |                          \
+	 (*((uint8 *)(s) + 2) << 16))
+#define READ_DWORD(s)                                                          \
+	(*(uint8 *)(s) | (*((uint8 *)(s) + 1) << 8) |                          \
+	 (*((uint8 *)(s) + 2) << 16) | (*((uint8 *)(s) + 3) << 24))
+#define WRITE_WORD(s, d)                                                       \
+	*(uint8 *)(s) = (uint8)(d), *((uint8 *)(s) + 1) = (uint8)((d) >> 8)
+#define WRITE_3WORD(s, d)                                                      \
+	*(uint8 *)(s) = (uint8)(d), *((uint8 *)(s) + 1) = (uint8)((d) >> 8),   \
+		*((uint8 *)(s) + 2) = (uint8)((d) >> 16)
+#define WRITE_DWORD(s, d)                                                      \
+	*(uint8 *)(s) = (uint8)(d), *((uint8 *)(s) + 1) = (uint8)((d) >> 8),   \
+		*((uint8 *)(s) + 2) = (uint8)((d) >> 16),                      \
+		*((uint8 *)(s) + 3) = (uint8)((d) >> 24)
 #endif
 
 #define CHECK_SOUND()

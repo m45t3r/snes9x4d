@@ -2,30 +2,30 @@
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
 
   (c) Copyright 1996 - 2003 Gary Henderson (gary.henderson@ntlworld.com) and
-                            Jerremy Koot (jkoot@snes9x.com)
+			    Jerremy Koot (jkoot@snes9x.com)
 
   (c) Copyright 2002 - 2003 Matthew Kendora and
-                            Brad Jorsch (anomie@users.sourceforge.net)
+			    Brad Jorsch (anomie@users.sourceforge.net)
 
 
 
   C4 x86 assembler and some C emulation code
   (c) Copyright 2000 - 2003 zsKnight (zsknight@zsnes.com),
-                            _Demo_ (_demo_@zsnes.com), and
-                            Nach (n-a-c-h@users.sourceforge.net)
+			    _Demo_ (_demo_@zsnes.com), and
+			    Nach (n-a-c-h@users.sourceforge.net)
 
   C4 C++ code
   (c) Copyright 2003 Brad Jorsch
 
   DSP-1 emulator code
   (c) Copyright 1998 - 2003 Ivar (ivar@snes9x.com), _Demo_, Gary Henderson,
-                            John Weidman (jweidman@slip.net),
-                            neviksti (neviksti@hotmail.com), and
-                            Kris Bleakley (stinkfish@bigpond.com)
+			    John Weidman (jweidman@slip.net),
+			    neviksti (neviksti@hotmail.com), and
+			    Kris Bleakley (stinkfish@bigpond.com)
 
   DSP-2 emulator code
   (c) Copyright 2003 Kris Bleakley, John Weidman, neviksti, Matthew Kendora, and
-                     Lord Nightmare (lord_nightmare@users.sourceforge.net
+		     Lord Nightmare (lord_nightmare@users.sourceforge.net
 
   OBC1 emulator code
   (c) Copyright 2001 - 2003 zsKnight, pagefault (pagefault@zsnes.com)
@@ -33,7 +33,7 @@
 
   SPC7110 and RTC C++ emulator code
   (c) Copyright 2002 Matthew Kendora with research by
-                     zsKnight, John Weidman, and Dark Force
+		     zsKnight, John Weidman, and Dark Force
 
   S-RTC C emulator code
   (c) Copyright 2001 John Weidman
@@ -76,14 +76,25 @@
 #define _SOUND_H_
 
 enum { SOUND_SAMPLE = 0, SOUND_NOISE, SOUND_EXTRA_NOISE, SOUND_MUTE };
-enum { SOUND_SILENT, SOUND_ATTACK, SOUND_DECAY, SOUND_SUSTAIN,
-       SOUND_RELEASE, SOUND_GAIN, SOUND_INCREASE_LINEAR,
-       SOUND_INCREASE_BENT_LINE, SOUND_DECREASE_LINEAR,
-       SOUND_DECREASE_EXPONENTIAL};
+enum { SOUND_SILENT,
+       SOUND_ATTACK,
+       SOUND_DECAY,
+       SOUND_SUSTAIN,
+       SOUND_RELEASE,
+       SOUND_GAIN,
+       SOUND_INCREASE_LINEAR,
+       SOUND_INCREASE_BENT_LINE,
+       SOUND_DECREASE_LINEAR,
+       SOUND_DECREASE_EXPONENTIAL };
 
-enum { MODE_NONE = SOUND_SILENT, MODE_ADSR, MODE_RELEASE = SOUND_RELEASE,
-       MODE_GAIN, MODE_INCREASE_LINEAR, MODE_INCREASE_BENT_LINE,
-       MODE_DECREASE_LINEAR, MODE_DECREASE_EXPONENTIAL};
+enum { MODE_NONE = SOUND_SILENT,
+       MODE_ADSR,
+       MODE_RELEASE = SOUND_RELEASE,
+       MODE_GAIN,
+       MODE_INCREASE_LINEAR,
+       MODE_INCREASE_BENT_LINE,
+       MODE_DECREASE_LINEAR,
+       MODE_DECREASE_EXPONENTIAL };
 
 #define MAX_ENVELOPE_HEIGHT 127
 #define ENVELOPE_SHIFT 7
@@ -92,140 +103,142 @@ enum { MODE_NONE = SOUND_SILENT, MODE_ADSR, MODE_RELEASE = SOUND_RELEASE,
 #define VOL_DIV 128
 #define SOUND_DECODE_LENGTH 16
 
-#define NUM_CHANNELS    8
+#define NUM_CHANNELS 8
 #define SOUND_BUFFER_SIZE (1024 * 16)
 #define MAX_BUFFER_SIZE SOUND_BUFFER_SIZE
 #define SOUND_BUFFER_SIZE_MASK (SOUND_BUFFER_SIZE - 1)
 
-#define SOUND_BUFS      4
+#define SOUND_BUFS 4
 
 #ifdef __sgi
-#  include <audio.h>
+#include <audio.h>
 #endif /* __sgi */
 
 typedef struct {
-    int sound_fd;
-    int sound_switch;
-    int playback_rate;
-    int buffer_size;
-    int noise_gen;
-    bool8_32 mute_sound;
-    int stereo;
-    bool8_32 sixteen_bit;
-    bool8_32 encoded;
+	int sound_fd;
+	int sound_switch;
+	int playback_rate;
+	int buffer_size;
+	int noise_gen;
+	bool8_32 mute_sound;
+	int stereo;
+	bool8_32 sixteen_bit;
+	bool8_32 encoded;
 #ifdef __sun
-    int last_eof;
+	int last_eof;
 #endif
 #ifdef __sgi
-    ALport al_port;
+	ALport al_port;
 #endif /* __sgi */
-    int32  samples_mixed_so_far;
-    int32  play_position;
-    uint32 err_counter;
-    uint32 err_rate;
+	int32 samples_mixed_so_far;
+	int32 play_position;
+	uint32 err_counter;
+	uint32 err_rate;
 } SoundStatus;
 
 EXTERN_C volatile SoundStatus so;
 
 typedef struct {
-    int state;
-    int type;
-    short volume_left;
-    short volume_right;
-    uint32 hertz;
-    uint32 frequency;
-    uint32 count;
-    bool8_32 loop;
-    int envx;
-    short left_vol_level;
-    short right_vol_level;
-    short envx_target;
-    unsigned long int env_error;
-    unsigned long erate;
-    int direction;
-    unsigned long attack_rate;
-    unsigned long decay_rate;
-    unsigned long sustain_rate;
-    unsigned long release_rate;
-    unsigned long sustain_level;
-    signed short sample;
-    signed short decoded [16];
-    signed short previous16 [2];
-    signed short *block;
-    uint16 sample_number;
-    bool8_32 last_block;
-    bool8_32 needs_decode;
-    uint32 block_pointer;
-    uint32 sample_pointer;
-    int *echo_buf_ptr;
-    int mode;
-    int32 envxx;
-    signed short next_sample;
-    int32 interpolate;
-    int32 previous [2];
-    // Just incase they are needed in the future, for snapshot compatibility.
-    uint32 dummy [8];
-//	unsigned short last_valid_header;
+	int state;
+	int type;
+	short volume_left;
+	short volume_right;
+	uint32 hertz;
+	uint32 frequency;
+	uint32 count;
+	bool8_32 loop;
+	int envx;
+	short left_vol_level;
+	short right_vol_level;
+	short envx_target;
+	unsigned long int env_error;
+	unsigned long erate;
+	int direction;
+	unsigned long attack_rate;
+	unsigned long decay_rate;
+	unsigned long sustain_rate;
+	unsigned long release_rate;
+	unsigned long sustain_level;
+	signed short sample;
+	signed short decoded[16];
+	signed short previous16[2];
+	signed short *block;
+	uint16 sample_number;
+	bool8_32 last_block;
+	bool8_32 needs_decode;
+	uint32 block_pointer;
+	uint32 sample_pointer;
+	int *echo_buf_ptr;
+	int mode;
+	int32 envxx;
+	signed short next_sample;
+	int32 interpolate;
+	int32 previous[2];
+	// Just incase they are needed in the future, for snapshot
+	// compatibility.
+	uint32 dummy[8];
+	//	unsigned short last_valid_header;
 } Channel;
 
-typedef struct
-{
-    short master_volume_left;
-    short master_volume_right;
-    short echo_volume_left;
-    short echo_volume_right;
-    int echo_enable;
-    int echo_feedback;
-    int echo_ptr;
-    int echo_buffer_size;
-    int echo_write_enabled;
-    int echo_channel_enable;
-    int pitch_mod;
-    // Just incase they are needed in the future, for snapshot compatibility.
-    uint32 dummy [3];
-    Channel channels [NUM_CHANNELS];
-    bool8_32 no_filter;
-    int master_volume [2];
-    int echo_volume [2];
-    int noise_hertz;
+typedef struct {
+	short master_volume_left;
+	short master_volume_right;
+	short echo_volume_left;
+	short echo_volume_right;
+	int echo_enable;
+	int echo_feedback;
+	int echo_ptr;
+	int echo_buffer_size;
+	int echo_write_enabled;
+	int echo_channel_enable;
+	int pitch_mod;
+	// Just incase they are needed in the future, for snapshot
+	// compatibility.
+	uint32 dummy[3];
+	Channel channels[NUM_CHANNELS];
+	bool8_32 no_filter;
+	int master_volume[2];
+	int echo_volume[2];
+	int noise_hertz;
 } SSoundData;
 
 EXTERN_C SSoundData SoundData;
 
-void S9xSetSoundVolume (int channel, short volume_left, short volume_right);
-void S9xSetSoundFrequency (int channel, int hertz);
-void S9xSetSoundHertz (int channel, int hertz);
-void S9xSetSoundType (int channel, int type_of_sound);
-void S9xSetMasterVolume (short master_volume_left, short master_volume_right);
-void S9xSetEchoVolume (short echo_volume_left, short echo_volume_right);
-void S9xSetSoundControl (int sound_switch);
-bool8_32 S9xSetSoundMute (bool8_32 mute);
-void S9xSetEnvelopeHeight (int channel, int height);
-void S9xSetSoundADSR (int channel, int attack, int decay, int sustain,
-		      int sustain_level, int release);
-void S9xSetSoundKeyOff (int channel);
-void S9xSetSoundDecayMode (int channel);
-void S9xSetSoundAttachMode (int channel);
-void S9xSoundStartEnvelope (Channel *);
-void S9xSetSoundSample (int channel, uint16 sample_number);
-void S9xSetEchoFeedback (int echo_feedback);
-void S9xSetEchoEnable (uint8 byte);
-void S9xSetEchoDelay (int byte);
-void S9xSetEchoWriteEnable (uint8 byte);
-void S9xSetFilterCoefficient (int tap, int value);
-void S9xSetFrequencyModulationEnable (uint8 byte);
-void S9xSetEnvelopeRate (int channel, unsigned long rate, int direction, int target);
-bool8_32 S9xSetSoundMode (int channel, int mode);
-int S9xGetEnvelopeHeight (int channel);
-void S9xResetSound (bool8_32 full);
-void S9xFixSoundAfterSnapshotLoad ();
-void S9xPlaybackSoundSetting (int channel);
-void S9xPlaySample (int channel, struct SAPU *);
-void S9xFixEnvelope (int channel, uint8 gain, uint8 adsr1, uint8 adsr2);
-void S9xStartSample (int channel);
+void S9xSetSoundVolume(int channel, short volume_left, short volume_right);
+void S9xSetSoundFrequency(int channel, int hertz);
+void S9xSetSoundHertz(int channel, int hertz);
+void S9xSetSoundType(int channel, int type_of_sound);
+void S9xSetMasterVolume(short master_volume_left, short master_volume_right);
+void S9xSetEchoVolume(short echo_volume_left, short echo_volume_right);
+void S9xSetSoundControl(int sound_switch);
+bool8_32 S9xSetSoundMute(bool8_32 mute);
+void S9xSetEnvelopeHeight(int channel, int height);
+void S9xSetSoundADSR(int channel, int attack, int decay, int sustain,
+		     int sustain_level, int release);
+void S9xSetSoundKeyOff(int channel);
+void S9xSetSoundDecayMode(int channel);
+void S9xSetSoundAttachMode(int channel);
+void S9xSoundStartEnvelope(Channel *);
+void S9xSetSoundSample(int channel, uint16 sample_number);
+void S9xSetEchoFeedback(int echo_feedback);
+void S9xSetEchoEnable(uint8 byte);
+void S9xSetEchoDelay(int byte);
+void S9xSetEchoWriteEnable(uint8 byte);
+void S9xSetFilterCoefficient(int tap, int value);
+void S9xSetFrequencyModulationEnable(uint8 byte);
+void S9xSetEnvelopeRate(int channel, unsigned long rate, int direction,
+			int target);
+bool8_32 S9xSetSoundMode(int channel, int mode);
+int S9xGetEnvelopeHeight(int channel);
+void S9xResetSound(bool8_32 full);
+void S9xFixSoundAfterSnapshotLoad();
+void S9xPlaybackSoundSetting(int channel);
+void S9xPlaySample(int channel, struct SAPU *);
+void S9xFixEnvelope(int channel, uint8 gain, uint8 adsr1, uint8 adsr2);
+void S9xStartSample(int channel);
 
-EXTERN_C void S9xMixSamples (uint8 *buffer, int sample_count);
-EXTERN_C void S9xMixSamplesO (uint8 *buffer, int sample_count, int byte_offset);
-bool8_32 S9xOpenSoundDevice (int, bool8_32, int);
-void S9xSetPlaybackRate (uint32 rate);
+EXTERN_C void S9xMixSamples(uint8 *buffer, int sample_count);
+EXTERN_C void S9xMixSamplesO(uint8 *buffer, int sample_count, int byte_offset);
+bool8_32 S9xOpenSoundDevice(int, bool8_32, int);
+void S9xSetPlaybackRate(uint32 rate);
 #endif

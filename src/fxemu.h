@@ -2,47 +2,47 @@
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
 
   (c) Copyright 1996 - 2002 Gary Henderson (gary.henderson@ntlworld.com) and
-                            Jerremy Koot (jkoot@snes9x.com)
+			    Jerremy Koot (jkoot@snes9x.com)
 
   (c) Copyright 2001 - 2004 John Weidman (jweidman@slip.net)
 
   (c) Copyright 2002 - 2004 Brad Jorsch (anomie@users.sourceforge.net),
-                            funkyass (funkyass@spam.shaw.ca),
-                            Joel Yliluoma (http://iki.fi/bisqwit/)
-                            Kris Bleakley (codeviolation@hotmail.com),
-                            Matthew Kendora,
-                            Nach (n-a-c-h@users.sourceforge.net),
-                            Peter Bortas (peter@bortas.org) and
-                            zones (kasumitokoduck@yahoo.com)
+			    funkyass (funkyass@spam.shaw.ca),
+			    Joel Yliluoma (http://iki.fi/bisqwit/)
+			    Kris Bleakley (codeviolation@hotmail.com),
+			    Matthew Kendora,
+			    Nach (n-a-c-h@users.sourceforge.net),
+			    Peter Bortas (peter@bortas.org) and
+			    zones (kasumitokoduck@yahoo.com)
 
   C4 x86 assembler and some C emulation code
   (c) Copyright 2000 - 2003 zsKnight (zsknight@zsnes.com),
-                            _Demo_ (_demo_@zsnes.com), and Nach
+			    _Demo_ (_demo_@zsnes.com), and Nach
 
   C4 C++ code
   (c) Copyright 2003 Brad Jorsch
 
   DSP-1 emulator code
   (c) Copyright 1998 - 2004 Ivar (ivar@snes9x.com), _Demo_, Gary Henderson,
-                            John Weidman, neviksti (neviksti@hotmail.com),
-                            Kris Bleakley, Andreas Naive
+			    John Weidman, neviksti (neviksti@hotmail.com),
+			    Kris Bleakley, Andreas Naive
 
   DSP-2 emulator code
   (c) Copyright 2003 Kris Bleakley, John Weidman, neviksti, Matthew Kendora, and
-                     Lord Nightmare (lord_nightmare@users.sourceforge.net
+		     Lord Nightmare (lord_nightmare@users.sourceforge.net
 
   OBC1 emulator code
   (c) Copyright 2001 - 2004 zsKnight, pagefault (pagefault@zsnes.com) and
-                            Kris Bleakley
+			    Kris Bleakley
   Ported from x86 assembler to C by sanmaiwashi
 
   SPC7110 and RTC C++ emulator code
   (c) Copyright 2002 Matthew Kendora with research by
-                     zsKnight, John Weidman, and Dark Force
+		     zsKnight, John Weidman, and Dark Force
 
   S-DD1 C emulator code
   (c) Copyright 2003 Brad Jorsch with research by
-                     Andreas Naive and John Weidman
+		     Andreas Naive and John Weidman
 
   S-RTC C emulator code
   (c) Copyright 2001 John Weidman
@@ -110,15 +110,17 @@ typedef int int32;
 #define FALSE 0
 #endif
 
-/* The FxInfo_s structure, the link between the FxEmulator and the Snes Emulator */
-struct FxInit_s
-{
-    uint32	vFlags;
-    uint8 *	pvRegisters;	/* 768 bytes located in the memory at address 0x3000 */
-    uint32	nRamBanks;	/* Number of 64kb-banks in GSU-RAM/BackupRAM (banks 0x70-0x73) */
-    uint8 *	pvRam;		/* Pointer to GSU-RAM */
-    uint32	nRomBanks;	/* Number of 32kb-banks in Cart-ROM */
-    uint8 *	pvRom;		/* Pointer to Cart-ROM */
+/* The FxInfo_s structure, the link between the FxEmulator and the Snes Emulator
+ */
+struct FxInit_s {
+	uint32 vFlags;
+	uint8 *
+	    pvRegisters; /* 768 bytes located in the memory at address 0x3000 */
+	uint32 nRamBanks; /* Number of 64kb-banks in GSU-RAM/BackupRAM (banks
+			     0x70-0x73) */
+	uint8 *pvRam;	  /* Pointer to GSU-RAM */
+	uint32 nRomBanks; /* Number of 32kb-banks in Cart-ROM */
+	uint8 *pvRom;	  /* Pointer to Cart-ROM */
 };
 
 /* Reset the FxChip */
@@ -129,7 +131,7 @@ extern int FxEmulate(uint32 nInstructions);
 
 /* Write access to the cache */
 extern void FxCacheWriteAccess(uint16 vAddress);
-extern void FxFlushCache();	/* Callled when the G flag in SFR is set to zero */
+extern void FxFlushCache(); /* Callled when the G flag in SFR is set to zero */
 
 /* Breakpoint */
 extern void FxBreakPointSet(uint32 vAddress);
@@ -149,29 +151,31 @@ extern uint32 FxGetSourceRegisterIndex();
 extern uint32 FxGetDestinationRegisterIndex();
 
 /* Get string for opcode currently in the pipe */
-extern void FxPipeString(char * pvString);
+extern void FxPipeString(char *pvString);
 
 /* Get the byte currently in the pipe */
 extern uint8 FxPipe();
 
 /* SCBR write seen.  We need to update our cached screen pointers */
-extern void fx_dirtySCBR (void);
+extern void fx_dirtySCBR(void);
 
 /* Update RamBankReg and RAM Bank pointer */
 extern void fx_updateRamBank(uint8 Byte);
 
 /* Option flags */
-#define FX_FLAG_ADDRESS_CHECKING	0x01
-#define FX_FLAG_ROM_BUFFER		0x02
+#define FX_FLAG_ADDRESS_CHECKING 0x01
+#define FX_FLAG_ROM_BUFFER 0x02
 
 /* Return codes from FxEmulate(), FxStepInto() or FxStepOver() */
-#define FX_BREAKPOINT			-1
-#define FX_ERROR_ILLEGAL_ADDRESS	-2
+#define FX_BREAKPOINT -1
+#define FX_ERROR_ILLEGAL_ADDRESS -2
 
 /* Return the number of bytes in an opcode */
-#define OPCODE_BYTES(op) ((((op)>=0x05&&(op)<=0xf)||((op)>=0xa0&&(op)<=0xaf))?2:(((op)>=0xf0)?3:1))
+#define OPCODE_BYTES(op)                                                       \
+	((((op) >= 0x05 && (op) <= 0xf) || ((op) >= 0xa0 && (op) <= 0xaf))     \
+	     ? 2                                                               \
+	     : (((op) >= 0xf0) ? 3 : 1))
 
-extern void fx_computeScreenPointers ();
+extern void fx_computeScreenPointers();
 
 #endif
-

@@ -2,7 +2,7 @@
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
 
   (c) Copyright 1996 - 2002  Gary Henderson (gary.henderson@ntlworld.com),
-                             Jerremy Koot (jkoot@snes9x.com)
+			     Jerremy Koot (jkoot@snes9x.com)
 
   (c) Copyright 2002 - 2004  Matthew Kendora
 
@@ -13,102 +13,101 @@
   (c) Copyright 2001 - 2006  John Weidman (jweidman@slip.net)
 
   (c) Copyright 2002 - 2006  funkyass (funkyass@spam.shaw.ca),
-                             Kris Bleakley (codeviolation@hotmail.com)
+			     Kris Bleakley (codeviolation@hotmail.com)
 
   (c) Copyright 2002 - 2010  Brad Jorsch (anomie@users.sourceforge.net),
-                             Nach (n-a-c-h@users.sourceforge.net),
-                             zones (kasumitokoduck@yahoo.com)
+			     Nach (n-a-c-h@users.sourceforge.net),
+			     zones (kasumitokoduck@yahoo.com)
 
   (c) Copyright 2006 - 2007  nitsuja
 
   (c) Copyright 2009 - 2010  BearOso,
-                             OV2
+			     OV2
 
 
   BS-X C emulator code
   (c) Copyright 2005 - 2006  Dreamer Nom,
-                             zones
+			     zones
 
   C4 x86 assembler and some C emulation code
   (c) Copyright 2000 - 2003  _Demo_ (_demo_@zsnes.com),
-                             Nach,
-                             zsKnight (zsknight@zsnes.com)
+			     Nach,
+			     zsKnight (zsknight@zsnes.com)
 
   C4 C++ code
   (c) Copyright 2003 - 2006  Brad Jorsch,
-                             Nach
+			     Nach
 
   DSP-1 emulator code
   (c) Copyright 1998 - 2006  _Demo_,
-                             Andreas Naive (andreasnaive@gmail.com),
-                             Gary Henderson,
-                             Ivar (ivar@snes9x.com),
-                             John Weidman,
-                             Kris Bleakley,
-                             Matthew Kendora,
-                             Nach,
-                             neviksti (neviksti@hotmail.com)
+			     Andreas Naive (andreasnaive@gmail.com),
+			     Gary Henderson,
+			     Ivar (ivar@snes9x.com),
+			     John Weidman,
+			     Kris Bleakley,
+			     Matthew Kendora,
+			     Nach,
+			     neviksti (neviksti@hotmail.com)
 
   DSP-2 emulator code
   (c) Copyright 2003         John Weidman,
-                             Kris Bleakley,
-                             Lord Nightmare (lord_nightmare@users.sourceforge.net),
-                             Matthew Kendora,
-                             neviksti
+			     Kris Bleakley,
+			     Lord Nightmare
+ (lord_nightmare@users.sourceforge.net), Matthew Kendora, neviksti
 
   DSP-3 emulator code
   (c) Copyright 2003 - 2006  John Weidman,
-                             Kris Bleakley,
-                             Lancer,
-                             z80 gaiden
+			     Kris Bleakley,
+			     Lancer,
+			     z80 gaiden
 
   DSP-4 emulator code
   (c) Copyright 2004 - 2006  Dreamer Nom,
-                             John Weidman,
-                             Kris Bleakley,
-                             Nach,
-                             z80 gaiden
+			     John Weidman,
+			     Kris Bleakley,
+			     Nach,
+			     z80 gaiden
 
   OBC1 emulator code
   (c) Copyright 2001 - 2004  zsKnight,
-                             pagefault (pagefault@zsnes.com),
-                             Kris Bleakley
-                             Ported from x86 assembler to C by sanmaiwashi
+			     pagefault (pagefault@zsnes.com),
+			     Kris Bleakley
+			     Ported from x86 assembler to C by sanmaiwashi
 
   SPC7110 and RTC C++ emulator code used in 1.39-1.51
   (c) Copyright 2002         Matthew Kendora with research by
-                             zsKnight,
-                             John Weidman,
-                             Dark Force
+			     zsKnight,
+			     John Weidman,
+			     Dark Force
 
   SPC7110 and RTC C++ emulator code used in 1.52+
   (c) Copyright 2009         byuu,
-                             neviksti
+			     neviksti
 
   S-DD1 C emulator code
   (c) Copyright 2003         Brad Jorsch with research by
-                             Andreas Naive,
-                             John Weidman
+			     Andreas Naive,
+			     John Weidman
 
   S-RTC C emulator code
   (c) Copyright 2001 - 2006  byuu,
-                             John Weidman
+			     John Weidman
 
   ST010 C++ emulator code
   (c) Copyright 2003         Feather,
-                             John Weidman,
-                             Kris Bleakley,
-                             Matthew Kendora
+			     John Weidman,
+			     Kris Bleakley,
+			     Matthew Kendora
 
   Super FX x86 assembler emulator code
   (c) Copyright 1998 - 2003  _Demo_,
-                             pagefault,
-                             zsKnight
+			     pagefault,
+			     zsKnight
 
   Super FX C emulator code
   (c) Copyright 1997 - 1999  Ivar,
-                             Gary Henderson,
-                             John Weidman
+			     Gary Henderson,
+			     John Weidman
 
   Sound emulator code used in 1.5-1.51
   (c) Copyright 1998 - 2003  Brad Martin
@@ -134,10 +133,10 @@
 
   Win32 GUI code
   (c) Copyright 2003 - 2006  blip,
-                             funkyass,
-                             Matthew Kendora,
-                             Nach,
-                             nitsuja
+			     funkyass,
+			     Matthew Kendora,
+			     Nach,
+			     nitsuja
   (c) Copyright 2009 - 2010  OV2
 
   Mac OS GUI code
@@ -173,7 +172,6 @@
   Super NES and Super Nintendo Entertainment System are trademarks of
   Nintendo Co., Limited and its subsidiary companies.
  ***********************************************************************************/
-
 
 #ifndef _NETPLAY_H_
 #define _NETPLAY_H_
@@ -229,91 +227,85 @@
 #define NP_SERV_SRAM_DATA 7
 #define NP_SERV_READY 8
 
-struct SNPClient
-{
-    volatile uint8 SendSequenceNum;
-    volatile uint8 ReceiveSequenceNum;
-    volatile bool8 Connected;
-    volatile bool8 SaidHello;
-    volatile bool8 Paused;
-    volatile bool8 Ready;
-    int Socket;
-    char *ROMName;
-    char *HostName;
-    char *Who;
+struct SNPClient {
+	volatile uint8 SendSequenceNum;
+	volatile uint8 ReceiveSequenceNum;
+	volatile bool8 Connected;
+	volatile bool8 SaidHello;
+	volatile bool8 Paused;
+	volatile bool8 Ready;
+	int Socket;
+	char *ROMName;
+	char *HostName;
+	char *Who;
 };
 
-enum {
-    NP_SERVER_SEND_ROM_IMAGE,
-    NP_SERVER_SYNC_ALL,
-    NP_SERVER_SYNC_CLIENT,
-    NP_SERVER_SEND_FREEZE_FILE_ALL,
-    NP_SERVER_SEND_ROM_LOAD_REQUEST_ALL,
-    NP_SERVER_RESET_ALL,
-    NP_SERVER_SEND_SRAM_ALL,
-    NP_SERVER_SEND_SRAM
-};
+enum { NP_SERVER_SEND_ROM_IMAGE,
+       NP_SERVER_SYNC_ALL,
+       NP_SERVER_SYNC_CLIENT,
+       NP_SERVER_SEND_FREEZE_FILE_ALL,
+       NP_SERVER_SEND_ROM_LOAD_REQUEST_ALL,
+       NP_SERVER_RESET_ALL,
+       NP_SERVER_SEND_SRAM_ALL,
+       NP_SERVER_SEND_SRAM };
 
 #define NP_MAX_TASKS 20
 
-struct NPServerTask
-{
-    uint32 Task;
-    void  *Data;
+struct NPServerTask {
+	uint32 Task;
+	void *Data;
 };
 
-struct SNPServer
-{
-    struct SNPClient Clients [NP_MAX_CLIENTS];
-    int    NumClients;
-    volatile struct NPServerTask TaskQueue [NP_MAX_TASKS];
-    volatile uint32 TaskHead;
-    volatile uint32 TaskTail;
-    int    Socket;
-    uint32 FrameTime;
-    uint32 FrameCount;
-    char   ROMName [30];
-    uint32 Joypads [NP_MAX_CLIENTS];
-    bool8  ClientPaused;
-    uint32 Paused;
-    bool8  SendROMImageOnConnect;
-    bool8  SyncByReset;
+struct SNPServer {
+	struct SNPClient Clients[NP_MAX_CLIENTS];
+	int NumClients;
+	volatile struct NPServerTask TaskQueue[NP_MAX_TASKS];
+	volatile uint32 TaskHead;
+	volatile uint32 TaskTail;
+	int Socket;
+	uint32 FrameTime;
+	uint32 FrameCount;
+	char ROMName[30];
+	uint32 Joypads[NP_MAX_CLIENTS];
+	bool8 ClientPaused;
+	uint32 Paused;
+	bool8 SendROMImageOnConnect;
+	bool8 SyncByReset;
 };
 
 #define NP_MAX_ACTION_LEN 200
 
-struct SNetPlay
-{
-    volatile uint8  MySequenceNum;
-    volatile uint8  ServerSequenceNum;
-    volatile bool8  Connected;
-    volatile bool8  Abort;
-    volatile uint8  Player;
-    volatile bool8  ClientsReady [NP_MAX_CLIENTS];
-    volatile bool8  ClientsPaused [NP_MAX_CLIENTS];
-    volatile bool8  Paused;
-    volatile bool8  PendingWait4Sync;
-    volatile uint8  PercentageComplete;
-    volatile bool8  Waiting4EmulationThread;
-    volatile bool8  Answer;
+struct SNetPlay {
+	volatile uint8 MySequenceNum;
+	volatile uint8 ServerSequenceNum;
+	volatile bool8 Connected;
+	volatile bool8 Abort;
+	volatile uint8 Player;
+	volatile bool8 ClientsReady[NP_MAX_CLIENTS];
+	volatile bool8 ClientsPaused[NP_MAX_CLIENTS];
+	volatile bool8 Paused;
+	volatile bool8 PendingWait4Sync;
+	volatile uint8 PercentageComplete;
+	volatile bool8 Waiting4EmulationThread;
+	volatile bool8 Answer;
 #ifdef __WIN32__
-    HANDLE          ReplyEvent;
+	HANDLE ReplyEvent;
 #endif
-    volatile int    Socket;
-    char *ServerHostName;
-    char *ROMName;
-    int Port;
-    volatile uint32 JoypadWriteInd;
-    volatile uint32 JoypadReadInd;
-    uint32 Joypads [NP_JOYPAD_HIST_SIZE][NP_MAX_CLIENTS];
-    uint32 Frame [NP_JOYPAD_HIST_SIZE];
-    uint32 FrameCount;
-    uint32 MaxFrameSkip;
-    uint32 MaxBehindFrameCount;
-    bool8 JoypadsReady [NP_JOYPAD_HIST_SIZE][NP_MAX_CLIENTS];
-    char   ActionMsg [NP_MAX_ACTION_LEN];
-    char   ErrorMsg [NP_MAX_ACTION_LEN];
-    char   WarningMsg [NP_MAX_ACTION_LEN];
+	volatile int Socket;
+	char *ServerHostName;
+	char *ROMName;
+	int Port;
+	volatile uint32 JoypadWriteInd;
+	volatile uint32 JoypadReadInd;
+	uint32 Joypads[NP_JOYPAD_HIST_SIZE][NP_MAX_CLIENTS];
+	uint32 Frame[NP_JOYPAD_HIST_SIZE];
+	uint32 FrameCount;
+	uint32 MaxFrameSkip;
+	uint32 MaxBehindFrameCount;
+	bool8 JoypadsReady[NP_JOYPAD_HIST_SIZE][NP_MAX_CLIENTS];
+	char ActionMsg[NP_MAX_ACTION_LEN];
+	char ErrorMsg[NP_MAX_ACTION_LEN];
+	char WarningMsg[NP_MAX_ACTION_LEN];
 };
 
 extern "C" struct SNetPlay NetPlay;
@@ -324,54 +316,53 @@ extern "C" struct SNetPlay NetPlay;
 // frame_time (4)
 // ROMName (variable)
 
-#define WRITE_LONG(p, v) { \
-*((p) + 0) = (uint8) ((v) >> 24); \
-*((p) + 1) = (uint8) ((v) >> 16); \
-*((p) + 2) = (uint8) ((v) >> 8); \
-*((p) + 3) = (uint8) ((v) >> 0); \
-}
+#define WRITE_LONG(p, v)                                                       \
+	{                                                                      \
+		*((p) + 0) = (uint8)((v) >> 24);                               \
+		*((p) + 1) = (uint8)((v) >> 16);                               \
+		*((p) + 2) = (uint8)((v) >> 8);                                \
+		*((p) + 3) = (uint8)((v) >> 0);                                \
+	}
 
-#define READ_LONG(p) \
-((((uint8) *((p) + 0)) << 24) | \
- (((uint8) *((p) + 1)) << 16) | \
- (((uint8) *((p) + 2)) <<  8) | \
- (((uint8) *((p) + 3)) <<  0))
+#define READ_LONG(p)                                                           \
+	((((uint8) * ((p) + 0)) << 24) | (((uint8) * ((p) + 1)) << 16) |       \
+	 (((uint8) * ((p) + 2)) << 8) | (((uint8) * ((p) + 3)) << 0))
 
-bool8 S9xNPConnectToServer (const char *server_name, int port,
-                            const char *rom_name);
-bool8 S9xNPWaitForHeartBeat ();
-bool8 S9xNPWaitForHeartBeatDelay (uint32 time_msec = 0);
-bool8 S9xNPCheckForHeartBeat (uint32 time_msec = 0);
-uint32 S9xNPGetJoypad (int which1);
-bool8 S9xNPSendJoypadUpdate (uint32 joypad);
-void S9xNPDisconnect ();
-bool8 S9xNPInitialise ();
-bool8 S9xNPSendData (int fd, const uint8 *data, int len);
-bool8 S9xNPGetData (int fd, uint8 *data, int len);
+bool8 S9xNPConnectToServer(const char *server_name, int port,
+			   const char *rom_name);
+bool8 S9xNPWaitForHeartBeat();
+bool8 S9xNPWaitForHeartBeatDelay(uint32 time_msec = 0);
+bool8 S9xNPCheckForHeartBeat(uint32 time_msec = 0);
+uint32 S9xNPGetJoypad(int which1);
+bool8 S9xNPSendJoypadUpdate(uint32 joypad);
+void S9xNPDisconnect();
+bool8 S9xNPInitialise();
+bool8 S9xNPSendData(int fd, const uint8 *data, int len);
+bool8 S9xNPGetData(int fd, uint8 *data, int len);
 
-void S9xNPSyncClients ();
-void S9xNPStepJoypadHistory ();
+void S9xNPSyncClients();
+void S9xNPStepJoypadHistory();
 
-void S9xNPResetJoypadReadPos ();
-bool8 S9xNPSendReady (uint8 op = NP_CLNT_READY);
-bool8 S9xNPSendPause (bool8 pause);
-void S9xNPReset ();
-void S9xNPSetAction (const char *action, bool8 force = FALSE);
-void S9xNPSetError (const char *error);
-void S9xNPSetWarning (const char *warning);
-void S9xNPDiscardHeartbeats ();
-void S9xNPServerQueueSendingFreezeFile (const char *filename);
-void S9xNPServerQueueSyncAll ();
-void S9xNPServerQueueSendingROMImage ();
-void S9xNPServerQueueSendingLoadROMRequest (const char *filename);
+void S9xNPResetJoypadReadPos();
+bool8 S9xNPSendReady(uint8 op = NP_CLNT_READY);
+bool8 S9xNPSendPause(bool8 pause);
+void S9xNPReset();
+void S9xNPSetAction(const char *action, bool8 force = FALSE);
+void S9xNPSetError(const char *error);
+void S9xNPSetWarning(const char *warning);
+void S9xNPDiscardHeartbeats();
+void S9xNPServerQueueSendingFreezeFile(const char *filename);
+void S9xNPServerQueueSyncAll();
+void S9xNPServerQueueSendingROMImage();
+void S9xNPServerQueueSendingLoadROMRequest(const char *filename);
 
-void S9xNPServerAddTask (uint32 task, void *data);
+void S9xNPServerAddTask(uint32 task, void *data);
 
-bool8 S9xNPStartServer (int port);
-void S9xNPStopServer ();
+bool8 S9xNPStartServer(int port);
+void S9xNPStopServer();
 #ifdef __WIN32__
 #define S9xGetMilliTime timeGetTime
 #else
-uint32 S9xGetMilliTime ();
+uint32 S9xGetMilliTime();
 #endif
 #endif

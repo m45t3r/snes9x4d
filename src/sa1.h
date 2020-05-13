@@ -109,72 +109,69 @@ struct SSA1 {
 #define SA1CheckEmulation() (reg->P.W & Emulation)
 
 #define SA1ClearFlags(f) (SA1Registers.P.W &= ~(f))
-#define SA1SetFlags(f)   (SA1Registers.P.W |=  (f))
-#define SA1CheckFlag(f)  (SA1Registers.P.W & (f))
-
+#define SA1SetFlags(f) (SA1Registers.P.W |= (f))
+#define SA1CheckFlag(f) (SA1Registers.P.W & (f))
 
 START_EXTERN_C
-uint8 S9xSA1GetByte (uint32, struct SCPUState *);
-uint16 S9xSA1GetWord (uint32, struct SCPUState *);
-void S9xSA1SetByte (uint8, uint32, struct SCPUState *);
-void S9xSA1SetWord (uint16, uint32, struct SCPUState *);
-void S9xSA1SetPCBase (uint32, struct SCPUState *);
-uint8 S9xGetSA1 (uint32);
-void S9xSetSA1 (uint8, uint32);
+uint8 S9xSA1GetByte(uint32, struct SCPUState *);
+uint16 S9xSA1GetWord(uint32, struct SCPUState *);
+void S9xSA1SetByte(uint8, uint32, struct SCPUState *);
+void S9xSA1SetWord(uint16, uint32, struct SCPUState *);
+void S9xSA1SetPCBase(uint32, struct SCPUState *);
+uint8 S9xGetSA1(uint32);
+void S9xSetSA1(uint8, uint32);
 
-extern struct SOpcodes S9xSA1OpcodesM1X1 [256];
-extern struct SOpcodes S9xSA1OpcodesM1X0 [256];
-extern struct SOpcodes S9xSA1OpcodesM0X1 [256];
-extern struct SOpcodes S9xSA1OpcodesM0X0 [256];
+extern struct SOpcodes S9xSA1OpcodesM1X1[256];
+extern struct SOpcodes S9xSA1OpcodesM1X0[256];
+extern struct SOpcodes S9xSA1OpcodesM0X1[256];
+extern struct SOpcodes S9xSA1OpcodesM0X0[256];
 extern struct SRegisters SA1Registers;
 extern struct SICPU SA1ICPU;
 extern struct SCPUState SA1;
-//extern struct SSA1Registers SA1Registers;
-//extern struct SSA1 SA1;
+// extern struct SSA1Registers SA1Registers;
+// extern struct SSA1 SA1;
 
-void S9xSA1MainLoop ();
-void S9xSA1Init ();
-void S9xFixSA1AfterSnapshotLoad ();
-void S9xSA1ExecuteDuringSleep ();
+void S9xSA1MainLoop();
+void S9xSA1Init();
+void S9xFixSA1AfterSnapshotLoad();
+void S9xSA1ExecuteDuringSleep();
 END_EXTERN_C
 
-#define SNES_IRQ_SOURCE	    (1 << 7)
-#define TIMER_IRQ_SOURCE    (1 << 6)
-#define DMA_IRQ_SOURCE	    (1 << 5)
+#define SNES_IRQ_SOURCE (1 << 7)
+#define TIMER_IRQ_SOURCE (1 << 6)
+#define DMA_IRQ_SOURCE (1 << 5)
 
 STATIC inline void S9xSA1UnpackStatus()
 {
-    SA1ICPU._Zero = (SA1Registers.PL & Zero) == 0;
-    SA1ICPU._Negative = (SA1Registers.PL & Negative);
-    SA1ICPU._Carry = (SA1Registers.PL & Carry);
-    SA1ICPU._Overflow = (SA1Registers.PL & Overflow) >> 6;
+	SA1ICPU._Zero = (SA1Registers.PL & Zero) == 0;
+	SA1ICPU._Negative = (SA1Registers.PL & Negative);
+	SA1ICPU._Carry = (SA1Registers.PL & Carry);
+	SA1ICPU._Overflow = (SA1Registers.PL & Overflow) >> 6;
 }
 
 STATIC inline void S9xSA1PackStatus()
 {
-    SA1Registers.PL &= ~(Zero | Negative | Carry | Overflow);
-    SA1Registers.PL |= (SA1ICPU._Carry & 0xff) | (((SA1ICPU._Zero & 0xff) == 0) << 1) |
-		       ((SA1ICPU._Negative & 0xff) & 0x80) | ((SA1ICPU._Overflow & 0xff) << 6);
+	SA1Registers.PL &= ~(Zero | Negative | Carry | Overflow);
+	SA1Registers.PL |= (SA1ICPU._Carry & 0xff) |
+			   (((SA1ICPU._Zero & 0xff) == 0) << 1) |
+			   ((SA1ICPU._Negative & 0xff) & 0x80) |
+			   ((SA1ICPU._Overflow & 0xff) << 6);
 }
 
-STATIC inline void S9xSA1FixCycles (struct SRegisters * reg, struct SICPU * icpu)
+STATIC inline void S9xSA1FixCycles(struct SRegisters *reg, struct SICPU *icpu)
 {
-    if (SA1CheckEmulation ())
-	icpu->S9xOpcodes = S9xSA1OpcodesM1X1;
-    else
-    if (SA1CheckMemory ())
-    {
-	if (SA1CheckIndex ())
-	    icpu->S9xOpcodes = S9xSA1OpcodesM1X1;
-	else
-	    icpu->S9xOpcodes = S9xSA1OpcodesM1X0;
-    }
-    else
-    {
-	if (SA1CheckIndex ())
-	    icpu->S9xOpcodes = S9xSA1OpcodesM0X1;
-	else
-	    icpu->S9xOpcodes = S9xSA1OpcodesM0X0;
-    }
+	if (SA1CheckEmulation())
+		icpu->S9xOpcodes = S9xSA1OpcodesM1X1;
+	else if (SA1CheckMemory()) {
+		if (SA1CheckIndex())
+			icpu->S9xOpcodes = S9xSA1OpcodesM1X1;
+		else
+			icpu->S9xOpcodes = S9xSA1OpcodesM1X0;
+	} else {
+		if (SA1CheckIndex())
+			icpu->S9xOpcodes = S9xSA1OpcodesM0X1;
+		else
+			icpu->S9xOpcodes = S9xSA1OpcodesM0X0;
+	}
 }
 #endif

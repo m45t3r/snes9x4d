@@ -54,33 +54,33 @@
 #define PL P.B.l
 #define PH P.B.h
 
-#define Carry       1
-#define Zero        2
-#define IRQ         4
-#define Decimal     8
-#define IndexFlag  16
+#define Carry 1
+#define Zero 2
+#define IRQ 4
+#define Decimal 8
+#define IndexFlag 16
 #define MemoryFlag 32
-#define Overflow   64
-#define Negative  128
+#define Overflow 64
+#define Negative 128
 #define Emulation 256
 
-#define CLEARCARRY()	(icpu->_Carry = 0)
-#define SETCARRY()		(icpu->_Carry = 1)
-#define SETZERO()		(icpu->_Zero = 0)
-#define	CLEARZERO()		(icpu->_Zero = 1)
-#define	SETIRQ_OP()		(reg->P.W |= IRQ)
-#define SETIRQ()		(Registers.P.W |= IRQ)
-#define CLEARIRQ()		(reg->P.W &= ~IRQ)
-#define SETDECIMAL()	(reg->P.W |= Decimal)
-#define CLEARDECIMAL()	(Registers.P.W &= ~Decimal)
-#define CLEARDECIMAL_OP()	(reg->P.W &= ~Decimal)
+#define CLEARCARRY() (icpu->_Carry = 0)
+#define SETCARRY() (icpu->_Carry = 1)
+#define SETZERO() (icpu->_Zero = 0)
+#define CLEARZERO() (icpu->_Zero = 1)
+#define SETIRQ_OP() (reg->P.W |= IRQ)
+#define SETIRQ() (Registers.P.W |= IRQ)
+#define CLEARIRQ() (reg->P.W &= ~IRQ)
+#define SETDECIMAL() (reg->P.W |= Decimal)
+#define CLEARDECIMAL() (Registers.P.W &= ~Decimal)
+#define CLEARDECIMAL_OP() (reg->P.W &= ~Decimal)
 #define SETINDEX() (	(reg->P.W |= IndexFlag)
-#define CLEARINDEX()	(reg->P.W &= ~IndexFlag)
-#define SETMEMORY()		(reg->P.W |= MemoryFlag)
-#define CLEARMEMORY()	(reg->P.W &= ~MemoryFlag)
-#define SETOVERFLOW()	(icpu->_Overflow = 1)
+#define CLEARINDEX() (reg->P.W &= ~IndexFlag)
+#define SETMEMORY() (reg->P.W |= MemoryFlag)
+#define CLEARMEMORY() (reg->P.W &= ~MemoryFlag)
+#define SETOVERFLOW() (icpu->_Overflow = 1)
 #define CLEAROVERFLOW() (icpu->_Overflow = 0)
-#define SETNEGATIVE()	(icpu->_Negative = 0x80)
+#define SETNEGATIVE() (icpu->_Negative = 0x80)
 #define CLEARNEGATIVE() (icpu->_Negative = 0)
 
 #define CHECKZERO() (icpu->_Zero == 0)
@@ -95,30 +95,33 @@
 #define CHECKEMULATION_OP() (reg->P.W & Emulation)
 
 #define CLEARFLAGS(f) (Registers.P.W &= ~(f))
-#define SETFLAGS(f)   (Registers.P.W |=  (f))
-#define SETFLAGS_OP(f)   (reg->P.W |=  (f))
-#define CHECKFLAG(f)  (reg->PL & (f))
+#define SETFLAGS(f) (Registers.P.W |= (f))
+#define SETFLAGS_OP(f) (reg->P.W |= (f))
+#define CHECKFLAG(f) (reg->PL & (f))
 
-typedef union
-{
+typedef union {
 #ifdef LSB_FIRST
-    struct { uint8 l,h; } B;
+	struct {
+		uint8 l, h;
+	} B;
 #else
-    struct { uint8 h,l; } B;
+	struct {
+		uint8 h, l;
+	} B;
 #endif
-    uint16 W;
+	uint16 W;
 } pair;
 
-struct SRegisters{
-    uint16_32	PC;
-    uint8_32	PB;
-    uint8_32	DB;
-    pair		P;
-    pair		A;
-    pair		D;
-    pair		S;
-    pair		X;
-    pair		Y;
+struct SRegisters {
+	uint16_32 PC;
+	uint8_32 PB;
+	uint8_32 DB;
+	pair P;
+	pair A;
+	pair D;
+	pair S;
+	pair X;
+	pair Y;
 };
 
 /*
@@ -134,20 +137,19 @@ struct SRegisters{
     uint16 PC;
 };
 */
-struct SICPU
-{
-    uint8		*Speed;
-    struct		SOpcodes *S9xOpcodes;
-    uint8_32	_Carry;
-    uint8_32	_Zero;
-    uint8_32	_Negative;
-    uint8_32	_Overflow;
-    bool8_32	CPUExecuting;
-    uint32		ShiftedPB;
-    uint32		ShiftedDB;
-    uint32		Frame;
-    uint32		Scanline;
-    uint32		FrameAdvanceCount;
+struct SICPU {
+	uint8 *Speed;
+	struct SOpcodes *S9xOpcodes;
+	uint8_32 _Carry;
+	uint8_32 _Zero;
+	uint8_32 _Negative;
+	uint8_32 _Overflow;
+	bool8_32 CPUExecuting;
+	uint32 ShiftedPB;
+	uint32 ShiftedDB;
+	uint32 Frame;
+	uint32 Scanline;
+	uint32 FrameAdvanceCount;
 };
 
 EXTERN_C struct SRegisters Registers;

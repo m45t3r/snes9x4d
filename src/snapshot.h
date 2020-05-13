@@ -53,11 +53,11 @@
 #define FILE_NOT_FOUND (-3)
 
 START_EXTERN_C
-bool8_32 S9xFreezeGame (const char *filename);
-bool8_32 S9xUnfreezeGame (const char *filename);
-bool8_32 Snapshot (const char *filename);
-bool8_32 S9xLoadSnapshot (const char *filename);
-bool8_32 S9xSPCDump (const char *filename);
+bool8_32 S9xFreezeGame(const char *filename);
+bool8_32 S9xUnfreezeGame(const char *filename);
+bool8_32 Snapshot(const char *filename);
+bool8_32 S9xLoadSnapshot(const char *filename);
+bool8_32 S9xSPCDump(const char *filename);
 END_EXTERN_C
 
 #endif

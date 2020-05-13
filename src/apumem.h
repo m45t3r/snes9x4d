@@ -48,129 +48,106 @@ extern uint8 W4;
 extern uint8 APUROM[64];
 END_EXTERN_C
 
-INLINE uint8 S9xAPUGetByteZ (uint8 Address, struct SIAPU * iapu)
+INLINE uint8 S9xAPUGetByteZ(uint8 Address, struct SIAPU *iapu)
 {
-    if (Address >= 0xf0 && iapu->DirectPage == iapu->RAM)
-    {
-	if (Address >= 0xf4 && Address <= 0xf7)
-	{
+	if (Address >= 0xf0 && iapu->DirectPage == iapu->RAM) {
+		if (Address >= 0xf4 && Address <= 0xf7) {
 #ifdef SPC700_SHUTDOWN
-	    iapu->WaitAddress2 = iapu->WaitAddress1;
-	    iapu->WaitAddress1 = iapu->PC;
+			iapu->WaitAddress2 = iapu->WaitAddress1;
+			iapu->WaitAddress1 = iapu->PC;
 #endif
-	    return (iapu->RAM [Address]);
-	}
-	if (Address >= 0xfd)
-	{
+			return (iapu->RAM[Address]);
+		}
+		if (Address >= 0xfd) {
 #ifdef SPC700_SHUTDOWN
-	    iapu->WaitAddress2 = iapu->WaitAddress1;
-	    iapu->WaitAddress1 = iapu->PC;
+			iapu->WaitAddress2 = iapu->WaitAddress1;
+			iapu->WaitAddress1 = iapu->PC;
 #endif
-	    uint8 t = iapu->RAM [Address];
-	    iapu->RAM [Address] = 0;
-	    return (t);
-	}
-	else
-	if (Address == 0xf3)
-	    return (S9xGetAPUDSP ());
+			uint8 t = iapu->RAM[Address];
+			iapu->RAM[Address] = 0;
+			return (t);
+		} else if (Address == 0xf3)
+			return (S9xGetAPUDSP());
 
-	return (iapu->RAM [Address]);
-    }
-    else
-	return (iapu->DirectPage [Address]);
+		return (iapu->RAM[Address]);
+	} else
+		return (iapu->DirectPage[Address]);
 }
 
-INLINE void S9xAPUSetByteZ (uint8 byte, uint8 Address, struct SIAPU * iapu, struct SAPU * apu)
+INLINE void S9xAPUSetByteZ(uint8 byte, uint8 Address, struct SIAPU *iapu,
+			   struct SAPU *apu)
 {
-    if (Address >= 0xf0 && iapu->DirectPage == iapu->RAM)
-    {
-	if (Address == 0xf3)
-	    S9xSetAPUDSP (byte, apu, iapu);
-	else
-	if (Address >= 0xf4 && Address <= 0xf7)
-	    apu->OutPorts [Address - 0xf4] = byte;
-	else
-	if (Address == 0xf1)
-	    S9xSetAPUControl (byte);
-	else
-	if (Address < 0xfd)
-	{
-	    iapu->RAM [Address] = byte;
-	    if (Address >= 0xfa)
-	    {
-		if (byte == 0)
-		    apu->TimerTarget [Address - 0xfa] = 0x100;
-		else
-		    apu->TimerTarget [Address - 0xfa] = byte;
-	    }
-	}
-    }
-    else
-	iapu->DirectPage [Address] = byte;
+	if (Address >= 0xf0 && iapu->DirectPage == iapu->RAM) {
+		if (Address == 0xf3)
+			S9xSetAPUDSP(byte, apu, iapu);
+		else if (Address >= 0xf4 && Address <= 0xf7)
+			apu->OutPorts[Address - 0xf4] = byte;
+		else if (Address == 0xf1)
+			S9xSetAPUControl(byte);
+		else if (Address < 0xfd) {
+			iapu->RAM[Address] = byte;
+			if (Address >= 0xfa) {
+				if (byte == 0)
+					apu->TimerTarget[Address - 0xfa] =
+					    0x100;
+				else
+					apu->TimerTarget[Address - 0xfa] = byte;
+			}
+		}
+	} else
+		iapu->DirectPage[Address] = byte;
 }
 
-INLINE uint8 S9xAPUGetByte (uint32 Address, struct SIAPU * iapu)
+INLINE uint8 S9xAPUGetByte(uint32 Address, struct SIAPU *iapu)
 {
-    Address &= 0xffff;
+	Address &= 0xffff;
 
-    if (Address <= 0xff && Address >= 0xf0)
-    {
-	if (Address >= 0xf4 && Address <= 0xf7)
-	{
+	if (Address <= 0xff && Address >= 0xf0) {
+		if (Address >= 0xf4 && Address <= 0xf7) {
 #ifdef SPC700_SHUTDOWN
-	    iapu->WaitAddress2 = iapu->WaitAddress1;
-	    iapu->WaitAddress1 = iapu->PC;
+			iapu->WaitAddress2 = iapu->WaitAddress1;
+			iapu->WaitAddress1 = iapu->PC;
 #endif
-	    return (iapu->RAM [Address]);
-	}
-	else
-	if (Address == 0xf3)
-	    return (S9xGetAPUDSP ());
-	if (Address >= 0xfd)
-	{
+			return (iapu->RAM[Address]);
+		} else if (Address == 0xf3)
+			return (S9xGetAPUDSP());
+		if (Address >= 0xfd) {
 #ifdef SPC700_SHUTDOWN
-	    iapu->WaitAddress2 = iapu->WaitAddress1;
-	    iapu->WaitAddress1 = iapu->PC;
+			iapu->WaitAddress2 = iapu->WaitAddress1;
+			iapu->WaitAddress1 = iapu->PC;
 #endif
-	    uint8 t = iapu->RAM [Address];
-	    iapu->RAM [Address] = 0;
-	    return (t);
-	}
-	return (iapu->RAM [Address]);
-    }
-    else
-	return (iapu->RAM [Address]);
+			uint8 t = iapu->RAM[Address];
+			iapu->RAM[Address] = 0;
+			return (t);
+		}
+		return (iapu->RAM[Address]);
+	} else
+		return (iapu->RAM[Address]);
 }
 
-INLINE void S9xAPUSetByte (uint8 byte, uint32 Address, struct SIAPU * iapu, struct SAPU * apu)
+INLINE void S9xAPUSetByte(uint8 byte, uint32 Address, struct SIAPU *iapu,
+			  struct SAPU *apu)
 {
-    Address &= 0xffff;
+	Address &= 0xffff;
 
-    if (Address <= 0xff && Address >= 0xf0)
-    {
-	if (Address == 0xf3)
-	    S9xSetAPUDSP (byte, apu, iapu);
-	else
-	if (Address >= 0xf4 && Address <= 0xf7)
-	    apu->OutPorts [Address - 0xf4] = byte;
-	else
-	if (Address == 0xf1)
-	    S9xSetAPUControl (byte);
-	else
-	if (Address < 0xfd)
-	{
-	    iapu->RAM [Address] = byte;
-	    if (Address >= 0xfa)
-	    {
-		if (byte == 0)
-		    apu->TimerTarget [Address - 0xfa] = 0x100;
-		else
-		    apu->TimerTarget [Address - 0xfa] = byte;
-	    }
-	}
-    }
-    else
-    {
+	if (Address <= 0xff && Address >= 0xf0) {
+		if (Address == 0xf3)
+			S9xSetAPUDSP(byte, apu, iapu);
+		else if (Address >= 0xf4 && Address <= 0xf7)
+			apu->OutPorts[Address - 0xf4] = byte;
+		else if (Address == 0xf1)
+			S9xSetAPUControl(byte);
+		else if (Address < 0xfd) {
+			iapu->RAM[Address] = byte;
+			if (Address >= 0xfa) {
+				if (byte == 0)
+					apu->TimerTarget[Address - 0xfa] =
+					    0x100;
+				else
+					apu->TimerTarget[Address - 0xfa] = byte;
+			}
+		}
+	} else {
 #if 0
 if (Address >= 0x2500 && Address <= 0x2504)
 printf ("%06d %04x <- %02x\n", ICPU.Scanline, Address, byte);
@@ -187,14 +164,13 @@ if (Address == 0x26c6)
     printf ("TRACING SWITCHED ON\n");
 }
 #endif
-	if (Address < 0xffc0)
-	    iapu->RAM [Address] = byte;
-	else
-	{
-	    apu->ExtraRAM [Address - 0xffc0] = byte;
-	    if (!apu->ShowROM)
-		iapu->RAM [Address] = byte;
+		if (Address < 0xffc0)
+			iapu->RAM[Address] = byte;
+		else {
+			apu->ExtraRAM[Address - 0xffc0] = byte;
+			if (!apu->ShowROM)
+				iapu->RAM[Address] = byte;
+		}
 	}
-    }
 }
 #endif

@@ -2,47 +2,47 @@
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
 
   (c) Copyright 1996 - 2002 Gary Henderson (gary.henderson@ntlworld.com) and
-                            Jerremy Koot (jkoot@snes9x.com)
+			    Jerremy Koot (jkoot@snes9x.com)
 
   (c) Copyright 2001 - 2004 John Weidman (jweidman@slip.net)
 
   (c) Copyright 2002 - 2004 Brad Jorsch (anomie@users.sourceforge.net),
-                            funkyass (funkyass@spam.shaw.ca),
-                            Joel Yliluoma (http://iki.fi/bisqwit/)
-                            Kris Bleakley (codeviolation@hotmail.com),
-                            Matthew Kendora,
-                            Nach (n-a-c-h@users.sourceforge.net),
-                            Peter Bortas (peter@bortas.org) and
-                            zones (kasumitokoduck@yahoo.com)
+			    funkyass (funkyass@spam.shaw.ca),
+			    Joel Yliluoma (http://iki.fi/bisqwit/)
+			    Kris Bleakley (codeviolation@hotmail.com),
+			    Matthew Kendora,
+			    Nach (n-a-c-h@users.sourceforge.net),
+			    Peter Bortas (peter@bortas.org) and
+			    zones (kasumitokoduck@yahoo.com)
 
   C4 x86 assembler and some C emulation code
   (c) Copyright 2000 - 2003 zsKnight (zsknight@zsnes.com),
-                            _Demo_ (_demo_@zsnes.com), and Nach
+			    _Demo_ (_demo_@zsnes.com), and Nach
 
   C4 C++ code
   (c) Copyright 2003 Brad Jorsch
 
   DSP-1 emulator code
   (c) Copyright 1998 - 2004 Ivar (ivar@snes9x.com), _Demo_, Gary Henderson,
-                            John Weidman, neviksti (neviksti@hotmail.com),
-                            Kris Bleakley, Andreas Naive
+			    John Weidman, neviksti (neviksti@hotmail.com),
+			    Kris Bleakley, Andreas Naive
 
   DSP-2 emulator code
   (c) Copyright 2003 Kris Bleakley, John Weidman, neviksti, Matthew Kendora, and
-                     Lord Nightmare (lord_nightmare@users.sourceforge.net
+		     Lord Nightmare (lord_nightmare@users.sourceforge.net
 
   OBC1 emulator code
   (c) Copyright 2001 - 2004 zsKnight, pagefault (pagefault@zsnes.com) and
-                            Kris Bleakley
+			    Kris Bleakley
   Ported from x86 assembler to C by sanmaiwashi
 
   SPC7110 and RTC C++ emulator code
   (c) Copyright 2002 Matthew Kendora with research by
-                     zsKnight, John Weidman, and Dark Force
+		     zsKnight, John Weidman, and Dark Force
 
   S-DD1 C emulator code
   (c) Copyright 2003 Brad Jorsch with research by
-                     Andreas Naive and John Weidman
+		     Andreas Naive and John Weidman
 
   S-RTC C emulator code
   (c) Copyright 2001 John Weidman
@@ -216,80 +216,84 @@
 /* Address checking (definately slow) */
 /* #define FX_ADDRESS_CHECK */
 
-struct FxRegs_s
-{
-    /* FxChip registers */
-    uint32	avReg[16];		/* 16 Generic registers */
-    uint32	vColorReg;		/* Internal color register */
-    uint32	vPlotOptionReg;		/* Plot option register */
-    uint32	vStatusReg;		/* Status register */
-    uint32	vPrgBankReg;		/* Program bank index register */
-    uint32	vRomBankReg;		/* Rom bank index register */
-    uint32	vRamBankReg;		/* Ram bank index register */
-    uint32	vCacheBaseReg;		/* Cache base address register */
-    uint32	vCacheFlags;		/* Saying what parts of the cache was written to */
-    uint32	vLastRamAdr;		/* Last RAM address accessed */
-    uint32 *	pvDreg;			/* Pointer to current destination register */
-    uint32 *	pvSreg;			/* Pointer to current source register */
-    uint8	vRomBuffer;		/* Current byte read by R14 */
-    uint8	vPipe;			/* Instructionset pipe */
-    uint32	vPipeAdr;		/* The address of where the pipe was read from */
+struct FxRegs_s {
+	/* FxChip registers */
+	uint32 avReg[16];      /* 16 Generic registers */
+	uint32 vColorReg;      /* Internal color register */
+	uint32 vPlotOptionReg; /* Plot option register */
+	uint32 vStatusReg;     /* Status register */
+	uint32 vPrgBankReg;    /* Program bank index register */
+	uint32 vRomBankReg;    /* Rom bank index register */
+	uint32 vRamBankReg;    /* Ram bank index register */
+	uint32 vCacheBaseReg;  /* Cache base address register */
+	uint32 vCacheFlags; /* Saying what parts of the cache was written to */
+	uint32 vLastRamAdr; /* Last RAM address accessed */
+	uint32 *pvDreg;	    /* Pointer to current destination register */
+	uint32 *pvSreg;	    /* Pointer to current source register */
+	uint8 vRomBuffer;   /* Current byte read by R14 */
+	uint8 vPipe;	    /* Instructionset pipe */
+	uint32 vPipeAdr;    /* The address of where the pipe was read from */
 
-    /* status register optimization stuff */
-    uint32	vSign;			/* v & 0x8000 */
-    uint32	vZero;			/* v == 0 */
-    uint32	vCarry;			/* a value of 1 or 0 */
-    int32	vOverflow;		/* (v >= 0x8000 || v < -0x8000) */
+	/* status register optimization stuff */
+	uint32 vSign;	 /* v & 0x8000 */
+	uint32 vZero;	 /* v == 0 */
+	uint32 vCarry;	 /* a value of 1 or 0 */
+	int32 vOverflow; /* (v >= 0x8000 || v < -0x8000) */
 
-    /* Other emulator variables */
+	/* Other emulator variables */
 
-    int32	vErrorCode;
-    uint32	vIllegalAddress;
+	int32 vErrorCode;
+	uint32 vIllegalAddress;
 
-    uint8	bBreakPoint;
-    uint32	vBreakPoint;
-    uint32	vStepPoint;
+	uint8 bBreakPoint;
+	uint32 vBreakPoint;
+	uint32 vStepPoint;
 
-    uint8 *	pvRegisters;	/* 768 bytes located in the memory at address 0x3000 */
-    uint32	nRamBanks;	/* Number of 64kb-banks in FxRam (Don't confuse it with SNES-Ram!!!) */
-    uint8 *	pvRam;		/* Pointer to FxRam */
-    uint32	nRomBanks;	/* Number of 32kb-banks in Cart-ROM */
-    uint8 *     pvRom;		/* Pointer to Cart-ROM */
+	uint8 *
+	    pvRegisters; /* 768 bytes located in the memory at address 0x3000 */
+	uint32 nRamBanks; /* Number of 64kb-banks in FxRam (Don't confuse it
+			     with SNES-Ram!!!) */
+	uint8 *pvRam;	  /* Pointer to FxRam */
+	uint32 nRomBanks; /* Number of 32kb-banks in Cart-ROM */
+	uint8 *pvRom;	  /* Pointer to Cart-ROM */
 
-    uint32	vMode;		/* Color depth/mode */
-    uint32	vPrevMode;	/* Previous depth */
-    uint8 *	pvScreenBase;
-    uint8 *	apvScreen[32];		/* Pointer to each of the 32 screen colums */
-    int		x[32];
-    uint32	vScreenHeight;		/* 128, 160, 192 or 256 (could be overriden by cmode) */
-    uint32	vScreenRealHeight;	/* 128, 160, 192 or 256 */
-    uint32	vPrevScreenHeight;
-    uint32	vScreenSize;
-    void	(*pfPlot)();
-    void	(*pfRpix)();
+	uint32 vMode;	  /* Color depth/mode */
+	uint32 vPrevMode; /* Previous depth */
+	uint8 *pvScreenBase;
+	uint8 *apvScreen[32]; /* Pointer to each of the 32 screen colums */
+	int x[32];
+	uint32 vScreenHeight;	  /* 128, 160, 192 or 256 (could be overriden by
+				     cmode) */
+	uint32 vScreenRealHeight; /* 128, 160, 192 or 256 */
+	uint32 vPrevScreenHeight;
+	uint32 vScreenSize;
+	void (*pfPlot)();
+	void (*pfRpix)();
 
-    uint8 *	pvRamBank;		/* Pointer to current RAM-bank */
-    uint8 *	pvRomBank;		/* Pointer to current ROM-bank */
-    uint8 *	pvPrgBank;		/* Pointer to current program ROM-bank */
+	uint8 *pvRamBank; /* Pointer to current RAM-bank */
+	uint8 *pvRomBank; /* Pointer to current ROM-bank */
+	uint8 *pvPrgBank; /* Pointer to current program ROM-bank */
 
-    uint8 *	apvRamBank[FX_RAM_BANKS];/* Ram bank table (max 256kb) */
-    uint8 *	apvRomBank[256];	/* Rom bank table */
+	uint8 *apvRamBank[FX_RAM_BANKS]; /* Ram bank table (max 256kb) */
+	uint8 *apvRomBank[256];		 /* Rom bank table */
 
-    uint8	bCacheActive;
-    uint8 *	pvCache;		/* Pointer to the GSU cache */
-    uint8 	avCacheBackup[512];	/* Backup of ROM when the cache has replaced it */
-    uint32	vCounter;
-    uint32	vInstCount;
-    uint32	vSCBRDirty;		/* if SCBR is written, our cached screen pointers need updating */
+	uint8 bCacheActive;
+	uint8 *pvCache;		  /* Pointer to the GSU cache */
+	uint8 avCacheBackup[512]; /* Backup of ROM when the cache has replaced
+				     it */
+	uint32 vCounter;
+	uint32 vInstCount;
+	uint32 vSCBRDirty; /* if SCBR is written, our cached screen pointers
+			      need updating */
 };
 
-#define  FxRegs_s_null { \
-   {0},    0,      0,      0,      0,   0,    0,   0,    0,    0, \
-  NULL, NULL,      0,      0,      0,   0,    0,   0,    0,    0, \
-     0,    0,      0,      0,   NULL,   0, NULL,   0, NULL,    0, \
-     0, NULL, {NULL},    {0},      0,   0,    0,   0, NULL, NULL, \
-  NULL, NULL,   NULL, {NULL}, {NULL},   0, NULL, {0},    0,    0, \
-}
+#define FxRegs_s_null                                                          \
+	{                                                                      \
+		{0}, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, 0, 0, 0, 0, 0, 0,  \
+		    0, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, NULL, 0, 0, NULL,      \
+		    {NULL}, {0}, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL,     \
+		    {NULL}, {NULL}, 0, NULL, {0}, 0, 0,                        \
+	}
 
 /* GSU registers */
 #define GSU_R0 0x000
@@ -322,32 +326,33 @@ struct FxRegs_s
 #define GSU_CACHERAM 0x100
 
 /* SFR flags */
-#define FLG_Z (1<<1)
-#define FLG_CY (1<<2)
-#define FLG_S (1<<3)
-#define FLG_OV (1<<4)
-#define FLG_G (1<<5)
-#define FLG_R (1<<6)
-#define FLG_ALT1 (1<<8)
-#define FLG_ALT2 (1<<9)
-#define FLG_IL (1<<10)
-#define FLG_IH (1<<11)
-#define FLG_B (1<<12)
-#define FLG_IRQ (1<<15)
+#define FLG_Z (1 << 1)
+#define FLG_CY (1 << 2)
+#define FLG_S (1 << 3)
+#define FLG_OV (1 << 4)
+#define FLG_G (1 << 5)
+#define FLG_R (1 << 6)
+#define FLG_ALT1 (1 << 8)
+#define FLG_ALT2 (1 << 9)
+#define FLG_IL (1 << 10)
+#define FLG_IH (1 << 11)
+#define FLG_B (1 << 12)
+#define FLG_IRQ (1 << 15)
 
 /* Test flag */
-#define TF(a) (GSU.vStatusReg & FLG_##a )
-#define CF(a) (GSU.vStatusReg &= ~FLG_##a )
-#define SF(a) (GSU.vStatusReg |= FLG_##a )
+#define TF(a) (GSU.vStatusReg & FLG_##a)
+#define CF(a) (GSU.vStatusReg &= ~FLG_##a)
+#define SF(a) (GSU.vStatusReg |= FLG_##a)
 
 /* Test and set flag if condition, clear if not */
-#define TS(a,b) GSU.vStatusReg = ( (GSU.vStatusReg & (~FLG_##a)) | ( (!!(##b)) * FLG_##a ) )
+#define TS(a, b)                                                               \
+	GSU.vStatusReg = ((GSU.vStatusReg & (~FLG_##a)) | ((!!(##b)) * FLG_##a))
 
 /* Testing ALT1 & ALT2 bits */
-#define ALT0 (!TF(ALT1)&&!TF(ALT2))
-#define ALT1 (TF(ALT1)&&!TF(ALT2))
-#define ALT2 (!TF(ALT1)&&TF(ALT2))
-#define ALT3 (TF(ALT1)&&TF(ALT2))
+#define ALT0 (!TF(ALT1) && !TF(ALT2))
+#define ALT1 (TF(ALT1) && !TF(ALT2))
+#define ALT2 (!TF(ALT1) && TF(ALT2))
+#define ALT3 (TF(ALT1) && TF(ALT2))
 
 /* Sign extend from 8/16 bit to 32 bit */
 #define SEX16(a) ((int32)((int16)(a)))
@@ -360,10 +365,14 @@ struct FxRegs_s
 #define SUSEX16(a) ((int32)((uint16)(a)))
 
 /* Set/Clr Sign and Zero flag */
-#define TSZ(num) TS(S, (num & 0x8000)); TS(Z, (!USEX16(num)) )
+#define TSZ(num)                                                               \
+	TS(S, (num & 0x8000));                                                 \
+	TS(Z, (!USEX16(num)))
 
 /* Clear flags */
-#define CLRFLAGS GSU.vStatusReg &= ~(FLG_ALT1|FLG_ALT2|FLG_B); GSU.pvDreg = GSU.pvSreg = &R0;
+#define CLRFLAGS                                                               \
+	GSU.vStatusReg &= ~(FLG_ALT1 | FLG_ALT2 | FLG_B);                      \
+	GSU.pvDreg = GSU.pvSreg = &R0;
 
 /* Read current RAM-Bank */
 #define RAM(adr) GSU.pvRamBank[USEX16(adr)]
@@ -379,13 +388,20 @@ struct FxRegs_s
 
 /* Update pipe from ROM */
 #if 0
-#define FETCHPIPE { PIPE = PRGBANK(R15); GSU.vPipeAdr = (GSU.vPrgBankReg<<16) + R15; }
+#define FETCHPIPE                                                              \
+	{                                                                      \
+		PIPE = PRGBANK(R15);                                           \
+		GSU.vPipeAdr = (GSU.vPrgBankReg << 16) + R15;                  \
+	}
 #else
-#define FETCHPIPE { PIPE = PRGBANK(R15); }
+#define FETCHPIPE                                                              \
+	{                                                                      \
+		PIPE = PRGBANK(R15);                                           \
+	}
 #endif
 
 /* ABS */
-#define ABS(x) ((x)<0?-(x):(x))
+#define ABS(x) ((x) < 0 ? -(x) : (x))
 
 /* Access source register */
 #define SREG (*GSU.pvSreg)
@@ -407,7 +423,9 @@ struct FxRegs_s
 #define READR14 GSU.vRomBuffer = ROM(R14)
 
 /* Test and/or read R14 */
-#define TESTR14 if(GSU.pvDreg == &R14) READR14
+#define TESTR14                                                                \
+	if (GSU.pvDreg == &R14)                                                \
+	READR14
 
 #endif
 
@@ -443,12 +461,16 @@ struct FxRegs_s
 #define CLSR USEX8(GSU.pvRegisters[GSU_CLSR])
 
 /* Execute instruction from the pipe, and fetch next byte to the pipe */
-#define FX_STEP { uint32 vOpcode = (uint32)PIPE; FETCHPIPE; \
-(*fx_ppfOpcodeTable[ (GSU.vStatusReg & 0x300) | vOpcode ])(); } \
+#define FX_STEP                                                                \
+	{                                                                      \
+		uint32 vOpcode = (uint32)PIPE;                                 \
+		FETCHPIPE;                                                     \
+		(*fx_ppfOpcodeTable[(GSU.vStatusReg & 0x300) | vOpcode])();    \
+	}
 
-#define FX_FUNCTION_RUN			0
-#define FX_FUNCTION_RUN_TO_BREAKPOINT	1
-#define FX_FUNCTION_STEP_OVER		2
+#define FX_FUNCTION_RUN 0
+#define FX_FUNCTION_RUN_TO_BREAKPOINT 1
+#define FX_FUNCTION_STEP_OVER 2
 
 extern uint32 (**fx_ppfFunctionTable)(uint32);
 extern void (**fx_ppfPlotTable)();
@@ -467,9 +489,9 @@ extern uint32 (*fx_ar_apfFunctionTable[])(uint32);
 extern void (*fx_ar_apfOpcodeTable[])();
 extern void (*fx_ar_apfPlotTable[])();
 
-/* Set this define if branches are relative to the instruction in the delay slot */
+/* Set this define if branches are relative to the instruction in the delay slot
+ */
 /* (I think they are) */
 #define BRANCH_DELAY_RELATIVE
 
 #endif
-

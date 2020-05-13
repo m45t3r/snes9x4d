@@ -2,7 +2,7 @@
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
 
   (c) Copyright 1996 - 2002  Gary Henderson (gary.henderson@ntlworld.com),
-                             Jerremy Koot (jkoot@snes9x.com)
+			     Jerremy Koot (jkoot@snes9x.com)
 
   (c) Copyright 2002 - 2004  Matthew Kendora
 
@@ -13,102 +13,101 @@
   (c) Copyright 2001 - 2006  John Weidman (jweidman@slip.net)
 
   (c) Copyright 2002 - 2006  funkyass (funkyass@spam.shaw.ca),
-                             Kris Bleakley (codeviolation@hotmail.com)
+			     Kris Bleakley (codeviolation@hotmail.com)
 
   (c) Copyright 2002 - 2010  Brad Jorsch (anomie@users.sourceforge.net),
-                             Nach (n-a-c-h@users.sourceforge.net),
-                             zones (kasumitokoduck@yahoo.com)
+			     Nach (n-a-c-h@users.sourceforge.net),
+			     zones (kasumitokoduck@yahoo.com)
 
   (c) Copyright 2006 - 2007  nitsuja
 
   (c) Copyright 2009 - 2010  BearOso,
-                             OV2
+			     OV2
 
 
   BS-X C emulator code
   (c) Copyright 2005 - 2006  Dreamer Nom,
-                             zones
+			     zones
 
   C4 x86 assembler and some C emulation code
   (c) Copyright 2000 - 2003  _Demo_ (_demo_@zsnes.com),
-                             Nach,
-                             zsKnight (zsknight@zsnes.com)
+			     Nach,
+			     zsKnight (zsknight@zsnes.com)
 
   C4 C++ code
   (c) Copyright 2003 - 2006  Brad Jorsch,
-                             Nach
+			     Nach
 
   DSP-1 emulator code
   (c) Copyright 1998 - 2006  _Demo_,
-                             Andreas Naive (andreasnaive@gmail.com),
-                             Gary Henderson,
-                             Ivar (ivar@snes9x.com),
-                             John Weidman,
-                             Kris Bleakley,
-                             Matthew Kendora,
-                             Nach,
-                             neviksti (neviksti@hotmail.com)
+			     Andreas Naive (andreasnaive@gmail.com),
+			     Gary Henderson,
+			     Ivar (ivar@snes9x.com),
+			     John Weidman,
+			     Kris Bleakley,
+			     Matthew Kendora,
+			     Nach,
+			     neviksti (neviksti@hotmail.com)
 
   DSP-2 emulator code
   (c) Copyright 2003         John Weidman,
-                             Kris Bleakley,
-                             Lord Nightmare (lord_nightmare@users.sourceforge.net),
-                             Matthew Kendora,
-                             neviksti
+			     Kris Bleakley,
+			     Lord Nightmare
+ (lord_nightmare@users.sourceforge.net), Matthew Kendora, neviksti
 
   DSP-3 emulator code
   (c) Copyright 2003 - 2006  John Weidman,
-                             Kris Bleakley,
-                             Lancer,
-                             z80 gaiden
+			     Kris Bleakley,
+			     Lancer,
+			     z80 gaiden
 
   DSP-4 emulator code
   (c) Copyright 2004 - 2006  Dreamer Nom,
-                             John Weidman,
-                             Kris Bleakley,
-                             Nach,
-                             z80 gaiden
+			     John Weidman,
+			     Kris Bleakley,
+			     Nach,
+			     z80 gaiden
 
   OBC1 emulator code
   (c) Copyright 2001 - 2004  zsKnight,
-                             pagefault (pagefault@zsnes.com),
-                             Kris Bleakley
-                             Ported from x86 assembler to C by sanmaiwashi
+			     pagefault (pagefault@zsnes.com),
+			     Kris Bleakley
+			     Ported from x86 assembler to C by sanmaiwashi
 
   SPC7110 and RTC C++ emulator code used in 1.39-1.51
   (c) Copyright 2002         Matthew Kendora with research by
-                             zsKnight,
-                             John Weidman,
-                             Dark Force
+			     zsKnight,
+			     John Weidman,
+			     Dark Force
 
   SPC7110 and RTC C++ emulator code used in 1.52+
   (c) Copyright 2009         byuu,
-                             neviksti
+			     neviksti
 
   S-DD1 C emulator code
   (c) Copyright 2003         Brad Jorsch with research by
-                             Andreas Naive,
-                             John Weidman
+			     Andreas Naive,
+			     John Weidman
 
   S-RTC C emulator code
   (c) Copyright 2001 - 2006  byuu,
-                             John Weidman
+			     John Weidman
 
   ST010 C++ emulator code
   (c) Copyright 2003         Feather,
-                             John Weidman,
-                             Kris Bleakley,
-                             Matthew Kendora
+			     John Weidman,
+			     Kris Bleakley,
+			     Matthew Kendora
 
   Super FX x86 assembler emulator code
   (c) Copyright 1998 - 2003  _Demo_,
-                             pagefault,
-                             zsKnight
+			     pagefault,
+			     zsKnight
 
   Super FX C emulator code
   (c) Copyright 1997 - 1999  Ivar,
-                             Gary Henderson,
-                             John Weidman
+			     Gary Henderson,
+			     John Weidman
 
   Sound emulator code used in 1.5-1.51
   (c) Copyright 1998 - 2003  Brad Martin
@@ -134,10 +133,10 @@
 
   Win32 GUI code
   (c) Copyright 2003 - 2006  blip,
-                             funkyass,
-                             Matthew Kendora,
-                             Nach,
-                             nitsuja
+			     funkyass,
+			     Matthew Kendora,
+			     Nach,
+			     nitsuja
   (c) Copyright 2009 - 2010  OV2
 
   Mac OS GUI code
@@ -174,37 +173,33 @@
   Nintendo Co., Limited and its subsidiary companies.
  ***********************************************************************************/
 
-
 #include "snes9x.h"
 #include "memmap.h"
 #include "sdd1.h"
 #include "display.h"
 
-
-void S9xSetSDD1MemoryMap (uint32 bank, uint32 value)
+void S9xSetSDD1MemoryMap(uint32 bank, uint32 value)
 {
 	bank = 0xc00 + bank * 0x100;
 	value = value * 1024 * 1024;
 
-	for (int c = 0; c < 0x100; c += 16)
-	{
-		uint8	*block = &Memory.ROM[value + (c << 12)];
+	for (int c = 0; c < 0x100; c += 16) {
+		uint8 *block = &Memory.ROM[value + (c << 12)];
 		for (int i = c; i < c + 16; i++)
 			Memory.Map[i + bank] = block;
 	}
 }
 
-void S9xResetSDD1 (void)
+void S9xResetSDD1(void)
 {
 	memset(&Memory.FillRAM[0x4800], 0, 4);
-	for (int i = 0; i < 4; i++)
-	{
+	for (int i = 0; i < 4; i++) {
 		Memory.FillRAM[0x4804 + i] = i;
 		S9xSetSDD1MemoryMap(i, i);
 	}
 }
 
-void S9xSDD1PostLoadState (void)
+void S9xSDD1PostLoadState(void)
 {
 	for (int i = 0; i < 4; i++)
 		S9xSetSDD1MemoryMap(i, Memory.FillRAM[0x4804 + i]);

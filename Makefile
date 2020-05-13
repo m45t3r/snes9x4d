@@ -1,6 +1,3 @@
-# derived from "Makefile", 01 June 2010
-# blame Skeezix
-
 GIT_VERSION := "$(shell git describe --abbrev=7 --dirty --always --tags)"
 
 UNZIP=1
@@ -98,8 +95,12 @@ $(CCFLAGS)
 CFLAGS = --std=gnu11 $(CCFLAGS)
 
 .SUFFIXES: .o .cpp .c .cc .h .m .i .S .asm .obj
+.PHONY: format
 
 all: snes9x4d
+
+format:
+	clang-format -i **/*.{c,cpp,h}
 
 snes9x4d: $(OBJECTS)
 	$(CXX) -o $@ $(OBJECTS) $(LDLIBS)

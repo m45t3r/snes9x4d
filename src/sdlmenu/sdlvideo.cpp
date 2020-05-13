@@ -69,22 +69,14 @@ extern uint32 xs, ys, cl, cs;
 extern bool8_32 Scale;
 
 #ifndef _ZAURUS
-int S9xMinCommandLineArgs ()
-{
-	return (2);
-}
+int S9xMinCommandLineArgs() { return (2); }
 
-void S9xGraphicsMode ()
-{
-}
+void S9xGraphicsMode() {}
 
-void S9xTextMode ()
-{
-}
+void S9xTextMode() {}
 #endif
 
-
-void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
+void S9xInitDisplay(int /*argc*/, char ** /*argv*/)
 {
 	if (SDL_Init(SDL_INIT_VIDEO /*| (Settings.NextAPUEnabled ? SDL_INIT_AUDIO : 0)*/) < 0 )
  	{
@@ -105,23 +97,22 @@ void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
 	upscale_p_bilinear = UPSCALE_P_BILINEAR;
 #endif
 
-	screen = SDL_SetVideoMode(surfacewidth, surfaceheight, 16, SDL_HWSURFACE|SDL_DOUBLEBUF);
+	screen = SDL_SetVideoMode(surfacewidth, surfaceheight, 16,
+				  SDL_HWSURFACE | SDL_DOUBLEBUF);
 
-	if (screen == NULL)
-	{
+	if (screen == NULL) {
 		printf("Couldn't set video mode: %s\n", SDL_GetError());
 		S9xExit();
 	}
 
-	if (Settings.SupportHiRes)
-	{
-		gfxscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 480, 16, 0, 0, 0, 0);
+	if (Settings.SupportHiRes) {
+		gfxscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 480, 16, 0,
+						 0, 0, 0);
 		GFX.Screen = (uint8 *)gfxscreen->pixels;
 		GFX.Pitch = 512 * 2;
-	}
-	else
-	{
-		gfxscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, 256, 240, 16, 0, 0, 0, 0);
+	} else {
+		gfxscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, 256, 240, 16, 0,
+						 0, 0, 0);
 		GFX.Screen = (uint8 *)gfxscreen->pixels;
 		GFX.Pitch = 256 * 2;
 	}
@@ -131,7 +122,7 @@ void S9xInitDisplay (int /*argc*/, char ** /*argv*/)
 	GFX.SubZBuffer = (uint8 *)malloc(512 * 480 * 2);
 }
 
-void S9xDeinitDisplay ()
+void S9xDeinitDisplay()
 {
 	SDL_FreeSurface(screen);
 	SDL_FreeSurface(gfxscreen);
@@ -140,75 +131,67 @@ void S9xDeinitDisplay ()
 	free(GFX.SubZBuffer);
 }
 
-void S9xSetPalette ()
-{
-}
+void S9xSetPalette() {}
 
-void S9xSetTitle (const char * /*title*/)
-{
-}
+void S9xSetTitle(const char * /*title*/) {}
 
 #ifndef _ZAURUS
-const char *S9xSelectFilename (const char *def, const char *dir1,
-								const char *ext1, const char *title)
+const char *S9xSelectFilename(const char *def, const char *dir1,
+			      const char *ext1, const char *title)
 {
-	static char path [PATH_MAX];
-	char buffer [PATH_MAX];
+	static char path[PATH_MAX];
+	char buffer[PATH_MAX];
 
-	S9xTextMode ();
-	printf ("\n%s (default: %s): ", title, def);
-	fflush (stdout);
+	S9xTextMode();
+	printf("\n%s (default: %s): ", title, def);
+	fflush(stdout);
 
-	if (fgets (buffer, sizeof (buffer) - 1, stdin))
-	{
+	if (fgets(buffer, sizeof(buffer) - 1, stdin)) {
 		char *p = buffer;
-		while (isspace (*p) || *p == '\n')
+		while (isspace(*p) || *p == '\n')
 			p++;
-		if (!*p)
-		{
-			strcpy (buffer, def);
+		if (!*p) {
+			strcpy(buffer, def);
 			p = buffer;
 		}
 
-		char *q = strrchr (p, '\n');
+		char *q = strrchr(p, '\n');
 		if (q)
 			*q = 0;
 
-		char fname [PATH_MAX];
-		char drive [_MAX_DRIVE];
-		char dir [_MAX_DIR];
-		char ext [_MAX_EXT];
+		char fname[PATH_MAX];
+		char drive[_MAX_DRIVE];
+		char dir[_MAX_DIR];
+		char ext[_MAX_EXT];
 
-		_splitpath (p, drive, dir, fname, ext);
-		_makepath (path, drive, *dir ? dir : dir1, fname, *ext ? ext : ext1);
-		S9xGraphicsMode ();
+		_splitpath(p, drive, dir, fname, ext);
+		_makepath(path, drive, *dir ? dir : dir1, fname,
+			  *ext ? ext : ext1);
+		S9xGraphicsMode();
 		return (path);
 	}
 
-	S9xGraphicsMode ();
+	S9xGraphicsMode();
 	return (NULL);
 }
 
-void S9xExtraUsage ()
-{
-}
+void S9xExtraUsage() {}
 
-bool8 S9xReadMousePosition (int /* which1 */, int &/* x */, int & /* y */,
-				uint32 & /* buttons */)
+bool8 S9xReadMousePosition(int /* which1 */, int & /* x */, int & /* y */,
+			   uint32 & /* buttons */)
 {
-	//SDL_GetMouseState
+	// SDL_GetMouseState
 	return (FALSE);
 }
 
-bool8 S9xReadSuperScopePosition (int & /* x */, int & /* y */,
-				 uint32 & /* buttons */)
+bool8 S9xReadSuperScopePosition(int & /* x */, int & /* y */,
+				uint32 & /* buttons */)
 {
 	return (FALSE);
 }
 #endif
 
-void S9xMessage (int /* type */, int /* number */, const char *message)
+void S9xMessage(int /* type */, int /* number */, const char *message)
 {
-	fprintf (stderr, "%s\n", message);
+	fprintf(stderr, "%s\n", message);
 }
-

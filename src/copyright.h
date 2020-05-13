@@ -41,8 +41,8 @@
 /*
  * Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
  *
- * (c) Copyright 1996, 1997, 1998, 1999 Gary Henderson (gary@daniver.demon.co.uk) and
- *                                      Jerremy Koot (jkoot@snes9x.com)
+ * (c) Copyright 1996, 1997, 1998, 1999 Gary Henderson
+ * (gary@daniver.demon.co.uk) and Jerremy Koot (jkoot@snes9x.com)
  *
  * Super FX C emulator code (c) Copyright 1997, 1998 Ivar and
  *                                                   Gary Henderson.
