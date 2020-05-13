@@ -64,7 +64,11 @@ void S9xMainLoop(void)
 	struct SAPURegisters *areg = &APURegisters;
 
 	for (;;) {
+#ifdef __ARM__
+		asm_APU_EXECUTE();
+#else
 		APU_EXECUTE();
+#endif
 
 		if (cpu->Flags) {
 			if (cpu->Flags & NMI_FLAG) {
