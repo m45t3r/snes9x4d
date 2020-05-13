@@ -444,37 +444,36 @@ void show_credits()
 {
 	uint8 *keyssnes = 0;
 	int line = 0, ypix = 0;
-	char disptxt[100][SBUFFER] = {
-	    "",
-	    "",
-	    "",
-	    "",
-	    "",
-	    "                                     ",
-	    " Thank you using this Emulator!      ",
-	    "                                     ",
-	    "",
-	    "",
-	    "",
-	    "",
-	    "",
-	    "",
-	    "",
-	    " by SiENcE",
-	    " crankgaming.blogspot.com",
-	    "",
-	    " regards to joyrider & g17",
-	    "",
-	    "",
-	    "",
-	    "",
-	    "",
-	    "",
-	    "",
-	    " ported by m45t3r",
-	    "",
-	    " with optimizations from drowsnug95 and snes9x2002",
-	};
+	char disptxt[][SBUFFER] = {"",
+				   "",
+				   "",
+				   "",
+				   "",
+				   "                                     ",
+				   " Thank you using this Emulator!      ",
+				   "                                     ",
+				   "",
+				   "",
+				   "",
+				   "",
+				   "",
+				   "",
+				   "",
+				   " by SiENcE",
+				   " crankgaming.blogspot.com",
+				   "",
+				   " regards to joyrider & g17",
+				   "",
+				   "",
+				   "",
+				   "",
+				   "",
+				   "",
+				   "",
+				   " ported by m45t3r",
+				   "",
+				   " with optimizations from drowsnug95",
+				   " and assembly from ARMSNES-libretro"};
 
 	do {
 		SDL_Event event;
@@ -486,8 +485,8 @@ void show_credits()
 
 		for (int i = 0; i <= 16; i++) {
 			int j = i + line;
-			if (j >= 20)
-				j -= 20;
+			if (j >= 30)
+				j -= 30;
 			S9xDisplayString(disptxt[j], GFX.Screen, GFX.Pitch,
 					 i * 10 + 80 - ypix);
 		}
