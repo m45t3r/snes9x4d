@@ -71,8 +71,7 @@ INCLUDE = -I. -Isrc/ -Isrc/unzip
 LDLIBS  = -lSDL -lz -lm $(SDL_LIBS)
 
 OFLAGS = -Ofast -march=armv5te -mtune=arm926ej-s \
-			-ffast-math -fomit-frame-pointer -fno-strength-reduce \
-			-falign-functions=2 -fno-stack-protector
+	 -fomit-frame-pointer -fno-strict-aliasing -fno-stack-protector
 
 ifeq ($(PGO), GENERATE)
   OFLAGS += -fprofile-generate -fprofile-dir=./profile
@@ -102,7 +101,7 @@ $(UNZIPDEFINES) \
 -D__SDL__ \
 
 CXXFLAGS = --std=gnu++03 \
--fno-exceptions -fno-rtti -fno-math-errno -fno-threadsafe-statics \
+	   -fno-exceptions -fno-rtti -fno-math-errno -fno-threadsafe-statics \
 $(CCFLAGS)
 
 CFLAGS = --std=gnu11 $(CCFLAGS)
