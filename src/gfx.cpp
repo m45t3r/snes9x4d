@@ -335,8 +335,10 @@ bool8_32 S9xGraphicsInit()
 			return (FALSE);
 #endif
 
-		if (1
-#ifndef _FAST_GFX
+		if (
+#ifdef _FAST_GFX
+		    1
+#else
 		    !(GFX.ZERO_OR_X2 =
 			  (uint16 *)malloc(sizeof(uint16) * 0x10000)) ||
 		    !(GFX.ZERO = (uint16 *)malloc(sizeof(uint16) * 0x10000))
