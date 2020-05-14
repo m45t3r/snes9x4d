@@ -472,6 +472,7 @@ void show_credits()
 				   "",
 				   " ported by m45t3r",
 				   "",
+				   " with optimizations from drowsnug95",
 				   " and assembly from ARMSNES-libretro"};
 
 	do {
@@ -484,8 +485,8 @@ void show_credits()
 
 		for (int i = 0; i <= 16; i++) {
 			int j = i + line;
-			if (j >= 29)
-				j -= 29;
+			if (j >= 30)
+				j -= 30;
 			S9xDisplayString(disptxt[j], GFX.Screen, GFX.Pitch,
 					 i * 10 + 80 - ypix);
 		}
