@@ -13,8 +13,8 @@
 #define SURFACE_HEIGHT 240
 #define UPSCALE_P upscale_256x224_to_384x240_for_400x240
 #elif VIDEO_MODE == 3
-#define SURFACE_WIDTH 400
-#define SURFACE_HEIGHT 240
+#define SURFACE_WIDTH 480
+#define SURFACE_HEIGHT 272
 #define UPSCALE_P upscale_256x224_to_384x272_for_480x272
 #endif
 
