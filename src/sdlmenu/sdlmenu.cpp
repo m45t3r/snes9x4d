@@ -81,7 +81,7 @@ void menu_dispupdate(void)
 	char disptxt[MAX_MENU_ITEMS][SBUFFER] = {
 #ifdef MIYOO
 	    "  Snes9x4D " BUILD_VERSION " for Miyoo  ",
-#elif
+#else
 	    "  Snes9x4D " BUILD_VERSION " for SDL  ",
 #endif
 	    "",
