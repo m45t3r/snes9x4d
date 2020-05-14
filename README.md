@@ -4,7 +4,7 @@ Snes9x4d for [MiyooCFW](https://github.com/TriForceX/MiyooCFW) devices.
 Should run in both BittBoy and PocketGo, however it is only tested on
 PocketGo v1.
 
-## Using
+## Usage
 
 Assuming that you're using the latest version of
 [MiyooCFW](https://github.com/TriForceX/MiyooCFW), go to the
@@ -20,7 +20,35 @@ like `Snes9x4d vYYYY.MM.DD for Miyoo` (where `YYYY.MM.DD` is a date).
 get better performance. To do this press `Select` when `SNES` is selected in
 `Emulators` menu, select `EDIT SNES` and adjust `CPU Clock` to either `702`
 (default), `732` or `798`. Not all devices support all overclock options, so
-if you device freeze reduce the overclock or return to default.
+if your device freeze reduce the overclock or return to default.
+
+## Options
+
+This emulator has multiple options that can be accessed using `Reset` button in
+BittBoy/PocketGo. Some of them may improve performance at the expense of
+quality. Some of them are described below:
+
+- Transparency (default `On`): enables/disables transparency effects in games.
+  Disabling it may improve performance, but it may also break some effects in
+  games and even make some of them unplayable
+- Full Screen (default `False`): enables/disables full screen. There is a small
+  performance impact for it, and it also makes the aspect ratio wrong
+- Billinear Filtering (default `False`): enables/disables bilinear filtering.
+  Only makes sense when `Full Screen` is also `True`. This makes the image in
+  full screen smoother at the expense of performance
+- Frameskip (default `Auto`): sets frameskipping. It works by skipping some
+  frames, for example assuming a NTSC (USA or Japanese) ROM with 60Hz of
+  refresh rate, setting Frameskip to `60/2` will skip every other frame
+  (rendering only 30 frames per second instead of 60). `Auto` tries to skip
+  frames as much as necessary to keep full speed, but in some heavy games
+  (like `Star Fox`) it is better to set a fixed frameskip to make the game
+  stutter less
+- Sound Rate (default `32000`): sets sound rate. The official sound rate of
+  SNES is 32000 so this is the recommended value to have the best available
+  sound quality, but you may reduce to improve performance
+- Stereo (default `False`): enables/disables stereo mixing (making a Mono
+  output). Disabling it improves performance, but the Mono mixing results in
+  some missing instruments in games
 
 ## Setup environment
 
