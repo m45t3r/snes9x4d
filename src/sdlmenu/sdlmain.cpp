@@ -54,10 +54,6 @@
 #include "keydef.h"
 #include "scaler.h"
 
-#ifdef NETPLAY_SUPPORT
-#include "../netplay.h"
-#endif
-
 #ifdef MIYOO
 #include "miyoo.h"
 #else
@@ -79,11 +75,6 @@
 #include "sdlvideo.h"
 
 uint8 *keyssnes;
-
-#ifdef NETPLAY_SUPPORT
-static uint32 joypads[8];
-static uint32 old_joypads[8];
-#endif
 
 // SaveSlotNumber
 short SaveSlotNum = 0;
@@ -364,40 +355,6 @@ extern "C"
 	sigaction(SIGINT, &sa, NULL);
 #endif
 
-#ifdef NETPLAY_SUPPORT
-	if (strlen(Settings.ServerName) == 0) {
-		char *server = getenv("S9XSERVER");
-		if (server) {
-			strncpy(Settings.ServerName, server, 127);
-			Settings.ServerName[127] = 0;
-		}
-	}
-
-	char *port = getenv("S9XPORT");
-	if (Settings.Port >= 0 && port)
-		Settings.Port = atoi(port);
-	else if (Settings.Port < 0)
-		Settings.Port = -Settings.Port;
-
-	if (Settings.NetPlay) {
-		NetPlay.MaxFrameSkip = 10;
-
-		if (!S9xNPConnectToServer(Settings.ServerName, Settings.Port,
-					  Memory.ROMName)) {
-			fprintf(stderr,
-				"Failed to connect to server %s on port %d.\n",
-				Settings.ServerName, Settings.Port);
-			S9xExit();
-		}
-
-		fprintf(stderr,
-			"Connected to server %s on port %d as player #%d "
-			"playing %s.\n",
-			Settings.ServerName, Settings.Port, NetPlay.Player,
-			Memory.ROMName);
-	}
-#endif
-
 	// Handheld Key Infos
 #ifdef MIYOO
 	sprintf(msg, "Press R to Show MENU");
@@ -426,40 +383,7 @@ extern "C"
 
 	S9xSetSoundMute(FALSE);
 
-#ifdef NETPLAY_SUPPORT
-	bool8 NP_Activated = Settings.NetPlay;
-#endif
-
 	while (1) {
-#ifdef NETPLAY_SUPPORT
-		if (NP_Activated) {
-			if (NetPlay.PendingWait4Sync &&
-			    !S9xNPWaitForHeartBeatDelay(100)) {
-				S9xProcessEvents(FALSE);
-				continue;
-			}
-
-			//			for (int J = 0; J < 8; J++)
-			//				old_joypads[J] =
-			//MovieGetJoypad(J);
-
-			//			for (int J = 0; J < 8; J++)
-			//				MovieSetJoypad(J,
-			//joypads[J]);
-
-			if (NetPlay.Connected) {
-				if (NetPlay.PendingWait4Sync) {
-					NetPlay.PendingWait4Sync = FALSE;
-					NetPlay.FrameCount++;
-					S9xNPStepJoypadHistory();
-				}
-			} else {
-				fprintf(stderr, "Lost connection to server.\n");
-				S9xExit();
-			}
-		}
-#endif
-
 #ifdef DEBUGGER
 		if (!Settings.Paused ||
 		    (CPU.Flags & (DEBUG_MODE_FLAG | SINGLE_STEP_FLAG)))
@@ -467,14 +391,6 @@ extern "C"
 		if (!Settings.Paused)
 #endif
 			S9xMainLoop();
-
-#ifdef NETPLAY_SUPPORT
-		if (NP_Activated) {
-			//			for (int J = 0; J < 8; J++)
-			//				MovieSetJoypad(J,
-			//old_joypads[J]);
-		}
-#endif
 
 #ifdef DEBUGGER
 		if (Settings.Paused || (CPU.Flags & DEBUG_MODE_FLAG))
@@ -528,11 +444,6 @@ void OutOfMemory()
 void S9xExit()
 {
 	S9xSetSoundMute(true);
-
-#ifdef NETPLAY_SUPPORT
-	if (Settings.NetPlay)
-		S9xNPDisconnect();
-#endif
 
 	S9xWriteConfig();
 	Memory.SaveSRAM(S9xGetFilename(".srm"));
@@ -607,8 +518,8 @@ void S9xInitInputDevices()
 				sfc_key[UP_1] = atoi(envp);
 			else if (i == 12)
 				sfc_key[DOWN_1] = atoi(envp);
-			/*			else if (i == 13) sfc_key[LU_2] =
-			   atoi(envp); else if (i == 14) sfc_key[LD_2] =
+			/*			else if (i == 13) sfc_key[LU_2]
+			   = atoi(envp); else if (i == 14) sfc_key[LD_2] =
 			   atoi(envp); else if (i == 15) sfc_key[RU_2] =
 			   atoi(envp); else if (i == 16) sfc_key[RD_2] =
 			   atoi(envp);
@@ -886,53 +797,6 @@ void S9xToggleSoundChannel(int c)
 
 void S9xSyncSpeed() // called from S9xMainLoop in ../cpuexec.cpp
 {
-#ifdef NETPLAY_SUPPORT
-	if (Settings.NetPlay && NetPlay.Connected) {
-#if defined(NP_DEBUG) && NP_DEBUG == 2
-		printf("CLIENT: SyncSpeed @%d\n", S9xGetMilliTime());
-#endif
-
-		S9xNPSendJoypadUpdate(old_joypads[0]);
-		for (int J = 0; J < 8; J++)
-			joypads[J] = S9xNPGetJoypad(J);
-
-		if (!S9xNPCheckForHeartBeat()) {
-			NetPlay.PendingWait4Sync =
-			    !S9xNPWaitForHeartBeatDelay(100);
-#if defined(NP_DEBUG) && NP_DEBUG == 2
-			if (NetPlay.PendingWait4Sync)
-				printf("CLIENT: PendingWait4Sync1 @%d\n",
-				       S9xGetMilliTime());
-#endif
-
-			IPPU.RenderThisFrame = TRUE;
-			IPPU.SkippedFrames = 0;
-		} else {
-			NetPlay.PendingWait4Sync =
-			    !S9xNPWaitForHeartBeatDelay(200);
-#if defined(NP_DEBUG) && NP_DEBUG == 2
-			if (NetPlay.PendingWait4Sync)
-				printf("CLIENT: PendingWait4Sync2 @%d\n",
-				       S9xGetMilliTime());
-#endif
-
-			if (IPPU.SkippedFrames < NetPlay.MaxFrameSkip) {
-				IPPU.RenderThisFrame = FALSE;
-				IPPU.SkippedFrames++;
-			} else {
-				IPPU.RenderThisFrame = TRUE;
-				IPPU.SkippedFrames = 0;
-			}
-		}
-
-		if (!NetPlay.PendingWait4Sync) {
-			NetPlay.FrameCount++;
-			S9xNPStepJoypadHistory();
-		}
-
-		return;
-	}
-#endif
 	if (!Settings.TurboMode && Settings.SkipFrames == AUTO_FRAMERATE) {
 		static struct timeval next1 = {0, 0};
 		struct timeval now;
@@ -1093,25 +957,21 @@ uint32 S9xReadJoypad(int which1)
 		val |= SNES_LEFT_MASK;
 	if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
 		val |= SNES_RIGHT_MASK;
-		// player2
-		/*
-		if (keyssnes[sfc_key[UP_2]] == SDL_PRESSED)		val |=
-		SNES_UP_MASK;
-		if (keyssnes[sfc_key[DOWN_2]] == SDL_PRESSED)	val |=
-		SNES_DOWN_MASK; if (keyssnes[sfc_key[LEFT_2]] == SDL_PRESSED)
-		val |= SNES_LEFT_MASK; if (keyssnes[sfc_key[RIGHT_2]] ==
-		SDL_PRESSED)	val |= SNES_RIGHT_MASK; if (keyssnes[sfc_key[LU_2]] == SDL_PRESSED)	val |= SNES_LEFT_MASK | SNES_UP_MASK;
-		if (keyssnes[sfc_key[LD_2]] == SDL_PRESSED)	val |=
-		SNES_LEFT_MASK | SNES_DOWN_MASK; if (keyssnes[sfc_key[RU_2]] ==
-		SDL_PRESSED)	val |= SNES_RIGHT_MASK | SNES_UP_MASK; if
-		(keyssnes[sfc_key[RD_2]] == SDL_PRESSED)	val |=
-		SNES_RIGHT_MASK | SNES_DOWN_MASK;
-		*/
-
-#ifdef NETPLAY_SUPPORT
-	if (Settings.NetPlay)
-		return (S9xNPGetJoypad(which1));
-#endif
+	// player2
+	/*
+	if (keyssnes[sfc_key[UP_2]] == SDL_PRESSED)		val |=
+	SNES_UP_MASK;
+	if (keyssnes[sfc_key[DOWN_2]] == SDL_PRESSED)	val |=
+	SNES_DOWN_MASK; if (keyssnes[sfc_key[LEFT_2]] == SDL_PRESSED)
+	val |= SNES_LEFT_MASK; if (keyssnes[sfc_key[RIGHT_2]] ==
+	SDL_PRESSED)	val |= SNES_RIGHT_MASK; if
+	(keyssnes[sfc_key[LU_2]] == SDL_PRESSED)	val |=
+	SNES_LEFT_MASK | SNES_UP_MASK; if (keyssnes[sfc_key[LD_2]] ==
+	SDL_PRESSED)	val |= SNES_LEFT_MASK | SNES_DOWN_MASK; if
+	(keyssnes[sfc_key[RU_2]] == SDL_PRESSED)	val |=
+	SNES_RIGHT_MASK | SNES_UP_MASK; if (keyssnes[sfc_key[RD_2]] ==
+	SDL_PRESSED)	val |= SNES_RIGHT_MASK | SNES_DOWN_MASK;
+	*/
 
 	return (val);
 }

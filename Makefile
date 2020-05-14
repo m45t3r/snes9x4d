@@ -43,11 +43,6 @@ OBJECTS = $(CPUOBJ) $(FXOBJ) $(C4OBJ) $(CHEAT) $(ASM) \
 	src/sdlmenu/sdlmenu.o src/sdlmenu/sdlmain.o src/sdlmenu/sdlaudio.o \
 	src/sdlmenu/scaler.o src/sdlmenu/sdlvideo.o \
 
-ifdef NETPLAY
-OBJECTS += src/netplay.o #src/server.o
-NETPLAYDEFINES = -DNETPLAY_SUPPORT
-endif
-
 ifdef UNZIP
 OBJECTS += src/loadzip.o src/unzip/unzip.o src/unzip/explode.o src/unzip/unreduce.o \
 	   src/unzip/unshrink.o
@@ -85,7 +80,6 @@ $(ASMDEFINES) \
 $(C4DEFINES) \
 $(CHEATDEFINES) \
 $(INCLUDE) \
-$(NETPLAYDEFINES) \
 $(SDL_CFLAGS) \
 $(SOUNDDEFINES) \
 $(UNZIPDEFINES) \

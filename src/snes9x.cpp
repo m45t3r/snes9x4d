@@ -385,30 +385,8 @@ char *S9xParseArgs(char **argv, int argc)
 			} else if (strcasecmp(argv[i], "-nosuperscope") == 0 ||
 				   strcasecmp(argv[i], "-nss") == 0) {
 				Settings.SuperScope = FALSE;
-			}
-#ifdef NETPLAY_SUPPORT
-			else if (strcasecmp(argv[i], "-port") == 0 ||
-				 strcasecmp(argv[i], "-po") == 0) {
-				if (i + 1 < argc) {
-					Settings.NetPlay = TRUE;
-					Settings.Port = -atoi(argv[++i]);
-				} else
-					S9xUsage();
-			} else if (strcasecmp(argv[i], "-server") == 0 ||
-				   strcasecmp(argv[i], "-srv") == 0) {
-				if (i + 1 < argc) {
-					Settings.NetPlay = TRUE;
-					strncpy(Settings.ServerName, argv[++i],
-						127);
-					Settings.ServerName[127] = 0;
-				} else
-					S9xUsage();
-			} else if (strcasecmp(argv[i], "-net") == 0) {
-				Settings.NetPlay = TRUE;
-			}
-#endif
-			else if (strcasecmp(argv[i], "-fullscreen") == 0 ||
-				 strcasecmp(argv[i], "-fs") == 0) {
+			} else if (strcasecmp(argv[i], "-fullscreen") == 0 ||
+				   strcasecmp(argv[i], "-fs") == 0) {
 				Scale = TRUE;
 			} else
 				S9xParseArg(argv, i, argc);
