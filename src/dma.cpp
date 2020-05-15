@@ -829,13 +829,11 @@ void S9xDoDMA(uint8 Channel)
 		} while (count);
 	}
 
-#ifdef SPC700_C
+#if defined(SPC700_C) && !defined(SPC700_ASM)
 	iapu->APUExecuting = Settings.APUEnabled;
 	APU_EXECUTE();
-#elif SPC700_ASM
-	iapu->APUExecuting = Settings.APUEnabled;
-	asm_APU_EXECUTE();
 #endif
+
 	while (cpu->Cycles > cpu->NextEvent)
 		S9xDoHBlankProcessing(cpu, apu, iapu);
 	S9xUpdateAPUTimer();

@@ -165,21 +165,27 @@ EXTERN_C int32 ESPC(int32);
 #endif
 
 #ifdef SPC700_ASM
-EXTERN_C int32 spc700_execute(int32 cycles);
+EXTERN_C int spc700_execute(int cycles);
 
 #define asm_APU_EXECUTE()                                                      \
-	{                                                                      \
-		int32 cycles = (CPU.Cycles - APU.Cycles);                      \
-		if (cycles > 0) {                                              \
-			APU.Cycles += cycles - spc700_execute(cycles);         \
+	if (iapu->APUExecuting) {                                              \
+		{                                                              \
+			int cycles = (cpu->Cycles - apu->Cycles);              \
+			if (cycles > 0) {                                      \
+				apu->Cycles +=                                 \
+				    cycles - spc700_execute(cycles);           \
+			}                                                      \
 		}                                                              \
 	}
 
 #define asm_APU_EXECUTE1()                                                     \
-	{                                                                      \
-		int32 cycles = (APU.Cycles - CPU.NextEvent);                   \
-		if (cycles > 0) {                                              \
-			APU.Cycles += cycles - spc700_execute(cycles);         \
+	if (iapu->APUExecuting) {                                              \
+		{                                                              \
+			int cycles = (apu->Cycles - cpu->NextEvent);           \
+			if (cycles > 0) {                                      \
+				apu->Cycles +=                                 \
+				    cycles - spc700_execute(cycles);           \
+			}                                                      \
 		}                                                              \
 	}
 

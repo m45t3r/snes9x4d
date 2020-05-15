@@ -10,6 +10,10 @@ FXOBJ = src/fxinst.o src/fxemu.o src/fxdbg.o
 SOUNDOBJ = src/spc700.o src/soundux.o src/apu.o
 SOUNDDEFINES = -DSPC700_C
 
+ifndef SPC700_ASM
+SOUNDDEFINES = -DSPC700_SHUTDOWN
+endif
+
 CPUOBJ = src/cpuops.o src/cpuexec.o
 
 C4OBJ = src/c4.o src/c4emu.o
@@ -87,7 +91,6 @@ $(UNZIPDEFINES) \
 -DBUILD_VERSION=\"$(GIT_VERSION)\" \
 -DCPU_SHUTDOWN \
 -DMIYOO \
--DSPC700_SHUTDOWN \
 -DVAR_CYCLES \
 -DVIDEO_MODE=1 \
 -DZLIB \

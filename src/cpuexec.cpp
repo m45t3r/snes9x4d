@@ -64,9 +64,7 @@ void S9xMainLoop(void)
 	struct SAPURegisters *areg = &APURegisters;
 
 	for (;;) {
-#ifdef SPC700_ASM
-		asm_APU_EXECUTE();
-#else
+#ifndef SPC700_ASM
 		APU_EXECUTE();
 #endif
 
@@ -210,7 +208,9 @@ void S9xDoHBlankProcessing(struct SCPUState *cpu, struct SAPU *apu,
 		break;
 
 	case HBLANK_END_EVENT:
-
+#ifdef SPC700_ASM
+		asm_APU_EXECUTE();
+#endif
 		S9xSuperFXExec();
 
 #ifndef STORM
