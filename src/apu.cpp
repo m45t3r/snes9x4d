@@ -94,6 +94,8 @@ EXTERN_C uint8 APUROM[64];
 
 void S9xResetAPU()
 {
+	Settings.APUEnabled = Settings.NextAPUEnabled;
+
 	memset(IAPU.RAM, Settings.APURAMInitialValue, 0x10000);
 	memset(IAPU.ShadowRAM, Settings.APURAMInitialValue, 0x10000);
 
@@ -110,7 +112,7 @@ void S9xResetAPU()
 	APURegisters.P = 0;
 	S9xAPUUnpackStatus();
 	APURegisters.PC = 0;
-	CPU.APU_APUExecuting = Settings.APUEnabled;
+	IAPU.APUExecuting = Settings.APUEnabled;
 #ifdef SPC700_SHUTDOWN
 	IAPU.WaitAddress1 = NULL;
 	IAPU.WaitAddress2 = NULL;
@@ -855,7 +857,7 @@ void S9xUpdateAPUTimer(void)
 		while (CPU.Cycles * 10000L >= IAPU.NextAPUTimerPos)
 		//if (CPU.Cycles * 10000L >= IAPU.NextAPUTimerPos)
 		{
-			//asm_APU_EXECUTE(1);
+			//APU_EXECUTE();
 
 			IAPU.NextAPUTimerPos += SNES_APUTIMER2_CYCLEx10000;
 

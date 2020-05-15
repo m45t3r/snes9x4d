@@ -53,7 +53,6 @@
 #include "dma.h"
 #include "fxemu.h"
 #include "sa1.h"
-#include "spc700.h"
 
 void S9xMainLoop(void)
 {
@@ -65,7 +64,7 @@ void S9xMainLoop(void)
 	struct SAPURegisters *areg = &APURegisters;
 
 	for (;;) {
-		asm_APU_EXECUTE(1);
+		APU_EXECUTE();
 
 		if (cpu->Flags) {
 			if (cpu->Flags & NMI_FLAG) {
@@ -207,7 +206,6 @@ void S9xDoHBlankProcessing(struct SCPUState *cpu, struct SAPU *apu,
 		break;
 
 	case HBLANK_END_EVENT:
-		asm_APU_EXECUTE(3);
 		S9xSuperFXExec();
 
 #ifndef STORM
@@ -217,7 +215,7 @@ void S9xDoHBlankProcessing(struct SCPUState *cpu, struct SAPU *apu,
 
 		cpu->Cycles -= Settings.H_Max;
 		IAPU.NextAPUTimerPos -= (Settings.H_Max * 10000L);
-		if (cpu->APU_APUExecuting)
+		if (iapu->APUExecuting)
 			apu->Cycles -= Settings.H_Max;
 		else
 			apu->Cycles = 0;
@@ -308,7 +306,7 @@ void S9xDoHBlankProcessing(struct SCPUState *cpu, struct SAPU *apu,
 					apu->Timer[2] -= apu->TimerTarget[2];
 #ifdef SPC700_SHUTDOWN
 					iapu->WaitCounter++;
-					cpu->APU_APUExecuting = TRUE;
+					iapu->APUExecuting = TRUE;
 #endif
 				}
 			}
@@ -322,7 +320,7 @@ void S9xDoHBlankProcessing(struct SCPUState *cpu, struct SAPU *apu,
 						apu->Timer[0] = 0;
 #ifdef SPC700_SHUTDOWN
 						iapu->WaitCounter++;
-						cpu->APU_APUExecuting = TRUE;
+						iapu->APUExecuting = TRUE;
 #endif
 					}
 				}
@@ -335,7 +333,7 @@ void S9xDoHBlankProcessing(struct SCPUState *cpu, struct SAPU *apu,
 						apu->Timer[1] = 0;
 #ifdef SPC700_SHUTDOWN
 						iapu->WaitCounter++;
-						cpu->APU_APUExecuting = TRUE;
+						iapu->APUExecuting = TRUE;
 #endif
 					}
 				}

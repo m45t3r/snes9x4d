@@ -716,10 +716,10 @@ static int Unfreeze(STREAM stream)
 			IAPU.DirectPage = IAPU.RAM;
 
 		Settings.APUEnabled = TRUE;
-		CPU.APU_APUExecuting = TRUE;
+		IAPU.APUExecuting = TRUE;
 	} else {
 		Settings.APUEnabled = FALSE;
-		CPU.APU_APUExecuting = FALSE;
+		IAPU.APUExecuting = FALSE;
 		S9xSetSoundMute(TRUE);
 	}
 
@@ -1282,10 +1282,10 @@ bool8_32 S9xUnfreezeZSNES(const char *filename)
 			else
 				IAPU.DirectPage = IAPU.RAM;
 			Settings.APUEnabled = TRUE;
-			CPU.APU_APUExecuting = TRUE;
+			IAPU.APUExecuting = TRUE;
 		} else {
 			Settings.APUEnabled = FALSE;
-			CPU.APU_APUExecuting = FALSE;
+			IAPU.APUExecuting = FALSE;
 			S9xSetSoundMute(TRUE);
 		}
 		if (Settings.SuperFX) {

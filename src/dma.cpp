@@ -52,7 +52,6 @@
 #include "apu.h"
 #include "gfx.h"
 #include "sa1.h"
-#include "spc700.h"
 
 #ifdef SDD1_DECOMP
 #include "sdd1emu.h"
@@ -830,10 +829,10 @@ void S9xDoDMA(uint8 Channel)
 		} while (count);
 	}
 
-#ifdef SPC700_SHUTDOWN
-	CPU.APU_APUExecuting = Settings.APUEnabled;
+#ifdef SPC700_C
+	iapu->APUExecuting = Settings.APUEnabled;
+	APU_EXECUTE();
 #endif
-	asm_APU_EXECUTE(1);
 
 	while (cpu->Cycles > cpu->NextEvent)
 		S9xDoHBlankProcessing(cpu, apu, iapu);

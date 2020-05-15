@@ -49,7 +49,6 @@
 #include "missing.h"
 #include "apu.h"
 #include "sa1.h"
-#include "spc700.h"
 
 START_EXTERN_C
 /*
@@ -2893,7 +2892,9 @@ inline void CPUShutdown(struct SICPU *icpu, struct SCPUState *cpu)
 			S9xUpdateAPUTimer();
 			if (IAPU.APUExecuting) {
 				icpu->CPUExecuting = FALSE;
-				asm_APU_EXECUTE1();
+				do {
+					APU_EXECUTE1();
+				} while (apu->Cycles < cpu->NextEvent);
 				icpu->CPUExecuting = TRUE;
 			}
 		} else if (cpu->WaitCounter >= 2)
@@ -4357,7 +4358,10 @@ static void OpCB(struct SRegisters *reg, struct SICPU *icpu,
         if (IAPU.APUExecuting)
         {
             SA1.Executing = FALSE;
-	    asm_APU_EXECUTE1 ();
+            do
+            {
+                APU_EXECUTE1 ();
+            } while (APU.Cycles < SA1.NextEvent);
             SA1.Executing = TRUE;
         }
     }
@@ -4386,7 +4390,9 @@ static void OpCB(struct SRegisters *reg, struct SICPU *icpu,
 			S9xUpdateAPUTimer();
 			if (iapu->APUExecuting) {
 				icpu->CPUExecuting = FALSE;
-				asm_APU_EXECUTE1();
+				do {
+					APU_EXECUTE1();
+				} while (APU.Cycles < CPU.NextEvent);
 				icpu->CPUExecuting = TRUE;
 			}
 		} else {

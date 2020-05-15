@@ -146,8 +146,6 @@ Some tips to port this project to another Dingoo-like device:
       than the default one (it is slightly more expansive too). For now, it is
       only available for `VIDEO_MODE=1`, so if your device uses any other
       video mode it is better to disable it
-    + Also it is probably a good idea to disable `SPC700_ASM` (since the code
-      only has an ARM version of it). You can always enable it later
     + `_ZAURUS` is a compile toggle that is used in many parts of the project,
       disabling many features that doesn't make sense to embedded devices. So
       it should be enabled (and there are good chances that the code will

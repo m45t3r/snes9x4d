@@ -164,52 +164,31 @@ enum { SNES_MULTIPLAYER5,
 #define MEMMAP_NUM_BLOCKS (0x1000000 / MEMMAP_BLOCK_SIZE)
 
 struct SCPUState {
-	uint32 Flags;		   // 0
-	bool8 BranchSkip;	   // 4
-	bool8 NMIActive;	   // 5
-	bool8 IRQActive;	   // 6
-	bool8 WaitingForInterrupt; // 7
-	struct SRegisters Regs;	   // 8
-	uint8 *PC;		   // 24
-	int32 Cycles;		   // 28
-	uint8 *PCBase;		   // 32
-	uint8 *PCAtOpcodeStart;	   // 36
-	uint8 *WaitAddress;	   // 40
-	uint32 WaitCounter;	   // 44
-	volatile int32 NextEvent;  // 48
-	int32 V_Counter;	   // 52
-	int32 MemSpeed;		   // 56
-	int32 MemSpeedx2;	   // 60
-	int32 FastROMSpeed;	   // 64
-	uint32 AutoSaveTimer;	   // 68
-	uint32 NMITriggerPoint;	   // 72
-	uint32 NMICycleCount;	   // 76
-	uint32 IRQCycleCount;	   // 80
-
-	bool8 InDMA;		     // 84
-	uint8 WhichEvent;	     // 85
-	bool8 SRAMModified;	     // 86
-	bool8 BRKTriggered;	     // 87
-	uint32 _ARM_asm_reserved_1;  // 88  to stock current jmp table
-	bool8 TriedInterleavedMode2; // 92
-	bool8 _ARM_asm_padding1[3];  // 93
-
-	uint8 *Memory_Map;	    // 96
-	uint8 *Memory_WriteMap;	    // 100
-	uint32 *Memory_MemorySpeed; // 104
-	uint8 *Memory_BlockIsRAM;   // 108
-	uint8 *Memory_SRAM;	    // 112
-	uint8 *Memory_BWRAM;	    // 116
-	uint32 Memory_SRAMMask;	    // 120
-	bool8_32 APU_APUExecuting;  // 124
-	bool8_32 _ARM_asm_padding2; // 128
-	uint32 _PALMSOS_R9;	    // 132
-	uint32 _PALMSOS_R10;	    // 136
-	volatile int32 APU_Cycles;  // 140 notaz
-	void *DSPGet;
-	void *DSPSet;
-	int32 rstatus;
-
+	uint32 Flags;
+	bool8_32 BranchSkip;
+	bool8_32 NMIActive;
+	bool8_32 IRQActive;
+	bool8_32 WaitingForInterrupt;
+	bool8_32 InDMA;
+	uint8_32 WhichEvent;
+	uint8 *PC;
+	uint8 *PCBase;
+	uint8 *PCAtOpcodeStart;
+	uint8 *WaitAddress;
+	uint32 WaitCounter;
+	long Cycles;
+	long NextEvent;
+	long V_Counter;
+	long MemSpeed;
+	long MemSpeedx2;
+	long FastROMSpeed;
+	uint32 AutoSaveTimer;
+	bool8_32 SRAMModified;
+	uint32 NMITriggerPoint;
+	bool8_32 BRKTriggered;
+	bool8_32 TriedInterleavedMode2;
+	uint32 NMICycleCount;
+	uint32 IRQCycleCount;
 	// Needed for SA1
 	bool8_32 Executing;
 	bool8_32 Waiting;
@@ -365,7 +344,6 @@ struct SSettings {
 	bool8_32 DaffyDuck;
 	uint8 APURAMInitialValue;
 
-	bool8 asmspc700;
 #ifdef __WIN32__
 	int SoundDriver;
 #endif
