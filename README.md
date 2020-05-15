@@ -44,8 +44,8 @@ quality. Some of them are described below:
   (like `Star Fox`) it is better to set a fixed frameskip to make the game
   stutter less
 - Sound Rate (default `32000`): sets sound rate. The official sound rate of
-  SNES is 32000 so this is the recommended value to have the best available
-  sound quality, but you may reduce to improve performance
+  SNES is ~32000 so this is the recommended value to have the best available
+  sound quality, but you may reduce it to improve performance
 - Stereo (default `False`): enables/disables stereo mixing (making a Mono
   output). Disabling it improves performance, but the Mono mixing results in
   some missing instruments in games
@@ -159,7 +159,7 @@ Some tips to port this project to another Dingoo-like device:
       like the menu in F-Zero and the intro in Street Fighter Alpha 2 (but not
       in-game). If your device is slow it is worth it, but if your device is
       fast enough to run games at full speed without it is better to disable it
-- If your device is like Miyoo and doesn't have an standard Dingoo layouyt, you
+- If your device is like Miyoo and doesn't have an standard Dingoo layout, you
   should define your own custom layout by creating a file
   `src/sdlmenu/<device>.h` and mapping the SDL buttons accordingly (see
   `src/sdlmenu/miyoo.h` for an example). Afterwards, just import your custom
