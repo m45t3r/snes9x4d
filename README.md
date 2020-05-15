@@ -120,8 +120,8 @@ specific game it may be better to generate your playthrough of it.
 
 While this fork removes support for any other device outside Miyoo (since I
 don't have the infrastructure to maintain the ports), it should be
-straightforward to port this code for a new device, specially for Dingoo-like
-devices.
+straightforward to port this code for a new device, specially for a Dingux-like
+(Linux+SDL) devices.
 
 Each specific device feature is behind compiler-flags so it shouldn't affect
 compilation for other targets. Also this port has many code clean-ups, so it
@@ -152,7 +152,7 @@ Some tips to port this project to another Dingoo-like device:
       disabling many features that doesn't make sense to embedded devices. So
       it should be enabled (and there are good chances that the code will
       simply not build without it)
-    + `_FAST_GFX` is an interesting optimization from
+    + `TL_COLOR_OPS` is an interesting optimization from
       [drowsnug95](https://github.com/drowsnug95/snes9x4d-rs90/) port. It
       allows color operations without a lookup table, and it is significantly
       faster. But it is also somewhat wrong, so it breaks colors in some games,

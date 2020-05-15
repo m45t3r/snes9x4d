@@ -330,13 +330,13 @@ bool8_32 S9xGraphicsInit()
 	S9xFixColourBrightness();
 
 	if (Settings.SixteenBit) {
-#ifndef _FAST_GFX
+#ifndef TL_COLOR_OPS
 		if (!(GFX.X2 = (uint16 *)malloc(sizeof(uint16) * 0x10000)))
 			return (FALSE);
 #endif
 
 		if (
-#ifdef _FAST_GFX
+#ifdef TL_COLOR_OPS
 		    1
 #else
 		    !(GFX.ZERO_OR_X2 =
@@ -344,7 +344,7 @@ bool8_32 S9xGraphicsInit()
 		    !(GFX.ZERO = (uint16 *)malloc(sizeof(uint16) * 0x10000))
 #endif
 		) {
-#ifndef _FAST_GFX
+#ifndef TL_COLOR_OPS
 			if (GFX.ZERO_OR_X2) {
 				free((char *)GFX.ZERO_OR_X2);
 				GFX.ZERO_OR_X2 = NULL;
@@ -358,7 +358,7 @@ bool8_32 S9xGraphicsInit()
 		}
 		uint32 r, g, b;
 
-#ifndef _FAST_GFX
+#ifndef TL_COLOR_OPS
 		// Build a lookup table that multiplies a packed RGB value by 2
 		// with saturation.
 		for (r = 0; r <= MAX_RED; r++) {
@@ -383,7 +383,7 @@ bool8_32 S9xGraphicsInit()
 		}
 #endif
 
-#ifndef _FAST_GFX
+#ifndef TL_COLOR_OPS
 		ZeroMemory(GFX.ZERO, 0x10000 * sizeof(uint16));
 		ZeroMemory(GFX.ZERO_OR_X2, 0x10000 * sizeof(uint16));
 		// Build a lookup table that if the top bit of the color value
@@ -426,7 +426,7 @@ bool8_32 S9xGraphicsInit()
 		}
 #endif
 
-#ifndef _FAST_GFX
+#ifndef TL_COLOR_OPS
 		// Build a lookup table that if the top bit of the color value
 		// is zero then the value is zero, otherwise its just the value.
 		for (r = 0; r <= MAX_RED; r++) {
@@ -459,7 +459,7 @@ bool8_32 S9xGraphicsInit()
 		}
 #endif
 	} else {
-#ifndef _FAST_GFX
+#ifndef TL_COLOR_OPS
 		GFX.X2 = NULL;
 		GFX.ZERO_OR_X2 = NULL;
 		GFX.ZERO = NULL;
@@ -472,7 +472,7 @@ bool8_32 S9xGraphicsInit()
 void S9xGraphicsDeinit(void)
 {
 	// Free any memory allocated in S9xGraphicsInit
-#ifndef _FAST_GFX
+#ifndef TL_COLOR_OPS
 	if (GFX.X2) {
 		free((char *)GFX.X2);
 		GFX.X2 = NULL;

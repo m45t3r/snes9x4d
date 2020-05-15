@@ -54,7 +54,7 @@ struct SGFX {
 
 	// Setup in call to S9xGraphicsInit()
 	int Delta;
-#ifndef _FAST_GFX
+#ifndef TL_COLOR_OPS
 	uint16 *X2;
 	uint16 *ZERO_OR_X2;
 #endif
@@ -185,7 +185,7 @@ extern uint8 mul_brightness[16][32];
 #define MASK1 0xF7DE
 #define MASK2 0x7BEF
 
-#ifdef _FAST_GFX
+#ifdef TL_COLOR_OPS
 inline uint16_t COLOR_ADD(uint16_t C1, uint16_t C2)
 {
 	uint16_t a, b, c, z, c1, c2;
@@ -228,7 +228,7 @@ inline uint16_t COLOR_ADD(uint16_t C1, uint16_t C2)
 //    z = ((a & c) & MASK2)<<1;
 //
 
-#ifdef _FAST_GFX
+#ifdef TL_COLOR_OPS
 inline uint16_t COLOR_SUB(uint16_t C1, uint16_t C2)
 {
 	uint16_t a, b, c, z, c1, c2;
@@ -251,7 +251,7 @@ inline uint16_t COLOR_SUB(uint16_t C1, uint16_t C2)
 	 ((C1)&RGB_LOW_BITS_MASK) - ((C2)&RGB_LOW_BITS_MASK))
 #endif
 
-#ifdef _FAST_GFX
+#ifdef TL_COLOR_OPS
 inline uint16_t COLOR_SUB1_2(uint16_t C1, uint16_t C2)
 {
 	uint16_t a, b, c, z, c1, c2;

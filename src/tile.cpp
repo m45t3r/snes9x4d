@@ -1267,7 +1267,7 @@ void DrawLargePixel16Sub(uint32 Tile, uint32 Offset, uint32 StartPixel,
 	uint8 *Depth = gfx->ZBuffer + Offset;
 	uint16 pixel;
 
-#ifdef _FAST_GFX
+#ifdef TL_COLOR_OPS
 #define LARGE_SUB_PIXEL(s, p)                                                  \
 	(Depth[z + gfx->DepthDelta]                                            \
 	     ? (Depth[z + gfx->DepthDelta] != 1                                \
