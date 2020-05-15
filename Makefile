@@ -3,16 +3,12 @@ GIT_VERSION := "$(shell git describe --abbrev=7 --dirty --always --tags)"
 UNZIP = 1
 CHEATS = 1
 ARM_ASM = 1
-# SPC700_ASM = 1
+SPC700_ASM = 1
 
 FXOBJ = src/fxinst.o src/fxemu.o src/fxdbg.o
 
 SOUNDOBJ = src/spc700.o src/soundux.o src/apu.o
-SOUNDDEFINES = -DSPC700_C
-
-ifndef SPC700_ASM
-SOUNDDEFINES = -DSPC700_SHUTDOWN
-endif
+SOUNDDEFINES = -DSPC700_C -DSPC700_SHUTDOWN
 
 CPUOBJ = src/cpuops.o src/cpuexec.o
 

@@ -127,68 +127,51 @@ EXTERN_C struct SAPURegisters APURegisters;
 
 // 1.953us := 1.024065.54MHz
 
-#ifdef SPCTOOL
-EXTERN_C int32 ESPC(int32);
-
-#define APU_EXECUTE()                                                          \
-	{                                                                      \
-		int32 l = (CPU.Cycles - APU.Cycles) / 14;                      \
-		if (l > 0) {                                                   \
-			l -= _EmuSPC(l);                                       \
-			APU.Cycles += l * 14;                                  \
-		}                                                              \
-	}
-
-#else
-
-#ifdef DEBUGGER
-#define APU_EXECUTE1()                                                         \
-	{                                                                      \
-		if (APU.Flags & TRACE_FLAG)                                    \
-			S9xTraceAPU();                                         \
-		APU.Cycles += S9xAPUCycles[*IAPU.PC];                          \
-		(*S9xApuOpcodes[*IAPU.PC])(&APURegisters, &IAPU, &APU);        \
-	}
-#else
-#define APU_EXECUTE1()                                                         \
-	{                                                                      \
-		apu->Cycles += S9xAPUCycles[*iapu->PC];                        \
-		(*S9xApuOpcodes[*iapu->PC])(&APURegisters, iapu, apu);         \
-	}
-#endif
-
-#define APU_EXECUTE()                                                          \
-	if (iapu->APUExecuting) {                                              \
-		while (apu->Cycles <= cpu->Cycles)                             \
-			APU_EXECUTE1();                                        \
-	}
-#endif
-
 #ifdef SPC700_ASM
 EXTERN_C int spc700_execute(int cycles);
+#else
+#define spc700_execute(cycles) 0
+#endif
 
-#define asm_APU_EXECUTE()                                                      \
-	if (iapu->APUExecuting) {                                              \
-		{                                                              \
-			int cycles = (cpu->Cycles - apu->Cycles);              \
-			if (cycles > 0) {                                      \
-				apu->Cycles +=                                 \
-				    cycles - spc700_execute(cycles);           \
+#define asm_APU_EXECUTE(MODE)                                                  \
+	{                                                                      \
+		if (cpu->APU_APUExecuting == MODE) {                           \
+			if (Settings.asmspc700) {                              \
+				if (apu->Cycles < cpu->Cycles) {               \
+					int cycles =                           \
+					    cpu->Cycles - apu->Cycles;         \
+					apu->Cycles +=                         \
+					    cycles - spc700_execute(cycles);   \
+				}                                              \
+			} else {                                               \
+				while (apu->Cycles <= cpu->Cycles) {           \
+					CPU.APU_Cycles +=                      \
+					    S9xAPUCycles[*IAPU.PC];            \
+					(*S9xApuOpcodes[*iapu->PC])(           \
+					    &APURegisters, iapu, apu);         \
+				}                                              \
 			}                                                      \
 		}                                                              \
 	}
 
 #define asm_APU_EXECUTE1()                                                     \
-	if (iapu->APUExecuting) {                                              \
-		{                                                              \
-			int cycles = (apu->Cycles - cpu->NextEvent);           \
-			if (cycles > 0) {                                      \
-				apu->Cycles +=                                 \
-				    cycles - spc700_execute(cycles);           \
+	{                                                                      \
+		if (cpu->APU_APUExecuting == TRUE) {                           \
+			if (Settings.asmspc700) {                              \
+				if (apu->Cycles < cpu->NextEvent) {            \
+					int cycles =                           \
+					    cpu->NextEvent - apu->Cycles;      \
+					apu->Cycles +=                         \
+					    cycles - spc700_execute(cycles);   \
+				}                                              \
+			} else {                                               \
+				do {                                           \
+					apu->Cycles += S9xAPUCycles[*IAPU.PC]; \
+					(*S9xApuOpcodes[*iapu->PC])(           \
+					    &APURegisters, iapu, apu);         \
+				} while (apu->Cycles < cpu->NextEvent);        \
 			}                                                      \
 		}                                                              \
 	}
-
-#endif
 
 #endif

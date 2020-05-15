@@ -826,7 +826,7 @@ void S9xSetPPU(uint8 Byte, uint16 Address, struct SPPU *ppu,
 			Memory.FillRAM[Address] = Byte;
 			IAPU.RAM[(Address & 3) + 0xf4] = Byte;
 #ifdef SPC700_SHUTDOWN
-			IAPU.APUExecuting = Settings.APUEnabled;
+			CPU.APU_APUExecuting = Settings.APUEnabled;
 			IAPU.WaitCounter++;
 #endif
 #endif // SPCTOOL
@@ -1256,7 +1256,7 @@ uint8 S9xGetPPU(uint16 Address, struct SPPU *ppu, CMemory *mem)
 #else
 			//	CPU.Flags |= DEBUG_MODE_FLAG;
 #ifdef SPC700_SHUTDOWN
-			IAPU.APUExecuting = Settings.APUEnabled;
+			CPU.APU_APUExecuting = Settings.APUEnabled;
 			IAPU.WaitCounter++;
 #endif
 			if (Settings.APUEnabled) {

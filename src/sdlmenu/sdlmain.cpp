@@ -246,7 +246,13 @@ extern "C"
 	Settings.SoundBufferSize = 256;
 	Settings.CyclesPercentage = 100;
 	Settings.DisableSoundEcho = FALSE;
-	Settings.APUEnabled = Settings.NextAPUEnabled = TRUE;
+#ifdef SPC700_ASM
+	Settings.asmspc700 = true;
+	CPU.APU_APUExecuting = Settings.APUEnabled = 3;
+#else
+	Settings.asmspc700 = false;
+	CPU.APU_APUExecuting = Settings.APUEnabled = TRUE;
+#endif
 	Settings.InterpolatedSound = TRUE;
 	Settings.H_Max = SNES_CYCLES_PER_SCANLINE;
 	Settings.SkipFrames = AUTO_FRAMERATE;

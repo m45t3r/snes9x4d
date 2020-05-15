@@ -76,10 +76,10 @@ char *S9xParseArgs(char **argv, int argc)
 		if (*argv[i] == '-') {
 			if (strcasecmp(argv[i], "-so") == 0 ||
 			    strcasecmp(argv[i], "-sound") == 0) {
-				Settings.NextAPUEnabled = TRUE;
+				Settings.APUEnabled = TRUE;
 			} else if (strcasecmp(argv[i], "-ns") == 0 ||
 				   strcasecmp(argv[i], "-nosound") == 0) {
-				Settings.NextAPUEnabled = FALSE;
+				Settings.APUEnabled = FALSE;
 			} else if (strcasecmp(argv[i], "-soundskip") == 0 ||
 				   strcasecmp(argv[i], "-sk") == 0) {
 				if (i + 1 < argc)
@@ -310,10 +310,9 @@ char *S9xParseArgs(char **argv, int argc)
 				 strcasecmp(argv[i], "-st") == 0) {
 				Settings.Stereo = TRUE;
 				Settings.APUEnabled = TRUE;
-				Settings.NextAPUEnabled = TRUE;
 			} else if (strcasecmp(argv[i], "-mono") == 0) {
 				Settings.Stereo = FALSE;
-				Settings.NextAPUEnabled = TRUE;
+				Settings.APUEnabled = TRUE;
 			}
 #endif
 			else if (strcasecmp(argv[i], "-envx") == 0 ||
