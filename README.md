@@ -1,13 +1,13 @@
 # Snes9x4d for Miyoo
 
-Snes9x4d for [MiyooCFW](https://github.com/TriForceX/MiyooCFW) devices.
+Snes9x4d for [MiyooCFW](https://github.com/TriForceX/MiyooCFW/) devices.
 Should run in both BittBoy and PocketGo, however it is only tested on
 PocketGo v1.
 
 ## Usage
 
 Assuming that you're using the latest version of
-[MiyooCFW](https://github.com/TriForceX/MiyooCFW), go to the
+[MiyooCFW](https://github.com/TriForceX/MiyooCFW/), go to the
 [releases](https://github.com/m45t3r/snes9x4d-miyoo/releases/) tab and
 download the latest version of `snes9x4d` file. Put this file in
 `sd://emus/snes9x4d`, substituing the file that is in there. That's it!
@@ -54,7 +54,7 @@ quality. Some of them are described below:
 
 First, you need to setup a toolchain. This code is tested with:
 
-- https://github.com/steward-fu/miyoo
+- https://github.com/steward-fu/miyoo/
 - https://github.com/bittboy/buildroot/
 
 The first one is easier to setup since it has some instructions and also the
