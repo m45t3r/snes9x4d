@@ -277,6 +277,7 @@ void S9xUpdateScreen();
 void RenderLine(uint8 line, struct SPPU *);
 void S9xBuildDirectColourMaps();
 bool8_32 S9xBuildLookupTable();
+void S9xFreeLookupTable();
 
 bool8_32 S9xGraphicsInit();
 void S9xGraphicsDeinit();

@@ -329,12 +329,22 @@ bool8_32 S9xGraphicsInit()
 #endif
 	S9xFixColourBrightness();
 
+	// Just making sure we are not freeing unitialized memory by mistake
+	GFX.X2 = NULL;
+	GFX.ZERO_OR_X2 = NULL;
+	GFX.ZERO = NULL;
+
 	return S9xBuildLookupTable();
 }
 
 void S9xGraphicsDeinit(void)
 {
 	// Free any memory allocated in S9xGraphicsInit
+	S9xFreeLookupTable();
+}
+
+void S9xFreeLookupTable()
+{
 	if (GFX.X2) {
 		free((char *)GFX.X2);
 		GFX.X2 = NULL;
@@ -347,7 +357,6 @@ void S9xGraphicsDeinit(void)
 		free((char *)GFX.ZERO);
 		GFX.ZERO = NULL;
 	}
-	return;
 }
 
 bool8_32 S9xBuildLookupTable()
@@ -466,18 +475,7 @@ bool8_32 S9xBuildLookupTable()
 			}
 		}
 	} else {
-		if (GFX.X2) {
-			free((char *)GFX.X2);
-			GFX.X2 = NULL;
-		}
-		if (GFX.ZERO_OR_X2) {
-			free((char *)GFX.ZERO_OR_X2);
-			GFX.ZERO_OR_X2 = NULL;
-		}
-		if (GFX.ZERO) {
-			free((char *)GFX.ZERO);
-			GFX.ZERO = NULL;
-		}
+		S9xFreeLookupTable();
 	}
 
 	return (TRUE);
