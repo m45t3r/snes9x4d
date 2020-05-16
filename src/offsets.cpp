@@ -51,43 +51,19 @@
 #define S9xSTREAM stdout
 #endif
 
-#define OFFSET(N, F)                                                           \
-	fprintf(S9xSTREAM, "#define " #N " CPU + %d\n",                        \
-		(int)&((struct SCPUState *)0)->F);
-#define OFFSET2(N, F)                                                          \
-	fprintf(S9xSTREAM, "#define " #N " Registers + %d\n",                  \
-		(int)&((struct SRegisters *)0)->F);
-#define OFFSET3(F)                                                             \
-	fprintf(S9xSTREAM, "#define " #F " Memory + %d\n",                     \
-		(int)&((class CMemory *)0)->F);
-#define OFFSET4(N, F)                                                          \
-	fprintf(S9xSTREAM, "#define " #N " APU + %d\n",                        \
-		(int)&((struct SAPU *)0)->F);
-#define OFFSET5(N, F)                                                          \
-	fprintf(S9xSTREAM, "#define " #N " IAPU + %d\n",                       \
-		(int)&((struct SIAPU *)0)->F);
-#define OFFSET6(N, F)                                                          \
-	fprintf(S9xSTREAM, "#define " #N " ICPU + %d\n",                       \
-		(int)&((struct SICPU *)0)->F);
-#define OFFSET7(N, F)                                                          \
-	fprintf(S9xSTREAM, "#define " #N " Settings + %d\n",                   \
-		(int)&((struct SSettings *)0)->F);
-#define OFFSET8(N, F)                                                          \
-	fprintf(S9xSTREAM, "#define " #N " APURegisters + %d\n",               \
-		(int)&((struct SAPURegisters *)0)->F);
+#define OFFSET(N, F) fprintf(S9xSTREAM, "#define " #N " CPU + %d\n", (int)&((struct SCPUState *)0)->F);
+#define OFFSET2(N, F) fprintf(S9xSTREAM, "#define " #N " Registers + %d\n", (int)&((struct SRegisters *)0)->F);
+#define OFFSET3(F) fprintf(S9xSTREAM, "#define " #F " Memory + %d\n", (int)&((class CMemory *)0)->F);
+#define OFFSET4(N, F) fprintf(S9xSTREAM, "#define " #N " APU + %d\n", (int)&((struct SAPU *)0)->F);
+#define OFFSET5(N, F) fprintf(S9xSTREAM, "#define " #N " IAPU + %d\n", (int)&((struct SIAPU *)0)->F);
+#define OFFSET6(N, F) fprintf(S9xSTREAM, "#define " #N " ICPU + %d\n", (int)&((struct SICPU *)0)->F);
+#define OFFSET7(N, F) fprintf(S9xSTREAM, "#define " #N " Settings + %d\n", (int)&((struct SSettings *)0)->F);
+#define OFFSET8(N, F) fprintf(S9xSTREAM, "#define " #N " APURegisters + %d\n", (int)&((struct SAPURegisters *)0)->F);
 
-#define OFFSET9(N, F)                                                          \
-	fprintf(S9xSTREAM, "#define " #N " PPU + %d\n",                        \
-		(int)&((struct SPPU *)0)->F);
-#define OFFSET10(N, F)                                                         \
-	fprintf(S9xSTREAM, "#define " #N " IPPU + %d\n",                       \
-		(int)&((struct InternalPPU *)0)->F);
-#define OFFSET11(N, F)                                                         \
-	fprintf(S9xSTREAM, "#define " #N " SA1 + %d\n",                        \
-		(int)&((struct SSA1 *)0)->F);
-#define OFFSET12(N, F)                                                         \
-	fprintf(S9xSTREAM, "#define " #N " SA1Registers + %d\n",               \
-		(int)&((struct SSA1Registers *)0)->F);
+#define OFFSET9(N, F) fprintf(S9xSTREAM, "#define " #N " PPU + %d\n", (int)&((struct SPPU *)0)->F);
+#define OFFSET10(N, F) fprintf(S9xSTREAM, "#define " #N " IPPU + %d\n", (int)&((struct InternalPPU *)0)->F);
+#define OFFSET11(N, F) fprintf(S9xSTREAM, "#define " #N " SA1 + %d\n", (int)&((struct SSA1 *)0)->F);
+#define OFFSET12(N, F) fprintf(S9xSTREAM, "#define " #N " SA1Registers + %d\n", (int)&((struct SSA1Registers *)0)->F);
 
 int main(int /*argc*/, char ** /*argv*/)
 {

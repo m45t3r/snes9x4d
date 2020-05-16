@@ -112,10 +112,8 @@ void C4TransfWireFrame()
 	c4y = c4x2 * sin(tanval) + c4y2 * cos(tanval);
 
 	// Scale
-	C4WFXVal =
-	    (short)(c4x * (double)C4WFScale / (0x90 * (c4z + 0x95)) * 0x95);
-	C4WFYVal =
-	    (short)(c4y * (double)C4WFScale / (0x90 * (c4z + 0x95)) * 0x95);
+	C4WFXVal = (short)(c4x * (double)C4WFScale / (0x90 * (c4z + 0x95)) * 0x95);
+	C4WFYVal = (short)(c4y * (double)C4WFScale / (0x90 * (c4z + 0x95)) * 0x95);
 }
 
 void C4TransfWireFrame2()
@@ -158,8 +156,7 @@ void C4CalcWireFrame()
 	} else {
 		if (C4WFYVal != 0) {
 			C4WFDist = abs(C4WFYVal) + 1;
-			C4WFXVal =
-			    (short)(256 * (double)C4WFXVal / abs(C4WFYVal));
+			C4WFXVal = (short)(256 * (double)C4WFXVal / abs(C4WFYVal));
 			if (C4WFYVal < 0)
 				C4WFYVal = -256;
 			else
@@ -194,15 +191,13 @@ void C4Op1F()
 
 void C4Op15()
 {
-	tanval =
-	    sqrt((double)C41FYVal * C41FYVal + (double)C41FXVal * C41FXVal);
+	tanval = sqrt((double)C41FYVal * C41FYVal + (double)C41FXVal * C41FXVal);
 	C41FDist = (short)tanval;
 }
 
 void C4Op0D()
 {
-	tanval =
-	    sqrt((double)C41FYVal * C41FYVal + (double)C41FXVal * C41FXVal);
+	tanval = sqrt((double)C41FYVal * C41FYVal + (double)C41FXVal * C41FXVal);
 	tanval = C41FDistVal / tanval;
 	C41FYVal = (short)(C41FYVal * tanval * 0.99);
 	C41FXVal = (short)(C41FXVal * tanval * 0.98);
@@ -211,8 +206,7 @@ void C4Op0D()
 #ifdef ZSNES_C4
 void C4LoaDMem(char *C4RAM)
 {
-	memmove(C4RAM + (READ_WORD(C4RAM + 0x1f45) & 0x1fff),
-		S9xGetMemPointer(READ_3WORD(C4RAM + 0x1f40)),
+	memmove(C4RAM + (READ_WORD(C4RAM + 0x1f45) & 0x1fff), S9xGetMemPointer(READ_3WORD(C4RAM + 0x1f40)),
 		READ_WORD(C4RAM + 0x1f43));
 }
 #endif

@@ -43,8 +43,8 @@
 void S9xOpcode_NMI();
 void S9xOpcode_IRQ();
 
-#define CHECK_FOR_IRQ()                                                        \
-	if (CPU.IRQActive && !CheckFlag(IRQ) && !Settings.DisableIRQ)          \
+#define CHECK_FOR_IRQ()                                                                                                \
+	if (CPU.IRQActive && !CheckFlag(IRQ) && !Settings.DisableIRQ)                                                  \
 	S9xOpcode_IRQ()
 
 #endif

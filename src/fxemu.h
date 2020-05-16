@@ -114,13 +114,12 @@ typedef int int32;
  */
 struct FxInit_s {
 	uint32 vFlags;
-	uint8 *
-	    pvRegisters; /* 768 bytes located in the memory at address 0x3000 */
-	uint32 nRamBanks; /* Number of 64kb-banks in GSU-RAM/BackupRAM (banks
-			     0x70-0x73) */
-	uint8 *pvRam;	  /* Pointer to GSU-RAM */
-	uint32 nRomBanks; /* Number of 32kb-banks in Cart-ROM */
-	uint8 *pvRom;	  /* Pointer to Cart-ROM */
+	uint8 *pvRegisters; /* 768 bytes located in the memory at address 0x3000 */
+	uint32 nRamBanks;   /* Number of 64kb-banks in GSU-RAM/BackupRAM (banks
+			       0x70-0x73) */
+	uint8 *pvRam;	    /* Pointer to GSU-RAM */
+	uint32 nRomBanks;   /* Number of 32kb-banks in Cart-ROM */
+	uint8 *pvRom;	    /* Pointer to Cart-ROM */
 };
 
 /* Reset the FxChip */
@@ -171,10 +170,8 @@ extern void fx_updateRamBank(uint8 Byte);
 #define FX_ERROR_ILLEGAL_ADDRESS -2
 
 /* Return the number of bytes in an opcode */
-#define OPCODE_BYTES(op)                                                       \
-	((((op) >= 0x05 && (op) <= 0xf) || ((op) >= 0xa0 && (op) <= 0xaf))     \
-	     ? 2                                                               \
-	     : (((op) >= 0xf0) ? 3 : 1))
+#define OPCODE_BYTES(op)                                                                                               \
+	((((op) >= 0x05 && (op) <= 0xf) || ((op) >= 0xa0 && (op) <= 0xaf)) ? 2 : (((op) >= 0xf0) ? 3 : 1))
 
 extern void fx_computeScreenPointers();
 

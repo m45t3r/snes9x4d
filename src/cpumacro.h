@@ -41,12 +41,12 @@
 #ifndef _CPUMACRO_H_
 #define _CPUMACRO_H_
 
-#define SETZN16(W)                                                             \
-	icpu->_Zero = (W);                                                     \
+#define SETZN16(W)                                                                                                     \
+	icpu->_Zero = (W);                                                                                             \
 	icpu->_Negative = (uint8)((W) >> 8);
 
-#define SETZN8(W)                                                              \
-	icpu->_Zero = (W);                                                     \
+#define SETZN8(W)                                                                                                      \
+	icpu->_Zero = (W);                                                                                             \
 	icpu->_Negative = (W);
 
 /*
@@ -63,8 +63,7 @@ STATIC inline void SETZN8 (uint8 Work)
 }
 */
 
-STATIC inline void ADC8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void ADC8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	uint8 Work8 = S9xGetByte(OpAddress, cpu);
 
@@ -109,8 +108,7 @@ STATIC inline void ADC8(long OpAddress, struct SRegisters *reg,
 	}
 }
 
-STATIC inline void ADC16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void ADC16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	uint16 Work16 = S9xGetWord(OpAddress, cpu);
 
@@ -171,22 +169,19 @@ STATIC inline void ADC16(long OpAddress, struct SRegisters *reg,
 	}
 }
 
-STATIC inline void AND16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void AND16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	reg->A.W &= S9xGetWord(OpAddress, cpu);
 	SETZN16(reg->A.W);
 }
 
-STATIC inline void AND8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void AND8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	reg->AL &= S9xGetByte(OpAddress, cpu);
 	SETZN8(reg->AL);
 }
 
-STATIC inline void A_ASL16(struct SRegisters *reg, struct SICPU *icpu,
-			   struct SCPUState *cpu)
+STATIC inline void A_ASL16(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -196,8 +191,7 @@ STATIC inline void A_ASL16(struct SRegisters *reg, struct SICPU *icpu,
 	SETZN16(reg->A.W);
 }
 
-STATIC inline void A_ASL8(struct SRegisters *reg, struct SICPU *icpu,
-			  struct SCPUState *cpu)
+STATIC inline void A_ASL8(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -207,8 +201,7 @@ STATIC inline void A_ASL8(struct SRegisters *reg, struct SICPU *icpu,
 	SETZN8(reg->AL);
 }
 
-STATIC inline void ASL16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void ASL16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -220,8 +213,7 @@ STATIC inline void ASL16(long OpAddress, struct SRegisters *reg,
 	SETZN16(Work16);
 }
 
-STATIC inline void ASL8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void ASL8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -233,8 +225,7 @@ STATIC inline void ASL8(long OpAddress, struct SRegisters *reg,
 	SETZN8(Work8);
 }
 
-STATIC inline void BIT16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void BIT16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	uint16 Work16 = S9xGetWord(OpAddress, cpu);
 	icpu->_Overflow = (Work16 & 0x4000) != 0;
@@ -242,8 +233,7 @@ STATIC inline void BIT16(long OpAddress, struct SRegisters *reg,
 	icpu->_Zero = (Work16 & reg->A.W) != 0;
 }
 
-STATIC inline void BIT8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void BIT8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	uint8 Work8 = S9xGetByte(OpAddress, cpu);
 	icpu->_Overflow = (Work8 & 0x40) != 0;
@@ -251,56 +241,49 @@ STATIC inline void BIT8(long OpAddress, struct SRegisters *reg,
 	icpu->_Zero = Work8 & reg->AL;
 }
 
-STATIC inline void CMP16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void CMP16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	int32 Int32 = (long)reg->A.W - (long)S9xGetWord(OpAddress, cpu);
 	icpu->_Carry = Int32 >= 0;
 	SETZN16((uint16)Int32);
 }
 
-STATIC inline void CMP8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void CMP8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	int32 Int32 = (short)reg->AL - (short)S9xGetByte(OpAddress, cpu);
 	icpu->_Carry = Int32 >= 0;
 	SETZN8((uint8)Int32);
 }
 
-STATIC inline void CMX16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void CMX16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	int32 Int32 = (long)reg->X.W - (long)S9xGetWord(OpAddress, cpu);
 	icpu->_Carry = Int32 >= 0;
 	SETZN16((uint16)Int32);
 }
 
-STATIC inline void CMX8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void CMX8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	int32 Int32 = (short)reg->XL - (short)S9xGetByte(OpAddress, cpu);
 	icpu->_Carry = Int32 >= 0;
 	SETZN8((uint8)Int32);
 }
 
-STATIC inline void CMY16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void CMY16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	int32 Int32 = (long)reg->Y.W - (long)S9xGetWord(OpAddress, cpu);
 	icpu->_Carry = Int32 >= 0;
 	SETZN16((uint16)Int32);
 }
 
-STATIC inline void CMY8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void CMY8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	int32 Int32 = (short)reg->YL - (short)S9xGetByte(OpAddress, cpu);
 	icpu->_Carry = Int32 >= 0;
 	SETZN8((uint8)Int32);
 }
 
-STATIC inline void A_DEC16(struct SRegisters *reg, struct SICPU *icpu,
-			   struct SCPUState *cpu)
+STATIC inline void A_DEC16(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -313,8 +296,7 @@ STATIC inline void A_DEC16(struct SRegisters *reg, struct SICPU *icpu,
 	SETZN16(reg->A.W);
 }
 
-STATIC inline void A_DEC8(struct SRegisters *reg, struct SICPU *icpu,
-			  struct SCPUState *cpu)
+STATIC inline void A_DEC8(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -327,8 +309,7 @@ STATIC inline void A_DEC8(struct SRegisters *reg, struct SICPU *icpu,
 	SETZN8(reg->AL);
 }
 
-STATIC inline void DEC16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void DEC16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -342,8 +323,7 @@ STATIC inline void DEC16(long OpAddress, struct SRegisters *reg,
 	SETZN16(Work16);
 }
 
-STATIC inline void DEC8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void DEC8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -357,22 +337,19 @@ STATIC inline void DEC8(long OpAddress, struct SRegisters *reg,
 	SETZN8(Work8);
 }
 
-STATIC inline void EOR16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void EOR16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	reg->A.W ^= S9xGetWord(OpAddress, cpu);
 	SETZN16(reg->A.W);
 }
 
-STATIC inline void EOR8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void EOR8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	reg->AL ^= S9xGetByte(OpAddress, cpu);
 	SETZN8(reg->AL);
 }
 
-STATIC inline void A_INC16(struct SRegisters *reg, struct SICPU *icpu,
-			   struct SCPUState *cpu)
+STATIC inline void A_INC16(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -385,8 +362,7 @@ STATIC inline void A_INC16(struct SRegisters *reg, struct SICPU *icpu,
 	SETZN16(reg->A.W);
 }
 
-STATIC inline void A_INC8(struct SRegisters *reg, struct SICPU *icpu,
-			  struct SCPUState *cpu)
+STATIC inline void A_INC8(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -399,8 +375,7 @@ STATIC inline void A_INC8(struct SRegisters *reg, struct SICPU *icpu,
 	SETZN8(reg->AL);
 }
 
-STATIC inline void INC16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void INC16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -414,8 +389,7 @@ STATIC inline void INC16(long OpAddress, struct SRegisters *reg,
 	SETZN16(Work16);
 }
 
-STATIC inline void INC8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void INC8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -429,50 +403,43 @@ STATIC inline void INC8(long OpAddress, struct SRegisters *reg,
 	SETZN8(Work8);
 }
 
-STATIC inline void LDA16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void LDA16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	reg->A.W = S9xGetWord(OpAddress, cpu);
 	SETZN16(reg->A.W);
 }
 
-STATIC inline void LDA8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void LDA8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	reg->AL = S9xGetByte(OpAddress, cpu);
 	SETZN8(reg->AL);
 }
 
-STATIC inline void LDX16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void LDX16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	reg->X.W = S9xGetWord(OpAddress, cpu);
 	SETZN16(reg->X.W);
 }
 
-STATIC inline void LDX8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void LDX8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	reg->XL = S9xGetByte(OpAddress, cpu);
 	SETZN8(reg->XL);
 }
 
-STATIC inline void LDY16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void LDY16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	reg->Y.W = S9xGetWord(OpAddress, cpu);
 	SETZN16(reg->Y.W);
 }
 
-STATIC inline void LDY8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void LDY8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	reg->YL = S9xGetByte(OpAddress, cpu);
 	SETZN8(reg->YL);
 }
 
-STATIC inline void A_LSR16(struct SRegisters *reg, struct SICPU *icpu,
-			   struct SCPUState *cpu)
+STATIC inline void A_LSR16(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -482,8 +449,7 @@ STATIC inline void A_LSR16(struct SRegisters *reg, struct SICPU *icpu,
 	SETZN16(reg->A.W);
 }
 
-STATIC inline void A_LSR8(struct SRegisters *reg, struct SICPU *icpu,
-			  struct SCPUState *cpu)
+STATIC inline void A_LSR8(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -493,8 +459,7 @@ STATIC inline void A_LSR8(struct SRegisters *reg, struct SICPU *icpu,
 	SETZN8(reg->AL);
 }
 
-STATIC inline void LSR16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void LSR16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -506,8 +471,7 @@ STATIC inline void LSR16(long OpAddress, struct SRegisters *reg,
 	SETZN16(Work16);
 }
 
-STATIC inline void LSR8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void LSR8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -519,22 +483,19 @@ STATIC inline void LSR8(long OpAddress, struct SRegisters *reg,
 	SETZN8(Work8);
 }
 
-STATIC inline void ORA16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void ORA16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	reg->A.W |= S9xGetWord(OpAddress, cpu);
 	SETZN16(reg->A.W);
 }
 
-STATIC inline void ORA8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void ORA8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	reg->AL |= S9xGetByte(OpAddress, cpu);
 	SETZN8(reg->AL);
 }
 
-STATIC inline void A_ROL16(struct SRegisters *reg, struct SICPU *icpu,
-			   struct SCPUState *cpu)
+STATIC inline void A_ROL16(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -545,8 +506,7 @@ STATIC inline void A_ROL16(struct SRegisters *reg, struct SICPU *icpu,
 	SETZN16((uint16)Work32);
 }
 
-STATIC inline void A_ROL8(struct SRegisters *reg, struct SICPU *icpu,
-			  struct SCPUState *cpu)
+STATIC inline void A_ROL8(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -559,8 +519,7 @@ STATIC inline void A_ROL8(struct SRegisters *reg, struct SICPU *icpu,
 	SETZN8((uint8)Work16);
 }
 
-STATIC inline void ROL16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void ROL16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -573,8 +532,7 @@ STATIC inline void ROL16(long OpAddress, struct SRegisters *reg,
 	SETZN16((uint16)Work32);
 }
 
-STATIC inline void ROL8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void ROL8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -587,8 +545,7 @@ STATIC inline void ROL8(long OpAddress, struct SRegisters *reg,
 	SETZN8((uint8)Work16);
 }
 
-STATIC inline void A_ROR16(struct SRegisters *reg, struct SICPU *icpu,
-			   struct SCPUState *cpu)
+STATIC inline void A_ROR16(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -601,8 +558,7 @@ STATIC inline void A_ROR16(struct SRegisters *reg, struct SICPU *icpu,
 	SETZN16((uint16)Work32);
 }
 
-STATIC inline void A_ROR8(struct SRegisters *reg, struct SICPU *icpu,
-			  struct SCPUState *cpu)
+STATIC inline void A_ROR8(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -614,8 +570,7 @@ STATIC inline void A_ROR8(struct SRegisters *reg, struct SICPU *icpu,
 	SETZN8((uint8)Work16);
 }
 
-STATIC inline void ROR16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void ROR16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -628,8 +583,7 @@ STATIC inline void ROR16(long OpAddress, struct SRegisters *reg,
 	SETZN16((uint16)Work32);
 }
 
-STATIC inline void ROR8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void ROR8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -642,8 +596,7 @@ STATIC inline void ROR8(long OpAddress, struct SRegisters *reg,
 	SETZN8((uint8)Work16);
 }
 
-STATIC inline void SBC16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void SBC16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	uint16 Work16 = S9xGetWord(OpAddress, cpu);
 
@@ -689,8 +642,7 @@ STATIC inline void SBC16(long OpAddress, struct SRegisters *reg,
 		SETZN16(reg->A.W);
 	} else {
 
-		int32 Int32 =
-		    (long)reg->A.W - (long)Work16 + (long)CHECKCARRY() - 1;
+		int32 Int32 = (long)reg->A.W - (long)Work16 + (long)CHECKCARRY() - 1;
 
 		icpu->_Carry = Int32 >= 0;
 
@@ -703,8 +655,7 @@ STATIC inline void SBC16(long OpAddress, struct SRegisters *reg,
 	}
 }
 
-STATIC inline void SBC8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void SBC8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	uint8 Work8 = S9xGetByte(OpAddress, cpu);
 	if (CHECKDECIMAL()) {
@@ -734,8 +685,7 @@ STATIC inline void SBC8(long OpAddress, struct SRegisters *reg,
 		reg->AL = Ans8;
 		SETZN8(reg->AL);
 	} else {
-		int32 Int32 =
-		    (short)reg->AL - (short)Work8 + (short)CHECKCARRY() - 1;
+		int32 Int32 = (short)reg->AL - (short)Work8 + (short)CHECKCARRY() - 1;
 
 		icpu->_Carry = Int32 >= 0;
 		if ((reg->AL ^ Work8) & (reg->AL ^ (uint8)Int32) & 0x80)
@@ -747,56 +697,47 @@ STATIC inline void SBC8(long OpAddress, struct SRegisters *reg,
 	}
 }
 
-STATIC inline void STA16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void STA16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	S9xSetWord(reg->A.W, OpAddress, cpu);
 }
 
-STATIC inline void STA8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void STA8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	S9xSetByte(reg->AL, OpAddress, cpu);
 }
 
-STATIC inline void STX16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void STX16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	S9xSetWord(reg->X.W, OpAddress, cpu);
 }
 
-STATIC inline void STX8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void STX8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	S9xSetByte(reg->XL, OpAddress, cpu);
 }
 
-STATIC inline void STY16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void STY16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	S9xSetWord(reg->Y.W, OpAddress, cpu);
 }
 
-STATIC inline void STY8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void STY8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	S9xSetByte(reg->YL, OpAddress, cpu);
 }
 
-STATIC inline void STZ16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void STZ16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	S9xSetWord(0, OpAddress, cpu);
 }
 
-STATIC inline void STZ8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void STZ8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 	S9xSetByte(0, OpAddress, cpu);
 }
 
-STATIC inline void TSB16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void TSB16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -807,8 +748,7 @@ STATIC inline void TSB16(long OpAddress, struct SRegisters *reg,
 	S9xSetWord(Work16, OpAddress, cpu);
 }
 
-STATIC inline void TSB8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void TSB8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -819,8 +759,7 @@ STATIC inline void TSB8(long OpAddress, struct SRegisters *reg,
 	S9xSetByte(Work8, OpAddress, cpu);
 }
 
-STATIC inline void TRB16(long OpAddress, struct SRegisters *reg,
-			 struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void TRB16(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;
@@ -831,8 +770,7 @@ STATIC inline void TRB16(long OpAddress, struct SRegisters *reg,
 	S9xSetWord(Work16, OpAddress, cpu);
 }
 
-STATIC inline void TRB8(long OpAddress, struct SRegisters *reg,
-			struct SICPU *icpu, struct SCPUState *cpu)
+STATIC inline void TRB8(long OpAddress, struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
 #ifdef VAR_CYCLES
 	cpu->Cycles += ONE_CYCLE;

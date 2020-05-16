@@ -38,9 +38,8 @@ static void sdl_audio_callback(void *userdata, Uint8 *stream, int len)
 	return;
 }
 
-bool8_32 S9xOpenSoundDevice(
-    int mode, bool8_32 stereo,
-    int buffer_size) // called from S9xInitSound in ../soundux.cpp
+bool8_32 S9xOpenSoundDevice(int mode, bool8_32 stereo,
+			    int buffer_size) // called from S9xInitSound in ../soundux.cpp
 {
 	SDL_AudioSpec *audiospec;
 
@@ -75,10 +74,8 @@ bool8_32 S9xOpenSoundDevice(
 
 	SDL_PauseAudio(0);
 
-	printf(
-	    "Rate: %d, Buffer size: %d, 16-bit: %s, Stereo: %s, Encoded: %s\n",
-	    so.playback_rate, so.buffer_size, so.sixteen_bit ? "yes" : "no",
-	    so.stereo ? "yes" : "no", so.encoded ? "yes" : "no");
+	printf("Rate: %d, Buffer size: %d, 16-bit: %s, Stereo: %s, Encoded: %s\n", so.playback_rate, so.buffer_size,
+	       so.sixteen_bit ? "yes" : "no", so.stereo ? "yes" : "no", so.encoded ? "yes" : "no");
 
 	return (TRUE);
 }

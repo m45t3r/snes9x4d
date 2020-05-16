@@ -86,7 +86,7 @@ void S9xInitC4()
 {
 	// Stupid zsnes code, we can't do the logical thing without breaking
 	// savestates
-	//    Memory.C4RAM = &Memory.FillRAM [0x6000];
+	// Memory.C4RAM = &Memory.FillRAM[0x6000];
 	memset(Memory.C4RAM, 0, 0x2000);
 }
 
@@ -94,17 +94,15 @@ uint8 S9xGetC4(uint16 Address)
 {
 #ifdef DEBUGGER
 	if (Settings.BGLayering)
-		printf("%02x from %04x\n", Memory.C4RAM[Address - 0x6000],
-		       Address);
+		printf("%02x from %04x\n", Memory.C4RAM[Address - 0x6000], Address);
 #endif
 	return (Memory.C4RAM[Address - 0x6000]);
 }
 
-static uint8 C4TestPattern[12 * 4] = {
-    0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0x00, 0xff, 0x00, 0x00, 0x00, 0xff,
-    0xff, 0xff, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00, 0x80, 0xff, 0xff, 0x7f,
-    0x00, 0x80, 0x00, 0xff, 0x7f, 0x00, 0xff, 0x7f, 0xff, 0x7f, 0xff, 0xff,
-    0x00, 0x00, 0x01, 0xff, 0xff, 0xfe, 0x00, 0x01, 0x00, 0xff, 0xfe, 0x00};
+static uint8 C4TestPattern[12 * 4] = {0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0x00, 0xff, 0x00, 0x00, 0x00, 0xff,
+				      0xff, 0xff, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00, 0x80, 0xff, 0xff, 0x7f,
+				      0x00, 0x80, 0x00, 0xff, 0x7f, 0x00, 0xff, 0x7f, 0xff, 0x7f, 0xff, 0xff,
+				      0x00, 0x00, 0x01, 0xff, 0xff, 0xfe, 0x00, 0x01, 0x00, 0xff, 0xfe, 0x00};
 
 static void C4ConvOAM(void)
 {
@@ -128,12 +126,9 @@ static void C4ConvOAM(void)
 	if (Memory.C4RAM[0x625] != 0)
 		printf("$6625=%02x, expected 00\n", Memory.C4RAM[0x625]);
 	if ((Memory.C4RAM[0x626] >> 2) != Memory.C4RAM[0x629])
-		printf("$6629=%02x, expected %02x\n", Memory.C4RAM[0x629],
-		       (Memory.C4RAM[0x626] >> 2));
-	if (((uint16)Memory.C4RAM[0x626] << 2) !=
-	    READ_WORD(Memory.C4RAM + 0x627))
-		printf("$6627=%04x, expected %04x\n",
-		       READ_WORD(Memory.C4RAM + 0x627),
+		printf("$6629=%02x, expected %02x\n", Memory.C4RAM[0x629], (Memory.C4RAM[0x626] >> 2));
+	if (((uint16)Memory.C4RAM[0x626] << 2) != READ_WORD(Memory.C4RAM + 0x627))
+		printf("$6627=%04x, expected %04x\n", READ_WORD(Memory.C4RAM + 0x627),
 		       ((uint16)Memory.C4RAM[0x626] << 2));
 #endif
 
@@ -142,73 +137,45 @@ static void C4ConvOAM(void)
 		uint8 offset = (Memory.C4RAM[0x626] & 3) * 2;
 		for (int prio = 0x30; prio >= 0; prio -= 0x10) {
 			uint8 *srcptr = Memory.C4RAM + 0x220;
-			for (int i = Memory.C4RAM[0x0620];
-			     i > 0 && SprCount > 0; i--, srcptr += 16) {
+			for (int i = Memory.C4RAM[0x0620]; i > 0 && SprCount > 0; i--, srcptr += 16) {
 				if ((srcptr[4] & 0x30) != prio)
 					continue;
 				SprX = READ_WORD(srcptr) - globalX;
 				SprY = READ_WORD(srcptr + 2) - globalY;
 				SprName = srcptr[5];
-				SprAttr =
-				    srcptr[4] | srcptr[0x06]; // XXX: mask bits?
+				SprAttr = srcptr[4] | srcptr[0x06]; // XXX: mask bits?
 
-				uint8 *sprptr =
-				    S9xGetMemPointer(READ_3WORD(srcptr + 7));
+				uint8 *sprptr = S9xGetMemPointer(READ_3WORD(srcptr + 7));
 				if (*sprptr != 0) {
 					int16 X, Y;
-					for (int SprCnt = *sprptr++;
-					     SprCnt > 0 && SprCount > 0;
+					for (int SprCnt = *sprptr++; SprCnt > 0 && SprCount > 0;
 					     SprCnt--, sprptr += 4) {
 						X = (int8)sprptr[1];
 						if (SprAttr & 0x40) { // flip X
-							X = -X -
-							    ((sprptr[0] & 0x20)
-								 ? 16
-								 : 8);
+							X = -X - ((sprptr[0] & 0x20) ? 16 : 8);
 						}
 						X += SprX;
 						if (X >= -16 && X <= 272) {
 							Y = (int8)sprptr[2];
 							if (SprAttr & 0x80) {
-								Y = -Y -
-								    ((sprptr
-									  [0] &
-								      0x20)
-									 ? 16
-									 : 8);
+								Y = -Y - ((sprptr[0] & 0x20) ? 16 : 8);
 							}
 							Y += SprY;
-							if (Y >= -16 &&
-							    Y <= 224) {
-								OAMptr[0] =
-								    X & 0xff;
-								OAMptr[1] =
-								    (uint8)Y;
-								OAMptr[2] =
-								    SprName +
-								    sprptr[3];
-								OAMptr[3] =
-								    SprAttr ^
-								    (sprptr[0] &
-								     0xc0); // XXX: Carry from SprName addition?
-								*OAMptr2 &= ~(
-								    3
-								    << offset);
+							if (Y >= -16 && Y <= 224) {
+								OAMptr[0] = X & 0xff;
+								OAMptr[1] = (uint8)Y;
+								OAMptr[2] = SprName + sprptr[3];
+								OAMptr[3] = SprAttr ^
+									    (sprptr[0] &
+									     0xc0); // XXX: Carry from SprName addition?
+								*OAMptr2 &= ~(3 << offset);
 								if (X & 0x100)
-									*OAMptr2 |=
-									    1
-									    << offset;
-								if (sprptr[0] &
-								    0x20)
-									*OAMptr2 |=
-									    2
-									    << offset;
+									*OAMptr2 |= 1 << offset;
+								if (sprptr[0] & 0x20)
+									*OAMptr2 |= 2 << offset;
 								OAMptr += 4;
 								SprCount--;
-								offset =
-								    (offset +
-								     2) &
-								    6;
+								offset = (offset + 2) & 6;
 								if (offset == 0)
 									OAMptr2++;
 							}
@@ -255,55 +222,41 @@ static void C4DoScaleRotate(int row_padding)
 		B = 0;
 		C = 0;
 		D = (short)YScale;
-	} else if (READ_WORD(Memory.C4RAM + 0x1f80) ==
-		   128) { // 90 degree rotation
+	} else if (READ_WORD(Memory.C4RAM + 0x1f80) == 128) { // 90 degree rotation
 		// XXX: Really do this?
 		A = 0;
 		B = (short)(-YScale);
 		C = (short)XScale;
 		D = 0;
-	} else if (READ_WORD(Memory.C4RAM + 0x1f80) ==
-		   256) { // 180 degree rotation
+	} else if (READ_WORD(Memory.C4RAM + 0x1f80) == 256) { // 180 degree rotation
 		// XXX: Really do this?
 		A = (short)(-XScale);
 		B = 0;
 		C = 0;
 		D = (short)(-YScale);
-	} else if (READ_WORD(Memory.C4RAM + 0x1f80) ==
-		   384) { // 270 degree rotation
+	} else if (READ_WORD(Memory.C4RAM + 0x1f80) == 384) { // 270 degree rotation
 		// XXX: Really do this?
 		A = 0;
 		B = (short)YScale;
 		C = (short)(-XScale);
 		D = 0;
 	} else {
-		A = (short)SAR(
-		    C4CosTable[READ_WORD(Memory.C4RAM + 0x1f80) & 0x1ff] *
-			XScale,
-		    15);
-		B = (short)(-SAR(
-		    C4SinTable[READ_WORD(Memory.C4RAM + 0x1f80) & 0x1ff] *
-			YScale,
-		    15));
-		C = (short)SAR(
-		    C4SinTable[READ_WORD(Memory.C4RAM + 0x1f80) & 0x1ff] *
-			XScale,
-		    15);
-		D = (short)SAR(
-		    C4CosTable[READ_WORD(Memory.C4RAM + 0x1f80) & 0x1ff] *
-			YScale,
-		    15);
+		A = (short)SAR(C4CosTable[READ_WORD(Memory.C4RAM + 0x1f80) & 0x1ff] * XScale, 15);
+		B = (short)(-SAR(C4SinTable[READ_WORD(Memory.C4RAM + 0x1f80) & 0x1ff] * YScale, 15));
+		C = (short)SAR(C4SinTable[READ_WORD(Memory.C4RAM + 0x1f80) & 0x1ff] * XScale, 15);
+		D = (short)SAR(C4CosTable[READ_WORD(Memory.C4RAM + 0x1f80) & 0x1ff] * YScale, 15);
 	}
 
 	// Calculate Pixel Resolution
 	uint8 w = Memory.C4RAM[0x1f89] & ~7;
 	uint8 h = Memory.C4RAM[0x1f8c] & ~7;
 
-	//    printf("%dx%d XScale=%04x YScale=%04x angle=%03x\n", w, h, XScale,
-	//    YScale, READ_WORD(Memory.C4RAM+0x1f80)&0x1ff); printf("Matrix:
-	//    [%10g %10g]  [%04x %04x]\n", A/4096.0, B/4096.0, A&0xffff,
-	//    B&0xffff); printf("        [%10g %10g]  [%04x %04x]\n", C/4096.0,
-	//    D/4096.0, C&0xffff, D&0xffff);
+#if 0
+	printf("%dx%d XScale=%04x YScale=%04x angle=%03x\n", w, h, XScale, YScale,
+	       READ_WORD(Memory.C4RAM + 0x1f80) & 0x1ff);
+	printf("Matrix: [% 10g % 10g][% 04x % 04x]\n ", A / 4096.0, B / 4096.0, A & 0xffff, B & 0xffff);
+	printf("        [%10g %10g]  [%04x %04x]\n", C / 4096.0, D / 4096.0, C & 0xffff, D & 0xffff);
+#endif
 
 	// Clear the output RAM
 	memset(Memory.C4RAM, 0, (w + row_padding / 4) * h / 2);
@@ -315,14 +268,12 @@ static void C4DoScaleRotate(int row_padding)
 	if (Memory.C4RAM[0x1f97] != 0)
 		printf("$7f97=%02x, expected 00\n", Memory.C4RAM[0x1f97]);
 	if ((Cx & ~1) != w / 2 || (Cy & ~1) != h / 2)
-		printf("Center is not middle of image! (%d, %d) != (%d, %d)\n",
-		       Cx, Cy, w / 2, h / 2);
+		printf("Center is not middle of image! (%d, %d) != (%d, %d)\n", Cx, Cy, w / 2, h / 2);
 #endif
 
 	// Calculate start position (i.e. (Ox, Oy) = (0, 0))
-	// The low 12 bits are fractional, so (Cx<<12) gives us the Cx we want
-	// in the function. We do Cx*A etc normally because the matrix
-	// parameters already have the fractional parts.
+	// The low 12 bits are fractional, so (Cx<<12) gives us the Cx we want in the function.
+	// We do Cx*A etc normally because the matrix parameters already have the fractional parts.
 	int32 LineX = (Cx << 12) - Cx * A - Cx * B;
 	int32 LineY = (Cy << 12) - Cy * C - Cy * D;
 
@@ -374,8 +325,7 @@ static void C4DoScaleRotate(int row_padding)
 	}
 }
 
-static void C4DrawLine(int32 X1, int32 Y1, int16 Z1, int32 X2, int32 Y2,
-		       int16 Z2, uint8 Color)
+static void C4DrawLine(int32 X1, int32 Y1, int16 Z1, int32 X2, int32 Y2, int16 Z2, uint8 Color)
 {
 	// Transform coordinates
 	C4WFXVal = (short)X1;
@@ -408,12 +358,9 @@ static void C4DrawLine(int32 X1, int32 Y1, int16 Z1, int32 X2, int32 Y2,
 	// render line
 	for (int i = C4WFDist ? C4WFDist : 1; i > 0; i--) { //.loop
 		if (X1 > 0xff && Y1 > 0xff && X1 < 0x6000 && Y1 < 0x6000) {
-			uint16 addr = ((X1 & ~0x7ff) + (Y1 & ~0x7ff) * 12 +
-				       (Y1 & 0x700)) >>
-				      7;
-			addr = (((Y1 >> 8) >> 3) << 8) -
-			       (((Y1 >> 8) >> 3) << 6) +
-			       (((X1 >> 8) >> 3) << 4) + ((Y1 >> 8) & 7) * 2;
+			uint16 addr = ((X1 & ~0x7ff) + (Y1 & ~0x7ff) * 12 + (Y1 & 0x700)) >> 7;
+			addr = (((Y1 >> 8) >> 3) << 8) - (((Y1 >> 8) >> 3) << 6) + (((X1 >> 8) >> 3) << 4) +
+			       ((Y1 >> 8) & 7) * 2;
 			uint8 bit = 0x80 >> ((X1 >> 8) & 7);
 			Memory.C4RAM[addr + 0x300] &= ~bit;
 			Memory.C4RAM[addr + 0x301] &= ~bit;
@@ -437,11 +384,9 @@ static void C4DrawWireFrame(void)
 
 #ifdef DEBUGGER
 	if (READ_3WORD(Memory.C4RAM + 0x1f8f) & 0xff00ff)
-		printf("wireframe: Unexpected value in $7f8f: %06x\n",
-		       READ_3WORD(Memory.C4RAM + 0x1f8f));
+		printf("wireframe: Unexpected value in $7f8f: %06x\n", READ_3WORD(Memory.C4RAM + 0x1f8f));
 	if (READ_3WORD(Memory.C4RAM + 0x1fa4) != 0x001000)
-		printf("wireframe: Unexpected value in $7fa4: %06x\n",
-		       READ_3WORD(Memory.C4RAM + 0x1fa4));
+		printf("wireframe: Unexpected value in $7fa4: %06x\n", READ_3WORD(Memory.C4RAM + 0x1fa4));
 #endif
 
 	for (int i = Memory.C4RAM[0x0295]; i > 0; i--, line += 5) {
@@ -449,14 +394,11 @@ static void C4DrawWireFrame(void)
 			uint8 *tmp = line - 5;
 			while (line[2] == 0xff && line[3] == 0xff)
 				tmp -= 5;
-			point1 = S9xGetMemPointer((Memory.C4RAM[0x1f82] << 16) |
-						  (tmp[2] << 8) | tmp[3]);
+			point1 = S9xGetMemPointer((Memory.C4RAM[0x1f82] << 16) | (tmp[2] << 8) | tmp[3]);
 		} else {
-			point1 = S9xGetMemPointer((Memory.C4RAM[0x1f82] << 16) |
-						  (line[0] << 8) | line[1]);
+			point1 = S9xGetMemPointer((Memory.C4RAM[0x1f82] << 16) | (line[0] << 8) | line[1]);
 		}
-		point2 = S9xGetMemPointer((Memory.C4RAM[0x1f82] << 16) |
-					  (line[2] << 8) | line[3]);
+		point2 = S9xGetMemPointer((Memory.C4RAM[0x1f82] << 16) | (line[2] << 8) | line[3]);
 
 		X1 = (point1[0] << 8) | point1[1];
 		Y1 = (point1[2] << 8) | point1[3];
@@ -478,15 +420,13 @@ static void C4TransformLines(void)
 
 #ifdef DEBUGGER
 	if (Memory.C4RAM[0x1f8a] != 0x90)
-		printf("lines: $7f8a = %02x, expected 90\n",
-		       READ_WORD(Memory.C4RAM + 0x1f8a));
+		printf("lines: $7f8a = %02x, expected 90\n", READ_WORD(Memory.C4RAM + 0x1f8a));
 #endif
 
 	// transform vertices
 	uint8 *ptr = Memory.C4RAM;
 	{
-		for (int i = READ_WORD(Memory.C4RAM + 0x1f80); i > 0;
-		     i--, ptr += 0x10) {
+		for (int i = READ_WORD(Memory.C4RAM + 0x1f80); i > 0; i--, ptr += 0x10) {
 			C4WFXVal = READ_WORD(ptr + 1);
 			C4WFYVal = READ_WORD(ptr + 5);
 			C4WFZVal = READ_WORD(ptr + 9);
@@ -507,8 +447,7 @@ static void C4TransformLines(void)
 	ptr = Memory.C4RAM + 0xb02;
 	uint8 *ptr2 = Memory.C4RAM;
 	{
-		for (int i = READ_WORD(Memory.C4RAM + 0xb00); i > 0;
-		     i--, ptr += 2, ptr2 += 8) {
+		for (int i = READ_WORD(Memory.C4RAM + 0xb00); i > 0; i--, ptr += 2, ptr2 += 8) {
 			C4WFXVal = READ_WORD(Memory.C4RAM + (ptr[0] << 4) + 1);
 			C4WFYVal = READ_WORD(Memory.C4RAM + (ptr[0] << 4) + 5);
 			C4WFX2Val = READ_WORD(Memory.C4RAM + (ptr[1] << 4) + 1);
@@ -522,12 +461,10 @@ static void C4TransformLines(void)
 }
 static void C4BitPlaneWave()
 {
-	static uint16 bmpdata[] = {
-	    0x0000, 0x0002, 0x0004, 0x0006, 0x0008, 0x000A, 0x000C, 0x000E,
-	    0x0200, 0x0202, 0x0204, 0x0206, 0x0208, 0x020A, 0x020C, 0x020E,
-	    0x0400, 0x0402, 0x0404, 0x0406, 0x0408, 0x040A, 0x040C, 0x040E,
-	    0x0600, 0x0602, 0x0604, 0x0606, 0x0608, 0x060A, 0x060C, 0x060E,
-	    0x0800, 0x0802, 0x0804, 0x0806, 0x0808, 0x080A, 0x080C, 0x080E};
+	static uint16 bmpdata[] = {0x0000, 0x0002, 0x0004, 0x0006, 0x0008, 0x000A, 0x000C, 0x000E, 0x0200, 0x0202,
+				   0x0204, 0x0206, 0x0208, 0x020A, 0x020C, 0x020E, 0x0400, 0x0402, 0x0404, 0x0406,
+				   0x0408, 0x040A, 0x040C, 0x040E, 0x0600, 0x0602, 0x0604, 0x0606, 0x0608, 0x060A,
+				   0x060C, 0x060E, 0x0800, 0x0802, 0x0804, 0x0806, 0x0808, 0x080A, 0x080C, 0x080E};
 
 	uint8 *dst = Memory.C4RAM;
 	uint32 waveptr = Memory.C4RAM[0x1f83];
@@ -536,24 +473,17 @@ static void C4BitPlaneWave()
 
 #ifdef DEBUGGER
 	if (READ_3WORD(Memory.C4RAM + 0x1f80) != Memory.C4RAM[waveptr + 0xb00])
-		printf("$7f80=%06x, expected %02x\n",
-		       READ_3WORD(Memory.C4RAM + 0x1f80),
-		       Memory.C4RAM[waveptr + 0xb00]);
+		printf("$7f80=%06x, expected %02x\n", READ_3WORD(Memory.C4RAM + 0x1f80), Memory.C4RAM[waveptr + 0xb00]);
 #endif
 
 	for (int j = 0; j < 0x10; j++) {
 		do {
-			int16 height =
-			    -((int8)Memory.C4RAM[waveptr + 0xb00]) - 16;
+			int16 height = -((int8)Memory.C4RAM[waveptr + 0xb00]) - 16;
 			for (int i = 0; i < 40; i++) {
-				uint16 tmp =
-				    READ_WORD(dst + bmpdata[i]) & mask2;
+				uint16 tmp = READ_WORD(dst + bmpdata[i]) & mask2;
 				if (height >= 0) {
 					if (height < 8) {
-						tmp |= mask1 &
-						       READ_WORD(Memory.C4RAM +
-								 0xa00 +
-								 height * 2);
+						tmp |= mask1 & READ_WORD(Memory.C4RAM + 0xa00 + height * 2);
 					} else {
 						tmp |= mask1 & 0xff00;
 					}
@@ -568,17 +498,12 @@ static void C4BitPlaneWave()
 		dst += 16;
 
 		do {
-			int16 height =
-			    -((int8)Memory.C4RAM[waveptr + 0xb00]) - 16;
+			int16 height = -((int8)Memory.C4RAM[waveptr + 0xb00]) - 16;
 			for (int i = 0; i < 40; i++) {
-				uint16 tmp =
-				    READ_WORD(dst + bmpdata[i]) & mask2;
+				uint16 tmp = READ_WORD(dst + bmpdata[i]) & mask2;
 				if (height >= 0) {
 					if (height < 8) {
-						tmp |= mask1 &
-						       READ_WORD(Memory.C4RAM +
-								 0xa10 +
-								 height * 2);
+						tmp |= mask1 & READ_WORD(Memory.C4RAM + 0xa10 + height * 2);
 					} else {
 						tmp |= mask1 & 0xff00;
 					}
@@ -624,11 +549,9 @@ static void C4SprDisintegrate()
 
 	for (uint32 y = StartY, i = 0; i < height; i++, y += scaleY) {
 		for (uint32 x = StartX, j = 0; j < width; j++, x += scaleX) {
-			if ((x >> 8) < width && (y >> 8) < height &&
-			    (y >> 8) * width + (x >> 8) < 0x2000) {
+			if ((x >> 8) < width && (y >> 8) < height && (y >> 8) * width + (x >> 8) < 0x2000) {
 				uint8 pixel = (j & 1) ? (*src >> 4) : *src;
-				int idx = (y >> 11) * width * 4 +
-					  (x >> 11) * 32 + ((y >> 8) & 7) * 2;
+				int idx = (y >> 11) * width * 4 + (x >> 11) * 32 + ((y >> 8) & 7) * 2;
 				uint8 mask = 0x80 >> ((x >> 8) & 7);
 				if (pixel & 1)
 					Memory.C4RAM[idx] |= mask;
@@ -699,8 +622,7 @@ static void S9xC4ProcessSprites()
 
 	default:
 #ifdef DEBUGGER
-		printf("Unknown C4 sprite command (%02x)\n",
-		       Memory.C4RAM[0x1f4d]);
+		printf("Unknown C4 sprite command (%02x)\n", Memory.C4RAM[0x1f4d]);
 #endif
 		break;
 	}
@@ -716,8 +638,7 @@ void S9xSetC4(uint8 byte, uint16 Address)
 #endif
 	Memory.C4RAM[Address - 0x6000] = byte;
 	if (Address == 0x7f4f) {
-		if (Memory.C4RAM[0x1f4d] == 0x0e && byte < 0x40 &&
-		    (byte & 3) == 0) {
+		if (Memory.C4RAM[0x1f4d] == 0x0e && byte < 0x40 && (byte & 3) == 0) {
 #ifdef DEBUGGER
 			printf("Test command %02x 0e used!\n", byte);
 #endif
@@ -734,11 +655,9 @@ void S9xSetC4(uint8 byte, uint16 Address)
 				if (Memory.C4RAM[0x1f4d] != 8)
 					printf("$7f4d=%02x, expected 08 for "
 					       "command 01 %02x\n",
-					       Memory.C4RAM[0x1f4d],
-					       Memory.C4RAM[0x1f4d]);
+					       Memory.C4RAM[0x1f4d], Memory.C4RAM[0x1f4d]);
 #endif
-				memset(Memory.C4RAM + 0x300, 0,
-				       16 * 12 * 3 * 4);
+				memset(Memory.C4RAM + 0x300, 0, 16 * 12 * 3 * 4);
 				C4DrawWireFrame();
 				break;
 
@@ -748,22 +667,16 @@ void S9xSetC4(uint8 byte, uint16 Address)
 				if (Memory.C4RAM[0x1f4d] != 2)
 					printf("$7f4d=%02x, expected 02 for "
 					       "command 05 %02x\n",
-					       Memory.C4RAM[0x1f4d],
-					       Memory.C4RAM[0x1f4d]);
+					       Memory.C4RAM[0x1f4d], Memory.C4RAM[0x1f4d]);
 #endif
 				{
 					int32 tmp = 0x10000;
 					if (READ_WORD(Memory.C4RAM + 0x1f83)) {
-						tmp = SAR(
-						    (tmp /
-						     READ_WORD(Memory.C4RAM +
-							       0x1f83)) *
-							READ_WORD(Memory.C4RAM +
-								  0x1f81),
-						    8);
+						tmp = SAR((tmp / READ_WORD(Memory.C4RAM + 0x1f83)) *
+							      READ_WORD(Memory.C4RAM + 0x1f81),
+							  8);
 					}
-					WRITE_WORD(Memory.C4RAM + 0x1f80,
-						   (uint16)tmp);
+					WRITE_WORD(Memory.C4RAM + 0x1f80, (uint16)tmp);
 				}
 				break;
 
@@ -773,8 +686,7 @@ void S9xSetC4(uint8 byte, uint16 Address)
 				if (Memory.C4RAM[0x1f4d] != 2)
 					printf("$7f4d=%02x, expected 02 for "
 					       "command 0d %02x\n",
-					       Memory.C4RAM[0x1f4d],
-					       Memory.C4RAM[0x1f4d]);
+					       Memory.C4RAM[0x1f4d], Memory.C4RAM[0x1f4d]);
 #endif
 				C41FXVal = READ_WORD(Memory.C4RAM + 0x1f80);
 				C41FYVal = READ_WORD(Memory.C4RAM + 0x1f83);
@@ -791,31 +703,17 @@ void S9xSetC4(uint8 byte, uint16 Address)
 				if (Memory.C4RAM[0x1f4d] != 2)
 					printf("$7f4d=%02x, expected 02 for "
 					       "command 10 %02x\n",
-					       Memory.C4RAM[0x1f4d],
-					       Memory.C4RAM[0x1f4d]);
+					       Memory.C4RAM[0x1f4d], Memory.C4RAM[0x1f4d]);
 #endif
 				{
-					int32 tmp = SAR(
-					    (int32)READ_WORD(Memory.C4RAM +
-							     0x1f83) *
-						C4CosTable[READ_WORD(
-							       Memory.C4RAM +
-							       0x1f80) &
-							   0x1ff] *
-						2,
-					    16);
+					int32 tmp = SAR((int32)READ_WORD(Memory.C4RAM + 0x1f83) *
+							    C4CosTable[READ_WORD(Memory.C4RAM + 0x1f80) & 0x1ff] * 2,
+							16);
 					WRITE_3WORD(Memory.C4RAM + 0x1f86, tmp);
-					tmp = SAR(
-					    (int32)READ_WORD(Memory.C4RAM +
-							     0x1f83) *
-						C4SinTable[READ_WORD(
-							       Memory.C4RAM +
-							       0x1f80) &
-							   0x1ff] *
-						2,
-					    16);
-					WRITE_3WORD(Memory.C4RAM + 0x1f89,
-						    (tmp - SAR(tmp, 6)));
+					tmp = SAR((int32)READ_WORD(Memory.C4RAM + 0x1f83) *
+						      C4SinTable[READ_WORD(Memory.C4RAM + 0x1f80) & 0x1ff] * 2,
+						  16);
+					WRITE_3WORD(Memory.C4RAM + 0x1f89, (tmp - SAR(tmp, 6)));
 				}
 				break;
 
@@ -826,29 +724,16 @@ void S9xSetC4(uint8 byte, uint16 Address)
 				if (Memory.C4RAM[0x1f4d] != 2)
 					printf("$7f4d=%02x, expected 02 for "
 					       "command 13 %02x\n",
-					       Memory.C4RAM[0x1f4d],
-					       Memory.C4RAM[0x1f4d]);
+					       Memory.C4RAM[0x1f4d], Memory.C4RAM[0x1f4d]);
 #endif
 				{
-					int32 tmp = SAR(
-					    (int32)READ_WORD(Memory.C4RAM +
-							     0x1f83) *
-						C4CosTable[READ_WORD(
-							       Memory.C4RAM +
-							       0x1f80) &
-							   0x1ff] *
-						2,
-					    8);
+					int32 tmp = SAR((int32)READ_WORD(Memory.C4RAM + 0x1f83) *
+							    C4CosTable[READ_WORD(Memory.C4RAM + 0x1f80) & 0x1ff] * 2,
+							8);
 					WRITE_3WORD(Memory.C4RAM + 0x1f86, tmp);
-					tmp = SAR(
-					    (int32)READ_WORD(Memory.C4RAM +
-							     0x1f83) *
-						C4SinTable[READ_WORD(
-							       Memory.C4RAM +
-							       0x1f80) &
-							   0x1ff] *
-						2,
-					    8);
+					tmp = SAR((int32)READ_WORD(Memory.C4RAM + 0x1f83) *
+						      C4SinTable[READ_WORD(Memory.C4RAM + 0x1f80) & 0x1ff] * 2,
+						  8);
 					WRITE_3WORD(Memory.C4RAM + 0x1f89, tmp);
 				}
 				break;
@@ -859,14 +744,11 @@ void S9xSetC4(uint8 byte, uint16 Address)
 				if (Memory.C4RAM[0x1f4d] != 2)
 					printf("$7f4d=%02x, expected 02 for "
 					       "command 15 %02x\n",
-					       Memory.C4RAM[0x1f4d],
-					       Memory.C4RAM[0x1f4d]);
+					       Memory.C4RAM[0x1f4d], Memory.C4RAM[0x1f4d]);
 #endif
 				C41FXVal = READ_WORD(Memory.C4RAM + 0x1f80);
 				C41FYVal = READ_WORD(Memory.C4RAM + 0x1f83);
-				C41FDist =
-				    (int16)sqrt((double)C41FXVal * C41FXVal +
-						(double)C41FYVal * C41FYVal);
+				C41FDist = (int16)sqrt((double)C41FXVal * C41FXVal + (double)C41FYVal * C41FYVal);
 				WRITE_WORD(Memory.C4RAM + 0x1f80, C41FDist);
 				break;
 
@@ -876,8 +758,7 @@ void S9xSetC4(uint8 byte, uint16 Address)
 				if (Memory.C4RAM[0x1f4d] != 2)
 					printf("$7f4d=%02x, expected 02 for "
 					       "command 1f %02x\n",
-					       Memory.C4RAM[0x1f4d],
-					       Memory.C4RAM[0x1f4d]);
+					       Memory.C4RAM[0x1f4d], Memory.C4RAM[0x1f4d]);
 #endif
 				C41FXVal = READ_WORD(Memory.C4RAM + 0x1f80);
 				C41FYVal = READ_WORD(Memory.C4RAM + 0x1f83);
@@ -892,66 +773,38 @@ void S9xSetC4(uint8 byte, uint16 Address)
 				if (Memory.C4RAM[0x1f4d] != 2)
 					printf("$7f4d=%02x, expected 02 for "
 					       "command 22 %02x\n",
-					       Memory.C4RAM[0x1f4d],
-					       Memory.C4RAM[0x1f4d]);
+					       Memory.C4RAM[0x1f4d], Memory.C4RAM[0x1f4d]);
 #endif
 				for (int line = 0; line < 2; line++) {
-					int16 angle =
-					    READ_WORD(
-						Memory.C4RAM +
-						(line ? 0x1f8f : 0x1f8c)) &
-					    0x1ff;
+					int16 angle = READ_WORD(Memory.C4RAM + (line ? 0x1f8f : 0x1f8c)) & 0x1ff;
 					if (C4CosTable[angle] == 0)
 						break;
-					int32 tmp =
-					    (int32)(((int64)C4SinTable[angle])
-						    << 16) /
-					    C4CosTable[angle];
-					int32 cnt = (int16)(
-					    READ_WORD(Memory.C4RAM + 0x1f83) -
-					    READ_WORD(Memory.C4RAM + 0x1f89) -
-					    1);
+					int32 tmp = (int32)(((int64)C4SinTable[angle]) << 16) / C4CosTable[angle];
+					int32 cnt = (int16)(READ_WORD(Memory.C4RAM + 0x1f83) -
+							    READ_WORD(Memory.C4RAM + 0x1f89) - 1);
 					for (int j = 0; j < 225; j++) {
 						int16 res;
 						if (cnt >= 0) {
-							res =
-							    SAR(tmp * cnt, 16) -
-							    READ_WORD(
-								Memory.C4RAM +
-								0x1f80) +
-							    READ_WORD(
-								Memory.C4RAM +
-								0x1f86);
+							res = SAR(tmp * cnt, 16) - READ_WORD(Memory.C4RAM + 0x1f80) +
+							      READ_WORD(Memory.C4RAM + 0x1f86);
 							if (line)
-								res += READ_WORD(
-								    Memory
-									.C4RAM +
-								    0x1f93);
+								res += READ_WORD(Memory.C4RAM + 0x1f93);
 							if (res < 0) {
 								res = 0;
 								if (line)
-									Memory.C4RAM
-									    [j +
-									     0x800] =
-									    1;
+									Memory.C4RAM[j + 0x800] = 1;
 							} else if (res >= 255) {
 								res = 255;
-								if (line &&
-								    Memory.C4RAM
-									    [j +
-									     0x800] ==
-									255) { // XXX: Or does the real MMX3 have the bug this fixes?
-									res =
-									    254;
+								if (line && Memory.C4RAM[j + 0x800] ==
+										255) { // XXX: Or does the real MMX3
+										       // have the bug this fixes?
+									res = 254;
 								}
 							}
 						} else {
 							res = 1 - line;
 						}
-						Memory
-						    .C4RAM[j + (line ? 0x900
-								     : 0x800)] =
-						    (uint8)res;
+						Memory.C4RAM[j + (line ? 0x900 : 0x800)] = (uint8)res;
 						cnt++;
 					}
 				}
@@ -963,14 +816,11 @@ void S9xSetC4(uint8 byte, uint16 Address)
 				if (Memory.C4RAM[0x1f4d] != 2)
 					printf("$7f4d=%02x, expected 02 for "
 					       "command 25 %02x\n",
-					       Memory.C4RAM[0x1f4d],
-					       Memory.C4RAM[0x1f4d]);
+					       Memory.C4RAM[0x1f4d], Memory.C4RAM[0x1f4d]);
 #endif
 				{
-					int32 foo =
-					    READ_3WORD(Memory.C4RAM + 0x1f80);
-					int32 bar =
-					    READ_3WORD(Memory.C4RAM + 0x1f83);
+					int32 foo = READ_3WORD(Memory.C4RAM + 0x1f80);
+					int32 bar = READ_3WORD(Memory.C4RAM + 0x1f83);
 					foo *= bar;
 					WRITE_3WORD(Memory.C4RAM + 0x1f80, foo);
 				}
@@ -978,25 +828,19 @@ void S9xSetC4(uint8 byte, uint16 Address)
 
 			case 0x2d: // Transform Coords
 #ifdef DEBUGGER
-				   //                printf("2d Transform
-				//                Coords!\n");
+				   // printf("2d Transform Coords!\n");
 				if (Memory.C4RAM[0x1f4d] != 2)
 					printf("$7f4d=%02x, expected 02 for "
 					       "command 2d %02x\n",
-					       Memory.C4RAM[0x1f4d],
-					       Memory.C4RAM[0x1f4d]);
-				if (READ_3WORD(Memory.C4RAM + 0x1f8f) &
-				    0xff00ff)
-					printf(
-					    "2d transform coords: Unexpected "
-					    "value in $7f8f: %06x\n",
-					    READ_3WORD(Memory.C4RAM + 0x1f8f));
-				if (READ_3WORD(Memory.C4RAM + 0x1f8c) !=
-				    0x001000)
-					printf(
-					    "0d transform coords: Unexpected "
-					    "value in $7f8c: %06x\n",
-					    READ_3WORD(Memory.C4RAM + 0x1f8c));
+					       Memory.C4RAM[0x1f4d], Memory.C4RAM[0x1f4d]);
+				if (READ_3WORD(Memory.C4RAM + 0x1f8f) & 0xff00ff)
+					printf("2d transform coords: Unexpected "
+					       "value in $7f8f: %06x\n",
+					       READ_3WORD(Memory.C4RAM + 0x1f8f));
+				if (READ_3WORD(Memory.C4RAM + 0x1f8c) != 0x001000)
+					printf("0d transform coords: Unexpected "
+					       "value in $7f8c: %06x\n",
+					       READ_3WORD(Memory.C4RAM + 0x1f8c));
 #endif
 				C4WFXVal = READ_WORD(Memory.C4RAM + 0x1f81);
 				C4WFYVal = READ_WORD(Memory.C4RAM + 0x1f84);
@@ -1016,13 +860,11 @@ void S9xSetC4(uint8 byte, uint16 Address)
 				if (Memory.C4RAM[0x1f4d] != 0x0e)
 					printf("$7f4d=%02x, expected 0e for "
 					       "command 40 %02x\n",
-					       Memory.C4RAM[0x1f4d],
-					       Memory.C4RAM[0x1f4d]);
+					       Memory.C4RAM[0x1f4d], Memory.C4RAM[0x1f4d]);
 #endif
 				{
 					uint16 sum = 0;
-					for (int i = 0; i < 0x800;
-					     sum += Memory.C4RAM[i++])
+					for (int i = 0; i < 0x800; sum += Memory.C4RAM[i++])
 						;
 					WRITE_WORD(Memory.C4RAM + 0x1f80, sum);
 				}
@@ -1034,24 +876,15 @@ void S9xSetC4(uint8 byte, uint16 Address)
 				if (Memory.C4RAM[0x1f4d] != 0x0e)
 					printf("$7f4d=%02x, expected 0e for "
 					       "command 54 %02x\n",
-					       Memory.C4RAM[0x1f4d],
-					       Memory.C4RAM[0x1f4d]);
+					       Memory.C4RAM[0x1f4d], Memory.C4RAM[0x1f4d]);
 #endif
 				{
-					int64 a = SAR((int64)READ_3WORD(
-							  Memory.C4RAM + 0x1f80)
-							  << 40,
-						      40);
-					//	printf("%08X%08X\n",
-					//(uint32)(a>>32),
-					//(uint32)(a&0xFFFFFFFF));
+					int64 a = SAR((int64)READ_3WORD(Memory.C4RAM + 0x1f80) << 40, 40);
+					// printf("%08X%08X\n", (uint32)(a >> 32), (uint32)(a & 0xFFFFFFFF));
 					a *= a;
-					//	printf("%08X%08X\n",
-					//(uint32)(a>>32),
-					//(uint32)(a&0xFFFFFFFF));
+					// printf("%08X%08X\n", (uint32)(a >> 32), (uint32)(a & 0xFFFFFFFF));
 					WRITE_3WORD(Memory.C4RAM + 0x1f83, a);
-					WRITE_3WORD(Memory.C4RAM + 0x1f86,
-						    (a >> 24));
+					WRITE_3WORD(Memory.C4RAM + 0x1f86, (a >> 24));
 				}
 				break;
 
@@ -1061,8 +894,7 @@ void S9xSetC4(uint8 byte, uint16 Address)
 				if (Memory.C4RAM[0x1f4d] != 0x0e)
 					printf("$7f4d=%02x, expected 0e for "
 					       "command 5c %02x\n",
-					       Memory.C4RAM[0x1f4d],
-					       Memory.C4RAM[0x1f4d]);
+					       Memory.C4RAM[0x1f4d], Memory.C4RAM[0x1f4d]);
 #endif
 				for (i = 0; i < 12 * 4; i++)
 					Memory.C4RAM[i] = C4TestPattern[i];
@@ -1074,8 +906,7 @@ void S9xSetC4(uint8 byte, uint16 Address)
 				if (Memory.C4RAM[0x1f4d] != 0x0e)
 					printf("$7f4d=%02x, expected 0e for "
 					       "command 89 %02x\n",
-					       Memory.C4RAM[0x1f4d],
-					       Memory.C4RAM[0x1f4d]);
+					       Memory.C4RAM[0x1f4d], Memory.C4RAM[0x1f4d]);
 #endif
 				Memory.C4RAM[0x1f80] = 0x36;
 				Memory.C4RAM[0x1f81] = 0x43;
@@ -1091,140 +922,93 @@ void S9xSetC4(uint8 byte, uint16 Address)
 		}
 	} else if (Address == 0x7f47) {
 #ifdef DEBUGGER
-		//        printf("C4 load memory %06x => %04x, %04x bytes\n",
-		//        READ_3WORD(Memory.C4RAM+0x1f40),
-		//        READ_WORD(Memory.C4RAM+0x1f45),
-		//        READ_WORD(Memory.C4RAM+0x1f43));
+		// printf("C4 load memory %06x => %04x, %04x bytes\n", READ_3WORD(Memory.C4RAM + 0x1f40),
+		//        READ_WORD(Memory.C4RAM + 0x1f45), READ_WORD(Memory.C4RAM + 0x1f43));
 		if (byte != 0)
-			printf("C4 load: non-0 written to $7f47! Wrote %02x\n",
-			       byte);
+			printf("C4 load: non-0 written to $7f47! Wrote %02x\n", byte);
 		if (READ_WORD(Memory.C4RAM + 0x1f45) < 0x6000 ||
-		    (READ_WORD(Memory.C4RAM + 0x1f45) +
-		     READ_WORD(Memory.C4RAM + 0x1f43)) > 0x6c00)
-			printf("C4 load: Dest unusual! It's %04x\n",
-			       READ_WORD(Memory.C4RAM + 0x1f45));
+		    (READ_WORD(Memory.C4RAM + 0x1f45) + READ_WORD(Memory.C4RAM + 0x1f43)) > 0x6c00)
+			printf("C4 load: Dest unusual! It's %04x\n", READ_WORD(Memory.C4RAM + 0x1f45));
 #endif
-		memmove(Memory.C4RAM +
-			    (READ_WORD(Memory.C4RAM + 0x1f45) & 0x1fff),
-			S9xGetMemPointer(READ_3WORD(Memory.C4RAM + 0x1f40)),
-			READ_WORD(Memory.C4RAM + 0x1f43));
+		memmove(Memory.C4RAM + (READ_WORD(Memory.C4RAM + 0x1f45) & 0x1fff),
+			S9xGetMemPointer(READ_3WORD(Memory.C4RAM + 0x1f40)), READ_WORD(Memory.C4RAM + 0x1f43));
 	}
 }
 
 int16 C4SinTable[512] = {
-    0,	    402,    804,    1206,   1607,   2009,   2410,   2811,   3211,
-    3611,   4011,   4409,   4808,   5205,   5602,   5997,   6392,   6786,
-    7179,   7571,   7961,   8351,   8739,   9126,   9512,   9896,   10278,
-    10659,  11039,  11416,  11793,  12167,  12539,  12910,  13278,  13645,
-    14010,  14372,  14732,  15090,  15446,  15800,  16151,  16499,  16846,
-    17189,  17530,  17869,  18204,  18537,  18868,  19195,  19519,  19841,
-    20159,  20475,  20787,  21097,  21403,  21706,  22005,  22301,  22594,
-    22884,  23170,  23453,  23732,  24007,  24279,  24547,  24812,  25073,
-    25330,  25583,  25832,  26077,  26319,  26557,  26790,  27020,  27245,
-    27466,  27684,  27897,  28106,  28310,  28511,  28707,  28898,  29086,
-    29269,  29447,  29621,  29791,  29956,  30117,  30273,  30425,  30572,
-    30714,  30852,  30985,  31114,  31237,  31357,  31471,  31581,  31685,
-    31785,  31881,  31971,  32057,  32138,  32214,  32285,  32351,  32413,
-    32469,  32521,  32568,  32610,  32647,  32679,  32706,  32728,  32745,
-    32758,  32765,  32767,  32765,  32758,  32745,  32728,  32706,  32679,
-    32647,  32610,  32568,  32521,  32469,  32413,  32351,  32285,  32214,
-    32138,  32057,  31971,  31881,  31785,  31685,  31581,  31471,  31357,
-    31237,  31114,  30985,  30852,  30714,  30572,  30425,  30273,  30117,
-    29956,  29791,  29621,  29447,  29269,  29086,  28898,  28707,  28511,
-    28310,  28106,  27897,  27684,  27466,  27245,  27020,  26790,  26557,
-    26319,  26077,  25832,  25583,  25330,  25073,  24812,  24547,  24279,
-    24007,  23732,  23453,  23170,  22884,  22594,  22301,  22005,  21706,
-    21403,  21097,  20787,  20475,  20159,  19841,  19519,  19195,  18868,
-    18537,  18204,  17869,  17530,  17189,  16846,  16499,  16151,  15800,
-    15446,  15090,  14732,  14372,  14010,  13645,  13278,  12910,  12539,
-    12167,  11793,  11416,  11039,  10659,  10278,  9896,   9512,   9126,
-    8739,   8351,   7961,   7571,   7179,   6786,   6392,   5997,   5602,
-    5205,   4808,   4409,   4011,   3611,   3211,   2811,   2410,   2009,
-    1607,   1206,   804,    402,    0,	    -402,   -804,   -1206,  -1607,
-    -2009,  -2410,  -2811,  -3211,  -3611,  -4011,  -4409,  -4808,  -5205,
-    -5602,  -5997,  -6392,  -6786,  -7179,  -7571,  -7961,  -8351,  -8739,
-    -9126,  -9512,  -9896,  -10278, -10659, -11039, -11416, -11793, -12167,
-    -12539, -12910, -13278, -13645, -14010, -14372, -14732, -15090, -15446,
-    -15800, -16151, -16499, -16846, -17189, -17530, -17869, -18204, -18537,
-    -18868, -19195, -19519, -19841, -20159, -20475, -20787, -21097, -21403,
-    -21706, -22005, -22301, -22594, -22884, -23170, -23453, -23732, -24007,
-    -24279, -24547, -24812, -25073, -25330, -25583, -25832, -26077, -26319,
-    -26557, -26790, -27020, -27245, -27466, -27684, -27897, -28106, -28310,
-    -28511, -28707, -28898, -29086, -29269, -29447, -29621, -29791, -29956,
-    -30117, -30273, -30425, -30572, -30714, -30852, -30985, -31114, -31237,
-    -31357, -31471, -31581, -31685, -31785, -31881, -31971, -32057, -32138,
-    -32214, -32285, -32351, -32413, -32469, -32521, -32568, -32610, -32647,
-    -32679, -32706, -32728, -32745, -32758, -32765, -32767, -32765, -32758,
-    -32745, -32728, -32706, -32679, -32647, -32610, -32568, -32521, -32469,
-    -32413, -32351, -32285, -32214, -32138, -32057, -31971, -31881, -31785,
-    -31685, -31581, -31471, -31357, -31237, -31114, -30985, -30852, -30714,
-    -30572, -30425, -30273, -30117, -29956, -29791, -29621, -29447, -29269,
-    -29086, -28898, -28707, -28511, -28310, -28106, -27897, -27684, -27466,
-    -27245, -27020, -26790, -26557, -26319, -26077, -25832, -25583, -25330,
-    -25073, -24812, -24547, -24279, -24007, -23732, -23453, -23170, -22884,
-    -22594, -22301, -22005, -21706, -21403, -21097, -20787, -20475, -20159,
-    -19841, -19519, -19195, -18868, -18537, -18204, -17869, -17530, -17189,
-    -16846, -16499, -16151, -15800, -15446, -15090, -14732, -14372, -14010,
-    -13645, -13278, -12910, -12539, -12167, -11793, -11416, -11039, -10659,
-    -10278, -9896,  -9512,  -9126,  -8739,  -8351,  -7961,  -7571,  -7179,
-    -6786,  -6392,  -5997,  -5602,  -5205,  -4808,  -4409,  -4011,  -3611,
+    0,	    402,    804,    1206,   1607,   2009,   2410,   2811,   3211,   3611,   4011,   4409,   4808,   5205,
+    5602,   5997,   6392,   6786,   7179,   7571,   7961,   8351,   8739,   9126,   9512,   9896,   10278,  10659,
+    11039,  11416,  11793,  12167,  12539,  12910,  13278,  13645,  14010,  14372,  14732,  15090,  15446,  15800,
+    16151,  16499,  16846,  17189,  17530,  17869,  18204,  18537,  18868,  19195,  19519,  19841,  20159,  20475,
+    20787,  21097,  21403,  21706,  22005,  22301,  22594,  22884,  23170,  23453,  23732,  24007,  24279,  24547,
+    24812,  25073,  25330,  25583,  25832,  26077,  26319,  26557,  26790,  27020,  27245,  27466,  27684,  27897,
+    28106,  28310,  28511,  28707,  28898,  29086,  29269,  29447,  29621,  29791,  29956,  30117,  30273,  30425,
+    30572,  30714,  30852,  30985,  31114,  31237,  31357,  31471,  31581,  31685,  31785,  31881,  31971,  32057,
+    32138,  32214,  32285,  32351,  32413,  32469,  32521,  32568,  32610,  32647,  32679,  32706,  32728,  32745,
+    32758,  32765,  32767,  32765,  32758,  32745,  32728,  32706,  32679,  32647,  32610,  32568,  32521,  32469,
+    32413,  32351,  32285,  32214,  32138,  32057,  31971,  31881,  31785,  31685,  31581,  31471,  31357,  31237,
+    31114,  30985,  30852,  30714,  30572,  30425,  30273,  30117,  29956,  29791,  29621,  29447,  29269,  29086,
+    28898,  28707,  28511,  28310,  28106,  27897,  27684,  27466,  27245,  27020,  26790,  26557,  26319,  26077,
+    25832,  25583,  25330,  25073,  24812,  24547,  24279,  24007,  23732,  23453,  23170,  22884,  22594,  22301,
+    22005,  21706,  21403,  21097,  20787,  20475,  20159,  19841,  19519,  19195,  18868,  18537,  18204,  17869,
+    17530,  17189,  16846,  16499,  16151,  15800,  15446,  15090,  14732,  14372,  14010,  13645,  13278,  12910,
+    12539,  12167,  11793,  11416,  11039,  10659,  10278,  9896,   9512,   9126,   8739,   8351,   7961,   7571,
+    7179,   6786,   6392,   5997,   5602,   5205,   4808,   4409,   4011,   3611,   3211,   2811,   2410,   2009,
+    1607,   1206,   804,    402,    0,	    -402,   -804,   -1206,  -1607,  -2009,  -2410,  -2811,  -3211,  -3611,
+    -4011,  -4409,  -4808,  -5205,  -5602,  -5997,  -6392,  -6786,  -7179,  -7571,  -7961,  -8351,  -8739,  -9126,
+    -9512,  -9896,  -10278, -10659, -11039, -11416, -11793, -12167, -12539, -12910, -13278, -13645, -14010, -14372,
+    -14732, -15090, -15446, -15800, -16151, -16499, -16846, -17189, -17530, -17869, -18204, -18537, -18868, -19195,
+    -19519, -19841, -20159, -20475, -20787, -21097, -21403, -21706, -22005, -22301, -22594, -22884, -23170, -23453,
+    -23732, -24007, -24279, -24547, -24812, -25073, -25330, -25583, -25832, -26077, -26319, -26557, -26790, -27020,
+    -27245, -27466, -27684, -27897, -28106, -28310, -28511, -28707, -28898, -29086, -29269, -29447, -29621, -29791,
+    -29956, -30117, -30273, -30425, -30572, -30714, -30852, -30985, -31114, -31237, -31357, -31471, -31581, -31685,
+    -31785, -31881, -31971, -32057, -32138, -32214, -32285, -32351, -32413, -32469, -32521, -32568, -32610, -32647,
+    -32679, -32706, -32728, -32745, -32758, -32765, -32767, -32765, -32758, -32745, -32728, -32706, -32679, -32647,
+    -32610, -32568, -32521, -32469, -32413, -32351, -32285, -32214, -32138, -32057, -31971, -31881, -31785, -31685,
+    -31581, -31471, -31357, -31237, -31114, -30985, -30852, -30714, -30572, -30425, -30273, -30117, -29956, -29791,
+    -29621, -29447, -29269, -29086, -28898, -28707, -28511, -28310, -28106, -27897, -27684, -27466, -27245, -27020,
+    -26790, -26557, -26319, -26077, -25832, -25583, -25330, -25073, -24812, -24547, -24279, -24007, -23732, -23453,
+    -23170, -22884, -22594, -22301, -22005, -21706, -21403, -21097, -20787, -20475, -20159, -19841, -19519, -19195,
+    -18868, -18537, -18204, -17869, -17530, -17189, -16846, -16499, -16151, -15800, -15446, -15090, -14732, -14372,
+    -14010, -13645, -13278, -12910, -12539, -12167, -11793, -11416, -11039, -10659, -10278, -9896,  -9512,  -9126,
+    -8739,  -8351,  -7961,  -7571,  -7179,  -6786,  -6392,  -5997,  -5602,  -5205,  -4808,  -4409,  -4011,  -3611,
     -3211,  -2811,  -2410,  -2009,  -1607,  -1206,  -804,   -402};
 
 int16 C4CosTable[512] = {
-    32767,  32765,  32758,  32745,  32728,  32706,  32679,  32647,  32610,
-    32568,  32521,  32469,  32413,  32351,  32285,  32214,  32138,  32057,
-    31971,  31881,  31785,  31685,  31581,  31471,  31357,  31237,  31114,
-    30985,  30852,  30714,  30572,  30425,  30273,  30117,  29956,  29791,
-    29621,  29447,  29269,  29086,  28898,  28707,  28511,  28310,  28106,
-    27897,  27684,  27466,  27245,  27020,  26790,  26557,  26319,  26077,
-    25832,  25583,  25330,  25073,  24812,  24547,  24279,  24007,  23732,
-    23453,  23170,  22884,  22594,  22301,  22005,  21706,  21403,  21097,
-    20787,  20475,  20159,  19841,  19519,  19195,  18868,  18537,  18204,
-    17869,  17530,  17189,  16846,  16499,  16151,  15800,  15446,  15090,
-    14732,  14372,  14010,  13645,  13278,  12910,  12539,  12167,  11793,
-    11416,  11039,  10659,  10278,  9896,   9512,   9126,   8739,   8351,
-    7961,   7571,   7179,   6786,   6392,   5997,   5602,   5205,   4808,
-    4409,   4011,   3611,   3211,   2811,   2410,   2009,   1607,   1206,
-    804,    402,    0,	    -402,   -804,   -1206,  -1607,  -2009,  -2410,
-    -2811,  -3211,  -3611,  -4011,  -4409,  -4808,  -5205,  -5602,  -5997,
-    -6392,  -6786,  -7179,  -7571,  -7961,  -8351,  -8739,  -9126,  -9512,
-    -9896,  -10278, -10659, -11039, -11416, -11793, -12167, -12539, -12910,
-    -13278, -13645, -14010, -14372, -14732, -15090, -15446, -15800, -16151,
-    -16499, -16846, -17189, -17530, -17869, -18204, -18537, -18868, -19195,
-    -19519, -19841, -20159, -20475, -20787, -21097, -21403, -21706, -22005,
-    -22301, -22594, -22884, -23170, -23453, -23732, -24007, -24279, -24547,
-    -24812, -25073, -25330, -25583, -25832, -26077, -26319, -26557, -26790,
-    -27020, -27245, -27466, -27684, -27897, -28106, -28310, -28511, -28707,
-    -28898, -29086, -29269, -29447, -29621, -29791, -29956, -30117, -30273,
-    -30425, -30572, -30714, -30852, -30985, -31114, -31237, -31357, -31471,
-    -31581, -31685, -31785, -31881, -31971, -32057, -32138, -32214, -32285,
-    -32351, -32413, -32469, -32521, -32568, -32610, -32647, -32679, -32706,
-    -32728, -32745, -32758, -32765, -32767, -32765, -32758, -32745, -32728,
-    -32706, -32679, -32647, -32610, -32568, -32521, -32469, -32413, -32351,
-    -32285, -32214, -32138, -32057, -31971, -31881, -31785, -31685, -31581,
-    -31471, -31357, -31237, -31114, -30985, -30852, -30714, -30572, -30425,
-    -30273, -30117, -29956, -29791, -29621, -29447, -29269, -29086, -28898,
-    -28707, -28511, -28310, -28106, -27897, -27684, -27466, -27245, -27020,
-    -26790, -26557, -26319, -26077, -25832, -25583, -25330, -25073, -24812,
-    -24547, -24279, -24007, -23732, -23453, -23170, -22884, -22594, -22301,
-    -22005, -21706, -21403, -21097, -20787, -20475, -20159, -19841, -19519,
-    -19195, -18868, -18537, -18204, -17869, -17530, -17189, -16846, -16499,
-    -16151, -15800, -15446, -15090, -14732, -14372, -14010, -13645, -13278,
-    -12910, -12539, -12167, -11793, -11416, -11039, -10659, -10278, -9896,
-    -9512,  -9126,  -8739,  -8351,  -7961,  -7571,  -7179,  -6786,  -6392,
-    -5997,  -5602,  -5205,  -4808,  -4409,  -4011,  -3611,  -3211,  -2811,
-    -2410,  -2009,  -1607,  -1206,  -804,   -402,   0,	    402,    804,
-    1206,   1607,   2009,   2410,   2811,   3211,   3611,   4011,   4409,
-    4808,   5205,   5602,   5997,   6392,   6786,   7179,   7571,   7961,
-    8351,   8739,   9126,   9512,   9896,   10278,  10659,  11039,  11416,
-    11793,  12167,  12539,  12910,  13278,  13645,  14010,  14372,  14732,
-    15090,  15446,  15800,  16151,  16499,  16846,  17189,  17530,  17869,
-    18204,  18537,  18868,  19195,  19519,  19841,  20159,  20475,  20787,
-    21097,  21403,  21706,  22005,  22301,  22594,  22884,  23170,  23453,
-    23732,  24007,  24279,  24547,  24812,  25073,  25330,  25583,  25832,
-    26077,  26319,  26557,  26790,  27020,  27245,  27466,  27684,  27897,
-    28106,  28310,  28511,  28707,  28898,  29086,  29269,  29447,  29621,
-    29791,  29956,  30117,  30273,  30425,  30572,  30714,  30852,  30985,
-    31114,  31237,  31357,  31471,  31581,  31685,  31785,  31881,  31971,
-    32057,  32138,  32214,  32285,  32351,  32413,  32469,  32521,  32568,
+    32767,  32765,  32758,  32745,  32728,  32706,  32679,  32647,  32610,  32568,  32521,  32469,  32413,  32351,
+    32285,  32214,  32138,  32057,  31971,  31881,  31785,  31685,  31581,  31471,  31357,  31237,  31114,  30985,
+    30852,  30714,  30572,  30425,  30273,  30117,  29956,  29791,  29621,  29447,  29269,  29086,  28898,  28707,
+    28511,  28310,  28106,  27897,  27684,  27466,  27245,  27020,  26790,  26557,  26319,  26077,  25832,  25583,
+    25330,  25073,  24812,  24547,  24279,  24007,  23732,  23453,  23170,  22884,  22594,  22301,  22005,  21706,
+    21403,  21097,  20787,  20475,  20159,  19841,  19519,  19195,  18868,  18537,  18204,  17869,  17530,  17189,
+    16846,  16499,  16151,  15800,  15446,  15090,  14732,  14372,  14010,  13645,  13278,  12910,  12539,  12167,
+    11793,  11416,  11039,  10659,  10278,  9896,   9512,   9126,   8739,   8351,   7961,   7571,   7179,   6786,
+    6392,   5997,   5602,   5205,   4808,   4409,   4011,   3611,   3211,   2811,   2410,   2009,   1607,   1206,
+    804,    402,    0,	    -402,   -804,   -1206,  -1607,  -2009,  -2410,  -2811,  -3211,  -3611,  -4011,  -4409,
+    -4808,  -5205,  -5602,  -5997,  -6392,  -6786,  -7179,  -7571,  -7961,  -8351,  -8739,  -9126,  -9512,  -9896,
+    -10278, -10659, -11039, -11416, -11793, -12167, -12539, -12910, -13278, -13645, -14010, -14372, -14732, -15090,
+    -15446, -15800, -16151, -16499, -16846, -17189, -17530, -17869, -18204, -18537, -18868, -19195, -19519, -19841,
+    -20159, -20475, -20787, -21097, -21403, -21706, -22005, -22301, -22594, -22884, -23170, -23453, -23732, -24007,
+    -24279, -24547, -24812, -25073, -25330, -25583, -25832, -26077, -26319, -26557, -26790, -27020, -27245, -27466,
+    -27684, -27897, -28106, -28310, -28511, -28707, -28898, -29086, -29269, -29447, -29621, -29791, -29956, -30117,
+    -30273, -30425, -30572, -30714, -30852, -30985, -31114, -31237, -31357, -31471, -31581, -31685, -31785, -31881,
+    -31971, -32057, -32138, -32214, -32285, -32351, -32413, -32469, -32521, -32568, -32610, -32647, -32679, -32706,
+    -32728, -32745, -32758, -32765, -32767, -32765, -32758, -32745, -32728, -32706, -32679, -32647, -32610, -32568,
+    -32521, -32469, -32413, -32351, -32285, -32214, -32138, -32057, -31971, -31881, -31785, -31685, -31581, -31471,
+    -31357, -31237, -31114, -30985, -30852, -30714, -30572, -30425, -30273, -30117, -29956, -29791, -29621, -29447,
+    -29269, -29086, -28898, -28707, -28511, -28310, -28106, -27897, -27684, -27466, -27245, -27020, -26790, -26557,
+    -26319, -26077, -25832, -25583, -25330, -25073, -24812, -24547, -24279, -24007, -23732, -23453, -23170, -22884,
+    -22594, -22301, -22005, -21706, -21403, -21097, -20787, -20475, -20159, -19841, -19519, -19195, -18868, -18537,
+    -18204, -17869, -17530, -17189, -16846, -16499, -16151, -15800, -15446, -15090, -14732, -14372, -14010, -13645,
+    -13278, -12910, -12539, -12167, -11793, -11416, -11039, -10659, -10278, -9896,  -9512,  -9126,  -8739,  -8351,
+    -7961,  -7571,  -7179,  -6786,  -6392,  -5997,  -5602,  -5205,  -4808,  -4409,  -4011,  -3611,  -3211,  -2811,
+    -2410,  -2009,  -1607,  -1206,  -804,   -402,   0,	    402,    804,    1206,   1607,   2009,   2410,   2811,
+    3211,   3611,   4011,   4409,   4808,   5205,   5602,   5997,   6392,   6786,   7179,   7571,   7961,   8351,
+    8739,   9126,   9512,   9896,   10278,  10659,  11039,  11416,  11793,  12167,  12539,  12910,  13278,  13645,
+    14010,  14372,  14732,  15090,  15446,  15800,  16151,  16499,  16846,  17189,  17530,  17869,  18204,  18537,
+    18868,  19195,  19519,  19841,  20159,  20475,  20787,  21097,  21403,  21706,  22005,  22301,  22594,  22884,
+    23170,  23453,  23732,  24007,  24279,  24547,  24812,  25073,  25330,  25583,  25832,  26077,  26319,  26557,
+    26790,  27020,  27245,  27466,  27684,  27897,  28106,  28310,  28511,  28707,  28898,  29086,  29269,  29447,
+    29621,  29791,  29956,  30117,  30273,  30425,  30572,  30714,  30852,  30985,  31114,  31237,  31357,  31471,
+    31581,  31685,  31785,  31881,  31971,  32057,  32138,  32214,  32285,  32351,  32413,  32469,  32521,  32568,
     32610,  32647,  32679,  32706,  32728,  32745,  32758,  32765};

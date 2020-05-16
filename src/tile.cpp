@@ -60,129 +60,115 @@ uint8 ConvertTile(uint8 *pCache, uint32 TileAddr)
 	register uint32 non_zero = 0;
 
 #ifdef __ARM__
-#define f(from, to_lo, to_hi, pix)                                             \
-	"	movs	" #from ", " #from ", lsl #(17)	\n"                    \
-	"	addcs	" #to_hi ", " #to_hi ", #(1 << ( 0 + 1 + " #pix        \
-	")) \n"                                                                \
-	"	addmi	" #to_hi ", " #to_hi ", #(1 << ( 8 + 1 + " #pix        \
-	")) \n"                                                                \
-	"	movs	" #from ", " #from ", lsl #2	\n"                       \
-	"	addcs	" #to_hi ", " #to_hi ", #(1 << (16 + 1 + " #pix        \
-	")) \n"                                                                \
-	"	addmi	" #to_hi ", " #to_hi ", #(1 << (24 + 1 + " #pix        \
-	")) \n"                                                                \
-	"	movs	" #from ", " #from ", lsl #2	\n"                       \
-	"	addcs	" #to_lo ", " #to_lo ", #(1 << ( 0 + 1 + " #pix        \
-	")) \n"                                                                \
-	"	addmi	" #to_lo ", " #to_lo ", #(1 << ( 8 + 1 + " #pix        \
-	")) \n"                                                                \
-	"	movs	" #from ", " #from ", lsl #2	\n"                       \
-	"	addcs	" #to_lo ", " #to_lo ", #(1 << (16 + 1 + " #pix        \
-	")) \n"                                                                \
-	"	addmi	" #to_lo ", " #to_lo ", #(1 << (24 + 1 + " #pix        \
-	")) \n"                                                                \
-                                                                               \
-	"	movs	" #from ", " #from ", lsl #2	\n"                       \
-	"	addcs	" #to_hi ", " #to_hi ", #(1 << ( 0 + " #pix ")) \n"    \
-	"	addmi	" #to_hi ", " #to_hi ", #(1 << ( 8 + " #pix ")) \n"    \
-	"	movs	" #from ", " #from ", lsl #2	\n"                       \
-	"	addcs	" #to_hi ", " #to_hi ", #(1 << (16 + " #pix ")) \n"    \
-	"	addmi	" #to_hi ", " #to_hi ", #(1 << (24 + " #pix ")) \n"    \
-	"	movs	" #from ", " #from ", lsl #2	\n"                       \
-	"	addcs	" #to_lo ", " #to_lo ", #(1 << ( 0 + " #pix ")) \n"    \
-	"	addmi	" #to_lo ", " #to_lo ", #(1 << ( 8 + " #pix ")) \n"    \
-	"	movs	" #from ", " #from ", lsl #2	\n"                       \
-	"	addcs	" #to_lo ", " #to_lo ", #(1 << (16 + " #pix ")) \n"    \
+#define f(from, to_lo, to_hi, pix)                                                                                     \
+	"	movs	" #from ", " #from ", lsl #(17)	\n"                                                            \
+	"	addcs	" #to_hi ", " #to_hi ", #(1 << ( 0 + 1 + " #pix ")) \n"                                        \
+	"	addmi	" #to_hi ", " #to_hi ", #(1 << ( 8 + 1 + " #pix ")) \n"                                        \
+	"	movs	" #from ", " #from ", lsl #2	\n"                                                               \
+	"	addcs	" #to_hi ", " #to_hi ", #(1 << (16 + 1 + " #pix ")) \n"                                        \
+	"	addmi	" #to_hi ", " #to_hi ", #(1 << (24 + 1 + " #pix ")) \n"                                        \
+	"	movs	" #from ", " #from ", lsl #2	\n"                                                               \
+	"	addcs	" #to_lo ", " #to_lo ", #(1 << ( 0 + 1 + " #pix ")) \n"                                        \
+	"	addmi	" #to_lo ", " #to_lo ", #(1 << ( 8 + 1 + " #pix ")) \n"                                        \
+	"	movs	" #from ", " #from ", lsl #2	\n"                                                               \
+	"	addcs	" #to_lo ", " #to_lo ", #(1 << (16 + 1 + " #pix ")) \n"                                        \
+	"	addmi	" #to_lo ", " #to_lo ", #(1 << (24 + 1 + " #pix ")) \n"                                        \
+                                                                                                                       \
+	"	movs	" #from ", " #from ", lsl #2	\n"                                                               \
+	"	addcs	" #to_hi ", " #to_hi ", #(1 << ( 0 + " #pix ")) \n"                                            \
+	"	addmi	" #to_hi ", " #to_hi ", #(1 << ( 8 + " #pix ")) \n"                                            \
+	"	movs	" #from ", " #from ", lsl #2	\n"                                                               \
+	"	addcs	" #to_hi ", " #to_hi ", #(1 << (16 + " #pix ")) \n"                                            \
+	"	addmi	" #to_hi ", " #to_hi ", #(1 << (24 + " #pix ")) \n"                                            \
+	"	movs	" #from ", " #from ", lsl #2	\n"                                                               \
+	"	addcs	" #to_lo ", " #to_lo ", #(1 << ( 0 + " #pix ")) \n"                                            \
+	"	addmi	" #to_lo ", " #to_lo ", #(1 << ( 8 + " #pix ")) \n"                                            \
+	"	movs	" #from ", " #from ", lsl #2	\n"                                                               \
+	"	addcs	" #to_lo ", " #to_lo ", #(1 << (16 + " #pix ")) \n"                                            \
 	"	addmi	" #to_lo ", " #to_lo ", #(1 << (24 + " #pix ")) \n"
 
 	switch (BG.BitShift) {
 	case 8:
-		__asm__ volatile(
-		    "	mov	r0, #8		\n"
-		    "	mov	%[non_zero], #0	\n"
+		__asm__ volatile("	mov	r0, #8		\n"
+				 "	mov	%[non_zero], #0	\n"
 
-		    "1:	\n"
+				 "1:	\n"
 
-		    "	mov	r1, #0		\n"
-		    "	mov	r2, #0		\n"
+				 "	mov	r1, #0		\n"
+				 "	mov	r2, #0		\n"
 
-		    "	ldrh	r3, [%[tp], #16]	\n"
-		    "	ldrh	r4, [%[tp], #32]	\n"
+				 "	ldrh	r3, [%[tp], #16]	\n"
+				 "	ldrh	r4, [%[tp], #32]	\n"
 
-		    f(r3, r2, r1, 2) f(r4, r2, r1, 4)
+				 f(r3, r2, r1, 2) f(r4, r2, r1, 4)
 
-			"	ldrh	r3, [%[tp], #48]	\n"
-			"	ldrh	r4, [%[tp]], #2	\n"
+				     "	ldrh	r3, [%[tp], #48]	\n"
+				     "	ldrh	r4, [%[tp]], #2	\n"
 
-		    f(r3, r2, r1, 6) f(r4, r2, r1, 0)
+				 f(r3, r2, r1, 6) f(r4, r2, r1, 0)
 
-			"	stmia	%[p]!, {r1, r2} \n"
+				     "	stmia	%[p]!, {r1, r2} \n"
 
-			"	orr	%[non_zero], %[non_zero], r1	\n"
-			"	orr	%[non_zero], %[non_zero], r2	\n"
+				     "	orr	%[non_zero], %[non_zero], r1	\n"
+				     "	orr	%[non_zero], %[non_zero], r2	\n"
 
-			"	subs	r0, r0, #1	\n"
-			"	bne	1b		\n"
+				     "	subs	r0, r0, #1	\n"
+				     "	bne	1b		\n"
 
-		    :
-		    [ non_zero ] "+r"(non_zero), [ tp ] "+r"(tp), [ p ] "+r"(p)
-		    :
-		    : "r0", "r1", "r2", "r3", "r4", "cc");
+				 : [ non_zero ] "+r"(non_zero), [ tp ] "+r"(tp), [ p ] "+r"(p)
+				 :
+				 : "r0", "r1", "r2", "r3", "r4", "cc");
 		break;
 
 	case 4:
-		__asm__ volatile(
-		    "	mov	r0, #8		\n"
-		    "	mov	%[non_zero], #0	\n"
-		    "1:	\n"
+		__asm__ volatile("	mov	r0, #8		\n"
+				 "	mov	%[non_zero], #0	\n"
+				 "1:	\n"
 
-		    "	mov	r1, #0		\n"
-		    "	mov	r2, #0		\n"
+				 "	mov	r1, #0		\n"
+				 "	mov	r2, #0		\n"
 
-		    "	ldrh	r3, [%[tp], #16]\n"
-		    "	ldrh	r4, [%[tp]], #2	\n"
+				 "	ldrh	r3, [%[tp], #16]\n"
+				 "	ldrh	r4, [%[tp]], #2	\n"
 
-		    f(r3, r2, r1, 2) f(r4, r2, r1, 0)
+				 f(r3, r2, r1, 2) f(r4, r2, r1, 0)
 
-			"	stmia	%[p]!, {r1, r2} \n"
+				     "	stmia	%[p]!, {r1, r2} \n"
 
-			"	orr	%[non_zero], %[non_zero], r1	\n"
-			"	orr	%[non_zero], %[non_zero], r2	\n"
+				     "	orr	%[non_zero], %[non_zero], r1	\n"
+				     "	orr	%[non_zero], %[non_zero], r2	\n"
 
-			"	subs	r0, r0, #1	\n"
-			"	bne	1b		\n"
+				     "	subs	r0, r0, #1	\n"
+				     "	bne	1b		\n"
 
-		    :
-		    [ non_zero ] "+r"(non_zero), [ tp ] "+r"(tp), [ p ] "+r"(p)
-		    :
-		    : "r0", "r1", "r2", "r3", "r4", "cc");
+				 : [ non_zero ] "+r"(non_zero), [ tp ] "+r"(tp), [ p ] "+r"(p)
+				 :
+				 : "r0", "r1", "r2", "r3", "r4", "cc");
 		break;
 
 	case 2:
-		__asm__ volatile(
-		    "	mov	r0, #8		\n"
-		    "	mov	%[non_zero], #0	\n"
-		    "1:	\n"
+		__asm__ volatile("	mov	r0, #8		\n"
+				 "	mov	%[non_zero], #0	\n"
+				 "1:	\n"
 
-		    "	ldrh	r3, [%[tp]], #2	\n"
+				 "	ldrh	r3, [%[tp]], #2	\n"
 
-		    "	mov	r1, #0		\n"
-		    "	mov	r2, #0		\n"
+				 "	mov	r1, #0		\n"
+				 "	mov	r2, #0		\n"
 
-		    f(r3, r2, r1, 0)
+				 f(r3, r2, r1, 0)
 
-			"	stmia	%[p]!, {r1, r2} \n"
+				     "	stmia	%[p]!, {r1, r2} \n"
 
-			"	orr	%[non_zero], %[non_zero], r1	\n"
-			"	orr	%[non_zero], %[non_zero], r2	\n"
+				     "	orr	%[non_zero], %[non_zero], r1	\n"
+				     "	orr	%[non_zero], %[non_zero], r2	\n"
 
-			"	subs	r0, r0, #1	\n"
-			"	bne	1b		\n"
+				     "	subs	r0, r0, #1	\n"
+				     "	bne	1b		\n"
 
-		    :
-		    [ non_zero ] "+r"(non_zero), [ tp ] "+r"(tp), [ p ] "+r"(p)
-		    :
-		    : "r0", "r1", "r2", "r3", "cc");
+				 : [ non_zero ] "+r"(non_zero), [ tp ] "+r"(tp), [ p ] "+r"(p)
+				 :
+				 : "r0", "r1", "r2", "r3", "cc");
 		break;
 	}
 #undef f
@@ -292,10 +278,10 @@ inline void WRITE_4PIXELS(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 	uint8 *Screen = gfx->S + Offset;
 	uint8 *Depth = gfx->DB + Offset;
 
-#define FN(N)                                                                  \
-	if (gfx->Z1 > Depth[N] && (Pixel = Pixels[N])) {                       \
-		Screen[N] = (uint8)gfx->ScreenColors[Pixel];                   \
-		Depth[N] = gfx->Z2;                                            \
+#define FN(N)                                                                                                          \
+	if (gfx->Z1 > Depth[N] && (Pixel = Pixels[N])) {                                                               \
+		Screen[N] = (uint8)gfx->ScreenColors[Pixel];                                                           \
+		Depth[N] = gfx->Z2;                                                                                    \
 	}
 
 	FN(0)
@@ -305,17 +291,16 @@ inline void WRITE_4PIXELS(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 #undef FN
 }
 
-inline void WRITE_4PIXELS_FLIPPED(uint32 Offset, uint8 *Pixels,
-				  struct SGFX *gfx)
+inline void WRITE_4PIXELS_FLIPPED(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 {
 	uint8 Pixel;
 	uint8 *Screen = gfx->S + Offset;
 	uint8 *Depth = gfx->DB + Offset;
 
-#define FN(N)                                                                  \
-	if (gfx->Z1 > Depth[N] && (Pixel = Pixels[3 - N])) {                   \
-		Screen[N] = (uint8)gfx->ScreenColors[Pixel];                   \
-		Depth[N] = gfx->Z2;                                            \
+#define FN(N)                                                                                                          \
+	if (gfx->Z1 > Depth[N] && (Pixel = Pixels[3 - N])) {                                                           \
+		Screen[N] = (uint8)gfx->ScreenColors[Pixel];                                                           \
+		Depth[N] = gfx->Z2;                                                                                    \
 	}
 
 	FN(0)
@@ -331,11 +316,10 @@ inline void WRITE_4PIXELSx2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 	uint8 *Screen = gfx->S + Offset;
 	uint8 *Depth = gfx->DB + Offset;
 
-#define FN(N)                                                                  \
-	if (gfx->Z1 > Depth[0] && (Pixel = Pixels[N])) {                       \
-		Screen[N * 2] = Screen[N * 2 + 1] =                            \
-		    (uint8)gfx->ScreenColors[Pixel];                           \
-		Depth[N * 2] = Depth[N * 2 + 1] = gfx->Z2;                     \
+#define FN(N)                                                                                                          \
+	if (gfx->Z1 > Depth[0] && (Pixel = Pixels[N])) {                                                               \
+		Screen[N * 2] = Screen[N * 2 + 1] = (uint8)gfx->ScreenColors[Pixel];                                   \
+		Depth[N * 2] = Depth[N * 2 + 1] = gfx->Z2;                                                             \
 	}
 
 	FN(0)
@@ -345,18 +329,16 @@ inline void WRITE_4PIXELSx2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 #undef FN
 }
 
-inline void WRITE_4PIXELS_FLIPPEDx2(uint32 Offset, uint8 *Pixels,
-				    struct SGFX *gfx)
+inline void WRITE_4PIXELS_FLIPPEDx2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 {
 	uint8 Pixel;
 	uint8 *Screen = gfx->S + Offset;
 	uint8 *Depth = gfx->DB + Offset;
 
-#define FN(N)                                                                  \
-	if (gfx->Z1 > Depth[N * 2] && (Pixel = Pixels[3 - N])) {               \
-		Screen[N * 2] = Screen[N * 2 + 1] =                            \
-		    (uint8)gfx->ScreenColors[Pixel];                           \
-		Depth[N * 2] = Depth[N * 2 + 1] = gfx->Z2;                     \
+#define FN(N)                                                                                                          \
+	if (gfx->Z1 > Depth[N * 2] && (Pixel = Pixels[3 - N])) {                                                       \
+		Screen[N * 2] = Screen[N * 2 + 1] = (uint8)gfx->ScreenColors[Pixel];                                   \
+		Depth[N * 2] = Depth[N * 2 + 1] = gfx->Z2;                                                             \
 	}
 
 	FN(0)
@@ -372,15 +354,12 @@ inline void WRITE_4PIXELSx2x2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 	uint8 *Screen = gfx->S + Offset;
 	uint8 *Depth = gfx->DB + Offset;
 
-#define FN(N)                                                                  \
-	if (gfx->Z1 > Depth[N * 2] && (Pixel = Pixels[N])) {                   \
-		Screen[N * 2] = Screen[N * 2 + 1] =                            \
-		    Screen[gfx->RealPitch + N * 2] =                           \
-			Screen[gfx->RealPitch + N * 2 + 1] =                   \
-			    (uint8)gfx->ScreenColors[Pixel];                   \
-		Depth[N * 2] = Depth[N * 2 + 1] =                              \
-		    Depth[gfx->RealPitch + N * 2] =                            \
-			Depth[gfx->RealPitch + N * 2 + 1] = gfx->Z2;           \
+#define FN(N)                                                                                                          \
+	if (gfx->Z1 > Depth[N * 2] && (Pixel = Pixels[N])) {                                                           \
+		Screen[N * 2] = Screen[N * 2 + 1] = Screen[gfx->RealPitch + N * 2] =                                   \
+		    Screen[gfx->RealPitch + N * 2 + 1] = (uint8)gfx->ScreenColors[Pixel];                              \
+		Depth[N * 2] = Depth[N * 2 + 1] = Depth[gfx->RealPitch + N * 2] = Depth[gfx->RealPitch + N * 2 + 1] =  \
+		    gfx->Z2;                                                                                           \
 	}
 
 	FN(0)
@@ -390,22 +369,18 @@ inline void WRITE_4PIXELSx2x2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 #undef FN
 }
 
-inline void WRITE_4PIXELS_FLIPPEDx2x2(uint32 Offset, uint8 *Pixels,
-				      struct SGFX *gfx)
+inline void WRITE_4PIXELS_FLIPPEDx2x2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 {
 	uint8 Pixel;
 	uint8 *Screen = gfx->S + Offset;
 	uint8 *Depth = gfx->DB + Offset;
 
-#define FN(N)                                                                  \
-	if (gfx->Z1 > Depth[N * 2] && (Pixel = Pixels[3 - N])) {               \
-		Screen[N * 2] = Screen[N * 2 + 1] =                            \
-		    Screen[gfx->RealPitch + N * 2] =                           \
-			Screen[gfx->RealPitch + N * 2 + 1] =                   \
-			    (uint8)gfx->ScreenColors[Pixel];                   \
-		Depth[N * 2] = Depth[N * 2 + 1] =                              \
-		    Depth[gfx->RealPitch + N * 2] =                            \
-			Depth[gfx->RealPitch + N * 2 + 1] = gfx->Z2;           \
+#define FN(N)                                                                                                          \
+	if (gfx->Z1 > Depth[N * 2] && (Pixel = Pixels[3 - N])) {                                                       \
+		Screen[N * 2] = Screen[N * 2 + 1] = Screen[gfx->RealPitch + N * 2] =                                   \
+		    Screen[gfx->RealPitch + N * 2 + 1] = (uint8)gfx->ScreenColors[Pixel];                              \
+		Depth[N * 2] = Depth[N * 2 + 1] = Depth[gfx->RealPitch + N * 2] = Depth[gfx->RealPitch + N * 2 + 1] =  \
+		    gfx->Z2;                                                                                           \
 	}
 
 	FN(0)
@@ -415,8 +390,7 @@ inline void WRITE_4PIXELS_FLIPPEDx2x2(uint32 Offset, uint8 *Pixels,
 #undef FN
 }
 
-void DrawTile(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount,
-	      struct SGFX *gfx)
+void DrawTile(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 
@@ -425,8 +399,7 @@ void DrawTile(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount,
 	RENDER_TILE(WRITE_4PIXELS, WRITE_4PIXELS_FLIPPED, 4)
 }
 
-void DrawClippedTile(uint32 Tile, uint32 Offset, uint32 StartPixel,
-		     uint32 Width, uint32 StartLine, uint32 LineCount,
+void DrawClippedTile(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Width, uint32 StartLine, uint32 LineCount,
 		     struct SGFX *gfx)
 {
 	TILE_PREAMBLE
@@ -436,8 +409,7 @@ void DrawClippedTile(uint32 Tile, uint32 Offset, uint32 StartPixel,
 	RENDER_CLIPPED_TILE(WRITE_4PIXELS, WRITE_4PIXELS_FLIPPED, 4)
 }
 
-void DrawTilex2(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount,
-		struct SGFX *gfx)
+void DrawTilex2(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 
@@ -446,8 +418,7 @@ void DrawTilex2(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount,
 	RENDER_TILE(WRITE_4PIXELSx2, WRITE_4PIXELS_FLIPPEDx2, 8)
 }
 
-void DrawClippedTilex2(uint32 Tile, uint32 Offset, uint32 StartPixel,
-		       uint32 Width, uint32 StartLine, uint32 LineCount,
+void DrawClippedTilex2(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Width, uint32 StartLine, uint32 LineCount,
 		       struct SGFX *gfx)
 {
 	TILE_PREAMBLE
@@ -457,8 +428,7 @@ void DrawClippedTilex2(uint32 Tile, uint32 Offset, uint32 StartPixel,
 	RENDER_CLIPPED_TILE(WRITE_4PIXELSx2, WRITE_4PIXELS_FLIPPEDx2, 8)
 }
 
-void DrawTilex2x2(uint32 Tile, uint32 Offset, uint32 StartLine,
-		  uint32 LineCount, struct SGFX *gfx)
+void DrawTilex2x2(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 
@@ -467,9 +437,8 @@ void DrawTilex2x2(uint32 Tile, uint32 Offset, uint32 StartLine,
 	RENDER_TILE(WRITE_4PIXELSx2x2, WRITE_4PIXELS_FLIPPEDx2x2, 8)
 }
 
-void DrawClippedTilex2x2(uint32 Tile, uint32 Offset, uint32 StartPixel,
-			 uint32 Width, uint32 StartLine, uint32 LineCount,
-			 struct SGFX *gfx)
+void DrawClippedTilex2x2(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Width, uint32 StartLine,
+			 uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 	register uint8 *bp;
@@ -478,8 +447,7 @@ void DrawClippedTilex2x2(uint32 Tile, uint32 Offset, uint32 StartPixel,
 	RENDER_CLIPPED_TILE(WRITE_4PIXELSx2x2, WRITE_4PIXELS_FLIPPEDx2x2, 8)
 }
 
-void DrawLargePixel(uint32 Tile, uint32 Offset, uint32 StartPixel,
-		    uint32 Pixels, uint32 StartLine, uint32 LineCount,
+void DrawLargePixel(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Pixels, uint32 StartLine, uint32 LineCount,
 		    struct SGFX *gfx)
 {
 	TILE_PREAMBLE
@@ -501,10 +469,10 @@ inline void WRITE_4PIXELS16(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 	uint32 z2 = gfx->Z2;
 	uint16 *sc = gfx->ScreenColors;
 
-#define FN(N)                                                                  \
-	if (z1 > Depth[N] && (Pixel = Pixels[N])) {                            \
-		Screen[N] = sc[Pixel];                                         \
-		Depth[N] = z2;                                                 \
+#define FN(N)                                                                                                          \
+	if (z1 > Depth[N] && (Pixel = Pixels[N])) {                                                                    \
+		Screen[N] = sc[Pixel];                                                                                 \
+		Depth[N] = z2;                                                                                         \
 	}
 
 	FN(0)
@@ -514,8 +482,7 @@ inline void WRITE_4PIXELS16(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 #undef FN
 }
 
-inline void WRITE_4PIXELS16_FLIPPED(uint32 Offset, uint8 *Pixels,
-				    struct SGFX *gfx)
+inline void WRITE_4PIXELS16_FLIPPED(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 {
 	uint32 Pixel;
 	uint16 *Screen = (uint16 *)gfx->S + Offset;
@@ -524,10 +491,10 @@ inline void WRITE_4PIXELS16_FLIPPED(uint32 Offset, uint8 *Pixels,
 	uint32 z2 = gfx->Z2;
 	uint16 *sc = gfx->ScreenColors;
 
-#define FN(N)                                                                  \
-	if (z1 > Depth[N] && (Pixel = Pixels[3 - N])) {                        \
-		Screen[N] = sc[Pixel];                                         \
-		Depth[N] = z2;                                                 \
+#define FN(N)                                                                                                          \
+	if (z1 > Depth[N] && (Pixel = Pixels[3 - N])) {                                                                \
+		Screen[N] = sc[Pixel];                                                                                 \
+		Depth[N] = z2;                                                                                         \
 	}
 
 	FN(0)
@@ -546,10 +513,10 @@ inline void WRITE_4PIXELS16x2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 	uint32 z2 = gfx->Z2;
 	uint16 *sc = gfx->ScreenColors;
 
-#define FN(N)                                                                  \
-	if (z1 > Depth[N * 2] && (Pixel = Pixels[N])) {                        \
-		Screen[N * 2] = Screen[N * 2 + 1] = sc[Pixel];                 \
-		Depth[N * 2] = Depth[N * 2 + 1] = z2;                          \
+#define FN(N)                                                                                                          \
+	if (z1 > Depth[N * 2] && (Pixel = Pixels[N])) {                                                                \
+		Screen[N * 2] = Screen[N * 2 + 1] = sc[Pixel];                                                         \
+		Depth[N * 2] = Depth[N * 2 + 1] = z2;                                                                  \
 	}
 
 	FN(0)
@@ -559,8 +526,7 @@ inline void WRITE_4PIXELS16x2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 #undef FN
 }
 
-inline void WRITE_4PIXELS16_FLIPPEDx2(uint32 Offset, uint8 *Pixels,
-				      struct SGFX *gfx)
+inline void WRITE_4PIXELS16_FLIPPEDx2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 {
 	uint32 Pixel;
 	uint16 *Screen = (uint16 *)gfx->S + Offset;
@@ -569,10 +535,10 @@ inline void WRITE_4PIXELS16_FLIPPEDx2(uint32 Offset, uint8 *Pixels,
 	uint32 z2 = gfx->Z2;
 	uint16 *sc = gfx->ScreenColors;
 
-#define FN(N)                                                                  \
-	if (z1 > Depth[N * 2] && (Pixel = Pixels[3 - N])) {                    \
-		Screen[N * 2] = Screen[N * 2 + 1] = sc[Pixel];                 \
-		Depth[N * 2] = Depth[N * 2 + 1] = z2;                          \
+#define FN(N)                                                                                                          \
+	if (z1 > Depth[N * 2] && (Pixel = Pixels[3 - N])) {                                                            \
+		Screen[N * 2] = Screen[N * 2 + 1] = sc[Pixel];                                                         \
+		Depth[N * 2] = Depth[N * 2 + 1] = z2;                                                                  \
 	}
 
 	FN(0)
@@ -591,14 +557,12 @@ inline void WRITE_4PIXELS16x2x2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 	uint32 z2 = gfx->Z2;
 	uint16 *sc = gfx->ScreenColors;
 
-#define FN(N)                                                                  \
-	if (z1 > Depth[N * 2] && (Pixel = Pixels[N])) {                        \
-		Screen[N * 2] = Screen[N * 2 + 1] =                            \
-		    Screen[(gfx->RealPitch >> 1) + N * 2] =                    \
-			Screen[(gfx->RealPitch >> 1) + N * 2 + 1] = sc[Pixel]; \
-		Depth[N * 2] = Depth[N * 2 + 1] =                              \
-		    Depth[(gfx->RealPitch >> 1) + N * 2] =                     \
-			Depth[(gfx->RealPitch >> 1) + N * 2 + 1] = z2;         \
+#define FN(N)                                                                                                          \
+	if (z1 > Depth[N * 2] && (Pixel = Pixels[N])) {                                                                \
+		Screen[N * 2] = Screen[N * 2 + 1] = Screen[(gfx->RealPitch >> 1) + N * 2] =                            \
+		    Screen[(gfx->RealPitch >> 1) + N * 2 + 1] = sc[Pixel];                                             \
+		Depth[N * 2] = Depth[N * 2 + 1] = Depth[(gfx->RealPitch >> 1) + N * 2] =                               \
+		    Depth[(gfx->RealPitch >> 1) + N * 2 + 1] = z2;                                                     \
 	}
 
 	FN(0)
@@ -608,8 +572,7 @@ inline void WRITE_4PIXELS16x2x2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 #undef FN
 }
 
-inline void WRITE_4PIXELS16_FLIPPEDx2x2(uint32 Offset, uint8 *Pixels,
-					struct SGFX *gfx)
+inline void WRITE_4PIXELS16_FLIPPEDx2x2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 {
 	uint32 Pixel;
 	uint16 *Screen = (uint16 *)gfx->S + Offset;
@@ -618,14 +581,12 @@ inline void WRITE_4PIXELS16_FLIPPEDx2x2(uint32 Offset, uint8 *Pixels,
 	uint32 z2 = gfx->Z2;
 	uint16 *sc = gfx->ScreenColors;
 
-#define FN(N)                                                                  \
-	if (z1 > Depth[N * 2] && (Pixel = Pixels[3 - N])) {                    \
-		Screen[N * 2] = Screen[N * 2 + 1] =                            \
-		    Screen[(gfx->RealPitch >> 1) + N * 2] =                    \
-			Screen[(gfx->RealPitch >> 1) + N * 2 + 1] = sc[Pixel]; \
-		Depth[N * 2] = Depth[N * 2 + 1] =                              \
-		    Depth[(gfx->RealPitch >> 1) + N * 2] =                     \
-			Depth[(gfx->RealPitch >> 1) + N * 2 + 1] = z2;         \
+#define FN(N)                                                                                                          \
+	if (z1 > Depth[N * 2] && (Pixel = Pixels[3 - N])) {                                                            \
+		Screen[N * 2] = Screen[N * 2 + 1] = Screen[(gfx->RealPitch >> 1) + N * 2] =                            \
+		    Screen[(gfx->RealPitch >> 1) + N * 2 + 1] = sc[Pixel];                                             \
+		Depth[N * 2] = Depth[N * 2 + 1] = Depth[(gfx->RealPitch >> 1) + N * 2] =                               \
+		    Depth[(gfx->RealPitch >> 1) + N * 2 + 1] = z2;                                                     \
 	}
 
 	FN(0)
@@ -635,8 +596,7 @@ inline void WRITE_4PIXELS16_FLIPPEDx2x2(uint32 Offset, uint8 *Pixels,
 #undef FN
 }
 
-void DrawTile16(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount,
-		struct SGFX *gfx)
+void DrawTile16(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 	register uint8 *bp;
@@ -644,8 +604,7 @@ void DrawTile16(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount,
 	RENDER_TILE(WRITE_4PIXELS16, WRITE_4PIXELS16_FLIPPED, 4)
 }
 
-void DrawClippedTile16(uint32 Tile, uint32 Offset, uint32 StartPixel,
-		       uint32 Width, uint32 StartLine, uint32 LineCount,
+void DrawClippedTile16(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Width, uint32 StartLine, uint32 LineCount,
 		       struct SGFX *gfx)
 {
 	TILE_PREAMBLE
@@ -655,8 +614,7 @@ void DrawClippedTile16(uint32 Tile, uint32 Offset, uint32 StartPixel,
 	RENDER_CLIPPED_TILE(WRITE_4PIXELS16, WRITE_4PIXELS16_FLIPPED, 4)
 }
 
-void DrawTile16x2(uint32 Tile, uint32 Offset, uint32 StartLine,
-		  uint32 LineCount, struct SGFX *gfx)
+void DrawTile16x2(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 	register uint8 *bp;
@@ -664,9 +622,8 @@ void DrawTile16x2(uint32 Tile, uint32 Offset, uint32 StartLine,
 	RENDER_TILE(WRITE_4PIXELS16x2, WRITE_4PIXELS16_FLIPPEDx2, 8)
 }
 
-void DrawClippedTile16x2(uint32 Tile, uint32 Offset, uint32 StartPixel,
-			 uint32 Width, uint32 StartLine, uint32 LineCount,
-			 struct SGFX *gfx)
+void DrawClippedTile16x2(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Width, uint32 StartLine,
+			 uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 	register uint8 *bp;
@@ -675,8 +632,7 @@ void DrawClippedTile16x2(uint32 Tile, uint32 Offset, uint32 StartPixel,
 	RENDER_CLIPPED_TILE(WRITE_4PIXELS16x2, WRITE_4PIXELS16_FLIPPEDx2, 8)
 }
 
-void DrawTile16x2x2(uint32 Tile, uint32 Offset, uint32 StartLine,
-		    uint32 LineCount, struct SGFX *gfx)
+void DrawTile16x2x2(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 	register uint8 *bp;
@@ -684,9 +640,8 @@ void DrawTile16x2x2(uint32 Tile, uint32 Offset, uint32 StartLine,
 	RENDER_TILE(WRITE_4PIXELS16x2x2, WRITE_4PIXELS16_FLIPPEDx2x2, 8)
 }
 
-void DrawClippedTile16x2x2(uint32 Tile, uint32 Offset, uint32 StartPixel,
-			   uint32 Width, uint32 StartLine, uint32 LineCount,
-			   struct SGFX *gfx)
+void DrawClippedTile16x2x2(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Width, uint32 StartLine,
+			   uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 	register uint8 *bp;
@@ -695,8 +650,7 @@ void DrawClippedTile16x2x2(uint32 Tile, uint32 Offset, uint32 StartPixel,
 	RENDER_CLIPPED_TILE(WRITE_4PIXELS16x2x2, WRITE_4PIXELS16_FLIPPEDx2x2, 8)
 }
 
-void DrawLargePixel16(uint32 Tile, uint32 Offset, uint32 StartPixel,
-		      uint32 Pixels, uint32 StartLine, uint32 LineCount,
+void DrawLargePixel16(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Pixels, uint32 StartLine, uint32 LineCount,
 		      struct SGFX *gfx)
 {
 	TILE_PREAMBLE
@@ -719,19 +673,16 @@ inline void WRITE_4PIXELS16_ADD(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 	uint32 z2 = gfx->Z2;
 	uint32 fc = gfx->FixedColour;
 
-#define FN(N)                                                                  \
-	if (z1 > Depth[N] && (Pixel = Pixels[N])) {                            \
-		if (SubDepth[N]) {                                             \
-			if (SubDepth[N] != 1)                                  \
-				Screen[N] =                                    \
-				    COLOR_ADD(gfx->ScreenColors[Pixel],        \
-					      Screen[gfx->Delta + N]);         \
-			else                                                   \
-				Screen[N] =                                    \
-				    COLOR_ADD(gfx->ScreenColors[Pixel], fc);   \
-		} else                                                         \
-			Screen[N] = gfx->ScreenColors[Pixel];                  \
-		Depth[N] = z2;                                                 \
+#define FN(N)                                                                                                          \
+	if (z1 > Depth[N] && (Pixel = Pixels[N])) {                                                                    \
+		if (SubDepth[N]) {                                                                                     \
+			if (SubDepth[N] != 1)                                                                          \
+				Screen[N] = COLOR_ADD(gfx->ScreenColors[Pixel], Screen[gfx->Delta + N]);               \
+			else                                                                                           \
+				Screen[N] = COLOR_ADD(gfx->ScreenColors[Pixel], fc);                                   \
+		} else                                                                                                 \
+			Screen[N] = gfx->ScreenColors[Pixel];                                                          \
+		Depth[N] = z2;                                                                                         \
 	}
 
 	FN(0)
@@ -742,8 +693,7 @@ inline void WRITE_4PIXELS16_ADD(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 #undef FN
 }
 
-inline void WRITE_4PIXELS16_FLIPPED_ADD(uint32 Offset, uint8 *Pixels,
-					struct SGFX *gfx)
+inline void WRITE_4PIXELS16_FLIPPED_ADD(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 {
 	uint32 Pixel;
 	uint16 *Screen = (uint16 *)gfx->S + Offset;
@@ -753,19 +703,16 @@ inline void WRITE_4PIXELS16_FLIPPED_ADD(uint32 Offset, uint8 *Pixels,
 	uint32 z2 = gfx->Z2;
 	uint32 fc = gfx->FixedColour;
 
-#define FN(N)                                                                  \
-	if (z1 > Depth[N] && (Pixel = Pixels[3 - N])) {                        \
-		if (SubDepth[N]) {                                             \
-			if (SubDepth[N] != 1)                                  \
-				Screen[N] =                                    \
-				    COLOR_ADD(gfx->ScreenColors[Pixel],        \
-					      Screen[gfx->Delta + N]);         \
-			else                                                   \
-				Screen[N] =                                    \
-				    COLOR_ADD(gfx->ScreenColors[Pixel], fc);   \
-		} else                                                         \
-			Screen[N] = gfx->ScreenColors[Pixel];                  \
-		Depth[N] = z2;                                                 \
+#define FN(N)                                                                                                          \
+	if (z1 > Depth[N] && (Pixel = Pixels[3 - N])) {                                                                \
+		if (SubDepth[N]) {                                                                                     \
+			if (SubDepth[N] != 1)                                                                          \
+				Screen[N] = COLOR_ADD(gfx->ScreenColors[Pixel], Screen[gfx->Delta + N]);               \
+			else                                                                                           \
+				Screen[N] = COLOR_ADD(gfx->ScreenColors[Pixel], fc);                                   \
+		} else                                                                                                 \
+			Screen[N] = gfx->ScreenColors[Pixel];                                                          \
+		Depth[N] = z2;                                                                                         \
 	}
 
 	FN(0)
@@ -776,8 +723,7 @@ inline void WRITE_4PIXELS16_FLIPPED_ADD(uint32 Offset, uint8 *Pixels,
 #undef FN
 }
 
-inline void WRITE_4PIXELS16_ADD1_2(uint32 Offset, uint8 *Pixels,
-				   struct SGFX *gfx)
+inline void WRITE_4PIXELS16_ADD1_2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 {
 	uint32 Pixel;
 	uint16 *Screen = (uint16 *)gfx->S + Offset;
@@ -787,19 +733,16 @@ inline void WRITE_4PIXELS16_ADD1_2(uint32 Offset, uint8 *Pixels,
 	uint32 z2 = gfx->Z2;
 	uint32 fc = gfx->FixedColour;
 
-#define FN(N)                                                                  \
-	if (z1 > Depth[N] && (Pixel = Pixels[N])) {                            \
-		if (SubDepth[N]) {                                             \
-			if (SubDepth[N] != 1)                                  \
-				Screen[N] = (uint16)(                          \
-				    COLOR_ADD1_2(gfx->ScreenColors[Pixel],     \
-						 Screen[gfx->Delta + N]));     \
-			else                                                   \
-				Screen[N] =                                    \
-				    COLOR_ADD(gfx->ScreenColors[Pixel], fc);   \
-		} else                                                         \
-			Screen[N] = gfx->ScreenColors[Pixel];                  \
-		Depth[N] = z2;                                                 \
+#define FN(N)                                                                                                          \
+	if (z1 > Depth[N] && (Pixel = Pixels[N])) {                                                                    \
+		if (SubDepth[N]) {                                                                                     \
+			if (SubDepth[N] != 1)                                                                          \
+				Screen[N] = (uint16)(COLOR_ADD1_2(gfx->ScreenColors[Pixel], Screen[gfx->Delta + N]));  \
+			else                                                                                           \
+				Screen[N] = COLOR_ADD(gfx->ScreenColors[Pixel], fc);                                   \
+		} else                                                                                                 \
+			Screen[N] = gfx->ScreenColors[Pixel];                                                          \
+		Depth[N] = z2;                                                                                         \
 	}
 
 	FN(0)
@@ -810,8 +753,7 @@ inline void WRITE_4PIXELS16_ADD1_2(uint32 Offset, uint8 *Pixels,
 #undef FN
 }
 
-inline void WRITE_4PIXELS16_FLIPPED_ADD1_2(uint32 Offset, uint8 *Pixels,
-					   struct SGFX *gfx)
+inline void WRITE_4PIXELS16_FLIPPED_ADD1_2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 {
 	uint32 Pixel;
 	uint16 *Screen = (uint16 *)gfx->S + Offset;
@@ -821,19 +763,16 @@ inline void WRITE_4PIXELS16_FLIPPED_ADD1_2(uint32 Offset, uint8 *Pixels,
 	uint32 z2 = gfx->Z2;
 	uint32 fc = gfx->FixedColour;
 
-#define FN(N)                                                                  \
-	if (z1 > Depth[N] && (Pixel = Pixels[3 - N])) {                        \
-		if (SubDepth[N]) {                                             \
-			if (SubDepth[N] != 1)                                  \
-				Screen[N] = (uint16)(                          \
-				    COLOR_ADD1_2(gfx->ScreenColors[Pixel],     \
-						 Screen[gfx->Delta + N]));     \
-			else                                                   \
-				Screen[N] =                                    \
-				    COLOR_ADD(gfx->ScreenColors[Pixel], fc);   \
-		} else                                                         \
-			Screen[N] = gfx->ScreenColors[Pixel];                  \
-		Depth[N] = z2;                                                 \
+#define FN(N)                                                                                                          \
+	if (z1 > Depth[N] && (Pixel = Pixels[3 - N])) {                                                                \
+		if (SubDepth[N]) {                                                                                     \
+			if (SubDepth[N] != 1)                                                                          \
+				Screen[N] = (uint16)(COLOR_ADD1_2(gfx->ScreenColors[Pixel], Screen[gfx->Delta + N]));  \
+			else                                                                                           \
+				Screen[N] = COLOR_ADD(gfx->ScreenColors[Pixel], fc);                                   \
+		} else                                                                                                 \
+			Screen[N] = gfx->ScreenColors[Pixel];                                                          \
+		Depth[N] = z2;                                                                                         \
 	}
 
 	FN(0)
@@ -854,19 +793,16 @@ inline void WRITE_4PIXELS16_SUB(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 	uint32 z2 = gfx->Z2;
 	uint32 fc = gfx->FixedColour;
 
-#define FN(N)                                                                  \
-	if (z1 > Depth[N] && (Pixel = Pixels[N])) {                            \
-		if (SubDepth[N]) {                                             \
-			if (SubDepth[N] != 1)                                  \
-				Screen[N] = (uint16)COLOR_SUB(                 \
-				    gfx->ScreenColors[Pixel],                  \
-				    Screen[gfx->Delta + N]);                   \
-			else                                                   \
-				Screen[N] = (uint16)COLOR_SUB(                 \
-				    gfx->ScreenColors[Pixel], fc);             \
-		} else                                                         \
-			Screen[N] = gfx->ScreenColors[Pixel];                  \
-		Depth[N] = z2;                                                 \
+#define FN(N)                                                                                                          \
+	if (z1 > Depth[N] && (Pixel = Pixels[N])) {                                                                    \
+		if (SubDepth[N]) {                                                                                     \
+			if (SubDepth[N] != 1)                                                                          \
+				Screen[N] = (uint16)COLOR_SUB(gfx->ScreenColors[Pixel], Screen[gfx->Delta + N]);       \
+			else                                                                                           \
+				Screen[N] = (uint16)COLOR_SUB(gfx->ScreenColors[Pixel], fc);                           \
+		} else                                                                                                 \
+			Screen[N] = gfx->ScreenColors[Pixel];                                                          \
+		Depth[N] = z2;                                                                                         \
 	}
 
 	FN(0)
@@ -877,8 +813,7 @@ inline void WRITE_4PIXELS16_SUB(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 #undef FN
 }
 
-inline void WRITE_4PIXELS16_FLIPPED_SUB(uint32 Offset, uint8 *Pixels,
-					struct SGFX *gfx)
+inline void WRITE_4PIXELS16_FLIPPED_SUB(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 {
 	uint32 Pixel;
 	uint16 *Screen = (uint16 *)gfx->S + Offset;
@@ -888,19 +823,16 @@ inline void WRITE_4PIXELS16_FLIPPED_SUB(uint32 Offset, uint8 *Pixels,
 	uint32 z2 = gfx->Z2;
 	uint32 fc = gfx->FixedColour;
 
-#define FN(N)                                                                  \
-	if (z1 > Depth[N] && (Pixel = Pixels[3 - N])) {                        \
-		if (SubDepth[N]) {                                             \
-			if (SubDepth[N] != 1)                                  \
-				Screen[N] = (uint16)COLOR_SUB(                 \
-				    gfx->ScreenColors[Pixel],                  \
-				    Screen[gfx->Delta + N]);                   \
-			else                                                   \
-				Screen[N] = (uint16)COLOR_SUB(                 \
-				    gfx->ScreenColors[Pixel], fc);             \
-		} else                                                         \
-			Screen[N] = gfx->ScreenColors[Pixel];                  \
-		Depth[N] = z2;                                                 \
+#define FN(N)                                                                                                          \
+	if (z1 > Depth[N] && (Pixel = Pixels[3 - N])) {                                                                \
+		if (SubDepth[N]) {                                                                                     \
+			if (SubDepth[N] != 1)                                                                          \
+				Screen[N] = (uint16)COLOR_SUB(gfx->ScreenColors[Pixel], Screen[gfx->Delta + N]);       \
+			else                                                                                           \
+				Screen[N] = (uint16)COLOR_SUB(gfx->ScreenColors[Pixel], fc);                           \
+		} else                                                                                                 \
+			Screen[N] = gfx->ScreenColors[Pixel];                                                          \
+		Depth[N] = z2;                                                                                         \
 	}
 
 	FN(0)
@@ -911,8 +843,7 @@ inline void WRITE_4PIXELS16_FLIPPED_SUB(uint32 Offset, uint8 *Pixels,
 #undef FN
 }
 
-inline void WRITE_4PIXELS16_SUB1_2(uint32 Offset, uint8 *Pixels,
-				   struct SGFX *gfx)
+inline void WRITE_4PIXELS16_SUB1_2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 {
 	uint32 Pixel;
 	uint16 *Screen = (uint16 *)gfx->S + Offset;
@@ -922,19 +853,16 @@ inline void WRITE_4PIXELS16_SUB1_2(uint32 Offset, uint8 *Pixels,
 	uint32 z2 = gfx->Z2;
 	uint32 fc = gfx->FixedColour;
 
-#define FN(N)                                                                  \
-	if (z1 > Depth[N] && (Pixel = Pixels[N])) {                            \
-		if (SubDepth[N]) {                                             \
-			if (SubDepth[N] != 1)                                  \
-				Screen[N] = (uint16)COLOR_SUB1_2(              \
-				    gfx->ScreenColors[Pixel],                  \
-				    Screen[gfx->Delta + N]);                   \
-			else                                                   \
-				Screen[N] = (uint16)COLOR_SUB(                 \
-				    gfx->ScreenColors[Pixel], fc);             \
-		} else                                                         \
-			Screen[N] = gfx->ScreenColors[Pixel];                  \
-		Depth[N] = z2;                                                 \
+#define FN(N)                                                                                                          \
+	if (z1 > Depth[N] && (Pixel = Pixels[N])) {                                                                    \
+		if (SubDepth[N]) {                                                                                     \
+			if (SubDepth[N] != 1)                                                                          \
+				Screen[N] = (uint16)COLOR_SUB1_2(gfx->ScreenColors[Pixel], Screen[gfx->Delta + N]);    \
+			else                                                                                           \
+				Screen[N] = (uint16)COLOR_SUB(gfx->ScreenColors[Pixel], fc);                           \
+		} else                                                                                                 \
+			Screen[N] = gfx->ScreenColors[Pixel];                                                          \
+		Depth[N] = z2;                                                                                         \
 	}
 
 	FN(0)
@@ -945,8 +873,7 @@ inline void WRITE_4PIXELS16_SUB1_2(uint32 Offset, uint8 *Pixels,
 #undef FN
 }
 
-inline void WRITE_4PIXELS16_FLIPPED_SUB1_2(uint32 Offset, uint8 *Pixels,
-					   struct SGFX *gfx)
+inline void WRITE_4PIXELS16_FLIPPED_SUB1_2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 {
 	uint32 Pixel;
 	uint16 *Screen = (uint16 *)gfx->S + Offset;
@@ -956,19 +883,16 @@ inline void WRITE_4PIXELS16_FLIPPED_SUB1_2(uint32 Offset, uint8 *Pixels,
 	uint32 z2 = gfx->Z2;
 	uint32 fc = gfx->FixedColour;
 
-#define FN(N)                                                                  \
-	if (z1 > Depth[N] && (Pixel = Pixels[3 - N])) {                        \
-		if (SubDepth[N]) {                                             \
-			if (SubDepth[N] != 1)                                  \
-				Screen[N] = (uint16)COLOR_SUB1_2(              \
-				    gfx->ScreenColors[Pixel],                  \
-				    Screen[gfx->Delta + N]);                   \
-			else                                                   \
-				Screen[N] = (uint16)COLOR_SUB(                 \
-				    gfx->ScreenColors[Pixel], fc);             \
-		} else                                                         \
-			Screen[N] = gfx->ScreenColors[Pixel];                  \
-		Depth[N] = z2;                                                 \
+#define FN(N)                                                                                                          \
+	if (z1 > Depth[N] && (Pixel = Pixels[3 - N])) {                                                                \
+		if (SubDepth[N]) {                                                                                     \
+			if (SubDepth[N] != 1)                                                                          \
+				Screen[N] = (uint16)COLOR_SUB1_2(gfx->ScreenColors[Pixel], Screen[gfx->Delta + N]);    \
+			else                                                                                           \
+				Screen[N] = (uint16)COLOR_SUB(gfx->ScreenColors[Pixel], fc);                           \
+		} else                                                                                                 \
+			Screen[N] = gfx->ScreenColors[Pixel];                                                          \
+		Depth[N] = z2;                                                                                         \
 	}
 
 	FN(0)
@@ -979,8 +903,7 @@ inline void WRITE_4PIXELS16_FLIPPED_SUB1_2(uint32 Offset, uint8 *Pixels,
 #undef FN
 }
 
-void DrawTile16Add(uint32 Tile, uint32 Offset, uint32 StartLine,
-		   uint32 LineCount, struct SGFX *gfx)
+void DrawTile16Add(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 	register uint8 *bp;
@@ -988,9 +911,8 @@ void DrawTile16Add(uint32 Tile, uint32 Offset, uint32 StartLine,
 	RENDER_TILE(WRITE_4PIXELS16_ADD, WRITE_4PIXELS16_FLIPPED_ADD, 4)
 }
 
-void DrawClippedTile16Add(uint32 Tile, uint32 Offset, uint32 StartPixel,
-			  uint32 Width, uint32 StartLine, uint32 LineCount,
-			  struct SGFX *gfx)
+void DrawClippedTile16Add(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Width, uint32 StartLine,
+			  uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 	register uint8 *bp;
@@ -999,8 +921,7 @@ void DrawClippedTile16Add(uint32 Tile, uint32 Offset, uint32 StartPixel,
 	RENDER_CLIPPED_TILE(WRITE_4PIXELS16_ADD, WRITE_4PIXELS16_FLIPPED_ADD, 4)
 }
 
-void DrawTile16Add1_2(uint32 Tile, uint32 Offset, uint32 StartLine,
-		      uint32 LineCount, struct SGFX *gfx)
+void DrawTile16Add1_2(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 	register uint8 *bp;
@@ -1008,20 +929,17 @@ void DrawTile16Add1_2(uint32 Tile, uint32 Offset, uint32 StartLine,
 	RENDER_TILE(WRITE_4PIXELS16_ADD1_2, WRITE_4PIXELS16_FLIPPED_ADD1_2, 4)
 }
 
-void DrawClippedTile16Add1_2(uint32 Tile, uint32 Offset, uint32 StartPixel,
-			     uint32 Width, uint32 StartLine, uint32 LineCount,
-			     struct SGFX *gfx)
+void DrawClippedTile16Add1_2(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Width, uint32 StartLine,
+			     uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 	register uint8 *bp;
 
 	TILE_CLIP_PREAMBLE
-	RENDER_CLIPPED_TILE(WRITE_4PIXELS16_ADD1_2,
-			    WRITE_4PIXELS16_FLIPPED_ADD1_2, 4)
+	RENDER_CLIPPED_TILE(WRITE_4PIXELS16_ADD1_2, WRITE_4PIXELS16_FLIPPED_ADD1_2, 4)
 }
 
-void DrawTile16Sub(uint32 Tile, uint32 Offset, uint32 StartLine,
-		   uint32 LineCount, struct SGFX *gfx)
+void DrawTile16Sub(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 	register uint8 *bp;
@@ -1029,9 +947,8 @@ void DrawTile16Sub(uint32 Tile, uint32 Offset, uint32 StartLine,
 	RENDER_TILE(WRITE_4PIXELS16_SUB, WRITE_4PIXELS16_FLIPPED_SUB, 4)
 }
 
-void DrawClippedTile16Sub(uint32 Tile, uint32 Offset, uint32 StartPixel,
-			  uint32 Width, uint32 StartLine, uint32 LineCount,
-			  struct SGFX *gfx)
+void DrawClippedTile16Sub(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Width, uint32 StartLine,
+			  uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 	register uint8 *bp;
@@ -1040,8 +957,7 @@ void DrawClippedTile16Sub(uint32 Tile, uint32 Offset, uint32 StartPixel,
 	RENDER_CLIPPED_TILE(WRITE_4PIXELS16_SUB, WRITE_4PIXELS16_FLIPPED_SUB, 4)
 }
 
-void DrawTile16Sub1_2(uint32 Tile, uint32 Offset, uint32 StartLine,
-		      uint32 LineCount, struct SGFX *gfx)
+void DrawTile16Sub1_2(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 	register uint8 *bp;
@@ -1049,20 +965,17 @@ void DrawTile16Sub1_2(uint32 Tile, uint32 Offset, uint32 StartLine,
 	RENDER_TILE(WRITE_4PIXELS16_SUB1_2, WRITE_4PIXELS16_FLIPPED_SUB1_2, 4)
 }
 
-void DrawClippedTile16Sub1_2(uint32 Tile, uint32 Offset, uint32 StartPixel,
-			     uint32 Width, uint32 StartLine, uint32 LineCount,
-			     struct SGFX *gfx)
+void DrawClippedTile16Sub1_2(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Width, uint32 StartLine,
+			     uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 	register uint8 *bp;
 
 	TILE_CLIP_PREAMBLE
-	RENDER_CLIPPED_TILE(WRITE_4PIXELS16_SUB1_2,
-			    WRITE_4PIXELS16_FLIPPED_SUB1_2, 4)
+	RENDER_CLIPPED_TILE(WRITE_4PIXELS16_SUB1_2, WRITE_4PIXELS16_FLIPPED_SUB1_2, 4)
 }
 
-inline void WRITE_4PIXELS16_ADDF1_2(uint32 Offset, uint8 *Pixels,
-				    struct SGFX *gfx)
+inline void WRITE_4PIXELS16_ADDF1_2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 {
 	uint32 Pixel;
 	uint16 *Screen = (uint16 *)gfx->S + Offset;
@@ -1072,14 +985,13 @@ inline void WRITE_4PIXELS16_ADDF1_2(uint32 Offset, uint8 *Pixels,
 	uint32 z2 = gfx->Z2;
 	uint32 fc = gfx->FixedColour;
 
-#define FN(N)                                                                  \
-	if (z1 > Depth[N] && (Pixel = Pixels[N])) {                            \
-		if (SubDepth[N] == 1)                                          \
-			Screen[N] = (uint16)(                                  \
-			    COLOR_ADD1_2(gfx->ScreenColors[Pixel], fc));       \
-		else                                                           \
-			Screen[N] = gfx->ScreenColors[Pixel];                  \
-		Depth[N] = z2;                                                 \
+#define FN(N)                                                                                                          \
+	if (z1 > Depth[N] && (Pixel = Pixels[N])) {                                                                    \
+		if (SubDepth[N] == 1)                                                                                  \
+			Screen[N] = (uint16)(COLOR_ADD1_2(gfx->ScreenColors[Pixel], fc));                              \
+		else                                                                                                   \
+			Screen[N] = gfx->ScreenColors[Pixel];                                                          \
+		Depth[N] = z2;                                                                                         \
 	}
 
 	FN(0)
@@ -1090,8 +1002,7 @@ inline void WRITE_4PIXELS16_ADDF1_2(uint32 Offset, uint8 *Pixels,
 #undef FN
 }
 
-inline void WRITE_4PIXELS16_FLIPPED_ADDF1_2(uint32 Offset, uint8 *Pixels,
-					    struct SGFX *gfx)
+inline void WRITE_4PIXELS16_FLIPPED_ADDF1_2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 {
 	uint32 Pixel;
 	uint16 *Screen = (uint16 *)gfx->S + Offset;
@@ -1101,14 +1012,13 @@ inline void WRITE_4PIXELS16_FLIPPED_ADDF1_2(uint32 Offset, uint8 *Pixels,
 	uint32 z2 = gfx->Z2;
 	uint32 fc = gfx->FixedColour;
 
-#define FN(N)                                                                  \
-	if (z1 > Depth[N] && (Pixel = Pixels[3 - N])) {                        \
-		if (SubDepth[N] == 1)                                          \
-			Screen[N] = (uint16)(                                  \
-			    COLOR_ADD1_2(gfx->ScreenColors[Pixel], fc));       \
-		else                                                           \
-			Screen[N] = gfx->ScreenColors[Pixel];                  \
-		Depth[N] = z2;                                                 \
+#define FN(N)                                                                                                          \
+	if (z1 > Depth[N] && (Pixel = Pixels[3 - N])) {                                                                \
+		if (SubDepth[N] == 1)                                                                                  \
+			Screen[N] = (uint16)(COLOR_ADD1_2(gfx->ScreenColors[Pixel], fc));                              \
+		else                                                                                                   \
+			Screen[N] = gfx->ScreenColors[Pixel];                                                          \
+		Depth[N] = z2;                                                                                         \
 	}
 
 	FN(0)
@@ -1119,8 +1029,7 @@ inline void WRITE_4PIXELS16_FLIPPED_ADDF1_2(uint32 Offset, uint8 *Pixels,
 #undef FN
 }
 
-inline void WRITE_4PIXELS16_SUBF1_2(uint32 Offset, uint8 *Pixels,
-				    struct SGFX *gfx)
+inline void WRITE_4PIXELS16_SUBF1_2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 {
 	uint32 Pixel;
 	uint16 *Screen = (uint16 *)gfx->S + Offset;
@@ -1130,14 +1039,13 @@ inline void WRITE_4PIXELS16_SUBF1_2(uint32 Offset, uint8 *Pixels,
 	uint32 z2 = gfx->Z2;
 	uint32 fc = gfx->FixedColour;
 
-#define FN(N)                                                                  \
-	if (z1 > Depth[N] && (Pixel = Pixels[N])) {                            \
-		if (SubDepth[N] == 1)                                          \
-			Screen[N] = (uint16)COLOR_SUB1_2(                      \
-			    gfx->ScreenColors[Pixel], fc);                     \
-		else                                                           \
-			Screen[N] = gfx->ScreenColors[Pixel];                  \
-		Depth[N] = z2;                                                 \
+#define FN(N)                                                                                                          \
+	if (z1 > Depth[N] && (Pixel = Pixels[N])) {                                                                    \
+		if (SubDepth[N] == 1)                                                                                  \
+			Screen[N] = (uint16)COLOR_SUB1_2(gfx->ScreenColors[Pixel], fc);                                \
+		else                                                                                                   \
+			Screen[N] = gfx->ScreenColors[Pixel];                                                          \
+		Depth[N] = z2;                                                                                         \
 	}
 
 	FN(0)
@@ -1148,8 +1056,7 @@ inline void WRITE_4PIXELS16_SUBF1_2(uint32 Offset, uint8 *Pixels,
 #undef FN
 }
 
-inline void WRITE_4PIXELS16_FLIPPED_SUBF1_2(uint32 Offset, uint8 *Pixels,
-					    struct SGFX *gfx)
+inline void WRITE_4PIXELS16_FLIPPED_SUBF1_2(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 {
 	uint32 Pixel;
 	uint16 *Screen = (uint16 *)gfx->S + Offset;
@@ -1158,14 +1065,13 @@ inline void WRITE_4PIXELS16_FLIPPED_SUBF1_2(uint32 Offset, uint8 *Pixels,
 	uint32 z1 = gfx->Z1;
 	uint32 z2 = gfx->Z2;
 
-#define FN(N)                                                                  \
-	if (z1 > Depth[N] && (Pixel = Pixels[3 - N])) {                        \
-		if (SubDepth[N] == 1)                                          \
-			Screen[N] = (uint16)COLOR_SUB1_2(                      \
-			    gfx->ScreenColors[Pixel], gfx->FixedColour);       \
-		else                                                           \
-			Screen[N] = gfx->ScreenColors[Pixel];                  \
-		Depth[N] = z2;                                                 \
+#define FN(N)                                                                                                          \
+	if (z1 > Depth[N] && (Pixel = Pixels[3 - N])) {                                                                \
+		if (SubDepth[N] == 1)                                                                                  \
+			Screen[N] = (uint16)COLOR_SUB1_2(gfx->ScreenColors[Pixel], gfx->FixedColour);                  \
+		else                                                                                                   \
+			Screen[N] = gfx->ScreenColors[Pixel];                                                          \
+		Depth[N] = z2;                                                                                         \
 	}
 
 	FN(0)
@@ -1176,8 +1082,7 @@ inline void WRITE_4PIXELS16_FLIPPED_SUBF1_2(uint32 Offset, uint8 *Pixels,
 #undef FN
 }
 
-void DrawTile16FixedAdd1_2(uint32 Tile, uint32 Offset, uint32 StartLine,
-			   uint32 LineCount, struct SGFX *gfx)
+void DrawTile16FixedAdd1_2(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 	register uint8 *bp;
@@ -1185,20 +1090,17 @@ void DrawTile16FixedAdd1_2(uint32 Tile, uint32 Offset, uint32 StartLine,
 	RENDER_TILE(WRITE_4PIXELS16_ADDF1_2, WRITE_4PIXELS16_FLIPPED_ADDF1_2, 4)
 }
 
-void DrawClippedTile16FixedAdd1_2(uint32 Tile, uint32 Offset, uint32 StartPixel,
-				  uint32 Width, uint32 StartLine,
+void DrawClippedTile16FixedAdd1_2(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Width, uint32 StartLine,
 				  uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 	register uint8 *bp;
 
 	TILE_CLIP_PREAMBLE
-	RENDER_CLIPPED_TILE(WRITE_4PIXELS16_ADDF1_2,
-			    WRITE_4PIXELS16_FLIPPED_ADDF1_2, 4)
+	RENDER_CLIPPED_TILE(WRITE_4PIXELS16_ADDF1_2, WRITE_4PIXELS16_FLIPPED_ADDF1_2, 4)
 }
 
-void DrawTile16FixedSub1_2(uint32 Tile, uint32 Offset, uint32 StartLine,
-			   uint32 LineCount, struct SGFX *gfx)
+void DrawTile16FixedSub1_2(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 	register uint8 *bp;
@@ -1206,21 +1108,18 @@ void DrawTile16FixedSub1_2(uint32 Tile, uint32 Offset, uint32 StartLine,
 	RENDER_TILE(WRITE_4PIXELS16_SUBF1_2, WRITE_4PIXELS16_FLIPPED_SUBF1_2, 4)
 }
 
-void DrawClippedTile16FixedSub1_2(uint32 Tile, uint32 Offset, uint32 StartPixel,
-				  uint32 Width, uint32 StartLine,
+void DrawClippedTile16FixedSub1_2(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Width, uint32 StartLine,
 				  uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 	register uint8 *bp;
 
 	TILE_CLIP_PREAMBLE
-	RENDER_CLIPPED_TILE(WRITE_4PIXELS16_SUBF1_2,
-			    WRITE_4PIXELS16_FLIPPED_SUBF1_2, 4)
+	RENDER_CLIPPED_TILE(WRITE_4PIXELS16_SUBF1_2, WRITE_4PIXELS16_FLIPPED_SUBF1_2, 4)
 }
 
-void DrawLargePixel16Add(uint32 Tile, uint32 Offset, uint32 StartPixel,
-			 uint32 Pixels, uint32 StartLine, uint32 LineCount,
-			 struct SGFX *gfx)
+void DrawLargePixel16Add(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Pixels, uint32 StartLine,
+			 uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 
@@ -1228,18 +1127,16 @@ void DrawLargePixel16Add(uint32 Tile, uint32 Offset, uint32 StartPixel,
 	uint8 *Depth = gfx->ZBuffer + Offset;
 	uint16 pixel;
 
-#define LARGE_ADD_PIXEL(s, p)                                                  \
-	(Depth[z + gfx->DepthDelta] ? (Depth[z + gfx->DepthDelta] != 1         \
-					   ? COLOR_ADD(p, *(s + gfx->Delta))   \
-					   : COLOR_ADD(p, gfx->FixedColour))   \
-				    : p)
+#define LARGE_ADD_PIXEL(s, p)                                                                                          \
+	(Depth[z + gfx->DepthDelta]                                                                                    \
+	     ? (Depth[z + gfx->DepthDelta] != 1 ? COLOR_ADD(p, *(s + gfx->Delta)) : COLOR_ADD(p, gfx->FixedColour))    \
+	     : p)
 
 	RENDER_TILE_LARGE(gfx->ScreenColors[pixel], LARGE_ADD_PIXEL)
 }
 
-void DrawLargePixel16Add1_2(uint32 Tile, uint32 Offset, uint32 StartPixel,
-			    uint32 Pixels, uint32 StartLine, uint32 LineCount,
-			    struct SGFX *gfx)
+void DrawLargePixel16Add1_2(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Pixels, uint32 StartLine,
+			    uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 
@@ -1247,19 +1144,16 @@ void DrawLargePixel16Add1_2(uint32 Tile, uint32 Offset, uint32 StartPixel,
 	uint8 *Depth = gfx->ZBuffer + Offset;
 	uint16 pixel;
 
-#define LARGE_ADD_PIXEL1_2(s, p)                                               \
-	((uint16)(Depth[z + gfx->DepthDelta]                                   \
-		      ? (Depth[z + gfx->DepthDelta] != 1                       \
-			     ? COLOR_ADD1_2(p, *(s + gfx->Delta))              \
-			     : COLOR_ADD(p, gfx->FixedColour))                 \
-		      : p))
+#define LARGE_ADD_PIXEL1_2(s, p)                                                                                       \
+	((uint16)(Depth[z + gfx->DepthDelta] ? (Depth[z + gfx->DepthDelta] != 1 ? COLOR_ADD1_2(p, *(s + gfx->Delta))   \
+										: COLOR_ADD(p, gfx->FixedColour))      \
+					     : p))
 
 	RENDER_TILE_LARGE(gfx->ScreenColors[pixel], LARGE_ADD_PIXEL1_2)
 }
 
-void DrawLargePixel16Sub(uint32 Tile, uint32 Offset, uint32 StartPixel,
-			 uint32 Pixels, uint32 StartLine, uint32 LineCount,
-			 struct SGFX *gfx)
+void DrawLargePixel16Sub(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Pixels, uint32 StartLine,
+			 uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 
@@ -1267,18 +1161,16 @@ void DrawLargePixel16Sub(uint32 Tile, uint32 Offset, uint32 StartPixel,
 	uint8 *Depth = gfx->ZBuffer + Offset;
 	uint16 pixel;
 
-#define LARGE_SUB_PIXEL(s, p)                                                  \
-	(Depth[z + gfx->DepthDelta] ? (Depth[z + gfx->DepthDelta] != 1         \
-					   ? COLOR_SUB(p, *(s + gfx->Delta))   \
-					   : COLOR_SUB(p, gfx->FixedColour))   \
-				    : p)
+#define LARGE_SUB_PIXEL(s, p)                                                                                          \
+	(Depth[z + gfx->DepthDelta]                                                                                    \
+	     ? (Depth[z + gfx->DepthDelta] != 1 ? COLOR_SUB(p, *(s + gfx->Delta)) : COLOR_SUB(p, gfx->FixedColour))    \
+	     : p)
 
 	RENDER_TILE_LARGE(gfx->ScreenColors[pixel], LARGE_SUB_PIXEL)
 }
 
-void DrawLargePixel16Sub1_2(uint32 Tile, uint32 Offset, uint32 StartPixel,
-			    uint32 Pixels, uint32 StartLine, uint32 LineCount,
-			    struct SGFX *gfx)
+void DrawLargePixel16Sub1_2(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Pixels, uint32 StartLine,
+			    uint32 LineCount, struct SGFX *gfx)
 {
 	TILE_PREAMBLE
 
@@ -1286,11 +1178,9 @@ void DrawLargePixel16Sub1_2(uint32 Tile, uint32 Offset, uint32 StartPixel,
 	uint8 *Depth = gfx->ZBuffer + Offset;
 	uint16 pixel;
 
-#define LARGE_SUB_PIXEL1_2(s, p)                                               \
-	(Depth[z + gfx->DepthDelta]                                            \
-	     ? (Depth[z + gfx->DepthDelta] != 1                                \
-		    ? COLOR_SUB1_2(p, *(s + gfx->Delta))                       \
-		    : COLOR_SUB(p, gfx->FixedColour))                          \
+#define LARGE_SUB_PIXEL1_2(s, p)                                                                                       \
+	(Depth[z + gfx->DepthDelta]                                                                                    \
+	     ? (Depth[z + gfx->DepthDelta] != 1 ? COLOR_SUB1_2(p, *(s + gfx->Delta)) : COLOR_SUB(p, gfx->FixedColour)) \
 	     : p)
 
 	RENDER_TILE_LARGE(gfx->ScreenColors[pixel], LARGE_SUB_PIXEL1_2)

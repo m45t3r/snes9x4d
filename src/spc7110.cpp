@@ -42,7 +42,7 @@
  * Nintendo Co., Limited and its subsidiary companies.
  */
 
-//#define SPC7110_DEBUG
+// #define SPC7110_DEBUG
 
 #include "spc7110.h"
 #include "memmap.h"
@@ -110,12 +110,11 @@ typedef struct SPC7110DecompressionPackStructure {
 	uint16 last_offset;
 } Pack7110;
 
-char pfold[9]; // hack variable for log naming (each game makes a different log)
-Pack7110 *decompack =
-    NULL;	 // decompression pack uses a fair chunk of RAM, so dynalloc it.
-SPC7110Regs s7r; // SPC7110 registers, about 33KB
-S7RTC rtc_f9;	 // FEOEZ (and Shounen Jump no SHou) RTC
-void S9xUpdateRTC(); // S-RTC function hacked to work with the RTC
+char pfold[9];		    // hack variable for log naming (each game makes a different log)
+Pack7110 *decompack = NULL; // decompression pack uses a fair chunk of RAM, so dynalloc it.
+SPC7110Regs s7r;	    // SPC7110 registers, about 33KB
+S7RTC rtc_f9;		    // FEOEZ (and Shounen Jump no SHou) RTC
+void S9xUpdateRTC();	    // S-RTC function hacked to work with the RTC
 
 // Emulate power on state
 void S9xSpc7110Init()
@@ -173,24 +172,20 @@ void S9xSpc7110Init()
 
 	// establish game specific details
 
-	if (!strncmp((char *)&Memory.ROM[0xffc0], "SUPER POWER LEAG 4   ",
-		     21)) {
+	if (!strncmp((char *)&Memory.ROM[0xffc0], "SUPER POWER LEAG 4   ", 21)) {
 		// super power league
 		strcpy(pfold, "SPL4-SP7");
 		(*LoadUp7110)("SPL4-SP7");
-	} else if (!strncmp((char *)&Memory.ROM[0xffc0],
-			    "MOMOTETSU HAPPY      ", 21)) {
+	} else if (!strncmp((char *)&Memory.ROM[0xffc0], "MOMOTETSU HAPPY      ", 21)) {
 		// happy
 		(*LoadUp7110)("SMHT-SP7");
 		strcpy(pfold, "SMHT-SP7");
-	} else if (!strncmp((char *)&Memory.ROM[0xffc0],
-			    "HU TENGAI MAKYO ZERO ", 21)) {
+	} else if (!strncmp((char *)&Memory.ROM[0xffc0], "HU TENGAI MAKYO ZERO ", 21)) {
 		// feoez
 		(*LoadUp7110)("FEOEZSP7");
 		strcpy(pfold, "FEOEZSP7");
 		Settings.TurboMode = false;
-	} else if (!strncmp((char *)&Memory.ROM[0xffc0],
-			    "JUMP TENGAIMAKYO ZERO", 21)) {
+	} else if (!strncmp((char *)&Memory.ROM[0xffc0], "JUMP TENGAIMAKYO ZERO", 21)) {
 		// feoez -sjns
 		(*LoadUp7110)("SJUMPSP7");
 		strcpy(pfold, "SJUMPSP7");
@@ -209,10 +204,8 @@ void S9xSpc7110Init()
 void MovePackData()
 {
 	// log the last entry
-	Data7110 *log = &(
-	    decompack->tableEnts[decompack->idx].location[decompack->last_idx]);
-	if ((log->used_len + log->used_offset) <
-	    (decompack->last_offset + (unsigned short)s7r.bank50Internal)) {
+	Data7110 *log = &(decompack->tableEnts[decompack->idx].location[decompack->last_idx]);
+	if ((log->used_len + log->used_offset) < (decompack->last_offset + (unsigned short)s7r.bank50Internal)) {
 		log->used_len = s7r.bank50Internal;
 		log->used_offset = decompack->last_offset;
 	}
@@ -266,8 +259,7 @@ void MovePackData()
 			FILE *fp = fopen("sp7err.out", "a");
 #endif
 
-			fprintf(fp, "Table Entry %06X:%02X not found\n", table,
-				s7r.reg4804);
+			fprintf(fp, "Table Entry %06X:%02X not found\n", table, s7r.reg4804);
 			fclose(fp);
 			return;
 		}
@@ -277,21 +269,15 @@ void MovePackData()
 
 	// copy data
 	if (decompack->binfiles[decompack->idx]) {
-		memcpy(
-		    s7r.bank50,
-		    &(decompack->binfiles[decompack->idx]
-					 [decompack->tableEnts[decompack->idx]
-					      .location[s7r.reg4804]
-					      .offset]),
-		    decompack->tableEnts[decompack->idx]
-			.location[s7r.reg4804]
-			.size);
+		memcpy(s7r.bank50,
+		       &(decompack->binfiles[decompack->idx]
+					    [decompack->tableEnts[decompack->idx].location[s7r.reg4804].offset]),
+		       decompack->tableEnts[decompack->idx].location[s7r.reg4804].size);
 	}
 }
 
-// this is similar to the last function, but it keeps the last 5 accessed files
-// open,
-// and reads the data directly. Method 2
+// this is similar to the last function, but it keeps the last 5 accessed files open, and reads the data directly.
+// Method 2
 void ReadPackData()
 {
 	static int table_age_2;
@@ -302,19 +288,14 @@ void ReadPackData()
 	int table = (s7r.reg4803 << 16) | (s7r.reg4802 << 8) | s7r.reg4801;
 
 	if (table == 0) {
-		table_age_2 = table_age_3 = table_age_4 = table_age_5 =
-		    MAX_TABLES;
+		table_age_2 = table_age_3 = table_age_4 = table_age_5 = MAX_TABLES;
 		return;
 	}
 
-	if (table_age_2 == 0 && table_age_3 == 0 && table_age_4 == 0 &&
-	    table_age_5 == 0)
-		table_age_2 = table_age_3 = table_age_4 = table_age_5 =
-		    MAX_TABLES;
-	Data7110 *log = &(
-	    decompack->tableEnts[decompack->idx].location[decompack->last_idx]);
-	if ((log->used_len + log->used_offset) <
-	    (decompack->last_offset + (unsigned short)s7r.bank50Internal)) {
+	if (table_age_2 == 0 && table_age_3 == 0 && table_age_4 == 0 && table_age_5 == 0)
+		table_age_2 = table_age_3 = table_age_4 = table_age_5 = MAX_TABLES;
+	Data7110 *log = &(decompack->tableEnts[decompack->idx].location[decompack->last_idx]);
+	if ((log->used_len + log->used_offset) < (decompack->last_offset + (unsigned short)s7r.bank50Internal)) {
 		log->used_len = s7r.bank50Internal;
 		log->used_offset = decompack->last_offset;
 	}
@@ -354,17 +335,13 @@ void ReadPackData()
 			i++;
 		if (i == MAX_TABLES) {
 			FILE *fp = fopen("sp7err.out", "a");
-			fprintf(fp, "Table Entry %06X:%02X not found\n", table,
-				s7r.reg4804);
+			fprintf(fp, "Table Entry %06X:%02X not found\n", table, s7r.reg4804);
 			fclose(fp);
 			return;
 		}
-		if (i != table_age_2 && i != table_age_3 && i != table_age_4 &&
-		    i != table_age_5) {
-			if (table_age_5 != MAX_TABLES &&
-			    decompack->binfiles[table_age_5]) {
-				fclose(
-				    (FILE *)(decompack->binfiles[table_age_5]));
+		if (i != table_age_2 && i != table_age_3 && i != table_age_4 && i != table_age_5) {
+			if (table_age_5 != MAX_TABLES && decompack->binfiles[table_age_5]) {
+				fclose((FILE *)(decompack->binfiles[table_age_5]));
 				(decompack->binfiles[table_age_5]) = NULL;
 			}
 			table_age_5 = table_age_4;
@@ -378,13 +355,11 @@ void ReadPackData()
 			char fname[_MAX_FNAME + 1];
 			char ext[_MAX_EXT + 1];
 			if (strlen(FREEZEFOLDER)) {
-				// splitpath (Memory.ROMFilename, drive, dir,
-				// fname, ext);
+				// splitpath(Memory.ROMFilename, drive, dir, fname, ext);
 				strcpy(name, FREEZEFOLDER);
 				strcat(name, "/");
 			} else {
-				splitpath(Memory.ROMFilename, drive, dir, fname,
-					  ext);
+				splitpath(Memory.ROMFilename, drive, dir, fname, ext);
 				strcpy(name, drive);
 				// strcat(filename, "\\");
 				strcat(name, dir);
@@ -422,14 +397,8 @@ void ReadPackData()
 	// do read here.
 	if (decompack->binfiles[decompack->idx]) {
 		fseek((FILE *)(decompack->binfiles[decompack->idx]),
-		      decompack->tableEnts[decompack->idx]
-			  .location[s7r.reg4804]
-			  .offset,
-		      0);
-		fread(s7r.bank50, 1,
-		      (decompack->tableEnts[decompack->idx]
-			   .location[s7r.reg4804]
-			   .size),
+		      decompack->tableEnts[decompack->idx].location[s7r.reg4804].offset, 0);
+		fread(s7r.bank50, 1, (decompack->tableEnts[decompack->idx].location[s7r.reg4804].size),
 		      (FILE *)(decompack->binfiles[decompack->idx]));
 	}
 }
@@ -438,10 +407,8 @@ void ReadPackData()
 // use is_file to distinguish.
 void GetPackData()
 {
-	Data7110 *log = &(
-	    decompack->tableEnts[decompack->idx].location[decompack->last_idx]);
-	if ((log->used_len + log->used_offset) <
-	    (decompack->last_offset + (unsigned short)s7r.bank50Internal)) {
+	Data7110 *log = &(decompack->tableEnts[decompack->idx].location[decompack->last_idx]);
+	if ((log->used_len + log->used_offset) < (decompack->last_offset + (unsigned short)s7r.bank50Internal)) {
 		log->used_len = s7r.bank50Internal;
 		log->used_offset = decompack->last_offset;
 	}
@@ -482,8 +449,7 @@ void GetPackData()
 			i++;
 		if (i == MAX_TABLES) {
 			FILE *fp = fopen("sp7err.out", "a");
-			fprintf(fp, "Table Entry %06X:%02X not found\n", table,
-				s7r.reg4804);
+			fprintf(fp, "Table Entry %06X:%02X not found\n", table, s7r.reg4804);
 			fclose(fp);
 			return;
 		}
@@ -493,26 +459,15 @@ void GetPackData()
 	if (decompack->binfiles[decompack->idx]) {
 		if (decompack->tableEnts[decompack->idx].is_file) {
 			fseek((FILE *)decompack->binfiles[decompack->idx],
-			      decompack->tableEnts[decompack->idx]
-				  .location[s7r.reg4804]
-				  .offset,
-			      0);
-			fread(s7r.bank50, 1,
-			      (decompack->tableEnts[decompack->idx]
-				   .location[s7r.reg4804]
-				   .size),
+			      decompack->tableEnts[decompack->idx].location[s7r.reg4804].offset, 0);
+			fread(s7r.bank50, 1, (decompack->tableEnts[decompack->idx].location[s7r.reg4804].size),
 			      (FILE *)(decompack->binfiles[decompack->idx]));
 		} else {
-			memcpy(s7r.bank50,
-			       &(decompack
-				     ->binfiles[decompack->idx]
-					       [decompack
-						    ->tableEnts[decompack->idx]
-						    .location[s7r.reg4804]
-						    .offset]),
-			       decompack->tableEnts[decompack->idx]
-				   .location[s7r.reg4804]
-				   .size);
+			memcpy(
+			    s7r.bank50,
+			    &(decompack->binfiles[decompack->idx]
+						 [decompack->tableEnts[decompack->idx].location[s7r.reg4804].offset]),
+			    decompack->tableEnts[decompack->idx].location[s7r.reg4804].size);
 		}
 	}
 }
@@ -606,22 +561,19 @@ uint8 S9xGetSPC7110(uint16 Address)
 		if (s7r.written == 0)
 			return 0;
 		if ((s7r.written & 0x07) == 0x07) {
-			uint32 i = (s7r.reg4813 << 16) | (s7r.reg4812 << 8) |
-				   s7r.reg4811;
+			uint32 i = (s7r.reg4813 << 16) | (s7r.reg4812 << 8) | s7r.reg4811;
 			i %= s7r.DataRomSize;
 			if (s7r.reg4818 & 0x02) {
 				if (s7r.reg4818 & 0x08) {
 					signed short r4814;
-					r4814 =
-					    (s7r.reg4815 << 8) | s7r.reg4814;
+					r4814 = (s7r.reg4815 << 8) | s7r.reg4814;
 					i += r4814;
 					r4814++;
 					s7r.reg4815 = (uint8)(r4814 >> 8);
 					s7r.reg4814 = (uint8)(r4814 & 0x00FF);
 				} else {
 					unsigned short r4814;
-					r4814 =
-					    (s7r.reg4815 << 8) | s7r.reg4814;
+					r4814 = (s7r.reg4815 << 8) | s7r.reg4814;
 					i += r4814;
 					if (r4814 != 0xFFFF)
 						r4814++;
@@ -633,8 +585,7 @@ uint8 S9xGetSPC7110(uint16 Address)
 			}
 			i += s7r.DataRomOffset;
 			uint8 tmp = ROM[i];
-			i = (s7r.reg4813 << 16) | (s7r.reg4812 << 8) |
-			    s7r.reg4811;
+			i = (s7r.reg4813 << 16) | (s7r.reg4812 << 8) | s7r.reg4811;
 
 			if (s7r.reg4818 & 0x02) {
 			} else if (s7r.reg4818 & 0x01) {
@@ -647,26 +598,16 @@ uint8 S9xGetSPC7110(uint16 Address)
 					else {
 						if (s7r.reg4818 & 0x08) {
 							signed short r4814;
-							r4814 =
-							    (s7r.reg4815 << 8) |
-							    s7r.reg4814;
+							r4814 = (s7r.reg4815 << 8) | s7r.reg4814;
 							r4814 += inc;
-							s7r.reg4815 =
-							    (r4814 & 0xFF00) >>
-							    8;
-							s7r.reg4814 =
-							    r4814 & 0xFF;
+							s7r.reg4815 = (r4814 & 0xFF00) >> 8;
+							s7r.reg4814 = r4814 & 0xFF;
 						} else {
 							unsigned short r4814;
-							r4814 =
-							    (s7r.reg4815 << 8) |
-							    s7r.reg4814;
+							r4814 = (s7r.reg4815 << 8) | s7r.reg4814;
 							r4814 += inc;
-							s7r.reg4815 =
-							    (r4814 & 0xFF00) >>
-							    8;
-							s7r.reg4814 =
-							    r4814 & 0xFF;
+							s7r.reg4815 = (r4814 & 0xFF00) >> 8;
+							s7r.reg4814 = r4814 & 0xFF;
 						}
 					}
 					// is signed
@@ -678,26 +619,16 @@ uint8 S9xGetSPC7110(uint16 Address)
 					else {
 						if (s7r.reg4818 & 0x08) {
 							signed short r4814;
-							r4814 =
-							    (s7r.reg4815 << 8) |
-							    s7r.reg4814;
+							r4814 = (s7r.reg4815 << 8) | s7r.reg4814;
 							r4814 += inc;
-							s7r.reg4815 =
-							    (r4814 & 0xFF00) >>
-							    8;
-							s7r.reg4814 =
-							    r4814 & 0xFF;
+							s7r.reg4815 = (r4814 & 0xFF00) >> 8;
+							s7r.reg4814 = r4814 & 0xFF;
 						} else {
 							unsigned short r4814;
-							r4814 =
-							    (s7r.reg4815 << 8) |
-							    s7r.reg4814;
+							r4814 = (s7r.reg4815 << 8) | s7r.reg4814;
 							r4814 += inc;
-							s7r.reg4815 =
-							    (r4814 & 0xFF00) >>
-							    8;
-							s7r.reg4814 =
-							    r4814 & 0xFF;
+							s7r.reg4815 = (r4814 & 0xFF00) >> 8;
+							s7r.reg4814 = r4814 & 0xFF;
 						}
 					}
 				}
@@ -707,19 +638,15 @@ uint8 S9xGetSPC7110(uint16 Address)
 				else {
 					if (s7r.reg4818 & 0x08) {
 						signed short r4814;
-						r4814 = (s7r.reg4815 << 8) |
-							s7r.reg4814;
+						r4814 = (s7r.reg4815 << 8) | s7r.reg4814;
 						r4814 += 1;
-						s7r.reg4815 =
-						    (r4814 & 0xFF00) >> 8;
+						s7r.reg4815 = (r4814 & 0xFF00) >> 8;
 						s7r.reg4814 = r4814 & 0xFF;
 					} else {
 						unsigned short r4814;
-						r4814 = (s7r.reg4815 << 8) |
-							s7r.reg4814;
+						r4814 = (s7r.reg4815 << 8) | s7r.reg4814;
 						r4814 += 1;
-						s7r.reg4815 =
-						    (r4814 & 0xFF00) >> 8;
+						s7r.reg4815 = (r4814 & 0xFF00) >> 8;
 						s7r.reg4814 = r4814 & 0xFF;
 					}
 				}
@@ -767,8 +694,7 @@ uint8 S9xGetSPC7110(uint16 Address)
 	// if it helps your sanity
 	case 0x481A:
 		if (s7r.written == 0x1F) {
-			uint32 i = ((s7r.reg4813 << 16) | (s7r.reg4812 << 8) |
-				    s7r.reg4811);
+			uint32 i = ((s7r.reg4813 << 16) | (s7r.reg4812 << 8) | s7r.reg4811);
 			if (s7r.reg4818 & 0x08) {
 				short adj;
 				adj = ((short)(s7r.reg4815 << 8)) | s7r.reg4814;
@@ -782,23 +708,18 @@ uint8 S9xGetSPC7110(uint16 Address)
 			i %= s7r.DataRomSize;
 			i += s7r.DataRomOffset;
 			uint8 tmp = ROM[i];
-			i = ((s7r.reg4813 << 16) | (s7r.reg4812 << 8) |
-			     s7r.reg4811);
+			i = ((s7r.reg4813 << 16) | (s7r.reg4812 << 8) | s7r.reg4811);
 			if (0x60 == (s7r.reg4818 & 0x60)) {
-				i = ((s7r.reg4813 << 16) | (s7r.reg4812 << 8) |
-				     s7r.reg4811);
+				i = ((s7r.reg4813 << 16) | (s7r.reg4812 << 8) | s7r.reg4811);
 
 				if (!(s7r.reg4818 & 0x10)) {
 					if (s7r.reg4818 & 0x08) {
 						short adj;
-						adj = ((short)(s7r.reg4815
-							       << 8)) |
-						      s7r.reg4814;
+						adj = ((short)(s7r.reg4815 << 8)) | s7r.reg4814;
 						i += adj;
 					} else {
 						uint16 adj;
-						adj = (s7r.reg4815 << 8) |
-						      s7r.reg4814;
+						adj = (s7r.reg4815 << 8) | s7r.reg4814;
 						i += adj;
 					}
 					i %= s7r.DataRomSize;
@@ -808,20 +729,15 @@ uint8 S9xGetSPC7110(uint16 Address)
 				} else {
 					if (s7r.reg4818 & 0x08) {
 						short adj;
-						adj = ((short)(s7r.reg4815
-							       << 8)) |
-						      s7r.reg4814;
+						adj = ((short)(s7r.reg4815 << 8)) | s7r.reg4814;
 						adj += adj;
-						s7r.reg4815 =
-						    (adj & 0xFF00) >> 8;
+						s7r.reg4815 = (adj & 0xFF00) >> 8;
 						s7r.reg4814 = adj & 0xFF;
 					} else {
 						uint16 adj;
-						adj = (s7r.reg4815 << 8) |
-						      s7r.reg4814;
+						adj = (s7r.reg4815 << 8) | s7r.reg4814;
 						adj += adj;
-						s7r.reg4815 =
-						    (adj & 0xFF00) >> 8;
+						s7r.reg4815 = (adj & 0xFF00) >> 8;
 						s7r.reg4814 = adj & 0xFF;
 					}
 				}
@@ -998,8 +914,7 @@ void S9xSetSPC7110(uint8 data, uint16 Address)
 	// Offset enable
 	case 0x480B: {
 		s7r.reg480B = data;
-		int table =
-		    (s7r.reg4803 << 16) | (s7r.reg4802 << 8) | s7r.reg4801;
+		int table = (s7r.reg4803 << 16) | (s7r.reg4802 << 8) | s7r.reg4801;
 
 		int j = 4 * s7r.reg4804;
 		j += s7r.DataRomOffset;
@@ -1055,52 +970,37 @@ void S9xSetSPC7110(uint8 data, uint16 Address)
 				if (s7r.offset_add == 3) {
 					if (s7r.reg4818 & 0x10) {
 					} else {
-						uint32 i = (s7r.reg4813 << 16) |
-							   (s7r.reg4812 << 8) |
-							   s7r.reg4811;
+						uint32 i = (s7r.reg4813 << 16) | (s7r.reg4812 << 8) | s7r.reg4811;
 						if (s7r.reg4818 & 0x08) {
-							i += (signed char)
-								 s7r.reg4814;
+							i += (signed char)s7r.reg4814;
 						} else {
 							i += s7r.reg4814;
 						}
 						i %= s7r.DataRomSize;
 						s7r.reg4811 = i & 0x00FF;
-						s7r.reg4812 =
-						    (i & 0x00FF00) >> 8;
-						s7r.reg4813 =
-						    ((i & 0xFF0000) >> 16);
+						s7r.reg4812 = (i & 0x00FF00) >> 8;
+						s7r.reg4813 = ((i & 0xFF0000) >> 16);
 					}
 				}
-			} else if ((s7r.reg4818 & 0x40) &&
-				   !(s7r.reg4818 & 0x20)) {
+			} else if ((s7r.reg4818 & 0x40) && !(s7r.reg4818 & 0x20)) {
 				s7r.offset_add |= 0x01;
 				if (s7r.offset_add == 3) {
 					if (s7r.reg4818 & 0x10) {
 					} else {
-						uint32 i = (s7r.reg4813 << 16) |
-							   (s7r.reg4812 << 8) |
-							   s7r.reg4811;
+						uint32 i = (s7r.reg4813 << 16) | (s7r.reg4812 << 8) | s7r.reg4811;
 						if (s7r.reg4818 & 0x08) {
 							short adj;
-							adj =
-							    ((short)(s7r.reg4815
-								     << 8)) |
-							    s7r.reg4814;
+							adj = ((short)(s7r.reg4815 << 8)) | s7r.reg4814;
 							i += adj;
 						} else {
 							uint16 adj;
-							adj =
-							    (s7r.reg4815 << 8) |
-							    s7r.reg4814;
+							adj = (s7r.reg4815 << 8) | s7r.reg4814;
 							i += adj;
 						}
 						i %= s7r.DataRomSize;
 						s7r.reg4811 = i & 0x00FF;
-						s7r.reg4812 =
-						    (i & 0x00FF00) >> 8;
-						s7r.reg4813 =
-						    ((i & 0xFF0000) >> 16);
+						s7r.reg4812 = (i & 0x00FF00) >> 8;
+						s7r.reg4813 = ((i & 0xFF0000) >> 16);
 					}
 				}
 			}
@@ -1118,53 +1018,38 @@ void S9xSetSPC7110(uint8 data, uint16 Address)
 				if (s7r.offset_add == 3) {
 					if (s7r.reg4818 & 0x10) {
 					} else {
-						uint32 i = (s7r.reg4813 << 16) |
-							   (s7r.reg4812 << 8) |
-							   s7r.reg4811;
+						uint32 i = (s7r.reg4813 << 16) | (s7r.reg4812 << 8) | s7r.reg4811;
 
 						if (s7r.reg4818 & 0x08) {
-							i += (signed char)
-								 s7r.reg4814;
+							i += (signed char)s7r.reg4814;
 						} else {
 							i += s7r.reg4814;
 						}
 						i %= s7r.DataRomSize;
 						s7r.reg4811 = i & 0x00FF;
-						s7r.reg4812 =
-						    (i & 0x00FF00) >> 8;
-						s7r.reg4813 =
-						    ((i & 0xFF0000) >> 16);
+						s7r.reg4812 = (i & 0x00FF00) >> 8;
+						s7r.reg4813 = ((i & 0xFF0000) >> 16);
 					}
 				}
-			} else if (s7r.reg4818 & 0x40 &&
-				   !(s7r.reg4818 & 0x20)) {
+			} else if (s7r.reg4818 & 0x40 && !(s7r.reg4818 & 0x20)) {
 				s7r.offset_add |= 0x02;
 				if (s7r.offset_add == 3) {
 					if (s7r.reg4818 & 0x10) {
 					} else {
-						uint32 i = (s7r.reg4813 << 16) |
-							   (s7r.reg4812 << 8) |
-							   s7r.reg4811;
+						uint32 i = (s7r.reg4813 << 16) | (s7r.reg4812 << 8) | s7r.reg4811;
 						if (s7r.reg4818 & 0x08) {
 							short adj;
-							adj =
-							    ((short)(s7r.reg4815
-								     << 8)) |
-							    s7r.reg4814;
+							adj = ((short)(s7r.reg4815 << 8)) | s7r.reg4814;
 							i += adj;
 						} else {
 							uint16 adj;
-							adj =
-							    (s7r.reg4815 << 8) |
-							    s7r.reg4814;
+							adj = (s7r.reg4815 << 8) | s7r.reg4814;
 							i += adj;
 						}
 						i %= s7r.DataRomSize;
 						s7r.reg4811 = i & 0x00FF;
-						s7r.reg4812 =
-						    (i & 0x00FF00) >> 8;
-						s7r.reg4813 =
-						    ((i & 0xFF0000) >> 16);
+						s7r.reg4812 = (i & 0x00FF00) >> 8;
+						s7r.reg4813 = ((i & 0xFF0000) >> 16);
 					}
 				}
 			}
@@ -1224,10 +1109,8 @@ void S9xSetSPC7110(uint8 data, uint16 Address)
 			s7r.reg482B = (uint8)((mul & 0xFF000000) >> 24);
 		} else {
 			uint32 mul;
-			uint16 m1 =
-			    (uint16)((s7r.reg4824) | (s7r.reg4825 << 8));
-			uint16 m2 =
-			    (uint16)((s7r.reg4820) | (s7r.reg4821 << 8));
+			uint16 m1 = (uint16)((s7r.reg4824) | (s7r.reg4825 << 8));
+			uint16 m2 = (uint16)((s7r.reg4820) | (s7r.reg4821 << 8));
 
 			mul = m1 * m2;
 			s7r.reg4828 = (uint8)(mul & 0x000000FF);
@@ -1248,10 +1131,8 @@ void S9xSetSPC7110(uint8 data, uint16 Address)
 			int quotient;
 			short remainder;
 			int dividend =
-			    (int)(s7r.reg4820 | (s7r.reg4821 << 8) |
-				  (s7r.reg4822 << 16) | (s7r.reg4823 << 24));
-			short divisor =
-			    (short)(s7r.reg4826 | (s7r.reg4827 << 8));
+			    (int)(s7r.reg4820 | (s7r.reg4821 << 8) | (s7r.reg4822 << 16) | (s7r.reg4823 << 24));
+			short divisor = (short)(s7r.reg4826 | (s7r.reg4827 << 8));
 			if (divisor != 0) {
 				quotient = (int)(dividend / divisor);
 				remainder = (short)(dividend % divisor);
@@ -1269,10 +1150,8 @@ void S9xSetSPC7110(uint8 data, uint16 Address)
 			uint32 quotient;
 			uint16 remainder;
 			uint32 dividend =
-			    (uint32)(s7r.reg4820 | (s7r.reg4821 << 8) |
-				     (s7r.reg4822 << 16) | (s7r.reg4823 << 24));
-			uint16 divisor =
-			    (uint16)(s7r.reg4826 | (s7r.reg4827 << 8));
+			    (uint32)(s7r.reg4820 | (s7r.reg4821 << 8) | (s7r.reg4822 << 16) | (s7r.reg4823 << 24));
+			uint16 divisor = (uint16)(s7r.reg4826 | (s7r.reg4827 << 8));
 			if (divisor != 0) {
 				quotient = (uint32)(dividend / divisor);
 				remainder = (uint16)(dividend % divisor);
@@ -1295,10 +1174,8 @@ void S9xSetSPC7110(uint8 data, uint16 Address)
 	// Zero indicates unsigned math, resets with non-zero values turn on
 	// signed math
 	case 0x482E:
-		s7r.reg4820 = s7r.reg4821 = s7r.reg4822 = s7r.reg4823 =
-		    s7r.reg4824 = s7r.reg4825 = s7r.reg4826 = s7r.reg4827 =
-			s7r.reg4828 = s7r.reg4829 = s7r.reg482A = s7r.reg482B =
-			    s7r.reg482C = s7r.reg482D = 0;
+		s7r.reg4820 = s7r.reg4821 = s7r.reg4822 = s7r.reg4823 = s7r.reg4824 = s7r.reg4825 = s7r.reg4826 =
+		    s7r.reg4827 = s7r.reg4828 = s7r.reg4829 = s7r.reg482A = s7r.reg482B = s7r.reg482C = s7r.reg482D = 0;
 		s7r.reg482E = data;
 		break;
 
@@ -1329,12 +1206,12 @@ void S9xSetSPC7110(uint8 data, uint16 Address)
 	case 0x4840:
 		if (0 == data) {
 			S9xUpdateRTC();
-			//	rtc_f9.init=false;
-			//	rtc_f9.index=-1;
+			// rtc_f9.init = false;
+			// rtc_f9.index = -1;
 		}
 		if (data & 0x01) {
 			s7r.reg4842 = 0x80;
-			// rtc_f9.last_used=time(NULL);//????
+			// rtc_f9.last_used = time(NULL); // ????
 			rtc_f9.init = false;
 			rtc_f9.index = -1;
 		}
@@ -1359,43 +1236,34 @@ void S9xSetSPC7110(uint8 data, uint16 Address)
 							S9xUpdateRTC();
 							rtc_f9.reg[0] = 0;
 							rtc_f9.reg[1] = 0;
-							rtc_f9.last_used =
-							    time(NULL);
+							rtc_f9.last_used = time(NULL);
 						} else {
 							S9xUpdateRTC();
 							rtc_f9.reg[0] = 0;
 							rtc_f9.reg[1] = 0;
-							rtc_f9.last_used =
-							    time(NULL) - 60;
+							rtc_f9.last_used = time(NULL) - 60;
 							S9xUpdateRTC();
-							rtc_f9.last_used =
-							    time(NULL);
+							rtc_f9.last_used = time(NULL);
 						}
 						data &= 0x07;
 					}
 					if (rtc_f9.reg[0x0D] & 0x01) {
 						if (!(data % 2)) {
-							rtc_f9
-							    .reg[rtc_f9.index &
-								 0x0F] = data;
-							rtc_f9.last_used =
-							    time(NULL) - 1;
+							rtc_f9.reg[rtc_f9.index & 0x0F] = data;
+							rtc_f9.last_used = time(NULL) - 1;
 							S9xUpdateRTC();
-							rtc_f9.last_used =
-							    time(NULL);
+							rtc_f9.last_used = time(NULL);
 						}
 					}
 				}
 				if (0x0F == rtc_f9.index) {
-					if (data & 0x01 &&
-					    !(rtc_f9.reg[0x0F] & 0x01)) {
+					if (data & 0x01 && !(rtc_f9.reg[0x0F] & 0x01)) {
 						S9xUpdateRTC();
 						rtc_f9.reg[0] = 0;
 						rtc_f9.reg[1] = 0;
 						rtc_f9.last_used = time(NULL);
 					}
-					if (data & 0x02 &&
-					    !(rtc_f9.reg[0x0F] & 0x02)) {
+					if (data & 0x02 && !(rtc_f9.reg[0x0F] & 0x02)) {
 						S9xUpdateRTC();
 						rtc_f9.last_used = time(NULL);
 					}
@@ -1494,8 +1362,7 @@ void S9xUpdateRTC()
 	// on the system clock and adding the same number of seconds to the RTC
 	// clock structure.
 
-	if (rtc_f9.init && 0 == (rtc_f9.reg[0x0D] & 0x01) &&
-	    0 == (rtc_f9.reg[0x0F] & 0x03)) {
+	if (rtc_f9.init && 0 == (rtc_f9.reg[0x0D] & 0x01) && 0 == (rtc_f9.reg[0x0F] & 0x03)) {
 		cur_systime = time(NULL);
 
 		// This method assumes one time_t clock tick is one second
@@ -1570,8 +1437,7 @@ void S9xUpdateRTC()
 			rtc_f9.reg[12] += days;
 			days += (rtc_f9.reg[7] * 10 + rtc_f9.reg[6]);
 			if (days > 0) {
-				while (days > (temp_days = S9xRTCDaysInMonth(
-						   month, year))) {
+				while (days > (temp_days = S9xRTCDaysInMonth(month, year))) {
 					days -= temp_days;
 					month += 1;
 					if (month > 12) {
@@ -1650,14 +1516,10 @@ bool Load7110Index(char *filename)
 		fread(buffer, 1, 12, fp);
 		table = (buffer[3] << 16) | (buffer[2] << 8) | buffer[1];
 		index = buffer[0];
-		offset = (buffer[7] << 24) | (buffer[6] << 16) |
-			 (buffer[5] << 8) | buffer[4];
-		size = (buffer[11] << 24) | (buffer[10] << 16) |
-		       (buffer[9] << 8) | buffer[8];
+		offset = (buffer[7] << 24) | (buffer[6] << 16) | (buffer[5] << 8) | buffer[4];
+		size = (buffer[11] << 24) | (buffer[10] << 16) | (buffer[9] << 8) | buffer[8];
 		// while(i<MAX_TABLES&&decompack.tableEnts[i].table!=table)
-		while (i < MAX_TABLES &&
-		       decompack->tableEnts[i].table != table &&
-		       decompack->tableEnts[i].table != 0)
+		while (i < MAX_TABLES && decompack->tableEnts[i].table != table && decompack->tableEnts[i].table != 0)
 			i++;
 		if (i == MAX_TABLES)
 			return false;
@@ -1739,19 +1601,16 @@ void SPC7110Load(char *dirname)
 		if (decompack->tableEnts[i].table != 0) {
 			char binname[PATH_MAX];
 #ifndef _XBOX
-			sprintf(binname, "%06X.bin",
-				decompack->tableEnts[i].table);
+			sprintf(binname, "%06X.bin", decompack->tableEnts[i].table);
 #else
-			sprintf(binname, "%s%06X.bin", filename,
-				decompack->tableEnts[i].table);
+			sprintf(binname, "%s%06X.bin", filename, decompack->tableEnts[i].table);
 #endif
 			struct stat buf;
 			if (-1 != stat(binname, &buf))
 				decompack->binfiles[i] = new uint8[buf.st_size];
 			FILE *fp = fopen(binname, "rb");
 			if (fp) {
-				fread(decompack->binfiles[i], buf.st_size, 1,
-				      fp);
+				fread(decompack->binfiles[i], buf.st_size, 1, fp);
 				fclose(fp);
 			}
 		}
@@ -1914,33 +1773,26 @@ void SPC7110Grab(char *dirname)
 		if (decompack->tableEnts[i].table != 0) {
 			char binname[PATH_MAX];
 #ifndef _XBOX
-			sprintf(binname, "%06X.bin",
-				decompack->tableEnts[i].table);
+			sprintf(binname, "%06X.bin", decompack->tableEnts[i].table);
 #else
-			sprintf(binname, "%s%06X.bin", filename,
-				decompack->tableEnts[i].table);
+			sprintf(binname, "%s%06X.bin", filename, decompack->tableEnts[i].table);
 #endif
 			struct stat buf;
 			// add load/no load calculations here
 			if (-1 != stat(binname, &buf)) {
 				if (buf.st_size < buffer_size)
-					decompack->binfiles[i] =
-					    new uint8[buf.st_size];
+					decompack->binfiles[i] = new uint8[buf.st_size];
 				FILE *fp = fopen(binname, "rb");
 				// use them here
 				if (fp) {
 					if (buf.st_size < buffer_size) {
-						fread(decompack->binfiles[i],
-						      buf.st_size, 1, fp);
+						fread(decompack->binfiles[i], buf.st_size, 1, fp);
 						fclose(fp);
 						buffer_size -= buf.st_size;
-						decompack->tableEnts[i]
-						    .is_file = false;
+						decompack->tableEnts[i].is_file = false;
 					} else {
-						decompack->binfiles[i] =
-						    (uint8 *)fp;
-						decompack->tableEnts[i]
-						    .is_file = true;
+						decompack->binfiles[i] = (uint8 *)fp;
+						decompack->tableEnts[i].is_file = true;
 					}
 				}
 			}
@@ -2116,29 +1968,25 @@ void Do7110Logging()
 		// flush last read into logging
 		(*Copy7110)();
 
-		if (!strncmp((char *)&Memory.ROM[0xffc0],
-			     "SUPER POWER LEAG 4   ", 21)) {
+		if (!strncmp((char *)&Memory.ROM[0xffc0], "SUPER POWER LEAG 4   ", 21)) {
 #ifdef _XBOX
 			flog = fopen("T:\\spl4-sp7.dat", "rb");
 #else
 			flog = fopen("spl4-sp7.dat", "rb");
 #endif
-		} else if (!strncmp((char *)&Memory.ROM[0xffc0],
-				    "MOMOTETSU HAPPY      ", 21)) {
+		} else if (!strncmp((char *)&Memory.ROM[0xffc0], "MOMOTETSU HAPPY      ", 21)) {
 #ifdef _XBOX
 			flog = fopen("T:\\smht-sp7.dat", "rb");
 #else
 			flog = fopen("smht-sp7.dat", "rb");
 #endif
-		} else if (!strncmp((char *)&Memory.ROM[0xffc0],
-				    "HU TENGAI MAKYO ZERO ", 21)) {
+		} else if (!strncmp((char *)&Memory.ROM[0xffc0], "HU TENGAI MAKYO ZERO ", 21)) {
 #ifdef _XBOX
 			flog = fopen("T:\\feoezsp7.dat", "rb");
 #else
 			flog = fopen("feoezsp7.dat", "rb");
 #endif
-		} else if (!strncmp((char *)&Memory.ROM[0xffc0],
-				    "JUMP TENGAIMAKYO ZERO", 21)) {
+		} else if (!strncmp((char *)&Memory.ROM[0xffc0], "JUMP TENGAIMAKYO ZERO", 21)) {
 #ifdef _XBOX
 			flog = fopen("T:\\sjumpsp7.dat", "rb");
 #else
@@ -2162,21 +2010,14 @@ void Do7110Logging()
 				int i = 0;
 				Data7110 *log = NULL;
 				fread(buffer, 1, 8, flog);
-				table = buffer[0] | (buffer[1] << 8) |
-					(buffer[2] << 16);
+				table = buffer[0] | (buffer[1] << 8) | (buffer[2] << 16);
 				offset = buffer[6] | (buffer[7] << 8);
 				length = buffer[4] | (buffer[5] << 8);
 				while (i < MAX_TABLES && log == NULL) {
-					if (decompack->tableEnts[i].table ==
-					    table) {
-						log = &(
-						    decompack->tableEnts[i]
-							.location[(buffer[3])]);
-						if ((log->used_offset +
-						     log->used_len) <
-						    (offset + length)) {
-							log->used_offset =
-							    offset;
+					if (decompack->tableEnts[i].table == table) {
+						log = &(decompack->tableEnts[i].location[(buffer[3])]);
+						if ((log->used_offset + log->used_len) < (offset + length)) {
+							log->used_offset = offset;
 							log->used_len = length;
 						}
 					}
@@ -2186,30 +2027,25 @@ void Do7110Logging()
 			fclose(flog);
 		}
 
-		if (!strncmp((char *)&Memory.ROM[0xffc0],
-			     "SUPER POWER LEAG 4   ", 21)) {
-#ifdef _XBOX // cwd could be the dvd-rom, so write to T:\\ which is storage
-	     // region for each title
+		if (!strncmp((char *)&Memory.ROM[0xffc0], "SUPER POWER LEAG 4   ", 21)) {
+#ifdef _XBOX // cwd could be the dvd-rom, so write to T:\\ which is storage region for each title
 			flog = fopen("T:\\spl4-sp7.dat", "wb");
 #else
 			flog = fopen("spl4-sp7.dat", "wb");
 #endif
-		} else if (!strncmp((char *)&Memory.ROM[0xffc0],
-				    "MOMOTETSU HAPPY      ", 21)) {
+		} else if (!strncmp((char *)&Memory.ROM[0xffc0], "MOMOTETSU HAPPY      ", 21)) {
 #ifdef _XBOX
 			flog = fopen("T:\\smht-sp7.dat", "wb");
 #else
 			flog = fopen("smht-sp7.dat", "wb");
 #endif
-		} else if (!strncmp((char *)&Memory.ROM[0xffc0],
-				    "HU TENGAI MAKYO ZERO ", 21)) {
+		} else if (!strncmp((char *)&Memory.ROM[0xffc0], "HU TENGAI MAKYO ZERO ", 21)) {
 #ifdef _XBOX
 			flog = fopen("T:\\feoezsp7.dat", "wb");
 #else
 			flog = fopen("feoezsp7.dat", "wb");
 #endif
-		} else if (!strncmp((char *)&Memory.ROM[0xffc0],
-				    "JUMP TENGAIMAKYO ZERO", 21)) {
+		} else if (!strncmp((char *)&Memory.ROM[0xffc0], "JUMP TENGAIMAKYO ZERO", 21)) {
 #ifdef _XBOX
 			flog = fopen("T:\\sjumpsp7.dat", "wb");
 #else
@@ -2228,9 +2064,7 @@ void Do7110Logging()
 			int temp = 0;
 			for (j = 0; j < MAX_TABLES; j++) {
 				for (int k = 0; k < 256; k++) {
-					if (decompack->tableEnts[j]
-						.location[k]
-						.used_len != 0)
+					if (decompack->tableEnts[j].location[k].used_len != 0)
 						entries++;
 				}
 			}
@@ -2259,62 +2093,32 @@ void Do7110Logging()
 
 			for (j = 0; j < MAX_TABLES; j++) {
 				for (int k = 0; k < 256; k++) {
-					if (decompack->tableEnts[j]
-						.location[k]
-						.used_len != 0) {
-						ent_temp =
-						    decompack->tableEnts[j]
-							.table &
-						    0xFF;
+					if (decompack->tableEnts[j].location[k].used_len != 0) {
+						ent_temp = decompack->tableEnts[j].table & 0xFF;
 						fwrite(&ent_temp, 1, 1,
 						       flog); // 801
-						ent_temp =
-						    (decompack->tableEnts[j]
-							 .table >>
-						     8) &
-						    0xFF;
+						ent_temp = (decompack->tableEnts[j].table >> 8) & 0xFF;
 						;
 						fwrite(&ent_temp, 1, 1,
 						       flog); // 802
-						ent_temp =
-						    (decompack->tableEnts[j]
-							 .table >>
-						     16) &
-						    0xFF;
+						ent_temp = (decompack->tableEnts[j].table >> 16) & 0xFF;
 						;
 						fwrite(&ent_temp, 1, 1,
 						       flog); // 803
 						ent_temp = k & 0xFF;
 						fwrite(&ent_temp, 1, 1,
 						       flog); // 804
-						ent_temp =
-						    decompack->tableEnts[j]
-							.location[k]
-							.used_len &
-						    0xFF;
+						ent_temp = decompack->tableEnts[j].location[k].used_len & 0xFF;
 						fwrite(&ent_temp, 1, 1,
 						       flog); // lsb of
-						ent_temp =
-						    (decompack->tableEnts[j]
-							 .location[k]
-							 .used_len >>
-						     8) &
-						    0xFF;
+						ent_temp = (decompack->tableEnts[j].location[k].used_len >> 8) & 0xFF;
 						fwrite(&ent_temp, 1, 1,
 						       flog); // msb of
-						ent_temp =
-						    (decompack->tableEnts[j]
-							 .location[k]
-							 .used_offset) &
-						    0xFF;
+						ent_temp = (decompack->tableEnts[j].location[k].used_offset) & 0xFF;
 						fwrite(&ent_temp, 1, 1,
 						       flog); // lsb of
 						ent_temp =
-						    (decompack->tableEnts[j]
-							 .location[k]
-							 .used_offset >>
-						     8) &
-						    0xFF;
+						    (decompack->tableEnts[j].location[k].used_offset >> 8) & 0xFF;
 						fwrite(&ent_temp, 1, 1,
 						       flog); // msb of
 					}

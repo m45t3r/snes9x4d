@@ -109,12 +109,10 @@ void S9xNPShutdownClient(int c, bool8 report_error = FALSE)
 
 		close(NPServer.Clients[c].Socket);
 #ifdef NP_DEBUG
-		printf("SERVER: Player %d disconnecting @%ld\n", c + 1,
-		       S9xGetMilliTime() - START);
+		printf("SERVER: Player %d disconnecting @%ld\n", c + 1, S9xGetMilliTime() - START);
 #endif
 		if (report_error) {
-			sprintf(NetPlay.ErrorMsg,
-				"Player %d on '%s' has disconnected.", c + 1,
+			sprintf(NetPlay.ErrorMsg, "Player %d on '%s' has disconnected.", c + 1,
 				NPServer.Clients[c].HostName);
 			S9xNPSetError(NetPlay.ErrorMsg);
 		}
@@ -258,8 +256,7 @@ void S9xNPSendHeartBeat()
 
 		NPServer.FrameCount++;
 		*ptr++ = NP_SERV_MAGIC;
-		*ptr++ =
-		    0; // Individual client sequence number will get placed here
+		*ptr++ = 0; // Individual client sequence number will get placed here
 		*ptr++ = NP_SERV_JOYPAD | (n << 6) | ((Paused != 0) << 5);
 
 		WRITE_LONG(ptr, NPServer.FrameCount);
@@ -285,8 +282,7 @@ void S9xNPSendToAllClients(uint8 *data, int len)
 	for (i = 0; i < NP_MAX_CLIENTS; i++) {
 		if (NPServer.Clients[i].SaidHello) {
 			data[1] = NPServer.Clients[i].SendSequenceNum++;
-			if (!S9xNPSSendData(NPServer.Clients[i].Socket, data,
-					    len))
+			if (!S9xNPSSendData(NPServer.Clients[i].Socket, data, len))
 				S9xNPShutdownClient(i, TRUE);
 		}
 	}
@@ -300,14 +296,12 @@ void S9xNPProcessClient(int c)
 	uint8 *ptr;
 
 	if (!S9xNPSGetData(NPServer.Clients[c].Socket, header, 7)) {
-		S9xNPSetWarning(
-		    "SERVER: Failed to get message header from client.\n");
+		S9xNPSetWarning("SERVER: Failed to get message header from client.\n");
 		S9xNPShutdownClient(c, TRUE);
 		return;
 	}
 	if (header[0] != NP_CLNT_MAGIC) {
-		S9xNPSetWarning(
-		    "SERVER: Bad header magic value received from client.\n");
+		S9xNPSetWarning("SERVER: Bad header magic value received from client.\n");
 		S9xNPShutdownClient(c, TRUE);
 		return;
 	}
@@ -315,17 +309,12 @@ void S9xNPProcessClient(int c)
 	if (header[1] != NPServer.Clients[c].ReceiveSequenceNum) {
 #ifdef NP_DEBUG
 		printf("SERVER: Messages lost from '%s', expected %d, got %d\n",
-		       NPServer.Clients[c].HostName
-			   ? NPServer.Clients[c].HostName
-			   : "Unknown",
+		       NPServer.Clients[c].HostName ? NPServer.Clients[c].HostName : "Unknown",
 		       NPServer.Clients[c].ReceiveSequenceNum, header[1]);
 #endif
-		sprintf(
-		    NetPlay.WarningMsg,
-		    "SERVER: Messages lost from '%s', expected %d, got %d\n",
-		    NPServer.Clients[c].HostName ? NPServer.Clients[c].HostName
-						 : "Unknown",
-		    NPServer.Clients[c].ReceiveSequenceNum, header[1]);
+		sprintf(NetPlay.WarningMsg, "SERVER: Messages lost from '%s', expected %d, got %d\n",
+			NPServer.Clients[c].HostName ? NPServer.Clients[c].HostName : "Unknown",
+			NPServer.Clients[c].ReceiveSequenceNum, header[1]);
 		NPServer.Clients[c].ReceiveSequenceNum = header[1] + 1;
 		S9xNPSetWarning(NetPlay.WarningMsg);
 	} else
@@ -336,13 +325,11 @@ void S9xNPProcessClient(int c)
 	switch (header[2] & 0x3f) {
 	case NP_CLNT_HELLO:
 #ifdef NP_DEBUG
-		printf("SERVER: Got HELLO from client @%ld\n",
-		       S9xGetMilliTime() - START);
+		printf("SERVER: Got HELLO from client @%ld\n", S9xGetMilliTime() - START);
 #endif
 		S9xNPSetAction("Got HELLO from client...", TRUE);
 		if (len > 0x10000) {
-			S9xNPSetWarning(
-			    "SERVER: Client HELLO message length error.");
+			S9xNPSetWarning("SERVER: Client HELLO message length error.");
 			S9xNPShutdownClient(c, TRUE);
 			return;
 		}
@@ -362,8 +349,8 @@ void S9xNPProcessClient(int c)
 
 		NPServer.Clients[c].ROMName = strdup((char *)&data[4]);
 #ifdef NP_DEBUG
-		printf("SERVER: Client is playing: %s, Frame Time: %d @%ld\n",
-		       data + 4, READ_LONG(data), S9xGetMilliTime() - START);
+		printf("SERVER: Client is playing: %s, Frame Time: %d @%ld\n", data + 4, READ_LONG(data),
+		       S9xGetMilliTime() - START);
 #endif
 
 		NPServer.Clients[c].SendSequenceNum = 0;
@@ -375,8 +362,7 @@ void S9xNPProcessClient(int c)
 		*ptr++ = NP_SERV_MAGIC;
 		*ptr++ = NPServer.Clients[c].SendSequenceNum++;
 
-		if (NPServer.SendROMImageOnConnect &&
-		    NPServer.NumClients > NP_ONE_CLIENT)
+		if (NPServer.SendROMImageOnConnect && NPServer.NumClients > NP_ONE_CLIENT)
 			*ptr++ = NP_SERV_HELLO | 0x80;
 		else
 			*ptr++ = NP_SERV_HELLO;
@@ -389,13 +375,9 @@ void S9xNPProcessClient(int c)
 		strcpy((char *)ptr, NPServer.ROMName);
 
 #ifdef NP_DEBUG
-		printf(
-		    "SERVER: Sending welcome information to client @%ld...\n",
-		    S9xGetMilliTime() - START);
+		printf("SERVER: Sending welcome information to client @%ld...\n", S9xGetMilliTime() - START);
 #endif
-		S9xNPSetAction(
-		    "SERVER: Sending welcome information to new client...",
-		    TRUE);
+		S9xNPSetAction("SERVER: Sending welcome information to new client...", TRUE);
 		if (!S9xNPSSendData(NPServer.Clients[c].Socket, data, len)) {
 			S9xNPSetWarning("SERVER: Failed to send welcome "
 					"message to client.");
@@ -404,18 +386,14 @@ void S9xNPProcessClient(int c)
 		}
 		delete data;
 #ifdef NP_DEBUG
-		printf(
-		    "SERVER: Waiting for a response from the client @%ld...\n",
-		    S9xGetMilliTime() - START);
+		printf("SERVER: Waiting for a response from the client @%ld...\n", S9xGetMilliTime() - START);
 #endif
-		S9xNPSetAction(
-		    "SERVER: Waiting for a response from the client...", TRUE);
+		S9xNPSetAction("SERVER: Waiting for a response from the client...", TRUE);
 		break;
 
 	case NP_CLNT_LOADED_ROM:
 #ifdef NP_DEBUG
-		printf("SERVER: Client %d loaded requested ROM @%ld...\n", c,
-		       S9xGetMilliTime() - START);
+		printf("SERVER: Client %d loaded requested ROM @%ld...\n", c, S9xGetMilliTime() - START);
 #endif
 		NPServer.Clients[c].SaidHello = TRUE;
 		NPServer.Clients[c].Ready = FALSE;
@@ -432,8 +410,7 @@ void S9xNPProcessClient(int c)
 
 	case NP_CLNT_RECEIVED_ROM_IMAGE:
 #ifdef NP_DEBUG
-		printf("SERVER: Client %d received ROM image @%ld...\n", c,
-		       S9xGetMilliTime() - START);
+		printf("SERVER: Client %d received ROM image @%ld...\n", c, S9xGetMilliTime() - START);
 #endif
 		NPServer.Clients[c].SaidHello = TRUE;
 		NPServer.Clients[c].Ready = FALSE;
@@ -451,8 +428,7 @@ void S9xNPProcessClient(int c)
 
 	case NP_CLNT_WAITING_FOR_ROM_IMAGE:
 #ifdef NP_DEBUG
-		printf("SERVER: Client %d waiting for ROM image @%ld...\n", c,
-		       S9xGetMilliTime() - START);
+		printf("SERVER: Client %d waiting for ROM image @%ld...\n", c, S9xGetMilliTime() - START);
 #endif
 		NPServer.Clients[c].SaidHello = TRUE;
 		NPServer.Clients[c].Ready = FALSE;
@@ -463,8 +439,7 @@ void S9xNPProcessClient(int c)
 
 	case NP_CLNT_READY:
 #ifdef NP_DEBUG
-		printf("SERVER: Client %d ready @%ld...\n", c,
-		       S9xGetMilliTime() - START);
+		printf("SERVER: Client %d ready @%ld...\n", c, S9xGetMilliTime() - START);
 #endif
 		if (NPServer.Clients[c].SaidHello) {
 			NPServer.Clients[c].Paused = FALSE;
@@ -486,13 +461,10 @@ void S9xNPProcessClient(int c)
 				S9xNPWaitForEmulationToComplete();
 
 				if (NPServer.SyncByReset) {
-					S9xNPServerAddTask(NP_SERVER_SEND_SRAM,
-							   (void *)c);
-					S9xNPServerAddTask(NP_SERVER_RESET_ALL,
-							   0);
+					S9xNPServerAddTask(NP_SERVER_SEND_SRAM, (void *)c);
+					S9xNPServerAddTask(NP_SERVER_RESET_ALL, 0);
 				} else
-					S9xNPServerAddTask(
-					    NP_SERVER_SYNC_CLIENT, (void *)c);
+					S9xNPServerAddTask(NP_SERVER_SYNC_CLIENT, (void *)c);
 			}
 		} else {
 			NPServer.Clients[c].Ready = TRUE;
@@ -504,17 +476,14 @@ void S9xNPProcessClient(int c)
 		break;
 	case NP_CLNT_PAUSE:
 #ifdef NP_DEBUG
-		printf("SERVER: Client %d Paused: %s @%ld\n", c,
-		       (header[2] & 0x80) ? "YES" : "NO",
+		printf("SERVER: Client %d Paused: %s @%ld\n", c, (header[2] & 0x80) ? "YES" : "NO",
 		       S9xGetMilliTime() - START);
 #endif
 		NPServer.Clients[c].Paused = (header[2] & 0x80) != 0;
 		if (NPServer.Clients[c].Paused)
-			sprintf(NetPlay.WarningMsg,
-				"SERVER: Client %d has paused.", c + 1);
+			sprintf(NetPlay.WarningMsg, "SERVER: Client %d has paused.", c + 1);
 		else
-			sprintf(NetPlay.WarningMsg,
-				"SERVER: Client %d has resumed.", c + 1);
+			sprintf(NetPlay.WarningMsg, "SERVER: Client %d has resumed.", c + 1);
 		S9xNPSetWarning(NetPlay.WarningMsg);
 		S9xNPRecomputePause();
 		break;
@@ -535,11 +504,9 @@ void S9xNPAcceptClient(int Listen, bool8 block)
 	int i;
 
 #ifdef NP_DEBUG
-	printf("SERVER: attempting to accept new client connection @%ld\n",
-	       S9xGetMilliTime() - START);
+	printf("SERVER: attempting to accept new client connection @%ld\n", S9xGetMilliTime() - START);
 #endif
-	S9xNPSetAction("SERVER: Attempting to accept client connection...",
-		       TRUE);
+	S9xNPSetAction("SERVER: Attempting to accept client connection...", TRUE);
 	memset(&remote_address, 0, sizeof(remote_address));
 	len = sizeof(remote_address);
 	new_fd = accept(Listen, (struct sockaddr *)&remote_address, &len);
@@ -547,8 +514,7 @@ void S9xNPAcceptClient(int Listen, bool8 block)
 	S9xNPSetAction("Setting socket options...", TRUE);
 	val2.l_onoff = 1;
 	val2.l_linger = 0;
-	if (setsockopt(new_fd, SOL_SOCKET, SO_LINGER, (char *)&val2,
-		       sizeof(val2)) < 0) {
+	if (setsockopt(new_fd, SOL_SOCKET, SO_LINGER, (char *)&val2, sizeof(val2)) < 0) {
 		S9xNPSetError("Setting socket options failed.");
 		close(new_fd);
 		return;
@@ -580,13 +546,10 @@ void S9xNPAcceptClient(int Listen, bool8 block)
 
 	if (remote_address.sin_family == AF_INET) {
 #ifdef NP_DEBUG
-		printf("SERVER: Looking up new client's hostname @%ld\n",
-		       S9xGetMilliTime() - START);
+		printf("SERVER: Looking up new client's hostname @%ld\n", S9xGetMilliTime() - START);
 #endif
-		S9xNPSetAction("SERVER: Looking up new client's hostname...",
-			       TRUE);
-		host = gethostbyaddr((char *)&remote_address.sin_addr,
-				     sizeof(remote_address.sin_addr), AF_INET);
+		S9xNPSetAction("SERVER: Looking up new client's hostname...", TRUE);
+		host = gethostbyaddr((char *)&remote_address.sin_addr, sizeof(remote_address.sin_addr), AF_INET);
 
 		if (host) {
 #ifdef NP_DEBUG
@@ -594,9 +557,7 @@ void S9xNPAcceptClient(int Listen, bool8 block)
 			       "@%ld\n",
 			       host->h_name, S9xGetMilliTime() - START);
 #endif
-			sprintf(NetPlay.WarningMsg,
-				"SERVER: Player %d on %s has connected.", i + 1,
-				host->h_name);
+			sprintf(NetPlay.WarningMsg, "SERVER: Player %d on %s has connected.", i + 1, host->h_name);
 			NPServer.Clients[i].HostName = strdup(host->h_name);
 		} else {
 			char *ip = inet_ntoa(remote_address.sin_addr);
@@ -607,15 +568,13 @@ void S9xNPAcceptClient(int Listen, bool8 block)
 			       "(%s) @%ld\n",
 			       ip ? ip : "Unknown", S9xGetMilliTime() - START);
 #endif
-			sprintf(NetPlay.WarningMsg,
-				"SERVER: Player %d on %s has connected.", i + 1,
+			sprintf(NetPlay.WarningMsg, "SERVER: Player %d on %s has connected.", i + 1,
 				ip ? ip : "Unknown");
 		}
 		S9xNPSetWarning(NetPlay.WarningMsg);
 	}
 #ifdef NP_DEBUG
-	printf("SERVER: waiting for HELLO message from new client @%ld\n",
-	       S9xGetMilliTime() - START);
+	printf("SERVER: waiting for HELLO message from new client @%ld\n", S9xGetMilliTime() - START);
 #endif
 	S9xNPSetAction("SERVER: Waiting for HELLO message from new client...");
 }
@@ -657,8 +616,7 @@ static bool8 S9xNPServerInit(int port)
 	}
 
 	val = 1;
-	setsockopt(NPServer.Socket, SOL_SOCKET, SO_REUSEADDR, (char *)&val,
-		   sizeof(val));
+	setsockopt(NPServer.Socket, SOL_SOCKET, SO_REUSEADDR, (char *)&val, sizeof(val));
 
 	memset(&address, 0, sizeof(address));
 	address.sin_family = AF_INET;
@@ -666,23 +624,19 @@ static bool8 S9xNPServerInit(int port)
 	address.sin_port = htons(port);
 
 #ifdef NP_DEBUG
-	printf("SERVER: Binding socket to address and port @%ld\n",
-	       S9xGetMilliTime() - START);
+	printf("SERVER: Binding socket to address and port @%ld\n", S9xGetMilliTime() - START);
 #endif
-	if (bind(NPServer.Socket, (struct sockaddr *)&address,
-		 sizeof(address)) < 0) {
+	if (bind(NPServer.Socket, (struct sockaddr *)&address, sizeof(address)) < 0) {
 		S9xNPSetError("NetPlay Server: Can't bind socket to port "
 			      "number.\nPort already in use?");
 		return (FALSE);
 	}
 
 #ifdef NP_DEBUG
-	printf("SERVER: Getting socket to listen @%ld\n",
-	       S9xGetMilliTime() - START);
+	printf("SERVER: Getting socket to listen @%ld\n", S9xGetMilliTime() - START);
 #endif
 	if (listen(NPServer.Socket, NP_MAX_CLIENTS) < 0) {
-		S9xNPSetError(
-		    "NetPlay Server: Can't get new socket to listen.");
+		S9xNPSetError("NetPlay Server: Can't get new socket to listen.");
 		return (FALSE);
 	}
 
@@ -712,8 +666,8 @@ void S9xNPServerLoop(void *)
 		Sleep(0);
 #endif
 
-		if (success && !Settings.Paused && !Settings.StopEmulation &&
-		    !Settings.ForcedPause && !NPServer.Paused) {
+		if (success && !Settings.Paused && !Settings.StopEmulation && !Settings.ForcedPause &&
+		    !NPServer.Paused) {
 			S9xNPSendHeartBeat();
 		}
 
@@ -722,28 +676,23 @@ void S9xNPServerLoop(void *)
 			FD_SET(NPServer.Socket, &read_fds);
 			for (i = 0; i < NP_MAX_CLIENTS; i++) {
 				if (NPServer.Clients[i].Connected) {
-					FD_SET(NPServer.Clients[i].Socket,
-					       &read_fds);
+					FD_SET(NPServer.Clients[i].Socket, &read_fds);
 					if (NPServer.Clients[i].Socket > max_fd)
-						max_fd =
-						    NPServer.Clients[i].Socket;
+						max_fd = NPServer.Clients[i].Socket;
 				}
 			}
 
 			timeout.tv_sec = 0;
 			timeout.tv_usec = 1000;
-			res =
-			    select(max_fd + 1, &read_fds, NULL, NULL, &timeout);
+			res = select(max_fd + 1, &read_fds, NULL, NULL, &timeout);
 
 			if (res > 0) {
 				if (FD_ISSET(NPServer.Socket, &read_fds))
-					S9xNPAcceptClient(NPServer.Socket,
-							  FALSE);
+					S9xNPAcceptClient(NPServer.Socket, FALSE);
 
 				for (i = 0; i < NP_MAX_CLIENTS; i++) {
 					if (NPServer.Clients[i].Connected &&
-					    FD_ISSET(NPServer.Clients[i].Socket,
-						     &read_fds)) {
+					    FD_ISSET(NPServer.Clients[i].Socket, &read_fds)) {
 						S9xNPProcessClient(i);
 					}
 				}
@@ -751,17 +700,14 @@ void S9xNPServerLoop(void *)
 		} while (res > 0);
 
 #ifdef __WIN32__
-		success = WaitForSingleObject(GUI.ServerTimerSemaphore, 200) ==
-			  WAIT_OBJECT_0;
+		success = WaitForSingleObject(GUI.ServerTimerSemaphore, 200) == WAIT_OBJECT_0;
 #endif
 
 		while (NPServer.TaskHead != NPServer.TaskTail) {
-			void *task_data =
-			    NPServer.TaskQueue[NPServer.TaskHead].Data;
+			void *task_data = NPServer.TaskQueue[NPServer.TaskHead].Data;
 
 #if defined(NP_DEBUG) && NP_DEBUG == 2
-			printf("SERVER: task %d @%ld\n",
-			       NPServer.TaskQueue[NPServer.TaskHead].Task,
+			printf("SERVER: task %d @%ld\n", NPServer.TaskQueue[NPServer.TaskHead].Task,
 			       S9xGetMilliTime() - START);
 #endif
 
@@ -778,8 +724,7 @@ void S9xNPServerLoop(void *)
 				S9xNPSyncClients();
 				break;
 			case NP_SERVER_SEND_FREEZE_FILE_ALL:
-				S9xNPSendFreezeFileToAllClients(
-				    (char *)task_data);
+				S9xNPSendFreezeFileToAllClients((char *)task_data);
 				free((char *)task_data);
 				break;
 			case NP_SERVER_SEND_ROM_LOAD_REQUEST_ALL:
@@ -789,9 +734,7 @@ void S9xNPServerLoop(void *)
 			case NP_SERVER_RESET_ALL:
 				S9xNPNoClientReady(0);
 				S9xNPWaitForEmulationToComplete();
-				S9xNPSetAction(
-				    "SERVER: Sending RESET to all clients...",
-				    TRUE);
+				S9xNPSetAction("SERVER: Sending RESET to all clients...", TRUE);
 #ifdef NP_DEBUG
 				printf("SERVER: Sending RESET to all clients "
 				       "@%ld\n",
@@ -826,13 +769,11 @@ void S9xNPServerLoop(void *)
 				S9xNPSetError("SERVER: *** Unknown task ***\n");
 				break;
 			}
-			NPServer.TaskHead =
-			    (NPServer.TaskHead + 1) % NP_MAX_TASKS;
+			NPServer.TaskHead = (NPServer.TaskHead + 1) % NP_MAX_TASKS;
 		}
 	}
 #ifdef NP_DEBUG
-	printf("SERVER: Server thread exiting @%ld\n",
-	       S9xGetMilliTime() - START);
+	printf("SERVER: Server thread exiting @%ld\n", S9xGetMilliTime() - START);
 #endif
 	S9xNPStopServer();
 }
@@ -842,8 +783,7 @@ bool8 S9xNPStartServer(int port)
 	static int p;
 
 #ifdef NP_DEBUG
-	printf("SERVER: Starting server on port %d @%ld\n", port,
-	       S9xGetMilliTime() - START);
+	printf("SERVER: Starting server on port %d @%ld\n", port, S9xGetMilliTime() - START);
 #endif
 	p = port;
 	server_continue = TRUE;
@@ -906,16 +846,14 @@ void S9xNPSendROMImageToAllClients()
 bool8 S9xNPSendROMImageToClient(int c)
 {
 #ifdef NP_DEBUG
-	printf("SERVER: Sending ROM image to player %d @%ld\n", c + 1,
-	       S9xGetMilliTime() - START);
+	printf("SERVER: Sending ROM image to player %d @%ld\n", c + 1, S9xGetMilliTime() - START);
 #endif
 	sprintf(NetPlay.ActionMsg, "Sending ROM image to player %d...", c + 1);
 	S9xNPSetAction(NetPlay.ActionMsg, TRUE);
 
 	uint8 header[7 + 1 + 4];
 	uint8 *ptr = header;
-	int len = sizeof(header) + Memory.CalculatedSize +
-		  strlen(Memory.ROMFilename) + 1;
+	int len = sizeof(header) + Memory.CalculatedSize + strlen(Memory.ROMFilename) + 1;
 	*ptr++ = NP_SERV_MAGIC;
 	*ptr++ = NPServer.Clients[c].SendSequenceNum++;
 	*ptr++ = NP_SERV_ROM_IMAGE;
@@ -924,13 +862,9 @@ bool8 S9xNPSendROMImageToClient(int c)
 	*ptr++ = Memory.HiROM;
 	WRITE_LONG(ptr, Memory.CalculatedSize);
 
-	if (!S9xNPSSendData(NPServer.Clients[c].Socket, header,
-			    sizeof(header)) ||
-	    !S9xNPSSendData(NPServer.Clients[c].Socket, Memory.ROM,
-			    Memory.CalculatedSize) ||
-	    !S9xNPSSendData(NPServer.Clients[c].Socket,
-			    (uint8 *)Memory.ROMFilename,
-			    strlen(Memory.ROMFilename) + 1)) {
+	if (!S9xNPSSendData(NPServer.Clients[c].Socket, header, sizeof(header)) ||
+	    !S9xNPSSendData(NPServer.Clients[c].Socket, Memory.ROM, Memory.CalculatedSize) ||
+	    !S9xNPSSendData(NPServer.Clients[c].Socket, (uint8 *)Memory.ROMFilename, strlen(Memory.ROMFilename) + 1)) {
 		S9xNPShutdownClient(c, TRUE);
 		return (FALSE);
 	}
@@ -959,14 +893,11 @@ void S9xNPSyncClient(int client)
 			int c;
 
 			if (client < 0) {
-				for (c = NP_ONE_CLIENT; c < NP_MAX_CLIENTS;
-				     c++) {
+				for (c = NP_ONE_CLIENT; c < NP_MAX_CLIENTS; c++) {
 					if (NPServer.Clients[c].SaidHello) {
-						NPServer.Clients[client].Ready =
-						    FALSE;
+						NPServer.Clients[client].Ready = FALSE;
 						S9xNPRecomputePause();
-						S9xNPSendFreezeFile(c, data,
-								    len);
+						S9xNPSendFreezeFile(c, data, len);
 					}
 				}
 			} else {
@@ -1001,12 +932,10 @@ bool8 S9xNPLoadFreezeFile(const char *fname, uint8 *&data, uint32 &len)
 void S9xNPSendFreezeFile(int c, uint8 *data, uint32 len)
 {
 #ifdef NP_DEBUG
-	printf("SERVER: Sending freeze file to player %d @%ld\n", c + 1,
-	       S9xGetMilliTime() - START);
+	printf("SERVER: Sending freeze file to player %d @%ld\n", c + 1, S9xGetMilliTime() - START);
 #endif
 
-	sprintf(NetPlay.ActionMsg,
-		"SERVER: Sending freeze-file to player %d...", c + 1);
+	sprintf(NetPlay.ActionMsg, "SERVER: Sending freeze-file to player %d...", c + 1);
 	S9xNPSetAction(NetPlay.ActionMsg, TRUE);
 	uint8 header[7 + 4];
 	uint8 *ptr = header;
@@ -1029,15 +958,11 @@ void S9xNPRecomputePause()
 	int c;
 
 	for (c = 0; c < NP_MAX_CLIENTS; c++) {
-		if (NPServer.Clients[c].SaidHello &&
-		    (!NPServer.Clients[c].Ready ||
-		     NPServer.Clients[c].Paused)) {
+		if (NPServer.Clients[c].SaidHello && (!NPServer.Clients[c].Ready || NPServer.Clients[c].Paused)) {
 #if defined(NP_DEBUG) && NP_DEBUG == 2
 			printf("SERVER: Paused because of client %d (%d,%d) "
 			       "@%ld\n",
-			       c, NPServer.Clients[c].Ready,
-			       NPServer.Clients[c].Paused,
-			       S9xGetMilliTime() - START);
+			       c, NPServer.Clients[c].Ready, NPServer.Clients[c].Paused, S9xGetMilliTime() - START);
 #endif
 			NPServer.Paused = TRUE;
 			return;
@@ -1079,14 +1004,10 @@ void S9xNPSendROMLoadRequest(const char *filename)
 			       "%d @%ld\n",
 			       i + 1, S9xGetMilliTime() - START);
 #endif
-			sprintf(
-			    NetPlay.WarningMsg,
-			    "SERVER: sending ROM load request to player %d...",
-			    i + 1);
+			sprintf(NetPlay.WarningMsg, "SERVER: sending ROM load request to player %d...", i + 1);
 			S9xNPSetAction(NetPlay.WarningMsg, TRUE);
 			data[1] = NPServer.Clients[i].SendSequenceNum++;
-			if (!S9xNPSSendData(NPServer.Clients[i].Socket, data,
-					    len)) {
+			if (!S9xNPSSendData(NPServer.Clients[i].Socket, data, len)) {
 				S9xNPShutdownClient(i, TRUE);
 			}
 		}
@@ -1107,8 +1028,7 @@ void S9xNPSendSRAMToAllClients()
 void S9xNPSendSRAMToClient(int c)
 {
 #ifdef NP_DEBUG
-	printf("SERVER: Sending S-RAM data to player %d @%ld\n", c + 1,
-	       S9xGetMilliTime() - START);
+	printf("SERVER: Sending S-RAM data to player %d @%ld\n", c + 1, S9xGetMilliTime() - START);
 #endif
 	uint8 sram[7];
 	int SRAMSize = Memory.SRAMSize ? (1 << (Memory.SRAMSize + 3)) * 128 : 0;
@@ -1116,8 +1036,7 @@ void S9xNPSendSRAMToClient(int c)
 		SRAMSize = 0x10000;
 	int len = 7 + SRAMSize;
 
-	sprintf(NetPlay.ActionMsg, "SERVER: Sending S-RAM to player %d...",
-		c + 1);
+	sprintf(NetPlay.ActionMsg, "SERVER: Sending S-RAM to player %d...", c + 1);
 	S9xNPSetAction(NetPlay.ActionMsg, TRUE);
 
 	uint8 *ptr = sram;
@@ -1126,8 +1045,7 @@ void S9xNPSendSRAMToClient(int c)
 	*ptr++ = NP_SERV_SRAM_DATA;
 	WRITE_LONG(ptr, len);
 	if (!S9xNPSSendData(NPServer.Clients[c].Socket, sram, sizeof(sram)) ||
-	    (len > 7 &&
-	     !S9xNPSSendData(NPServer.Clients[c].Socket, ::SRAM, len - 7))) {
+	    (len > 7 && !S9xNPSSendData(NPServer.Clients[c].Socket, ::SRAM, len - 7))) {
 		S9xNPShutdownClient(c, TRUE);
 	}
 }
@@ -1137,8 +1055,7 @@ void S9xNPSendFreezeFileToAllClients(const char *filename)
 	uint8 *data;
 	uint32 len;
 
-	if (NPServer.NumClients > NP_ONE_CLIENT &&
-	    S9xNPLoadFreezeFile(filename, data, len)) {
+	if (NPServer.NumClients > NP_ONE_CLIENT && S9xNPLoadFreezeFile(filename, data, len)) {
 		S9xNPNoClientReady();
 
 		for (int c = NP_ONE_CLIENT; c < NP_MAX_CLIENTS; c++) {
@@ -1166,27 +1083,23 @@ void S9xNPReset()
 void S9xNPWaitForEmulationToComplete()
 {
 #ifdef NP_DEBUG
-	printf("SERVER: WaitForEmulationToComplete start @%ld\n",
-	       S9xGetMilliTime() - START);
+	printf("SERVER: WaitForEmulationToComplete start @%ld\n", S9xGetMilliTime() - START);
 #endif
 
-	while (!NetPlay.PendingWait4Sync && NetPlay.Connected &&
-	       !Settings.ForcedPause && !Settings.StopEmulation &&
+	while (!NetPlay.PendingWait4Sync && NetPlay.Connected && !Settings.ForcedPause && !Settings.StopEmulation &&
 	       !Settings.Paused) {
 #ifdef __WIN32__
 		Sleep(40);
 #endif
 	}
 #ifdef NP_DEBUG
-	printf("SERVER: WaitForEmulationToComplete end @%ld\n",
-	       S9xGetMilliTime() - START);
+	printf("SERVER: WaitForEmulationToComplete end @%ld\n", S9xGetMilliTime() - START);
 #endif
 }
 
 void S9xNPServerQueueSyncAll()
 {
-	if (Settings.NetPlay && Settings.NetPlayServer &&
-	    NPServer.NumClients > NP_ONE_CLIENT) {
+	if (Settings.NetPlay && Settings.NetPlayServer && NPServer.NumClients > NP_ONE_CLIENT) {
 		S9xNPNoClientReady();
 		S9xNPDiscardHeartbeats();
 		S9xNPServerAddTask(NP_SERVER_SYNC_ALL, 0);
@@ -1195,8 +1108,7 @@ void S9xNPServerQueueSyncAll()
 
 void S9xNPServerQueueSendingROMImage()
 {
-	if (Settings.NetPlay && Settings.NetPlayServer &&
-	    NPServer.NumClients > NP_ONE_CLIENT) {
+	if (Settings.NetPlay && Settings.NetPlayServer && NPServer.NumClients > NP_ONE_CLIENT) {
 		S9xNPNoClientReady();
 		S9xNPDiscardHeartbeats();
 		S9xNPServerAddTask(NP_SERVER_SEND_ROM_IMAGE, 0);
@@ -1205,23 +1117,19 @@ void S9xNPServerQueueSendingROMImage()
 
 void S9xNPServerQueueSendingFreezeFile(const char *filename)
 {
-	if (Settings.NetPlay && Settings.NetPlayServer &&
-	    NPServer.NumClients > NP_ONE_CLIENT) {
+	if (Settings.NetPlay && Settings.NetPlayServer && NPServer.NumClients > NP_ONE_CLIENT) {
 		S9xNPNoClientReady();
 		S9xNPDiscardHeartbeats();
-		S9xNPServerAddTask(NP_SERVER_SEND_FREEZE_FILE_ALL,
-				   (void *)strdup(filename));
+		S9xNPServerAddTask(NP_SERVER_SEND_FREEZE_FILE_ALL, (void *)strdup(filename));
 	}
 }
 
 void S9xNPServerQueueSendingLoadROMRequest(const char *filename)
 {
-	if (Settings.NetPlay && Settings.NetPlayServer &&
-	    NPServer.NumClients > NP_ONE_CLIENT) {
+	if (Settings.NetPlay && Settings.NetPlayServer && NPServer.NumClients > NP_ONE_CLIENT) {
 		S9xNPNoClientReady();
 		S9xNPDiscardHeartbeats();
-		S9xNPServerAddTask(NP_SERVER_SEND_ROM_LOAD_REQUEST_ALL,
-				   (void *)strdup(filename));
+		S9xNPServerAddTask(NP_SERVER_SEND_ROM_LOAD_REQUEST_ALL, (void *)strdup(filename));
 	}
 }
 

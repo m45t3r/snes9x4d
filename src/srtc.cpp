@@ -265,8 +265,7 @@ void S9xUpdateSrtcTime()
 
 				month = rtc.data[8];
 				days += (rtc.data[7] * 10 + rtc.data[6]);
-				while (days > (temp_days = S9xSRTCDaysInMmonth(
-						   month, year))) {
+				while (days > (temp_days = S9xSRTCDaysInMmonth(month, year))) {
 					days -= temp_days;
 					month += 1;
 					if (month > 12) {
@@ -340,12 +339,10 @@ void S9xSetSRTC(uint8 data, uint16 Address)
 			if (rtc.index == MAX_RTC_INDEX) {
 				// We have all the data for the RTC load
 
-				rtc.system_timestamp =
-				    time(NULL); // Get local system time
+				rtc.system_timestamp = time(NULL); // Get local system time
 
 				// Get the day of the week
-				rtc.data[rtc.index++] =
-				    S9xSRTCComputeDayOfWeek();
+				rtc.data[rtc.index++] = S9xSRTCComputeDayOfWeek();
 
 				// Start RTC counting again
 				rtc.count_enable = TRUE;
@@ -423,8 +420,7 @@ void S9xSRTCPreSaveState()
 	if (Settings.SRTC) {
 		S9xUpdateSrtcTime();
 
-		int s =
-		    Memory.SRAMSize ? (1 << (Memory.SRAMSize + 3)) * 128 : 0;
+		int s = Memory.SRAMSize ? (1 << (Memory.SRAMSize + 3)) * 128 : 0;
 		if (s > 0x20000)
 			s = 0x20000;
 
@@ -437,22 +433,14 @@ void S9xSRTCPreSaveState()
 #ifdef LSB_FIRST
 		memmove(&SRAM[s + 5 + MAX_RTC_INDEX], &rtc.system_timestamp, 8);
 #else
-		SRAM[s + 5 + MAX_RTC_INDEX] =
-		    (uint8)(rtc.system_timestamp >> 0);
-		SRAM[s + 6 + MAX_RTC_INDEX] =
-		    (uint8)(rtc.system_timestamp >> 8);
-		SRAM[s + 7 + MAX_RTC_INDEX] =
-		    (uint8)(rtc.system_timestamp >> 16);
-		SRAM[s + 8 + MAX_RTC_INDEX] =
-		    (uint8)(rtc.system_timestamp >> 24);
-		SRAM[s + 9 + MAX_RTC_INDEX] =
-		    (uint8)(rtc.system_timestamp >> 32);
-		SRAM[s + 10 + MAX_RTC_INDEX] =
-		    (uint8)(rtc.system_timestamp >> 40);
-		SRAM[s + 11 + MAX_RTC_INDEX] =
-		    (uint8)(rtc.system_timestamp >> 48);
-		SRAM[s + 12 + MAX_RTC_INDEX] =
-		    (uint8)(rtc.system_timestamp >> 56);
+		SRAM[s + 5 + MAX_RTC_INDEX] = (uint8)(rtc.system_timestamp >> 0);
+		SRAM[s + 6 + MAX_RTC_INDEX] = (uint8)(rtc.system_timestamp >> 8);
+		SRAM[s + 7 + MAX_RTC_INDEX] = (uint8)(rtc.system_timestamp >> 16);
+		SRAM[s + 8 + MAX_RTC_INDEX] = (uint8)(rtc.system_timestamp >> 24);
+		SRAM[s + 9 + MAX_RTC_INDEX] = (uint8)(rtc.system_timestamp >> 32);
+		SRAM[s + 10 + MAX_RTC_INDEX] = (uint8)(rtc.system_timestamp >> 40);
+		SRAM[s + 11 + MAX_RTC_INDEX] = (uint8)(rtc.system_timestamp >> 48);
+		SRAM[s + 12 + MAX_RTC_INDEX] = (uint8)(rtc.system_timestamp >> 56);
 #endif
 	}
 }
@@ -460,8 +448,7 @@ void S9xSRTCPreSaveState()
 void S9xSRTCPostLoadState()
 {
 	if (Settings.SRTC) {
-		int s =
-		    Memory.SRAMSize ? (1 << (Memory.SRAMSize + 3)) * 128 : 0;
+		int s = Memory.SRAMSize ? (1 << (Memory.SRAMSize + 3)) * 128 : 0;
 		if (s > 0x20000)
 			s = 0x20000;
 

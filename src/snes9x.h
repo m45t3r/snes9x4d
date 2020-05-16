@@ -76,9 +76,7 @@
 #define SNES_HEIGHT 224
 #define SNES_HEIGHT_EXTENDED 239
 #define IMAGE_WIDTH (Settings.SupportHiRes ? SNES_WIDTH * 2 : SNES_WIDTH)
-#define IMAGE_HEIGHT                                                           \
-	(Settings.SupportHiRes ? SNES_HEIGHT_EXTENDED * 2                      \
-			       : SNES_HEIGHT_EXTENDED)
+#define IMAGE_HEIGHT (Settings.SupportHiRes ? SNES_HEIGHT_EXTENDED * 2 : SNES_HEIGHT_EXTENDED)
 
 #define SNES_MAX_NTSC_VCOUNTER 262
 #define SNES_MAX_PAL_VCOUNTER 312
@@ -104,17 +102,13 @@
 #define SNES_CLOCK_LEN (1.0 / SNES_CLOCK_SPEED)
 
 #ifdef VAR_CYCLES
-#define SNES_CYCLES_PER_SCANLINE                                               \
-	((uint32)((SNES_SCANLINE_TIME / SNES_CLOCK_LEN) * 6 + 0.5))
+#define SNES_CYCLES_PER_SCANLINE ((uint32)((SNES_SCANLINE_TIME / SNES_CLOCK_LEN) * 6 + 0.5))
 #else
-#define SNES_CYCLES_PER_SCANLINE                                               \
-	((uint32)(SNES_SCANLINE_TIME / SNES_CLOCK_LEN + 0.5))
+#define SNES_CYCLES_PER_SCANLINE ((uint32)(SNES_SCANLINE_TIME / SNES_CLOCK_LEN + 0.5))
 #endif
 
-#define SNES_APUTIMER2_CYCLEx10000                                             \
-	((uint32)((SNES_CYCLES_PER_SCANLINE * 10000L) * (1.0 / 64000.0) /      \
-		      SNES_SCANLINE_TIME +                                     \
-		  0.5))
+#define SNES_APUTIMER2_CYCLEx10000                                                                                     \
+	((uint32)((SNES_CYCLES_PER_SCANLINE * 10000L) * (1.0 / 64000.0) / SNES_SCANLINE_TIME + 0.5))
 
 #define SNES_TR_MASK (1 << 4)
 #define SNES_TL_MASK (1 << 5)
@@ -129,12 +123,7 @@
 #define SNES_Y_MASK (1 << 14)
 #define SNES_B_MASK (1 << 15)
 
-enum { SNES_MULTIPLAYER5,
-       SNES_JOYPAD,
-       SNES_MOUSE_SWAPPED,
-       SNES_MOUSE,
-       SNES_SUPERSCOPE,
-       SNES_MAX_CONTROLLER_OPTIONS };
+enum { SNES_MULTIPLAYER5, SNES_JOYPAD, SNES_MOUSE_SWAPPED, SNES_MOUSE, SNES_SUPERSCOPE, SNES_MAX_CONTROLLER_OPTIONS };
 
 #define DEBUG_MODE_FLAG (1 << 0)
 #define TRACE_FLAG (1 << 1)
@@ -281,8 +270,8 @@ struct SSettings {
 	bool8_32 SA1;
 	bool8_32 C4;
 	bool8_32 SDD1;
-	//	bool8_32  SPC7110;
-	//	bool8_32  SPC7110RTC;
+	// bool8_32 SPC7110;
+	// bool8_32 SPC7110RTC;
 	bool8_32 OBC1;
 
 	// Sound options
@@ -326,8 +315,7 @@ struct SSettings {
 	int Port;
 	bool8_32 GlideEnable;
 	bool8_32 OpenGLEnable;
-	int32 AutoSaveDelay; // Time in seconds before S-RAM auto-saved if
-			     // modified
+	int32 AutoSaveDelay; // Time in seconds before S-RAM auto-saved if modified
 	bool8_32 ApplyCheats;
 	bool8_32 TurboMode;
 	uint32 TurboSkipFrames;

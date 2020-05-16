@@ -135,8 +135,8 @@ void DSP2_Op05()
 	for (n = 0; n < DSP2Op05Len; n++) {
 		c1 = *p1++;
 		c2 = *p2++;
-		*p3++ = (((c2 >> 4) == color) ? c1 & 0xf0 : c2 & 0xf0) |
-			(((c2 & 0x0f) == color) ? c1 & 0x0f : c2 & 0x0f);
+		*p3++ =
+		    (((c2 >> 4) == color) ? c1 & 0xf0 : c2 & 0xf0) | (((c2 & 0x0f) == color) ? c1 & 0x0f : c2 & 0x0f);
 	}
 }
 
@@ -159,22 +159,16 @@ void DSP2_Op01()
 		c2 = *p1++;
 		c3 = *p1++;
 
-		*p2a++ = (c0 & 0x10) << 3 | (c0 & 0x01) << 6 |
-			 (c1 & 0x10) << 1 | (c1 & 0x01) << 4 |
-			 (c2 & 0x10) >> 1 | (c2 & 0x01) << 2 |
-			 (c3 & 0x10) >> 3 | (c3 & 0x01);
+		*p2a++ = (c0 & 0x10) << 3 | (c0 & 0x01) << 6 | (c1 & 0x10) << 1 | (c1 & 0x01) << 4 | (c2 & 0x10) >> 1 |
+			 (c2 & 0x01) << 2 | (c3 & 0x10) >> 3 | (c3 & 0x01);
 
-		*p2a++ = (c0 & 0x20) << 2 | (c0 & 0x02) << 5 | (c1 & 0x20) |
-			 (c1 & 0x02) << 3 | (c2 & 0x20) >> 2 |
+		*p2a++ = (c0 & 0x20) << 2 | (c0 & 0x02) << 5 | (c1 & 0x20) | (c1 & 0x02) << 3 | (c2 & 0x20) >> 2 |
 			 (c2 & 0x02) << 1 | (c3 & 0x20) >> 4 | (c3 & 0x02) >> 1;
 
-		*p2b++ = (c0 & 0x40) << 1 | (c0 & 0x04) << 4 |
-			 (c1 & 0x40) >> 1 | (c1 & 0x04) << 2 |
-			 (c2 & 0x40) >> 3 | (c2 & 0x04) | (c3 & 0x40) >> 5 |
-			 (c3 & 0x04) >> 2;
+		*p2b++ = (c0 & 0x40) << 1 | (c0 & 0x04) << 4 | (c1 & 0x40) >> 1 | (c1 & 0x04) << 2 | (c2 & 0x40) >> 3 |
+			 (c2 & 0x04) | (c3 & 0x40) >> 5 | (c3 & 0x04) >> 2;
 
-		*p2b++ = (c0 & 0x80) | (c0 & 0x08) << 3 | (c1 & 0x80) >> 2 |
-			 (c1 & 0x08) << 1 | (c2 & 0x80) >> 4 |
+		*p2b++ = (c0 & 0x80) | (c0 & 0x08) << 3 | (c1 & 0x80) >> 2 | (c1 & 0x08) << 1 | (c2 & 0x80) >> 4 |
 			 (c2 & 0x08) >> 1 | (c3 & 0x80) >> 6 | (c3 & 0x08) >> 3;
 	}
 	return;
@@ -189,8 +183,7 @@ void DSP2_Op06()
 	int i, j;
 
 	for (i = 0, j = DSP2Op06Len - 1; i < DSP2Op06Len; i++, j--) {
-		DSP1.output[j] =
-		    (DSP1.parameters[i] << 4) | (DSP1.parameters[i] >> 4);
+		DSP1.output[j] = (DSP1.parameters[i] << 4) | (DSP1.parameters[i] >> 4);
 	}
 }
 
@@ -221,13 +214,11 @@ void DSP2_Op0D()
 		if ((pixel_offset & 1) == 0)
 			pixelarray[i] = DSP1.parameters[pixel_offset >> 1] >> 4;
 		else
-			pixelarray[i] =
-			    DSP1.parameters[pixel_offset >> 1] & 0x0f;
+			pixelarray[i] = DSP1.parameters[pixel_offset >> 1] & 0x0f;
 	}
 
 	for (i = 0; i < DSP2Op0DOutLen; i++)
-		DSP1.output[i] =
-		    (pixelarray[i << 1] << 4) | pixelarray[(i << 1) + 1];
+		DSP1.output[i] = (pixelarray[i << 1] << 4) | pixelarray[(i << 1) + 1];
 }
 
 #else
@@ -254,11 +245,9 @@ void DSP2_Op0D()
 	uint8 pixelarray[512];
 
 	if (DSP2Op0DInLen <= DSP2Op0DOutLen)
-		multiplier =
-		    0x10000; // In our self defined fixed point 0x10000 == 1
+		multiplier = 0x10000; // In our self defined fixed point 0x10000 == 1
 	else
-		multiplier =
-		    (DSP2Op0DInLen << 17) / ((DSP2Op0DOutLen << 1) + 1);
+		multiplier = (DSP2Op0DInLen << 17) / ((DSP2Op0DOutLen << 1) + 1);
 
 	pixloc = 0;
 	for (i = 0; i < DSP2Op0DOutLen * 2; i++) {
@@ -273,8 +262,7 @@ void DSP2_Op0D()
 	}
 
 	for (i = 0; i < DSP2Op0DOutLen; i++)
-		DSP1.output[i] =
-		    (pixelarray[i << 1] << 4) | pixelarray[(i << 1) + 1];
+		DSP1.output[i] = (pixelarray[i << 1] << 4) | pixelarray[(i << 1) + 1];
 }
 
 #endif

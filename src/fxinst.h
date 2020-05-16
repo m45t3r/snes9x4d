@@ -226,13 +226,13 @@ struct FxRegs_s {
 	uint32 vRomBankReg;    /* Rom bank index register */
 	uint32 vRamBankReg;    /* Ram bank index register */
 	uint32 vCacheBaseReg;  /* Cache base address register */
-	uint32 vCacheFlags; /* Saying what parts of the cache was written to */
-	uint32 vLastRamAdr; /* Last RAM address accessed */
-	uint32 *pvDreg;	    /* Pointer to current destination register */
-	uint32 *pvSreg;	    /* Pointer to current source register */
-	uint8 vRomBuffer;   /* Current byte read by R14 */
-	uint8 vPipe;	    /* Instructionset pipe */
-	uint32 vPipeAdr;    /* The address of where the pipe was read from */
+	uint32 vCacheFlags;    /* Saying what parts of the cache was written to */
+	uint32 vLastRamAdr;    /* Last RAM address accessed */
+	uint32 *pvDreg;	       /* Pointer to current destination register */
+	uint32 *pvSreg;	       /* Pointer to current source register */
+	uint8 vRomBuffer;      /* Current byte read by R14 */
+	uint8 vPipe;	       /* Instructionset pipe */
+	uint32 vPipeAdr;       /* The address of where the pipe was read from */
 
 	/* status register optimization stuff */
 	uint32 vSign;	 /* v & 0x8000 */
@@ -249,13 +249,12 @@ struct FxRegs_s {
 	uint32 vBreakPoint;
 	uint32 vStepPoint;
 
-	uint8 *
-	    pvRegisters; /* 768 bytes located in the memory at address 0x3000 */
-	uint32 nRamBanks; /* Number of 64kb-banks in FxRam (Don't confuse it
-			     with SNES-Ram!!!) */
-	uint8 *pvRam;	  /* Pointer to FxRam */
-	uint32 nRomBanks; /* Number of 32kb-banks in Cart-ROM */
-	uint8 *pvRom;	  /* Pointer to Cart-ROM */
+	uint8 *pvRegisters; /* 768 bytes located in the memory at address 0x3000 */
+	uint32 nRamBanks;   /* Number of 64kb-banks in FxRam (Don't confuse it
+			       with SNES-Ram!!!) */
+	uint8 *pvRam;	    /* Pointer to FxRam */
+	uint32 nRomBanks;   /* Number of 32kb-banks in Cart-ROM */
+	uint8 *pvRom;	    /* Pointer to Cart-ROM */
 
 	uint32 vMode;	  /* Color depth/mode */
 	uint32 vPrevMode; /* Previous depth */
@@ -287,12 +286,11 @@ struct FxRegs_s {
 			      need updating */
 };
 
-#define FxRegs_s_null                                                          \
-	{                                                                      \
-		{0}, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, 0, 0, 0, 0, 0, 0,  \
-		    0, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, NULL, 0, 0, NULL,      \
-		    {NULL}, {0}, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL,     \
-		    {NULL}, {NULL}, 0, NULL, {0}, 0, 0,                        \
+#define FxRegs_s_null                                                                                                  \
+	{                                                                                                              \
+		{0}, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, 0, NULL, 0,      \
+		    NULL, 0, 0, NULL, {NULL}, {0}, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, {NULL}, {NULL}, 0, NULL,  \
+		    {0}, 0, 0,                                                                                         \
 	}
 
 /* GSU registers */
@@ -345,8 +343,7 @@ struct FxRegs_s {
 #define SF(a) (GSU.vStatusReg |= FLG_##a)
 
 /* Test and set flag if condition, clear if not */
-#define TS(a, b)                                                               \
-	GSU.vStatusReg = ((GSU.vStatusReg & (~FLG_##a)) | ((!!(##b)) * FLG_##a))
+#define TS(a, b) GSU.vStatusReg = ((GSU.vStatusReg & (~FLG_##a)) | ((!!(##b)) * FLG_##a))
 
 /* Testing ALT1 & ALT2 bits */
 #define ALT0 (!TF(ALT1) && !TF(ALT2))
@@ -365,13 +362,13 @@ struct FxRegs_s {
 #define SUSEX16(a) ((int32)((uint16)(a)))
 
 /* Set/Clr Sign and Zero flag */
-#define TSZ(num)                                                               \
-	TS(S, (num & 0x8000));                                                 \
+#define TSZ(num)                                                                                                       \
+	TS(S, (num & 0x8000));                                                                                         \
 	TS(Z, (!USEX16(num)))
 
 /* Clear flags */
-#define CLRFLAGS                                                               \
-	GSU.vStatusReg &= ~(FLG_ALT1 | FLG_ALT2 | FLG_B);                      \
+#define CLRFLAGS                                                                                                       \
+	GSU.vStatusReg &= ~(FLG_ALT1 | FLG_ALT2 | FLG_B);                                                              \
 	GSU.pvDreg = GSU.pvSreg = &R0;
 
 /* Read current RAM-Bank */
@@ -388,15 +385,15 @@ struct FxRegs_s {
 
 /* Update pipe from ROM */
 #if 0
-#define FETCHPIPE                                                              \
-	{                                                                      \
-		PIPE = PRGBANK(R15);                                           \
-		GSU.vPipeAdr = (GSU.vPrgBankReg << 16) + R15;                  \
+#define FETCHPIPE                                                                                                      \
+	{                                                                                                              \
+		PIPE = PRGBANK(R15);                                                                                   \
+		GSU.vPipeAdr = (GSU.vPrgBankReg << 16) + R15;                                                          \
 	}
 #else
-#define FETCHPIPE                                                              \
-	{                                                                      \
-		PIPE = PRGBANK(R15);                                           \
+#define FETCHPIPE                                                                                                      \
+	{                                                                                                              \
+		PIPE = PRGBANK(R15);                                                                                   \
 	}
 #endif
 
@@ -423,8 +420,8 @@ struct FxRegs_s {
 #define READR14 GSU.vRomBuffer = ROM(R14)
 
 /* Test and/or read R14 */
-#define TESTR14                                                                \
-	if (GSU.pvDreg == &R14)                                                \
+#define TESTR14                                                                                                        \
+	if (GSU.pvDreg == &R14)                                                                                        \
 	READR14
 
 #endif
@@ -461,11 +458,11 @@ struct FxRegs_s {
 #define CLSR USEX8(GSU.pvRegisters[GSU_CLSR])
 
 /* Execute instruction from the pipe, and fetch next byte to the pipe */
-#define FX_STEP                                                                \
-	{                                                                      \
-		uint32 vOpcode = (uint32)PIPE;                                 \
-		FETCHPIPE;                                                     \
-		(*fx_ppfOpcodeTable[(GSU.vStatusReg & 0x300) | vOpcode])();    \
+#define FX_STEP                                                                                                        \
+	{                                                                                                              \
+		uint32 vOpcode = (uint32)PIPE;                                                                         \
+		FETCHPIPE;                                                                                             \
+		(*fx_ppfOpcodeTable[(GSU.vStatusReg & 0x300) | vOpcode])();                                            \
 	}
 
 #define FX_FUNCTION_RUN 0

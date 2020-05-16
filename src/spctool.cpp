@@ -57,9 +57,8 @@ void S9xSetPlaybackRate(uint32 rate)
 	SmpOpt.MixRout = 1;
 	SetSPUOpt(rate, SmpOpt);
 
-	//    so.playback_rate = playback_rate;
-	//    so.err_rate = (uint32) (SNES_SCANLINE_TIME * FIXED_POINT / (1.0 /
-	//    (double) so.playback_rate));
+	// so.playback_rate = playback_rate;
+	// so.err_rate = (uint32)(SNES_SCANLINE_TIME * FIXED_POINT / (1.0 / (double)so.playback_rate));
 }
 
 bool8 S9xSetSoundMute(bool8 mute) { return (TRUE); }
@@ -72,15 +71,13 @@ bool8 S9xInitSound(int mode, bool8 stereo, int buffer_size)
 
 	S9xSetSoundMute(TRUE);
 	if (!S9xOpenSoundDevice(mode, stereo, buffer_size)) {
-		S9xMessage(S9X_ERROR, S9X_SOUND_DEVICE_OPEN_FAILED,
-			   "Sound device open failed");
+		S9xMessage(S9X_ERROR, S9X_SOUND_DEVICE_OPEN_FAILED, "Sound device open failed");
 		return (FALSE);
 	}
 	return (TRUE);
 }
 
-void TraceSPC(unsigned char *PC, unsigned short YA, unsigned char X,
-	      SPCFlags PS, unsigned char *SP)
+void TraceSPC(unsigned char *PC, unsigned short YA, unsigned char X, SPCFlags PS, unsigned char *SP)
 {
 	APURegisters.YA.W = YA;
 	APURegisters.X = X;
@@ -99,12 +96,11 @@ bool8 S9xInitAPU()
 
 	SPCBase = malloc(131072); // Allocate memory for SPC RAM
 
-	IAPU.RAM = (uint8 *)InitSPU(
-	    SPCBase); // Initialize SPU w/ ptr to SPC RAM (Call only once)
+	IAPU.RAM = (uint8 *)InitSPU(SPCBase); // Initialize SPU w/ ptr to SPC RAM (Call only once)
 
 	S9xSetPlaybackRate(22000);
 	ResetSPU(20); // Reset SPU with pre-amp level of 30
-	//    _SetSPCDbg(TraceSPC);                   //Install debug handler
+	// _SetSPCDbg(TraceSPC); // Install debug handler
 	return (TRUE);
 }
 
@@ -113,14 +109,14 @@ void S9xResetAPU()
 	ResetSPU(20);
 	IAPU.RAM[0xf1] = 0x80;
 	_FixSPC(0xffc0, 0, 0, 0, 0, 0xff);
-	//    FixDSP ();
+	// FixDSP();
 }
 
 extern "C" void EDSP(uint8 *, int32);
 
 void S9xMixSamplesO(uint8 *buffer, int sample_count, int byte_offset)
 {
-	//    _EmuDSP (buffer + byte_offset, sample_count / 2);
+	// _EmuDSP(buffer + byte_offset, sample_count / 2);
 
 	EDSP(buffer + byte_offset, sample_count / 2);
 #if 0

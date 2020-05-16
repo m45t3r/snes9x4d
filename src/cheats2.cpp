@@ -54,16 +54,14 @@ void S9xInitCheatData()
 	Cheat.FillRAM = Memory.FillRAM;
 }
 
-void S9xAddCheat(bool8 enable, bool8 save_current_value, uint32 address,
-		 uint8 byte)
+void S9xAddCheat(bool8 enable, bool8 save_current_value, uint32 address, uint8 byte)
 {
 	if (Cheat.num_cheats < sizeof(Cheat.c) / sizeof(Cheat.c[0])) {
 		Cheat.c[Cheat.num_cheats].address = address;
 		Cheat.c[Cheat.num_cheats].byte = byte;
 		Cheat.c[Cheat.num_cheats].enabled = TRUE;
 		if (save_current_value) {
-			Cheat.c[Cheat.num_cheats].saved_byte =
-			    S9xGetByte(address, &CPU);
+			Cheat.c[Cheat.num_cheats].saved_byte = S9xGetByte(address, &CPU);
 			Cheat.c[Cheat.num_cheats].saved = TRUE;
 		}
 		Cheat.num_cheats++;
@@ -76,8 +74,7 @@ void S9xDeleteCheat(uint32 which1)
 		if (Cheat.c[which1].enabled)
 			S9xRemoveCheat(which1);
 
-		memmove(&Cheat.c[which1], &Cheat.c[which1 + 1],
-			sizeof(Cheat.c[0]) * (Cheat.num_cheats - which1 - 1));
+		memmove(&Cheat.c[which1], &Cheat.c[which1 + 1], sizeof(Cheat.c[0]) * (Cheat.num_cheats - which1 - 1));
 		Cheat.num_cheats = 0;
 	}
 }
@@ -113,8 +110,7 @@ void S9xRemoveCheat(uint32 which1)
 		uint8 *ptr = Memory.Map[block];
 
 		if (ptr >= (uint8 *)CMemory::MAP_LAST)
-			*(ptr + (address & 0xffff)) =
-			    Cheat.c[which1].saved_byte;
+			*(ptr + (address & 0xffff)) = Cheat.c[which1].saved_byte;
 		else
 			S9xSetByte(address, Cheat.c[which1].saved_byte, &CPU);
 	}
@@ -168,8 +164,7 @@ bool8 S9xLoadCheatFile(const char *filename)
 	while (fread((void *)data, 1, 28, fs) == 28) {
 		Cheat.c[Cheat.num_cheats].enabled = (data[0] & 4) == 0;
 		Cheat.c[Cheat.num_cheats].byte = data[1];
-		Cheat.c[Cheat.num_cheats].address =
-		    data[2] | (data[3] << 8) | (data[4] << 16);
+		Cheat.c[Cheat.num_cheats].address = data[2] | (data[3] << 8) | (data[4] << 16);
 		Cheat.c[Cheat.num_cheats].saved_byte = data[5];
 		Cheat.c[Cheat.num_cheats].saved = (data[0] & 8) != 0;
 		memmove(Cheat.c[Cheat.num_cheats].name, &data[8], 20);

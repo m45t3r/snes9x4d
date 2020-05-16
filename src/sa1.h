@@ -43,60 +43,58 @@
 
 #include "memmap.h"
 
-/*
+#if 0
 struct SSA1Registers {
-    uint8   PB;
-    uint8   DB;
-    pair    P;
-    pair    A;
-    pair    D;
-    pair    S;
-    pair    X;
-    pair    Y;
-    uint16  PC;
+	uint8 PB;
+	uint8 DB;
+	pair P;
+	pair A;
+	pair D;
+	pair S;
+	pair X;
+	pair Y;
+	uint16 PC;
 };
-*/
 
-/*
 struct SSA1 {
-    struct  SOpcodes *S9xOpcodes;
-    uint8   _Carry;
-    uint8   _Zero;
-    uint8   _Negative;
-    uint8   _Overflow;
-    bool8_32   CPUExecuting;
-    uint32  ShiftedPB;
-    uint32  ShiftedDB;
-    uint32  Flags;
-    bool8_32   Executing;
-    bool8_32   NMIActive;
-    bool8_32   IRQActive;
-    bool8_32   WaitingForInterrupt;
-    bool8_32   Waiting;
-//    uint8   WhichEvent;
-    uint8   *PC;
-    uint8   *PCBase;
-    uint8   *BWRAM;
-    uint8   *PCAtOpcodeStart;
-    uint8   *WaitAddress;
-    uint32  WaitCounter;
-    uint8   *WaitByteAddress1;
-    uint8   *WaitByteAddress2;
-//    long    Cycles;
-//    long    NextEvent;
-//    long    V_Counter;
-    uint8   *Map [MEMMAP_NUM_BLOCKS];
-    uint8   *WriteMap [MEMMAP_NUM_BLOCKS];
-    int16   op1;
-    int16   op2;
-    int     arithmetic_op;
-    int64   sum;
-    bool8_32   overflow;
-    uint8   VirtualBitmapFormat;
-    bool8_32   in_char_dma;
-    uint8   variable_bit_pos;
+	struct SOpcodes *S9xOpcodes;
+	uint8 _Carry;
+	uint8 _Zero;
+	uint8 _Negative;
+	uint8 _Overflow;
+	bool8_32 CPUExecuting;
+	uint32 ShiftedPB;
+	uint32 ShiftedDB;
+	uint32 Flags;
+	bool8_32 Executing;
+	bool8_32 NMIActive;
+	bool8_32 IRQActive;
+	bool8_32 WaitingForInterrupt;
+	bool8_32 Waiting;
+	// uint8 WhichEvent;
+	uint8 *PC;
+	uint8 *PCBase;
+	uint8 *BWRAM;
+	uint8 *PCAtOpcodeStart;
+	uint8 *WaitAddress;
+	uint32 WaitCounter;
+	uint8 *WaitByteAddress1;
+	uint8 *WaitByteAddress2;
+	// long Cycles;
+	// long NextEvent;
+	// long V_Counter;
+	uint8 *Map[MEMMAP_NUM_BLOCKS];
+	uint8 *WriteMap[MEMMAP_NUM_BLOCKS];
+	int16 op1;
+	int16 op2;
+	int arithmetic_op;
+	int64 sum;
+	bool8_32 overflow;
+	uint8 VirtualBitmapFormat;
+	bool8_32 in_char_dma;
+	uint8 variable_bit_pos;
 };
-*/
+#endif
 
 #define SA1CheckZero() (sa1->_Zero == 0)
 #define SA1CheckCarry() (sa1->_Carry)
@@ -152,10 +150,8 @@ STATIC inline void S9xSA1UnpackStatus()
 STATIC inline void S9xSA1PackStatus()
 {
 	SA1Registers.PL &= ~(Zero | Negative | Carry | Overflow);
-	SA1Registers.PL |= (SA1ICPU._Carry & 0xff) |
-			   (((SA1ICPU._Zero & 0xff) == 0) << 1) |
-			   ((SA1ICPU._Negative & 0xff) & 0x80) |
-			   ((SA1ICPU._Overflow & 0xff) << 6);
+	SA1Registers.PL |= (SA1ICPU._Carry & 0xff) | (((SA1ICPU._Zero & 0xff) == 0) << 1) |
+			   ((SA1ICPU._Negative & 0xff) & 0x80) | ((SA1ICPU._Overflow & 0xff) << 6);
 }
 
 STATIC inline void S9xSA1FixCycles(struct SRegisters *reg, struct SICPU *icpu)

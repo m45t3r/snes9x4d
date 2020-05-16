@@ -78,8 +78,7 @@ void S9xTextMode() {}
 
 void S9xInitDisplay(int /*argc*/, char ** /*argv*/)
 {
-	if (SDL_Init(SDL_INIT_VIDEO /*| (Settings.NextAPUEnabled ? SDL_INIT_AUDIO : 0)*/) < 0 )
- 	{
+	if (SDL_Init(SDL_INIT_VIDEO /*| (Settings.NextAPUEnabled ? SDL_INIT_AUDIO : 0)*/) < 0) {
 		printf("Could not initialize SDL(%s)\n", SDL_GetError());
 		S9xExit();
 	}
@@ -97,8 +96,7 @@ void S9xInitDisplay(int /*argc*/, char ** /*argv*/)
 	upscale_p_bilinear = UPSCALE_P_BILINEAR;
 #endif
 
-	screen = SDL_SetVideoMode(surfacewidth, surfaceheight, 16,
-				  SDL_HWSURFACE | SDL_DOUBLEBUF);
+	screen = SDL_SetVideoMode(surfacewidth, surfaceheight, 16, SDL_HWSURFACE | SDL_DOUBLEBUF);
 
 	if (screen == NULL) {
 		printf("Couldn't set video mode: %s\n", SDL_GetError());
@@ -106,13 +104,11 @@ void S9xInitDisplay(int /*argc*/, char ** /*argv*/)
 	}
 
 	if (Settings.SupportHiRes) {
-		gfxscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 480, 16, 0,
-						 0, 0, 0);
+		gfxscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 480, 16, 0, 0, 0, 0);
 		GFX.Screen = (uint8 *)gfxscreen->pixels;
 		GFX.Pitch = 512 * 2;
 	} else {
-		gfxscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, 256, 240, 16, 0,
-						 0, 0, 0);
+		gfxscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, 256, 240, 16, 0, 0, 0, 0);
 		GFX.Screen = (uint8 *)gfxscreen->pixels;
 		GFX.Pitch = 256 * 2;
 	}
@@ -136,8 +132,7 @@ void S9xSetPalette() {}
 void S9xSetTitle(const char * /*title*/) {}
 
 #ifndef _ZAURUS
-const char *S9xSelectFilename(const char *def, const char *dir1,
-			      const char *ext1, const char *title)
+const char *S9xSelectFilename(const char *def, const char *dir1, const char *ext1, const char *title)
 {
 	static char path[PATH_MAX];
 	char buffer[PATH_MAX];
@@ -165,8 +160,7 @@ const char *S9xSelectFilename(const char *def, const char *dir1,
 		char ext[_MAX_EXT];
 
 		_splitpath(p, drive, dir, fname, ext);
-		_makepath(path, drive, *dir ? dir : dir1, fname,
-			  *ext ? ext : ext1);
+		_makepath(path, drive, *dir ? dir : dir1, fname, *ext ? ext : ext1);
 		S9xGraphicsMode();
 		return (path);
 	}
@@ -177,21 +171,13 @@ const char *S9xSelectFilename(const char *def, const char *dir1,
 
 void S9xExtraUsage() {}
 
-bool8 S9xReadMousePosition(int /* which1 */, int & /* x */, int & /* y */,
-			   uint32 & /* buttons */)
+bool8 S9xReadMousePosition(int /* which1 */, int & /* x */, int & /* y */, uint32 & /* buttons */)
 {
 	// SDL_GetMouseState
 	return (FALSE);
 }
 
-bool8 S9xReadSuperScopePosition(int & /* x */, int & /* y */,
-				uint32 & /* buttons */)
-{
-	return (FALSE);
-}
+bool8 S9xReadSuperScopePosition(int & /* x */, int & /* y */, uint32 & /* buttons */) { return (FALSE); }
 #endif
 
-void S9xMessage(int /* type */, int /* number */, const char *message)
-{
-	fprintf(stderr, "%s\n", message);
-}
+void S9xMessage(int /* type */, int /* number */, const char *message) { fprintf(stderr, "%s\n", message); }

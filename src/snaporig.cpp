@@ -91,8 +91,7 @@ static int ReadBlock(const char *key, void *block, int max_len, STREAM snap)
 	int len = 0;
 	int rem = 0;
 
-	if (READ_STREAM(buffer, 11, snap) != 11 ||
-	    strncmp(buffer, key, 4) != 0 || (len = atoi(&buffer[4])) == 0)
+	if (READ_STREAM(buffer, 11, snap) != 11 || strncmp(buffer, key, 4) != 0 || (len = atoi(&buffer[4])) == 0)
 		return (WRONG_FORMAT);
 
 	if (len > max_len) {
@@ -123,23 +122,19 @@ static int ReadOrigSnapshot(STREAM snap)
 	int len = strlen(ORIG_SNAPSHOT_MAGIC) + 1 + 4 + 1;
 	if (READ_STREAM(buffer, len, snap) != len)
 		return (WRONG_FORMAT);
-	if (strncmp(buffer, ORIG_SNAPSHOT_MAGIC, strlen(ORIG_SNAPSHOT_MAGIC)) !=
-	    0)
+	if (strncmp(buffer, ORIG_SNAPSHOT_MAGIC, strlen(ORIG_SNAPSHOT_MAGIC)) != 0)
 		return (WRONG_FORMAT);
-	if ((version = atoi(&buffer[strlen(SNAPSHOT_MAGIC) + 1])) >
-	    ORIG_SNAPSHOT_VERSION)
+	if ((version = atoi(&buffer[strlen(SNAPSHOT_MAGIC) + 1])) > ORIG_SNAPSHOT_VERSION)
 		return (WRONG_VERSION);
 
-	if ((result = ReadBlock("NAM:", rom_filename, _MAX_PATH, snap)) !=
-	    SUCCESS)
+	if ((result = ReadBlock("NAM:", rom_filename, _MAX_PATH, snap)) != SUCCESS)
 		return (result);
 
 	if ((result = ReadBlock("HiR:", buffer, 0x41, snap)) != SUCCESS)
 		return (result);
 
 	if (strcasecmp(rom_filename, Memory.ROMFilename) != 0 &&
-	    strcasecmp(S9xBasename(rom_filename),
-		       S9xBasename(Memory.ROMFilename)) != 0) {
+	    strcasecmp(S9xBasename(rom_filename), S9xBasename(Memory.ROMFilename)) != 0) {
 		S9xMessage(S9X_WARNING, S9X_FREEZE_ROM_NAME,
 			   "Current loaded ROM image doesn't match that "
 			   "required by freeze-game file.");
@@ -147,8 +142,7 @@ static int ReadOrigSnapshot(STREAM snap)
 
 	S9xReset();
 	S9xSetSoundMute(TRUE);
-	if ((result = ReadBlock("CPU:", &OrigCPU, sizeof(OrigCPU), snap)) !=
-	    SUCCESS)
+	if ((result = ReadBlock("CPU:", &OrigCPU, sizeof(OrigCPU), snap)) != SUCCESS)
 		return (result);
 	OrigCPU.FastROMSpeed = OrigCPU.FastROMSpeed_old;
 	Memory.FixROMSpeed();
@@ -173,14 +167,12 @@ static int ReadOrigSnapshot(STREAM snap)
 	CPU.MemSpeedx2 = OrigCPU.MemSpeedx2;
 	CPU.FastROMSpeed = OrigCPU.FastROMSpeed;
 
-	if ((result = ReadBlock("REG:", &OrigRegisters, sizeof(OrigRegisters),
-				snap)) != SUCCESS)
+	if ((result = ReadBlock("REG:", &OrigRegisters, sizeof(OrigRegisters), snap)) != SUCCESS)
 		return (result);
 
 	Registers = *(struct SRegisters *)&OrigRegisters;
 
-	if ((result = ReadBlock("PPU:", &OrigPPU, sizeof(OrigPPU), snap)) !=
-	    SUCCESS)
+	if ((result = ReadBlock("PPU:", &OrigPPU, sizeof(OrigPPU), snap)) != SUCCESS)
 		return (result);
 
 	if (version == 2) {
@@ -272,8 +264,7 @@ static int ReadOrigSnapshot(STREAM snap)
 	PPU.Window2Left = OrigPPU.Window2Left;
 	PPU.Window2Right = OrigPPU.Window2Right;
 	for (i = 0; i < 6; i++) {
-		PPU.ClipWindowOverlapLogic[i] =
-		    OrigPPU.ClipWindowOverlapLogic[i];
+		PPU.ClipWindowOverlapLogic[i] = OrigPPU.ClipWindowOverlapLogic[i];
 		PPU.ClipWindow1Enable[i] = OrigPPU.ClipWindow1Enable[i];
 		PPU.ClipWindow2Enable[i] = OrigPPU.ClipWindow2Enable[i];
 		PPU.ClipWindow1Inside[i] = OrigPPU.ClipWindow1Inside[i];
@@ -287,8 +278,7 @@ static int ReadOrigSnapshot(STREAM snap)
 	S9xFixColourBrightness();
 	IPPU.RenderThisFrame = FALSE;
 
-	if ((result = ReadBlock("DMA:", OrigDMA, sizeof(OrigDMA), snap)) !=
-	    SUCCESS)
+	if ((result = ReadBlock("DMA:", OrigDMA, sizeof(OrigDMA), snap)) != SUCCESS)
 		return (result);
 
 	for (i = 0; i < 8; i++) {
@@ -301,8 +291,7 @@ static int ReadOrigSnapshot(STREAM snap)
 		DMA[i].Address = OrigDMA[i].Address;
 		DMA[i].BAddress = OrigDMA[i].BAddress;
 		DMA[i].TransferBytes = OrigDMA[i].TransferBytes;
-		DMA[i].HDMAIndirectAddressing =
-		    OrigDMA[i].HDMAIndirectAddressing;
+		DMA[i].HDMAIndirectAddressing = OrigDMA[i].HDMAIndirectAddressing;
 		DMA[i].IndirectAddress = OrigDMA[i].IndirectAddress;
 		DMA[i].IndirectBank = OrigDMA[i].IndirectBank;
 		DMA[i].Repeat = OrigDMA[i].Repeat;
@@ -316,28 +305,21 @@ static int ReadOrigSnapshot(STREAM snap)
 		return (result);
 	if ((result = ReadBlock("SRA:", ::SRAM, 0x10000, snap)) != SUCCESS)
 		return (result);
-	if ((result = ReadBlock("FIL:", Memory.FillRAM, 0x8000, snap)) !=
-	    SUCCESS)
+	if ((result = ReadBlock("FIL:", Memory.FillRAM, 0x8000, snap)) != SUCCESS)
 		return (result);
 	if (ReadBlock("APU:", &OrigAPU, sizeof(OrigAPU), snap) == SUCCESS) {
 		APU = *(struct SAPU *)&OrigAPU;
 
-		if ((result = ReadBlock("ARE:", &OrigAPURegisters,
-					sizeof(OrigAPURegisters), snap)) !=
-		    SUCCESS)
+		if ((result = ReadBlock("ARE:", &OrigAPURegisters, sizeof(OrigAPURegisters), snap)) != SUCCESS)
 			return (result);
 		APURegisters = *(struct SAPURegisters *)&OrigAPURegisters;
-		if ((result = ReadBlock("ARA:", IAPU.RAM, 0x10000, snap)) !=
-		    SUCCESS)
+		if ((result = ReadBlock("ARA:", IAPU.RAM, 0x10000, snap)) != SUCCESS)
 			return (result);
-		if ((result = ReadBlock("SOU:", &OrigSoundData,
-					sizeof(SOrigSoundData), snap)) !=
-		    SUCCESS)
+		if ((result = ReadBlock("SOU:", &OrigSoundData, sizeof(SOrigSoundData), snap)) != SUCCESS)
 			return (result);
 
 		SoundData.master_volume_left = OrigSoundData.master_volume_left;
-		SoundData.master_volume_right =
-		    OrigSoundData.master_volume_right;
+		SoundData.master_volume_right = OrigSoundData.master_volume_right;
 		SoundData.echo_volume_left = OrigSoundData.echo_volume_left;
 		SoundData.echo_volume_right = OrigSoundData.echo_volume_right;
 		SoundData.echo_enable = OrigSoundData.echo_enable;
@@ -345,73 +327,44 @@ static int ReadOrigSnapshot(STREAM snap)
 		SoundData.echo_ptr = OrigSoundData.echo_ptr;
 		SoundData.echo_buffer_size = OrigSoundData.echo_buffer_size;
 		SoundData.echo_write_enabled = OrigSoundData.echo_write_enabled;
-		SoundData.echo_channel_enable =
-		    OrigSoundData.echo_channel_enable;
+		SoundData.echo_channel_enable = OrigSoundData.echo_channel_enable;
 		SoundData.pitch_mod = OrigSoundData.pitch_mod;
 
 		for (i = 0; i < 3; i++)
 			SoundData.dummy[i] = OrigSoundData.dummy[i];
 		for (i = 0; i < NUM_CHANNELS; i++) {
-			SoundData.channels[i].state =
-			    OrigSoundData.channels[i].state;
-			SoundData.channels[i].type =
-			    OrigSoundData.channels[i].type;
-			SoundData.channels[i].volume_left =
-			    OrigSoundData.channels[i].volume_left;
-			SoundData.channels[i].volume_right =
-			    OrigSoundData.channels[i].volume_right;
-			SoundData.channels[i].hertz =
-			    OrigSoundData.channels[i].frequency;
-			SoundData.channels[i].count =
-			    OrigSoundData.channels[i].count;
-			SoundData.channels[i].loop =
-			    OrigSoundData.channels[i].loop;
-			SoundData.channels[i].envx =
-			    OrigSoundData.channels[i].envx;
-			SoundData.channels[i].left_vol_level =
-			    OrigSoundData.channels[i].left_vol_level;
-			SoundData.channels[i].right_vol_level =
-			    OrigSoundData.channels[i].right_vol_level;
-			SoundData.channels[i].envx_target =
-			    OrigSoundData.channels[i].envx_target;
-			SoundData.channels[i].env_error =
-			    OrigSoundData.channels[i].env_error;
-			SoundData.channels[i].erate =
-			    OrigSoundData.channels[i].erate;
-			SoundData.channels[i].direction =
-			    OrigSoundData.channels[i].direction;
-			SoundData.channels[i].attack_rate =
-			    OrigSoundData.channels[i].attack_rate;
-			SoundData.channels[i].decay_rate =
-			    OrigSoundData.channels[i].decay_rate;
-			SoundData.channels[i].sustain_rate =
-			    OrigSoundData.channels[i].sustain_rate;
-			SoundData.channels[i].release_rate =
-			    OrigSoundData.channels[i].release_rate;
-			SoundData.channels[i].sustain_level =
-			    OrigSoundData.channels[i].sustain_level;
-			SoundData.channels[i].sample =
-			    OrigSoundData.channels[i].sample;
+			SoundData.channels[i].state = OrigSoundData.channels[i].state;
+			SoundData.channels[i].type = OrigSoundData.channels[i].type;
+			SoundData.channels[i].volume_left = OrigSoundData.channels[i].volume_left;
+			SoundData.channels[i].volume_right = OrigSoundData.channels[i].volume_right;
+			SoundData.channels[i].hertz = OrigSoundData.channels[i].frequency;
+			SoundData.channels[i].count = OrigSoundData.channels[i].count;
+			SoundData.channels[i].loop = OrigSoundData.channels[i].loop;
+			SoundData.channels[i].envx = OrigSoundData.channels[i].envx;
+			SoundData.channels[i].left_vol_level = OrigSoundData.channels[i].left_vol_level;
+			SoundData.channels[i].right_vol_level = OrigSoundData.channels[i].right_vol_level;
+			SoundData.channels[i].envx_target = OrigSoundData.channels[i].envx_target;
+			SoundData.channels[i].env_error = OrigSoundData.channels[i].env_error;
+			SoundData.channels[i].erate = OrigSoundData.channels[i].erate;
+			SoundData.channels[i].direction = OrigSoundData.channels[i].direction;
+			SoundData.channels[i].attack_rate = OrigSoundData.channels[i].attack_rate;
+			SoundData.channels[i].decay_rate = OrigSoundData.channels[i].decay_rate;
+			SoundData.channels[i].sustain_rate = OrigSoundData.channels[i].sustain_rate;
+			SoundData.channels[i].release_rate = OrigSoundData.channels[i].release_rate;
+			SoundData.channels[i].sustain_level = OrigSoundData.channels[i].sustain_level;
+			SoundData.channels[i].sample = OrigSoundData.channels[i].sample;
 			for (j = 0; j < 16; j++)
-				SoundData.channels[i].decoded[j] =
-				    OrigSoundData.channels[i].decoded[j];
+				SoundData.channels[i].decoded[j] = OrigSoundData.channels[i].decoded[j];
 
 			for (j = 0; j < 2; j++)
-				SoundData.channels[i].previous[j] =
-				    OrigSoundData.channels[i].previous[j];
+				SoundData.channels[i].previous[j] = OrigSoundData.channels[i].previous[j];
 
-			SoundData.channels[i].sample_number =
-			    OrigSoundData.channels[i].sample_number;
-			SoundData.channels[i].last_block =
-			    OrigSoundData.channels[i].last_block;
-			SoundData.channels[i].needs_decode =
-			    OrigSoundData.channels[i].needs_decode;
-			SoundData.channels[i].block_pointer =
-			    OrigSoundData.channels[i].block_pointer;
-			SoundData.channels[i].sample_pointer =
-			    OrigSoundData.channels[i].sample_pointer;
-			SoundData.channels[i].mode =
-			    OrigSoundData.channels[i].mode;
+			SoundData.channels[i].sample_number = OrigSoundData.channels[i].sample_number;
+			SoundData.channels[i].last_block = OrigSoundData.channels[i].last_block;
+			SoundData.channels[i].needs_decode = OrigSoundData.channels[i].needs_decode;
+			SoundData.channels[i].block_pointer = OrigSoundData.channels[i].block_pointer;
+			SoundData.channels[i].sample_pointer = OrigSoundData.channels[i].sample_pointer;
+			SoundData.channels[i].mode = OrigSoundData.channels[i].mode;
 		}
 
 		S9xSetSoundMute(FALSE);

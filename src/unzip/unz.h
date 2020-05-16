@@ -41,8 +41,7 @@
  * or Silicon Graphics, or Convex, or IBM C Set/2, or GNU gcc under emx, or
  * or Watcom C, or Macintosh, or Windows NT.
  */
-#if (__STDC__ || defined(MSDOS) || defined(sgi) || defined(CONVEX) ||          \
-     defined(__sun))
+#if (__STDC__ || defined(MSDOS) || defined(sgi) || defined(CONVEX) || defined(__sun))
 #ifndef PROTO
 #define PROTO
 #endif
@@ -127,7 +126,7 @@
 #include <stddef.h>
 #endif
 #if (!defined(__GNUC__) && !defined(apollo)) /* both define __STDC__ */
-#include <stdlib.h> /* standard library prototypes, malloc(), etc. */
+#include <stdlib.h>			     /* standard library prototypes, malloc(), etc. */
 #else
 #ifdef __EMX__
 #include <stdlib.h> /* emx IS gcc but has stdlib.h */
@@ -237,12 +236,12 @@ struct tm *gmtime(), *localtime();
 #define far
 #endif /* __EMX__ */
 
-#ifdef MSC	/* defined for all versions of MSC now         */
-#define DOS_OS2 /* Turbo C under DOS, MSC under DOS or OS/2    */
+#ifdef MSC				     /* defined for all versions of MSC now         */
+#define DOS_OS2				     /* Turbo C under DOS, MSC under DOS or OS/2    */
 #if (defined(_MSC_VER) && (_MSC_VER >= 600)) /* new with 5.1 or 6.0 ... */
-#undef DECLARE_ERRNO /* errno is now a function in a dynamic link   */
-#endif		     /*   library (or something)--incompatible with */
-#endif		     /*   the usual "extern int errno" declaration  */
+#undef DECLARE_ERRNO			     /* errno is now a function in a dynamic link   */
+#endif					     /*   library (or something)--incompatible with */
+#endif					     /*   the usual "extern int errno" declaration  */
 
 #ifdef DOS_OS2	  /* defined for all MS-DOS and OS/2 compilers   */
 #include <io.h>	  /* lseek(), open(), setftime(), dup(), creat() */
@@ -291,16 +290,16 @@ struct tm *gmtime(), *localtime();
 #ifndef THINK_C
 #define RETURN return /* only used in main() */
 #else
-#define RETURN(v)                                                              \
-	{                                                                      \
-		int n;                                                         \
-		n = (v);                                                       \
-		fprintf(stderr, "\npress <return> to continue ");              \
-		while (getc(stdin) != '\n')                                    \
-			;                                                      \
-		putc('\n', stderr);                                            \
-		InitCursor();                                                  \
-		goto start;                                                    \
+#define RETURN(v)                                                                                                      \
+	{                                                                                                              \
+		int n;                                                                                                 \
+		n = (v);                                                                                               \
+		fprintf(stderr, "\npress <return> to continue ");                                                      \
+		while (getc(stdin) != '\n')                                                                            \
+			;                                                                                              \
+		putc('\n', stderr);                                                                                    \
+		InitCursor();                                                                                          \
+		goto start;                                                                                            \
 	}
 #endif
 #ifdef V7
@@ -431,8 +430,8 @@ typedef struct _MacInfo {
 #define WSIZE 0x8000 /* window size--must be a power of two, and */
 #endif /* !WSIZE */  /*  at least 32K for zip's deflate method */
 
-#define DIR_BLKSIZ                                                             \
-	64 /* number of directory entries per block                            \
+#define DIR_BLKSIZ                                                                                                     \
+	64 /* number of directory entries per block                                                                    \
 	    *  (should fit in 4096 bytes, usually) */
 #ifndef INBUFSIZ
 #define INBUFSIZ 2048 /* works for MS-DOS small model */
@@ -588,8 +587,8 @@ typedef struct _MacInfo {
 #define S_IXOTH 00001 /* execute permission: other */
 #endif		      /* !S_IRUSR */
 
-#ifdef ZIPINFO	/* these are individually checked because SysV doesn't */
-#ifndef S_IFBLK /*  have some of them, Microsoft C others, etc. */
+#ifdef ZIPINFO		/* these are individually checked because SysV doesn't */
+#ifndef S_IFBLK		/*  have some of them, Microsoft C others, etc. */
 #define S_IFBLK 0060000 /* block special */
 #endif
 #ifndef S_IFIFO		/* in Borland C, not MSC */
@@ -636,10 +635,9 @@ typedef struct min_info {
 	unsigned dos_attr;
 	int hostnum;
 	longint offset;
-	ULONG compr_size; /* compressed size (needed if extended header) */
-	ULONG crc;	  /* crc (needed if extended header) */
-	unsigned
-	    encrypted : 1; /* file encrypted: decrypt before uncompressing */
+	ULONG compr_size;	/* compressed size (needed if extended header) */
+	ULONG crc;		/* crc (needed if extended header) */
+	unsigned encrypted : 1; /* file encrypted: decrypt before uncompressing */
 	unsigned ExtLocHdr : 1; /* use time instead of CRC for decrypt check */
 	unsigned text : 1;	/* file is text or binary */
 	unsigned lcflag : 1;	/* convert filename to lowercase */
@@ -775,26 +773,23 @@ int ReadByte __((UWORD * x)); /* file_io.c */
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
-#define LSEEK(abs_offset)                                                      \
-	{                                                                      \
-		longint request = (abs_offset) + extra_bytes,                  \
-			inbuf_offset = request % INBUFSIZ,                     \
-			bufstart = request - inbuf_offset;                     \
-		if (request < 0) {                                             \
-			fprintf(stderr, SeekMsg, ReportMsg);                   \
-			return (3);                                            \
-		} else if (bufstart != cur_zipfile_bufstart) {                 \
-			cur_zipfile_bufstart =                                 \
-			    lseek(zipfd, bufstart, SEEK_SET);                  \
-			if ((incnt = read(zipfd, (char *)inbuf, INBUFSIZ)) <=  \
-			    0)                                                 \
-				return (51);                                   \
-			inptr = inbuf + (int)inbuf_offset;                     \
-			incnt -= (int)inbuf_offset;                            \
-		} else {                                                       \
-			incnt += (inptr - inbuf) - (int)inbuf_offset;          \
-			inptr = inbuf + (int)inbuf_offset;                     \
-		}                                                              \
+#define LSEEK(abs_offset)                                                                                              \
+	{                                                                                                              \
+		longint request = (abs_offset) + extra_bytes, inbuf_offset = request % INBUFSIZ,                       \
+			bufstart = request - inbuf_offset;                                                             \
+		if (request < 0) {                                                                                     \
+			fprintf(stderr, SeekMsg, ReportMsg);                                                           \
+			return (3);                                                                                    \
+		} else if (bufstart != cur_zipfile_bufstart) {                                                         \
+			cur_zipfile_bufstart = lseek(zipfd, bufstart, SEEK_SET);                                       \
+			if ((incnt = read(zipfd, (char *)inbuf, INBUFSIZ)) <= 0)                                       \
+				return (51);                                                                           \
+			inptr = inbuf + (int)inbuf_offset;                                                             \
+			incnt -= (int)inbuf_offset;                                                                    \
+		} else {                                                                                               \
+			incnt += (inptr - inbuf) - (int)inbuf_offset;                                                  \
+			inptr = inbuf + (int)inbuf_offset;                                                             \
+		}                                                                                                      \
 	}
 
 /*
@@ -829,11 +824,11 @@ int ReadByte __((UWORD * x)); /* file_io.c */
  *
  */
 
-#define SKIP_(length)                                                          \
-	if (length && ((error = do_string(length, SKIP)) != 0)) {              \
-		error_in_archive = error;                                      \
-		if (error > 1)                                                 \
-			return error;                                          \
+#define SKIP_(length)                                                                                                  \
+	if (length && ((error = do_string(length, SKIP)) != 0)) {                                                      \
+		error_in_archive = error;                                                                              \
+		if (error > 1)                                                                                         \
+			return error;                                                                                  \
 	}
 
 /*
@@ -852,13 +847,13 @@ int ReadByte __((UWORD * x)); /* file_io.c */
  *
  */
 
-#define READBIT(nbits, zdest)                                                  \
-	{                                                                      \
-		if (nbits > bits_left)                                         \
-			FillBitBuffer();                                       \
-		zdest = (int)((UWORD)bitbuf & mask_bits[nbits]);               \
-		bitbuf >>= nbits;                                              \
-		bits_left -= nbits;                                            \
+#define READBIT(nbits, zdest)                                                                                          \
+	{                                                                                                              \
+		if (nbits > bits_left)                                                                                 \
+			FillBitBuffer();                                                                               \
+		zdest = (int)((UWORD)bitbuf & mask_bits[nbits]);                                                       \
+		bitbuf >>= nbits;                                                                                      \
+		bits_left -= nbits;                                                                                    \
 	}
 
 /*
@@ -873,18 +868,16 @@ int ReadByte __((UWORD * x)); /* file_io.c */
  *
  */
 
-#define PEEKBIT(nbits)                                                         \
-	(nbits > bits_left                                                     \
-	     ? (FillBitBuffer(), (UWORD)bitbuf & mask_bits[nbits])             \
-	     : (UWORD)bitbuf & mask_bits[nbits])
+#define PEEKBIT(nbits)                                                                                                 \
+	(nbits > bits_left ? (FillBitBuffer(), (UWORD)bitbuf & mask_bits[nbits]) : (UWORD)bitbuf & mask_bits[nbits])
 
-#define NUKE_CRs(buf, len)                                                     \
-	{                                                                      \
-		register int i, j;                                             \
-		for (i = j = 0; j < len; (buf)[i++] = (buf)[j++])              \
-			if ((buf)[j] == '\r')                                  \
-				++j;                                           \
-		len = i;                                                       \
+#define NUKE_CRs(buf, len)                                                                                             \
+	{                                                                                                              \
+		register int i, j;                                                                                     \
+		for (i = j = 0; j < len; (buf)[i++] = (buf)[j++])                                                      \
+			if ((buf)[j] == '\r')                                                                          \
+				++j;                                                                                   \
+		len = i;                                                                                               \
 	}
 
 /*
@@ -906,16 +899,14 @@ int ReadByte __((UWORD * x)); /* file_io.c */
  *
  */
 
-#define TOLOWER(str1, str2)                                                    \
-	{                                                                      \
-		char *ps1, *ps2;                                               \
-		ps1 = (str1)-1;                                                \
-		ps2 = (str2);                                                  \
-		while (*++ps1)                                                 \
-			*ps2++ =                                               \
-			    (char)(isupper((int)(*ps1)) ? tolower((int)(*ps1)) \
-							: *ps1);               \
-		*ps2 = '\0';                                                   \
+#define TOLOWER(str1, str2)                                                                                            \
+	{                                                                                                              \
+		char *ps1, *ps2;                                                                                       \
+		ps1 = (str1)-1;                                                                                        \
+		ps2 = (str2);                                                                                          \
+		while (*++ps1)                                                                                         \
+			*ps2++ = (char)(isupper((int)(*ps1)) ? tolower((int)(*ps1)) : *ps1);                           \
+		*ps2 = '\0';                                                                                           \
 	}
 
 /*
@@ -950,11 +941,11 @@ int ReadByte __((UWORD * x)); /* file_io.c */
 #ifndef NATIVE
 #define NATIVE "native chars"
 #endif
-#define A_TO_N(str1)                                                           \
-	{                                                                      \
-		register unsigned char *ps1;                                   \
-		for (ps1 = str1; *ps1; ps1++)                                  \
-			*ps1 = ascii_to_native(*ps1);                          \
+#define A_TO_N(str1)                                                                                                   \
+	{                                                                                                              \
+		register unsigned char *ps1;                                                                           \
+		for (ps1 = str1; *ps1; ps1++)                                                                          \
+			*ps1 = ascii_to_native(*ps1);                                                                  \
 	}
 #endif
 
@@ -997,8 +988,8 @@ union work {
 union work {
 	struct {
 		short Prefix_of[HSIZE + 2]; /* (8194 * sizeof(short)) */
-		byte Suffix_of[HSIZE + 2]; /* also s-f length_nodes (smaller) */
-		byte Stack[HSIZE + 2]; /* also s-f distance_nodes (smaller) */
+		byte Suffix_of[HSIZE + 2];  /* also s-f length_nodes (smaller) */
+		byte Stack[HSIZE + 2];	    /* also s-f distance_nodes (smaller) */
 	} shrink;
 	byte Slide[WSIZE];
 };

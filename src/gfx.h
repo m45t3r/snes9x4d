@@ -58,10 +58,9 @@ struct SGFX {
 	uint16 *ZERO_OR_X2;
 	uint16 *ZERO;
 	uint32 RealPitch; // True pitch of Screen buffer.
-	uint32 Pitch2; // Same as RealPitch except while using speed up hack for
-		       // Glide.
-	uint32 ZPitch; // Pitch of ZBuffer
-	uint32 PPL;    // Number of pixels on each of Screen buffer
+	uint32 Pitch2;	  // Same as RealPitch except while using speed up hack for Glide.
+	uint32 ZPitch;	  // Pitch of ZBuffer
+	uint32 PPL;	  // Number of pixels on each of Screen buffer
 	uint32 PPLx2;
 	uint32 PixSize;
 	uint8 *S;
@@ -151,19 +150,18 @@ extern uint8 mul_brightness[16][32];
 
 #ifdef __ARM__
 // by Harald Kipp, from http://www.ethernut.de/en/documents/arm-inline-asm.html
-#define SWAP_DWORD(val)                                                        \
-	__asm__ __volatile__("eor     r3, %1, %1, ror #16\n\t"                 \
-			     "bic     r3, r3, #0x00FF0000\n\t"                 \
-			     "mov     %0, %1, ror #8\n\t"                      \
-			     "eor     %0, %0, r3, lsr #8"                      \
-			     : "=r"(val)                                       \
-			     : "0"(val)                                        \
+#define SWAP_DWORD(val)                                                                                                \
+	__asm__ __volatile__("eor     r3, %1, %1, ror #16\n\t"                                                         \
+			     "bic     r3, r3, #0x00FF0000\n\t"                                                         \
+			     "mov     %0, %1, ror #8\n\t"                                                              \
+			     "eor     %0, %0, r3, lsr #8"                                                              \
+			     : "=r"(val)                                                                               \
+			     : "0"(val)                                                                                \
 			     : "r3", "cc");
 #else
 // Could use BSWAP instruction on Intel port...
-#define SWAP_DWORD(dw)                                                         \
-	dw = ((dw & 0xff) << 24) | ((dw & 0xff00) << 8) |                      \
-	     ((dw & 0xff0000) >> 8) | ((dw & 0xff000000) >> 24)
+#define SWAP_DWORD(dw)                                                                                                 \
+	dw = ((dw & 0xff) << 24) | ((dw & 0xff00) << 8) | ((dw & 0xff0000) >> 8) | ((dw & 0xff000000) >> 24)
 #endif
 
 #define READ_2BYTES(s) READ_WORD(s)
@@ -191,9 +189,7 @@ inline uint16_t COLOR_ADD(uint16_t C1, uint16_t C2)
 	} else
 #endif
 	{
-		return (GFX.X2[((((C1)&RGB_REMOVE_LOW_BITS_MASK) +
-				 ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >>
-				1) +
+		return (GFX.X2[((((C1)&RGB_REMOVE_LOW_BITS_MASK) + ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >> 1) +
 			       ((C1) & (C2)&RGB_LOW_BITS_MASK)] |
 			(((C1) ^ (C2)) & RGB_LOW_BITS_MASK));
 	}
@@ -201,9 +197,7 @@ inline uint16_t COLOR_ADD(uint16_t C1, uint16_t C2)
 
 inline uint16_t COLOR_ADD1_2(uint16_t C1, uint16_t C2)
 {
-	return (((((C1)&RGB_REMOVE_LOW_BITS_MASK) +
-		  ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >>
-		 1) +
+	return (((((C1)&RGB_REMOVE_LOW_BITS_MASK) + ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >> 1) +
 		    ((C1) & (C2)&RGB_LOW_BITS_MASK) |
 		ALPHA_BITS_MASK);
 }
@@ -226,9 +220,7 @@ inline uint16_t COLOR_SUB(uint16_t C1, uint16_t C2)
 	} else
 #endif
 	{
-		return (GFX.ZERO_OR_X2[(((C1) | RGB_HI_BITS_MASKx2) -
-					((C2)&RGB_REMOVE_LOW_BITS_MASK)) >>
-				       1] +
+		return (GFX.ZERO_OR_X2[(((C1) | RGB_HI_BITS_MASKx2) - ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >> 1] +
 			((C1)&RGB_LOW_BITS_MASK) - ((C2)&RGB_LOW_BITS_MASK));
 	}
 }
@@ -251,22 +243,15 @@ inline uint16_t COLOR_SUB1_2(uint16_t C1, uint16_t C2)
 	} else
 #endif
 	{
-		return GFX.ZERO[(((C1) | RGB_HI_BITS_MASKx2) -
-				 ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >>
-				1];
+		return GFX.ZERO[(((C1) | RGB_HI_BITS_MASKx2) - ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >> 1];
 	}
 }
 
-typedef void (*NormalTileRenderer)(uint32 Tile, uint32 Offset, uint32 StartLine,
+typedef void (*NormalTileRenderer)(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount, struct SGFX *gfx);
+typedef void (*ClippedTileRenderer)(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Width, uint32 StartLine,
+				    uint32 LineCount, struct SGFX *gfx);
+typedef void (*LargePixelRenderer)(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Pixels, uint32 StartLine,
 				   uint32 LineCount, struct SGFX *gfx);
-typedef void (*ClippedTileRenderer)(uint32 Tile, uint32 Offset,
-				    uint32 StartPixel, uint32 Width,
-				    uint32 StartLine, uint32 LineCount,
-				    struct SGFX *gfx);
-typedef void (*LargePixelRenderer)(uint32 Tile, uint32 Offset,
-				   uint32 StartPixel, uint32 Pixels,
-				   uint32 StartLine, uint32 LineCount,
-				   struct SGFX *gfx);
 
 START_EXTERN_C
 void S9xStartScreenRefresh();

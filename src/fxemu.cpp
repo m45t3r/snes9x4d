@@ -287,8 +287,7 @@ static void fx_readRegisterSpace()
 	if (i == 3)
 		GSU.vScreenSize = (256 / 8) * (256 / 8) * 32;
 	else
-		GSU.vScreenSize =
-		    (GSU.vScreenHeight / 8) * (256 / 8) * avMult[GSU.vMode];
+		GSU.vScreenSize = (GSU.vScreenHeight / 8) * (256 / 8) * avMult[GSU.vMode];
 	if (GSU.vPlotOptionReg & 0x10) {
 		/* OBJ Mode (for drawing into sprites) */
 		GSU.vScreenHeight = 256;
@@ -297,10 +296,8 @@ static void fx_readRegisterSpace()
     if(GSU.pvScreenBase + GSU.vScreenSize > GSU.pvRam + (GSU.nRamBanks * 65536))
 	error illegal address for screen base register
 #else
-	if (GSU.pvScreenBase + GSU.vScreenSize >
-	    GSU.pvRam + (GSU.nRamBanks * 65536))
-		GSU.pvScreenBase =
-		    GSU.pvRam + (GSU.nRamBanks * 65536) - GSU.vScreenSize;
+	if (GSU.pvScreenBase + GSU.vScreenSize > GSU.pvRam + (GSU.nRamBanks * 65536))
+		GSU.pvScreenBase = GSU.pvRam + (GSU.nRamBanks * 65536) - GSU.vScreenSize;
 #endif
 	GSU.pfPlot = fx_apfPlotTable[GSU.vMode];
 	GSU.pfRpix = fx_apfPlotTable[GSU.vMode + 5];
@@ -319,8 +316,7 @@ void fx_dirtySCBR() { GSU.vSCBRDirty = TRUE; }
 
 void fx_computeScreenPointers()
 {
-	if (GSU.vMode != GSU.vPrevMode ||
-	    GSU.vPrevScreenHeight != GSU.vScreenHeight || GSU.vSCBRDirty) {
+	if (GSU.vMode != GSU.vPrevMode || GSU.vPrevScreenHeight != GSU.vScreenHeight || GSU.vSCBRDirty) {
 		int i;
 
 		GSU.vSCBRDirty = FALSE;
@@ -331,23 +327,20 @@ void fx_computeScreenPointers()
 			switch (GSU.vMode) {
 			case 0:
 				for (i = 0; i < 32; i++) {
-					GSU.apvScreen[i] =
-					    GSU.pvScreenBase + (i << 4);
+					GSU.apvScreen[i] = GSU.pvScreenBase + (i << 4);
 					GSU.x[i] = i << 8;
 				}
 				break;
 			case 1:
 				for (i = 0; i < 32; i++) {
-					GSU.apvScreen[i] =
-					    GSU.pvScreenBase + (i << 5);
+					GSU.apvScreen[i] = GSU.pvScreenBase + (i << 5);
 					GSU.x[i] = i << 9;
 				}
 				break;
 			case 2:
 			case 3:
 				for (i = 0; i < 32; i++) {
-					GSU.apvScreen[i] =
-					    GSU.pvScreenBase + (i << 6);
+					GSU.apvScreen[i] = GSU.pvScreenBase + (i << 6);
 					GSU.x[i] = i << 10;
 				}
 				break;
@@ -357,23 +350,20 @@ void fx_computeScreenPointers()
 			switch (GSU.vMode) {
 			case 0:
 				for (i = 0; i < 32; i++) {
-					GSU.apvScreen[i] =
-					    GSU.pvScreenBase + (i << 4);
+					GSU.apvScreen[i] = GSU.pvScreenBase + (i << 4);
 					GSU.x[i] = (i << 8) + (i << 6);
 				}
 				break;
 			case 1:
 				for (i = 0; i < 32; i++) {
-					GSU.apvScreen[i] =
-					    GSU.pvScreenBase + (i << 5);
+					GSU.apvScreen[i] = GSU.pvScreenBase + (i << 5);
 					GSU.x[i] = (i << 9) + (i << 7);
 				}
 				break;
 			case 2:
 			case 3:
 				for (i = 0; i < 32; i++) {
-					GSU.apvScreen[i] =
-					    GSU.pvScreenBase + (i << 6);
+					GSU.apvScreen[i] = GSU.pvScreenBase + (i << 6);
 					GSU.x[i] = (i << 10) + (i << 8);
 				}
 				break;
@@ -383,23 +373,20 @@ void fx_computeScreenPointers()
 			switch (GSU.vMode) {
 			case 0:
 				for (i = 0; i < 32; i++) {
-					GSU.apvScreen[i] =
-					    GSU.pvScreenBase + (i << 4);
+					GSU.apvScreen[i] = GSU.pvScreenBase + (i << 4);
 					GSU.x[i] = (i << 8) + (i << 7);
 				}
 				break;
 			case 1:
 				for (i = 0; i < 32; i++) {
-					GSU.apvScreen[i] =
-					    GSU.pvScreenBase + (i << 5);
+					GSU.apvScreen[i] = GSU.pvScreenBase + (i << 5);
 					GSU.x[i] = (i << 9) + (i << 8);
 				}
 				break;
 			case 2:
 			case 3:
 				for (i = 0; i < 32; i++) {
-					GSU.apvScreen[i] =
-					    GSU.pvScreenBase + (i << 6);
+					GSU.apvScreen[i] = GSU.pvScreenBase + (i << 6);
 					GSU.x[i] = (i << 10) + (i << 9);
 				}
 				break;
@@ -409,30 +396,21 @@ void fx_computeScreenPointers()
 			switch (GSU.vMode) {
 			case 0:
 				for (i = 0; i < 32; i++) {
-					GSU.apvScreen[i] = GSU.pvScreenBase +
-							   ((i & 0x10) << 9) +
-							   ((i & 0xf) << 8);
-					GSU.x[i] = ((i & 0x10) << 8) +
-						   ((i & 0xf) << 4);
+					GSU.apvScreen[i] = GSU.pvScreenBase + ((i & 0x10) << 9) + ((i & 0xf) << 8);
+					GSU.x[i] = ((i & 0x10) << 8) + ((i & 0xf) << 4);
 				}
 				break;
 			case 1:
 				for (i = 0; i < 32; i++) {
-					GSU.apvScreen[i] = GSU.pvScreenBase +
-							   ((i & 0x10) << 10) +
-							   ((i & 0xf) << 9);
-					GSU.x[i] = ((i & 0x10) << 9) +
-						   ((i & 0xf) << 5);
+					GSU.apvScreen[i] = GSU.pvScreenBase + ((i & 0x10) << 10) + ((i & 0xf) << 9);
+					GSU.x[i] = ((i & 0x10) << 9) + ((i & 0xf) << 5);
 				}
 				break;
 			case 2:
 			case 3:
 				for (i = 0; i < 32; i++) {
-					GSU.apvScreen[i] = GSU.pvScreenBase +
-							   ((i & 0x10) << 11) +
-							   ((i & 0xf) << 10);
-					GSU.x[i] = ((i & 0x10) << 10) +
-						   ((i & 0xf) << 6);
+					GSU.apvScreen[i] = GSU.pvScreenBase + ((i & 0x10) << 11) + ((i & 0xf) << 10);
+					GSU.x[i] = ((i & 0x10) << 10) + ((i & 0xf) << 6);
 				}
 				break;
 			}
@@ -577,8 +555,7 @@ void FxReset(struct FxInit_s *psFxInfo)
 static uint8 fx_checkStartAddress()
 {
 	/* Check if we start inside the cache */
-	if (GSU.bCacheActive && R15 >= GSU.vCacheBaseReg &&
-	    R15 < (GSU.vCacheBaseReg + 512))
+	if (GSU.bCacheActive && R15 >= GSU.vCacheBaseReg && R15 < (GSU.vCacheBaseReg + 512))
 		return TRUE;
 
 	/*  Check if we're in an unused area */
@@ -590,8 +567,7 @@ static uint8 fx_checkStartAddress()
 		return FALSE;
 
 	/* Check if we're in RAM and the RAN flag is not set */
-	if (GSU.vPrgBankReg >= 0x70 && GSU.vPrgBankReg <= 0x73 &&
-	    !(SCMR & (1 << 3)))
+	if (GSU.vPrgBankReg >= 0x70 && GSU.vPrgBankReg <= 0x73 && !(SCMR & (1 << 3)))
 		return FALSE;
 
 	/* If not, we're in ROM, so check if the RON flag is set */
@@ -625,8 +601,7 @@ int FxEmulate(uint32 nInstructions)
 	CF(IRQ);
 
 	if (GSU.bBreakPoint)
-		vCount = fx_ppfFunctionTable[FX_FUNCTION_RUN_TO_BREAKPOINT](
-		    nInstructions);
+		vCount = fx_ppfFunctionTable[FX_FUNCTION_RUN_TO_BREAKPOINT](nInstructions);
 	else
 		vCount = fx_ppfFunctionTable[FX_FUNCTION_RUN](nInstructions);
 
@@ -667,8 +642,7 @@ int FxStepOver(uint32 nInstructions)
 
 	if (PIPE >= 0xf0)
 		GSU.vStepPoint = USEX16(R15 + 3);
-	else if ((PIPE >= 0x05 && PIPE <= 0x0f) ||
-		 (PIPE >= 0xa0 && PIPE <= 0xaf))
+	else if ((PIPE >= 0x05 && PIPE <= 0x0f) || (PIPE >= 0xa0 && PIPE <= 0xaf))
 		GSU.vStepPoint = USEX16(R15 + 2);
 	else
 		GSU.vStepPoint = USEX16(R15 + 1);

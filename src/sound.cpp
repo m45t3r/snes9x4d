@@ -60,8 +60,7 @@
 
 extern SoundStatus so;
 
-extern int AudioOpen(unsigned long freq, unsigned long bufsize,
-		     unsigned long bitrate, unsigned long stereo);
+extern int AudioOpen(unsigned long freq, unsigned long bufsize, unsigned long bitrate, unsigned long stereo);
 extern void AudioClose(void);
 
 extern int OpenPrelude(ULONG Type, ULONG DefaultFreq, ULONG MinBuffSize);
@@ -113,8 +112,7 @@ ULONG BufferLen = NULL;
 int test = 0;
 int test2 = 0;
 
-int AudioOpen(unsigned long freq, unsigned long minbufsize,
-	      unsigned long bitrate, unsigned long stereo)
+int AudioOpen(unsigned long freq, unsigned long minbufsize, unsigned long bitrate, unsigned long stereo)
 {
 	ULONG Type;
 
@@ -169,8 +167,7 @@ int AudioOpen(unsigned long freq, unsigned long minbufsize,
 	 * nearest 32 bytes.  Check AHIData->BufferSize or
 	 * Samples[n].something_Length
 	 */
-	if (AHIData = OpenAHI(1, Type, AHI_INVALID_ID, AHI_DEFAULT_FREQ, 0,
-			      minbufsize)) {
+	if (AHIData = OpenAHI(1, Type, AHI_INVALID_ID, AHI_DEFAULT_FREQ, 0, minbufsize)) {
 		printf("AHI opened\n");
 		printf("BuffSize %d\n", AHIData->BufferSize);
 	} else {

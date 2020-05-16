@@ -118,9 +118,7 @@ typedef struct unz_file_info_s {
 	tm_unz tmu_date;
 } unz_file_info;
 
-extern int ZEXPORT unzStringFileNameCompare OF((const char *fileName1,
-						const char *fileName2,
-						int iCaseSensitivity));
+extern int ZEXPORT unzStringFileNameCompare OF((const char *fileName1, const char *fileName2, int iCaseSensitivity));
 /*
    Compare two filename (fileName1,fileName2).
    If iCaseSenisivity = 1, comparision is case sensitivity (like strcmp)
@@ -148,15 +146,13 @@ extern int ZEXPORT unzClose OF((unzFile file));
     these files MUST be closed with unzipCloseCurrentFile before call
   unzipClose. return UNZ_OK if there is no problem. */
 
-extern int ZEXPORT unzGetGlobalInfo OF((unzFile file,
-					unz_global_info *pglobal_info));
+extern int ZEXPORT unzGetGlobalInfo OF((unzFile file, unz_global_info *pglobal_info));
 /*
   Write info about the ZipFile in the *pglobal_info structure.
   No preparation of the structure is needed
   return UNZ_OK if there is no problem. */
 
-extern int ZEXPORT unzGetGlobalComment OF((unzFile file, char *szComment,
-					   uLong uSizeBuf));
+extern int ZEXPORT unzGetGlobalComment OF((unzFile file, char *szComment, uLong uSizeBuf));
 /*
   Get the global comment string of the ZipFile, in the szComment buffer.
   uSizeBuf is the size of the szComment buffer.
@@ -179,8 +175,7 @@ extern int ZEXPORT unzGoToNextFile OF((unzFile file));
   return UNZ_END_OF_LIST_OF_FILE if the actual file was the latest.
 */
 
-extern int ZEXPORT unzLocateFile OF((unzFile file, const char *szFileName,
-				     int iCaseSensitivity));
+extern int ZEXPORT unzLocateFile OF((unzFile file, const char *szFileName, int iCaseSensitivity));
 /*
   Try locate the file szFileName in the zipfile.
   For the iCaseSensitivity signification, see unzStringFileNameCompare
@@ -190,10 +185,9 @@ extern int ZEXPORT unzLocateFile OF((unzFile file, const char *szFileName,
   UNZ_END_OF_LIST_OF_FILE if the file is not found
 */
 
-extern int ZEXPORT unzGetCurrentFileInfo
-    OF((unzFile file, unz_file_info *pfile_info, char *szFileName,
-	uLong fileNameBufferSize, void *extraField, uLong extraFieldBufferSize,
-	char *szComment, uLong commentBufferSize));
+extern int ZEXPORT unzGetCurrentFileInfo OF((unzFile file, unz_file_info *pfile_info, char *szFileName,
+					     uLong fileNameBufferSize, void *extraField, uLong extraFieldBufferSize,
+					     char *szComment, uLong commentBufferSize));
 /*
   Get Info about the current file
   if pfile_info!=NULL, the *pfile_info structure will contain somes info about
@@ -224,8 +218,7 @@ extern int ZEXPORT unzCloseCurrentFile OF((unzFile file));
   Return UNZ_CRCERROR if all the file was read but the CRC is not good
 */
 
-extern int ZEXPORT unzReadCurrentFile OF((unzFile file, voidp buf,
-					  unsigned len));
+extern int ZEXPORT unzReadCurrentFile OF((unzFile file, voidp buf, unsigned len));
 /*
   Read bytes from the current file (opened by unzOpenCurrentFile)
   buf contain buffer where data must be copied
@@ -247,8 +240,7 @@ extern int ZEXPORT unzeof OF((unzFile file));
   return 1 if the end of file was reached, 0 elsewhere
 */
 
-extern int ZEXPORT unzGetLocalExtrafield OF((unzFile file, voidp buf,
-					     unsigned len));
+extern int ZEXPORT unzGetLocalExtrafield OF((unzFile file, voidp buf, unsigned len));
 /*
   Read extra field from the current file (opened by unzOpenCurrentFile)
   This is the local-header version of the extra field (sometimes, there is

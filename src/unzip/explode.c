@@ -70,8 +70,8 @@
 #include <stdlib.h>
 
 #ifndef WSIZE
-#define WSIZE                                                                  \
-	0x8000 /* window size--must be a power of two, and at least            \
+#define WSIZE                                                                                                          \
+	0x8000 /* window size--must be a power of two, and at least                                                    \
 		  8K for zip's implode method */
 #endif	       /* !WSIZE */
 
@@ -87,17 +87,14 @@ struct huft {
 /* Function prototypes */
 /* routines from inflate.c */
 extern unsigned hufts;
-int huft_build OF((unsigned *, unsigned, unsigned, UWORD *, UWORD *,
-		   struct huft **, int *));
+int huft_build OF((unsigned *, unsigned, unsigned, UWORD *, UWORD *, struct huft **, int *));
 int huft_free OF((struct huft *));
 void flush OF((unsigned));
 
 /* routines here */
 int get_tree OF((unsigned *, unsigned));
-int explode_lit8 OF((struct huft *, struct huft *, struct huft *, int, int,
-		     int));
-int explode_lit4 OF((struct huft *, struct huft *, struct huft *, int, int,
-		     int));
+int explode_lit8 OF((struct huft *, struct huft *, struct huft *, int, int, int));
+int explode_lit4 OF((struct huft *, struct huft *, struct huft *, int, int, int));
 int explode_nolit8 OF((struct huft *, struct huft *, int, int));
 int explode_nolit4 OF((struct huft *, struct huft *, int, int));
 int explode();
@@ -118,34 +115,22 @@ extern unz_s *pUnzip;
  */
 
 /* Tables for length and distance */
-UWORD cplen2[] = {2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14,
-		  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
-		  28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-		  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53,
-		  54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65};
-UWORD cplen3[] = {3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 15,
-		  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
-		  29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
-		  42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,
-		  55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66};
-UWORD extra[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8};
-UWORD cpdist4[] = {1,	 65,   129,  193,  257,	 321,  385,  449,  513,	 577,
-		   641,	 705,  769,  833,  897,	 961,  1025, 1089, 1153, 1217,
-		   1281, 1345, 1409, 1473, 1537, 1601, 1665, 1729, 1793, 1857,
-		   1921, 1985, 2049, 2113, 2177, 2241, 2305, 2369, 2433, 2497,
-		   2561, 2625, 2689, 2753, 2817, 2881, 2945, 3009, 3073, 3137,
-		   3201, 3265, 3329, 3393, 3457, 3521, 3585, 3649, 3713, 3777,
-		   3841, 3905, 3969, 4033};
-UWORD cpdist8[] = {1,	 129,  257,  385,  513,	 641,  769,  897,  1025, 1153,
-		   1281, 1409, 1537, 1665, 1793, 1921, 2049, 2177, 2305, 2433,
-		   2561, 2689, 2817, 2945, 3073, 3201, 3329, 3457, 3585, 3713,
-		   3841, 3969, 4097, 4225, 4353, 4481, 4609, 4737, 4865, 4993,
-		   5121, 5249, 5377, 5505, 5633, 5761, 5889, 6017, 6145, 6273,
-		   6401, 6529, 6657, 6785, 6913, 7041, 7169, 7297, 7425, 7553,
-		   7681, 7809, 7937, 8065};
+UWORD cplen2[] = {2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+		  24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45,
+		  46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65};
+UWORD cplen3[] = {3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+		  25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46,
+		  47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66};
+UWORD extra[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8};
+UWORD cpdist4[] = {1,	 65,   129,  193,  257,	 321,  385,  449,  513,	 577,  641,  705,  769,	 833,  897,  961,
+		   1025, 1089, 1153, 1217, 1281, 1345, 1409, 1473, 1537, 1601, 1665, 1729, 1793, 1857, 1921, 1985,
+		   2049, 2113, 2177, 2241, 2305, 2369, 2433, 2497, 2561, 2625, 2689, 2753, 2817, 2881, 2945, 3009,
+		   3073, 3137, 3201, 3265, 3329, 3393, 3457, 3521, 3585, 3649, 3713, 3777, 3841, 3905, 3969, 4033};
+UWORD cpdist8[] = {1,	 129,  257,  385,  513,	 641,  769,  897,  1025, 1153, 1281, 1409, 1537, 1665, 1793, 1921,
+		   2049, 2177, 2305, 2433, 2561, 2689, 2817, 2945, 3073, 3201, 3329, 3457, 3585, 3713, 3841, 3969,
+		   4097, 4225, 4353, 4481, 4609, 4737, 4865, 4993, 5121, 5249, 5377, 5505, 5633, 5761, 5889, 6017,
+		   6145, 6273, 6401, 6529, 6657, 6785, 6913, 7041, 7169, 7297, 7425, 7553, 7681, 7809, 7937, 8065};
 
 /* Macros for inflate() bit peeking and grabbing.
    The usage is:
@@ -162,23 +147,22 @@ UWORD cpdist8[] = {1,	 129,  257,  385,  513,	 641,  769,  897,  1025, 1153,
 
 extern UWORD bytebuf; /* (use the one in inflate.c) */
 #define NEXTBYTE (ReadByte(&bytebuf), bytebuf)
-#define NEEDBITS(n)                                                            \
-	{                                                                      \
-		while (k < (n)) {                                              \
-			b |= ((ULONG)NEXTBYTE) << k;                           \
-			k += 8;                                                \
-		}                                                              \
+#define NEEDBITS(n)                                                                                                    \
+	{                                                                                                              \
+		while (k < (n)) {                                                                                      \
+			b |= ((ULONG)NEXTBYTE) << k;                                                                   \
+			k += 8;                                                                                        \
+		}                                                                                                      \
 	}
-#define DUMPBITS(n)                                                            \
-	{                                                                      \
-		b >>= (n);                                                     \
-		k -= (n);                                                      \
+#define DUMPBITS(n)                                                                                                    \
+	{                                                                                                              \
+		b >>= (n);                                                                                             \
+		k -= (n);                                                                                              \
 	}
 
 /* HERE */
-UWORD mask_bits[] = {0x0000, 0x0001, 0x0003, 0x0007, 0x000f, 0x001f,
-		     0x003f, 0x007f, 0x00ff, 0x01ff, 0x03ff, 0x07ff,
-		     0x0fff, 0x1fff, 0x3fff, 0x7fff, 0xffff};
+UWORD mask_bits[] = {0x0000, 0x0001, 0x0003, 0x0007, 0x000f, 0x001f, 0x003f, 0x007f, 0x00ff,
+		     0x01ff, 0x03ff, 0x07ff, 0x0fff, 0x1fff, 0x3fff, 0x7fff, 0xffff};
 union work area; /* see unzip.h for the definition of work */
 ULONG crc32val;
 ush bytebuf;
@@ -204,7 +188,7 @@ unsigned n;			/* number expected */
 	do {
 		ReadByte(&bytebuf);
 		b = ((j = bytebuf) & 0xf) + 1; /* bits in code (1..16) */
-		j = ((j & 0xf0) >> 4) + 1; /* codes with those bits (1..16) */
+		j = ((j & 0xf0) >> 4) + 1;     /* codes with those bits (1..16) */
 		if (k + j > n)
 			return 4; /* don't overflow l[] */
 		do {
@@ -214,9 +198,8 @@ unsigned n;			/* number expected */
 	return k != n ? 4 : 0; /* should have read n of them */
 }
 
-int explode_lit8(tb, tl, td, bb, bl, bd) struct huft *tb, *tl,
-    *td;	/* literal, length, and distance tables */
-int bb, bl, bd; /* number of bits decoded by those */
+int explode_lit8(tb, tl, td, bb, bl, bd) struct huft *tb, *tl, *td; /* literal, length, and distance tables */
+int bb, bl, bd;							    /* number of bits decoded by those */
 /* Decompress the imploded data using coded literals and an 8K sliding
    window. */
 {
@@ -252,9 +235,7 @@ int bb, bl, bd; /* number of bits decoded by those */
 					DUMPBITS(t->b)
 					e -= 16;
 					NEEDBITS(e)
-				} while ((e = (t = t->v.t + ((~(unsigned)b) &
-							     mask_bits[e]))
-						  ->e) > 16);
+				} while ((e = (t = t->v.t + ((~(unsigned)b) & mask_bits[e]))->e) > 16);
 			DUMPBITS(t->b)
 			slide[w++] = (byte)t->v.n;
 			if (w == WSIZE) {
@@ -267,8 +248,7 @@ int bb, bl, bd; /* number of bits decoded by those */
 			NEEDBITS(7) /* get distance low bits */
 			d = (unsigned)b & 0x7f;
 			DUMPBITS(7)
-			NEEDBITS(
-			    (unsigned)bd) /* get coded distance high bits */
+			NEEDBITS((unsigned)bd) /* get coded distance high bits */
 			if ((e = (t = td + ((~(unsigned)b) & md))->e) > 16)
 				do {
 					if (e == 99)
@@ -276,9 +256,7 @@ int bb, bl, bd; /* number of bits decoded by those */
 					DUMPBITS(t->b)
 					e -= 16;
 					NEEDBITS(e)
-				} while ((e = (t = t->v.t + ((~(unsigned)b) &
-							     mask_bits[e]))
-						  ->e) > 16);
+				} while ((e = (t = t->v.t + ((~(unsigned)b) & mask_bits[e]))->e) > 16);
 			DUMPBITS(t->b)
 			d = w - d - t->v.n;    /* construct offset */
 			NEEDBITS((unsigned)bl) /* get coded length */
@@ -289,9 +267,7 @@ int bb, bl, bd; /* number of bits decoded by those */
 					DUMPBITS(t->b)
 					e -= 16;
 					NEEDBITS(e)
-				} while ((e = (t = t->v.t + ((~(unsigned)b) &
-							     mask_bits[e]))
-						  ->e) > 16);
+				} while ((e = (t = t->v.t + ((~(unsigned)b) & mask_bits[e]))->e) > 16);
 			DUMPBITS(t->b)
 			n = t->v.n;
 			if (e) /* get length extra bits */
@@ -304,11 +280,7 @@ int bb, bl, bd; /* number of bits decoded by those */
 			/* do the copy */
 			s -= n;
 			do {
-				n -= (e = (e = WSIZE -
-					       ((d &= WSIZE - 1) > w ? d : w)) >
-						  n
-					      ? n
-					      : e);
+				n -= (e = (e = WSIZE - ((d &= WSIZE - 1) > w ? d : w)) > n ? n : e);
 				if (u && w <= d) {
 					memset(slide + w, 0, e);
 					w += e;
@@ -337,14 +309,11 @@ int bb, bl, bd; /* number of bits decoded by those */
 
 	/* flush out slide */
 	flush(w);
-	return pfile_in_zip_read_info->rest_read_compressed
-		   ? 5
-		   : 0; /* should have read csize bytes */
+	return pfile_in_zip_read_info->rest_read_compressed ? 5 : 0; /* should have read csize bytes */
 }
 
-int explode_lit4(tb, tl, td, bb, bl, bd) struct huft *tb, *tl,
-    *td;	/* literal, length, and distance tables */
-int bb, bl, bd; /* number of bits decoded by those */
+int explode_lit4(tb, tl, td, bb, bl, bd) struct huft *tb, *tl, *td; /* literal, length, and distance tables */
+int bb, bl, bd;							    /* number of bits decoded by those */
 /* Decompress the imploded data using coded literals and a 4K sliding
    window. */
 {
@@ -380,9 +349,7 @@ int bb, bl, bd; /* number of bits decoded by those */
 					DUMPBITS(t->b)
 					e -= 16;
 					NEEDBITS(e)
-				} while ((e = (t = t->v.t + ((~(unsigned)b) &
-							     mask_bits[e]))
-						  ->e) > 16);
+				} while ((e = (t = t->v.t + ((~(unsigned)b) & mask_bits[e]))->e) > 16);
 			DUMPBITS(t->b)
 			slide[w++] = (byte)t->v.n;
 			if (w == WSIZE) {
@@ -395,8 +362,7 @@ int bb, bl, bd; /* number of bits decoded by those */
 			NEEDBITS(6) /* get distance low bits */
 			d = (unsigned)b & 0x3f;
 			DUMPBITS(6)
-			NEEDBITS(
-			    (unsigned)bd) /* get coded distance high bits */
+			NEEDBITS((unsigned)bd) /* get coded distance high bits */
 			if ((e = (t = td + ((~(unsigned)b) & md))->e) > 16)
 				do {
 					if (e == 99)
@@ -404,9 +370,7 @@ int bb, bl, bd; /* number of bits decoded by those */
 					DUMPBITS(t->b)
 					e -= 16;
 					NEEDBITS(e)
-				} while ((e = (t = t->v.t + ((~(unsigned)b) &
-							     mask_bits[e]))
-						  ->e) > 16);
+				} while ((e = (t = t->v.t + ((~(unsigned)b) & mask_bits[e]))->e) > 16);
 			DUMPBITS(t->b)
 			d = w - d - t->v.n;    /* construct offset */
 			NEEDBITS((unsigned)bl) /* get coded length */
@@ -417,9 +381,7 @@ int bb, bl, bd; /* number of bits decoded by those */
 					DUMPBITS(t->b)
 					e -= 16;
 					NEEDBITS(e)
-				} while ((e = (t = t->v.t + ((~(unsigned)b) &
-							     mask_bits[e]))
-						  ->e) > 16);
+				} while ((e = (t = t->v.t + ((~(unsigned)b) & mask_bits[e]))->e) > 16);
 			DUMPBITS(t->b)
 			n = t->v.n;
 			if (e) /* get length extra bits */
@@ -432,11 +394,7 @@ int bb, bl, bd; /* number of bits decoded by those */
 			/* do the copy */
 			s -= n;
 			do {
-				n -= (e = (e = WSIZE -
-					       ((d &= WSIZE - 1) > w ? d : w)) >
-						  n
-					      ? n
-					      : e);
+				n -= (e = (e = WSIZE - ((d &= WSIZE - 1) > w ? d : w)) > n ? n : e);
 				if (u && w <= d) {
 					memset(slide + w, 0, e);
 					w += e;
@@ -465,14 +423,11 @@ int bb, bl, bd; /* number of bits decoded by those */
 
 	/* flush out slide */
 	flush(w);
-	return pfile_in_zip_read_info->rest_read_compressed
-		   ? 5
-		   : 0; /* should have read csize bytes */
+	return pfile_in_zip_read_info->rest_read_compressed ? 5 : 0; /* should have read csize bytes */
 }
 
-int explode_nolit8(tl, td, bl, bd) struct huft *tl,
-    *td;    /* length and distance decoder tables */
-int bl, bd; /* number of bits decoded by tl[] and td[] */
+int explode_nolit8(tl, td, bl, bd) struct huft *tl, *td; /* length and distance decoder tables */
+int bl, bd;						 /* number of bits decoded by tl[] and td[] */
 /* Decompress the imploded data using uncoded literals and an 8K sliding
    window. */
 {
@@ -512,8 +467,7 @@ int bl, bd; /* number of bits decoded by tl[] and td[] */
 			NEEDBITS(7) /* get distance low bits */
 			d = (unsigned)b & 0x7f;
 			DUMPBITS(7)
-			NEEDBITS(
-			    (unsigned)bd) /* get coded distance high bits */
+			NEEDBITS((unsigned)bd) /* get coded distance high bits */
 			if ((e = (t = td + ((~(unsigned)b) & md))->e) > 16)
 				do {
 					if (e == 99)
@@ -521,9 +475,7 @@ int bl, bd; /* number of bits decoded by tl[] and td[] */
 					DUMPBITS(t->b)
 					e -= 16;
 					NEEDBITS(e)
-				} while ((e = (t = t->v.t + ((~(unsigned)b) &
-							     mask_bits[e]))
-						  ->e) > 16);
+				} while ((e = (t = t->v.t + ((~(unsigned)b) & mask_bits[e]))->e) > 16);
 			DUMPBITS(t->b)
 			d = w - d - t->v.n;    /* construct offset */
 			NEEDBITS((unsigned)bl) /* get coded length */
@@ -534,9 +486,7 @@ int bl, bd; /* number of bits decoded by tl[] and td[] */
 					DUMPBITS(t->b)
 					e -= 16;
 					NEEDBITS(e)
-				} while ((e = (t = t->v.t + ((~(unsigned)b) &
-							     mask_bits[e]))
-						  ->e) > 16);
+				} while ((e = (t = t->v.t + ((~(unsigned)b) & mask_bits[e]))->e) > 16);
 			DUMPBITS(t->b)
 			n = t->v.n;
 			if (e) /* get length extra bits */
@@ -549,11 +499,7 @@ int bl, bd; /* number of bits decoded by tl[] and td[] */
 			/* do the copy */
 			s -= n;
 			do {
-				n -= (e = (e = WSIZE -
-					       ((d &= WSIZE - 1) > w ? d : w)) >
-						  n
-					      ? n
-					      : e);
+				n -= (e = (e = WSIZE - ((d &= WSIZE - 1) > w ? d : w)) > n ? n : e);
 				if (u && w <= d) {
 					memset(slide + w, 0, e);
 					w += e;
@@ -582,14 +528,11 @@ int bl, bd; /* number of bits decoded by tl[] and td[] */
 
 	/* flush out slide */
 	flush(w);
-	return pfile_in_zip_read_info->rest_read_compressed
-		   ? 5
-		   : 0; /* should have read csize bytes */
+	return pfile_in_zip_read_info->rest_read_compressed ? 5 : 0; /* should have read csize bytes */
 }
 
-int explode_nolit4(tl, td, bl, bd) struct huft *tl,
-    *td;    /* length and distance decoder tables */
-int bl, bd; /* number of bits decoded by tl[] and td[] */
+int explode_nolit4(tl, td, bl, bd) struct huft *tl, *td; /* length and distance decoder tables */
+int bl, bd;						 /* number of bits decoded by tl[] and td[] */
 /* Decompress the imploded data using uncoded literals and a 4K sliding
    window. */
 {
@@ -629,8 +572,7 @@ int bl, bd; /* number of bits decoded by tl[] and td[] */
 			NEEDBITS(6) /* get distance low bits */
 			d = (unsigned)b & 0x3f;
 			DUMPBITS(6)
-			NEEDBITS(
-			    (unsigned)bd) /* get coded distance high bits */
+			NEEDBITS((unsigned)bd) /* get coded distance high bits */
 			if ((e = (t = td + ((~(unsigned)b) & md))->e) > 16)
 				do {
 					if (e == 99)
@@ -638,9 +580,7 @@ int bl, bd; /* number of bits decoded by tl[] and td[] */
 					DUMPBITS(t->b)
 					e -= 16;
 					NEEDBITS(e)
-				} while ((e = (t = t->v.t + ((~(unsigned)b) &
-							     mask_bits[e]))
-						  ->e) > 16);
+				} while ((e = (t = t->v.t + ((~(unsigned)b) & mask_bits[e]))->e) > 16);
 			DUMPBITS(t->b)
 			d = w - d - t->v.n;    /* construct offset */
 			NEEDBITS((unsigned)bl) /* get coded length */
@@ -651,9 +591,7 @@ int bl, bd; /* number of bits decoded by tl[] and td[] */
 					DUMPBITS(t->b)
 					e -= 16;
 					NEEDBITS(e)
-				} while ((e = (t = t->v.t + ((~(unsigned)b) &
-							     mask_bits[e]))
-						  ->e) > 16);
+				} while ((e = (t = t->v.t + ((~(unsigned)b) & mask_bits[e]))->e) > 16);
 			DUMPBITS(t->b)
 			n = t->v.n;
 			if (e) /* get length extra bits */
@@ -666,11 +604,7 @@ int bl, bd; /* number of bits decoded by tl[] and td[] */
 			/* do the copy */
 			s -= n;
 			do {
-				n -= (e = (e = WSIZE -
-					       ((d &= WSIZE - 1) > w ? d : w)) >
-						  n
-					      ? n
-					      : e);
+				n -= (e = (e = WSIZE - ((d &= WSIZE - 1) > w ? d : w)) > n ? n : e);
 				if (u && w <= d) {
 					memset(slide + w, 0, e);
 					w += e;
@@ -699,9 +633,7 @@ int bl, bd; /* number of bits decoded by tl[] and td[] */
 
 	/* flush out slide */
 	flush(w);
-	return pfile_in_zip_read_info->rest_read_compressed
-		   ? 5
-		   : 0; /* should have read csize bytes */
+	return pfile_in_zip_read_info->rest_read_compressed ? 5 : 0; /* should have read csize bytes */
 }
 
 int explode()
@@ -754,8 +686,7 @@ int explode()
 			return r;
 		if (pUnzip->cur_file_info.flag & 2) /* true if 8K */
 		{
-			if ((r = huft_build(l, 64, 0, cpdist8, extra, &td,
-					    &bd)) != 0) {
+			if ((r = huft_build(l, 64, 0, cpdist8, extra, &td, &bd)) != 0) {
 				if (r == 1)
 					huft_free(td);
 				huft_free(tl);
@@ -765,8 +696,7 @@ int explode()
 			r = explode_lit8(tb, tl, td, bb, bl, bd);
 		} else /* else 4K */
 		{
-			if ((r = huft_build(l, 64, 0, cpdist4, extra, &td,
-					    &bd)) != 0) {
+			if ((r = huft_build(l, 64, 0, cpdist4, extra, &td, &bd)) != 0) {
 				if (r == 1)
 					huft_free(td);
 				huft_free(tl);
@@ -793,8 +723,7 @@ int explode()
 			return r;
 		if (pUnzip->cur_file_info.flag & 2) /* true if 8K */
 		{
-			if ((r = huft_build(l, 64, 0, cpdist8, extra, &td,
-					    &bd)) != 0) {
+			if ((r = huft_build(l, 64, 0, cpdist8, extra, &td, &bd)) != 0) {
 				if (r == 1)
 					huft_free(td);
 				huft_free(tl);
@@ -803,8 +732,7 @@ int explode()
 			r = explode_nolit8(tl, td, bl, bd);
 		} else /* else 4K */
 		{
-			if ((r = huft_build(l, 64, 0, cpdist4, extra, &td,
-					    &bd)) != 0) {
+			if ((r = huft_build(l, 64, 0, cpdist4, extra, &td, &bd)) != 0) {
 				if (r == 1)
 					huft_free(td);
 				huft_free(tl);
@@ -834,24 +762,20 @@ int ReadByte(x) UWORD *x;
 			return (0);
 
 		if (pfile_in_zip_read_info->rest_read_compressed < uReadThis)
-			uReadThis =
-			    (uInt)pfile_in_zip_read_info->rest_read_compressed;
+			uReadThis = (uInt)pfile_in_zip_read_info->rest_read_compressed;
 		if (uReadThis == 0)
 			return UNZ_EOF;
 		if (fseek(pfile_in_zip_read_info->file,
-			  pfile_in_zip_read_info->pos_in_zipfile +
-			      pfile_in_zip_read_info->byte_before_the_zipfile,
+			  pfile_in_zip_read_info->pos_in_zipfile + pfile_in_zip_read_info->byte_before_the_zipfile,
 			  SEEK_SET) != 0)
 			return UNZ_ERRNO;
-		if (fread(pfile_in_zip_read_info->read_buffer, uReadThis, 1,
-			  pfile_in_zip_read_info->file) != 1)
+		if (fread(pfile_in_zip_read_info->read_buffer, uReadThis, 1, pfile_in_zip_read_info->file) != 1)
 			return UNZ_ERRNO;
 		pfile_in_zip_read_info->pos_in_zipfile += uReadThis;
 
 		pfile_in_zip_read_info->rest_read_compressed -= uReadThis;
 
-		pfile_in_zip_read_info->stream.next_in =
-		    (Bytef *)pfile_in_zip_read_info->read_buffer;
+		pfile_in_zip_read_info->stream.next_in = (Bytef *)pfile_in_zip_read_info->read_buffer;
 		pfile_in_zip_read_info->stream.avail_in = (uInt)uReadThis;
 	}
 
@@ -867,14 +791,13 @@ int ReadByte(x) UWORD *x;
 
 unsigned hufts; /* track memory usage */
 
-int huft_build(b, n, s, d, e, t,
-	       m) unsigned *b; /* code lengths in bits (all assumed <= BMAX) */
-unsigned n;		       /* number of codes (assumed <= N_MAX) */
-unsigned s;		       /* number of simple-valued codes (0..s-1) */
-ush *d;			       /* list of base values for non-simple codes */
-ush *e;			       /* list of extra bits for non-simple codes */
-struct huft **t;	       /* result: starting table */
-int *m;			       /* maximum lookup bits, returns actual */
+int huft_build(b, n, s, d, e, t, m) unsigned *b; /* code lengths in bits (all assumed <= BMAX) */
+unsigned n;					 /* number of codes (assumed <= N_MAX) */
+unsigned s;					 /* number of simple-valued codes (0..s-1) */
+ush *d;						 /* list of base values for non-simple codes */
+ush *e;						 /* list of extra bits for non-simple codes */
+struct huft **t;				 /* result: starting table */
+int *m;						 /* maximum lookup bits, returns actual */
 /* Given a list of code lengths and a maximum table size, make a set of
    tables to decode that set of codes.  Return zero on success, one if
    the given code set is incomplete (the tables are still built in this
@@ -977,14 +900,11 @@ int *m;			       /* maximum lookup bits, returns actual */
 
 				/* compute minimum size table less than or equal
 				 * to l bits */
-				z = (z = g - w) > (unsigned)l
-					? l
-					: z; /* upper limit on table size */
-				if ((f = 1 << (j = k - w)) >
-				    a + 1) /* try a k-w bit table */
-				{	   /* too few codes for k-w bit table */
-					f -= a + 1; /* deduct codes from
-						       patterns left */
+				z = (z = g - w) > (unsigned)l ? l : z; /* upper limit on table size */
+				if ((f = 1 << (j = k - w)) > a + 1)    /* try a k-w bit table */
+				{				       /* too few codes for k-w bit table */
+					f -= a + 1;		       /* deduct codes from
+									  patterns left */
 					xp = c + k;
 					while (++j < z) /* try smaller tables up
 							   to z bits */
@@ -993,39 +913,32 @@ int *m;			       /* maximum lookup bits, returns actual */
 							break; /* enough codes
 								  to use up j
 								  bits */
-						f -= *xp; /* else deduct codes
-							     from patterns */
+						f -= *xp;      /* else deduct codes
+								  from patterns */
 					}
 				}
 				z = 1 << j; /* table entries for j-bit table */
 
 				/* allocate and link in new table */
-				if ((q = (struct huft *)malloc(
-					 (z + 1) * sizeof(struct huft))) ==
-				    (struct huft *)NULL) {
+				if ((q = (struct huft *)malloc((z + 1) * sizeof(struct huft))) == (struct huft *)NULL) {
 					if (h)
 						huft_free(u[0]);
 					return 3; /* not enough memory */
 				}
 				hufts += z + 1; /* track memory usage */
-				*t = q + 1; /* link to list for huft_free() */
+				*t = q + 1;	/* link to list for huft_free() */
 				*(t = &(q->v.t)) = (struct huft *)NULL;
 				u[h] = ++q; /* table starts after link */
 
 				/* connect to last table, if there is one */
 				if (h) {
-					x[h] =
-					    i; /* save pattern for backing up */
-					r.b = (uch)l; /* bits to dump before
-							 this table */
-					r.e = (uch)(16 +
-						    j); /* bits in this table */
-					r.v.t = q; /* pointer to this table */
-					j = i >>
-					    (w -
-					     l); /* (get around Turbo C bug) */
-					u[h - 1][j] =
-					    r; /* connect to last table */
+					x[h] = i;	     /* save pattern for backing up */
+					r.b = (uch)l;	     /* bits to dump before
+								this table */
+					r.e = (uch)(16 + j); /* bits in this table */
+					r.v.t = q;	     /* pointer to this table */
+					j = i >> (w - l);    /* (get around Turbo C bug) */
+					u[h - 1][j] = r;     /* connect to last table */
 				}
 			}
 
@@ -1034,12 +947,8 @@ int *m;			       /* maximum lookup bits, returns actual */
 			if (p >= v + n)
 				r.e = 99; /* out of values--invalid code */
 			else if (*p < s) {
-				r.e = (uch)(
-				    *p < 256
-					? 16
-					: 15); /* 256 is end-of-block code */
-				r.v.n =
-				    *p++; /* simple code is just the value */
+				r.e = (uch)(*p < 256 ? 16 : 15); /* 256 is end-of-block code */
+				r.v.n = *p++;			 /* simple code is just the value */
 			} else {
 				r.e = (uch)e[*p - s]; /* non-simple--look up in
 							 lists */
@@ -1090,8 +999,7 @@ void flush(w) unsigned w; /* number of bytes to flush */
 {
 	memmove(pfile_in_zip_read_info->stream.next_out, slide, w);
 	pfile_in_zip_read_info->crc32 =
-	    crc32(pfile_in_zip_read_info->crc32,
-		  pfile_in_zip_read_info->stream.next_out, w);
+	    crc32(pfile_in_zip_read_info->crc32, pfile_in_zip_read_info->stream.next_out, w);
 	pfile_in_zip_read_info->stream.next_out += w;
 	pfile_in_zip_read_info->stream.avail_out -= w;
 	pfile_in_zip_read_info->stream.total_out += w;
@@ -1102,8 +1010,7 @@ void flush_stack(w) unsigned w; /* number of bytes to flush */
 {
 	memmove(pfile_in_zip_read_info->stream.next_out, stack, w);
 	pfile_in_zip_read_info->crc32 =
-	    crc32(pfile_in_zip_read_info->crc32,
-		  pfile_in_zip_read_info->stream.next_out, w);
+	    crc32(pfile_in_zip_read_info->crc32, pfile_in_zip_read_info->stream.next_out, w);
 	pfile_in_zip_read_info->stream.next_out += w;
 	pfile_in_zip_read_info->stream.avail_out -= w;
 	pfile_in_zip_read_info->stream.total_out += w;

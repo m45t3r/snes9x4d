@@ -213,8 +213,7 @@ void S9xSetEchoVolume(short echo_volume_left, short echo_volume_right);
 void S9xSetSoundControl(int sound_switch);
 bool8_32 S9xSetSoundMute(bool8_32 mute);
 void S9xSetEnvelopeHeight(int channel, int height);
-void S9xSetSoundADSR(int channel, int attack, int decay, int sustain,
-		     int sustain_level, int release);
+void S9xSetSoundADSR(int channel, int attack, int decay, int sustain, int sustain_level, int release);
 void S9xSetSoundKeyOff(int channel);
 void S9xSetSoundDecayMode(int channel);
 void S9xSetSoundAttachMode(int channel);
@@ -226,8 +225,7 @@ void S9xSetEchoDelay(int byte);
 void S9xSetEchoWriteEnable(uint8 byte);
 void S9xSetFilterCoefficient(int tap, int value);
 void S9xSetFrequencyModulationEnable(uint8 byte);
-void S9xSetEnvelopeRate(int channel, unsigned long rate, int direction,
-			int target);
+void S9xSetEnvelopeRate(int channel, unsigned long rate, int direction, int target);
 bool8_32 S9xSetSoundMode(int channel, int mode);
 int S9xGetEnvelopeHeight(int channel);
 void S9xResetSound(bool8_32 full);

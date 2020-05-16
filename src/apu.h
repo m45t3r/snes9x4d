@@ -83,47 +83,45 @@ struct SAPU {
 
 EXTERN_C struct SAPU APU;
 EXTERN_C struct SIAPU IAPU;
-/*
-STATIC inline void S9xAPUUnpackStatus()
-{
-    IAPU._Zero = ((APURegisters.P & Zero) == 0) | (APURegisters.P & Negative);
-    IAPU._Carry = (APURegisters.P & Carry);
-    IAPU._Overflow = (APURegisters.P & Overflow) >> 6;
-}
 
-STATIC inline void S9xAPUPackStatus()
-{
-    APURegisters.P &= ~(Zero | Negative | Carry | Overflow);
-    APURegisters.P |= IAPU._Carry | ((IAPU._Zero == 0) << 1) |
-		      (IAPU._Zero & 0x80) | (IAPU._Overflow << 6);
-}*/
-#define S9xAPUUnpackStatus()                                                   \
-	{                                                                      \
-		IAPU._Zero = ((APURegisters.P & Zero) == 0) |                  \
-			     (APURegisters.P & Negative);                      \
-		IAPU._Carry = (APURegisters.P & Carry);                        \
-		IAPU._Overflow = (APURegisters.P & Overflow) >> 6;             \
+// STATIC inline void S9xAPUUnpackStatus()
+// {
+// 	IAPU._Zero = ((APURegisters.P & Zero) == 0) | (APURegisters.P & Negative);
+// 	IAPU._Carry = (APURegisters.P & Carry);
+// 	IAPU._Overflow = (APURegisters.P & Overflow) >> 6;
+// }
+
+// STATIC inline void S9xAPUPackStatus()
+// {
+// 	APURegisters.P &= ~(Zero | Negative | Carry | Overflow);
+// 	APURegisters.P |= IAPU._Carry | ((IAPU._Zero == 0) << 1) | (IAPU._Zero & 0x80) | (IAPU._Overflow << 6);
+// }
+
+#define S9xAPUUnpackStatus()                                                                                           \
+	{                                                                                                              \
+		IAPU._Zero = ((APURegisters.P & Zero) == 0) | (APURegisters.P & Negative);                             \
+		IAPU._Carry = (APURegisters.P & Carry);                                                                \
+		IAPU._Overflow = (APURegisters.P & Overflow) >> 6;                                                     \
 	}
 
-#define S9xAPUPackStatus()                                                     \
-	{                                                                      \
-		APURegisters.P &= ~(Zero | Negative | Carry | Overflow);       \
-		APURegisters.P |= IAPU._Carry | ((IAPU._Zero == 0) << 1) |     \
-				  (IAPU._Zero & 0x80) | (IAPU._Overflow << 6); \
+#define S9xAPUPackStatus()                                                                                             \
+	{                                                                                                              \
+		APURegisters.P &= ~(Zero | Negative | Carry | Overflow);                                               \
+		APURegisters.P |=                                                                                      \
+		    IAPU._Carry | ((IAPU._Zero == 0) << 1) | (IAPU._Zero & 0x80) | (IAPU._Overflow << 6);              \
 	}
 
-#define S9xAPUUnpackStatus_OP()                                                \
-	{                                                                      \
-		iapu->_Zero = ((areg->P & Zero) == 0) | (areg->P & Negative);  \
-		iapu->_Carry = (areg->P & Carry);                              \
-		iapu->_Overflow = (areg->P & Overflow) >> 6;                   \
+#define S9xAPUUnpackStatus_OP()                                                                                        \
+	{                                                                                                              \
+		iapu->_Zero = ((areg->P & Zero) == 0) | (areg->P & Negative);                                          \
+		iapu->_Carry = (areg->P & Carry);                                                                      \
+		iapu->_Overflow = (areg->P & Overflow) >> 6;                                                           \
 	}
 
-#define S9xAPUPackStatus_OP()                                                  \
-	{                                                                      \
-		areg->P &= ~(Zero | Negative | Carry | Overflow);              \
-		areg->P |= iapu->_Carry | ((iapu->_Zero == 0) << 1) |          \
-			   (iapu->_Zero & 0x80) | (iapu->_Overflow << 6);      \
+#define S9xAPUPackStatus_OP()                                                                                          \
+	{                                                                                                              \
+		areg->P &= ~(Zero | Negative | Carry | Overflow);                                                      \
+		areg->P |= iapu->_Carry | ((iapu->_Zero == 0) << 1) | (iapu->_Zero & 0x80) | (iapu->_Overflow << 6);   \
 	}
 
 START_EXTERN_C
@@ -143,8 +141,7 @@ void S9xOpenCloseSoundTracingFile(bool8_32);
 void S9xPrintAPUState();
 extern int32 S9xAPUCycles[256];	      // Scaled cycle lengths
 extern int32 S9xAPUCycleLengths[256]; // Raw data.
-extern void (*S9xApuOpcodes[256])(struct SAPURegisters *, struct SIAPU *,
-				  struct SAPU *);
+extern void (*S9xApuOpcodes[256])(struct SAPURegisters *, struct SIAPU *, struct SAPU *);
 END_EXTERN_C
 
 #define APU_VOL_LEFT 0x00

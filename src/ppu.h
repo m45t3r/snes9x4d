@@ -282,12 +282,11 @@ STATIC inline uint8 REGISTER_4212()
     if (IPPU.PreviousLine != IPPU.CurrentLine)
 	S9xUpdateScreen ();
 }*/
-#define FLUSH_REDRAW()                                                         \
-	if (ippu->PreviousLine != ippu->CurrentLine)                           \
+#define FLUSH_REDRAW()                                                                                                 \
+	if (ippu->PreviousLine != ippu->CurrentLine)                                                                   \
 		S9xUpdateScreen();
 
-STATIC inline void REGISTER_2104(uint8 byte, CMemory *mem,
-				 struct InternalPPU *ippu, struct SPPU *ppu)
+STATIC inline void REGISTER_2104(uint8 byte, CMemory *mem, struct InternalPPU *ippu, struct SPPU *ppu)
 {
 	if (ppu->OAMAddr >= 0x110)
 		return;
@@ -302,31 +301,23 @@ STATIC inline void REGISTER_2104(uint8 byte, CMemory *mem,
 			// X position high bit, and sprite size (x4)
 			struct SOBJ *pObj = &ppu->OBJ[(addr & 0x1f) * 4];
 
-			pObj->HPos =
-			    (pObj->HPos & 0xFF) | SignExtend[(byte >> 0) & 1];
+			pObj->HPos = (pObj->HPos & 0xFF) | SignExtend[(byte >> 0) & 1];
 			pObj++->Size = byte & 2;
-			pObj->HPos =
-			    (pObj->HPos & 0xFF) | SignExtend[(byte >> 2) & 1];
+			pObj->HPos = (pObj->HPos & 0xFF) | SignExtend[(byte >> 2) & 1];
 			pObj++->Size = byte & 8;
-			pObj->HPos =
-			    (pObj->HPos & 0xFF) | SignExtend[(byte >> 4) & 1];
+			pObj->HPos = (pObj->HPos & 0xFF) | SignExtend[(byte >> 4) & 1];
 			pObj++->Size = byte & 32;
-			pObj->HPos =
-			    (pObj->HPos & 0xFF) | SignExtend[(byte >> 6) & 1];
+			pObj->HPos = (pObj->HPos & 0xFF) | SignExtend[(byte >> 6) & 1];
 			pObj->Size = byte & 128;
 		} else {
 			if (addr & 1) {
 				if (addr & 2) {
 					addr = ppu->OAMAddr >> 1;
-					// Tile within group, priority, h and v
-					// flip.
+					// Tile within group, priority, h and v flip.
 					ppu->OBJ[addr].Name &= 0xFF;
-					ppu->OBJ[addr].Name |=
-					    ((uint16)(byte & 1)) << 8;
-					ppu->OBJ[addr].Palette =
-					    (byte >> 1) & 7;
-					ppu->OBJ[addr].Priority =
-					    (byte >> 4) & 3;
+					ppu->OBJ[addr].Name |= ((uint16)(byte & 1)) << 8;
+					ppu->OBJ[addr].Palette = (byte >> 1) & 7;
+					ppu->OBJ[addr].Priority = (byte >> 4) & 3;
 					ppu->OBJ[addr].HFlip = (byte >> 6) & 1;
 					ppu->OBJ[addr].VFlip = (byte >> 7) & 1;
 				} else {
@@ -337,13 +328,11 @@ STATIC inline void REGISTER_2104(uint8 byte, CMemory *mem,
 				if (addr & 2) {
 					// Tile group
 
-					ppu->OBJ[addr = ppu->OAMAddr >> 1]
-					    .Name &= 0x100;
+					ppu->OBJ[addr = ppu->OAMAddr >> 1].Name &= 0x100;
 					ppu->OBJ[addr].Name |= byte;
 				} else {
 					// X position (low)
-					ppu->OBJ[addr = ppu->OAMAddr >> 1]
-					    .HPos &= 0xFF00;
+					ppu->OBJ[addr = ppu->OAMAddr >> 1].HPos &= 0xFF00;
 					ppu->OBJ[addr].HPos |= byte;
 				}
 			}
@@ -356,14 +345,12 @@ STATIC inline void REGISTER_2104(uint8 byte, CMemory *mem,
 	mem->FillRAM[0x2104] = byte;
 }
 
-STATIC inline void REGISTER_2118(uint8 Byte, CMemory *mem,
-				 struct InternalPPU *ippu, struct SPPU *ppu)
+STATIC inline void REGISTER_2118(uint8 Byte, CMemory *mem, struct InternalPPU *ippu, struct SPPU *ppu)
 {
 	uint32 address;
 	if (ppu->VMA.FullGraphicCount) {
 		uint32 rem = ppu->VMA.Address & ppu->VMA.Mask1;
-		address = (((ppu->VMA.Address & ~ppu->VMA.Mask1) +
-			    (rem >> ppu->VMA.Shift) +
+		address = (((ppu->VMA.Address & ~ppu->VMA.Mask1) + (rem >> ppu->VMA.Shift) +
 			    ((rem & (ppu->VMA.FullGraphicCount - 1)) << 3))
 			   << 1) &
 			  0xffff;
@@ -377,39 +364,33 @@ STATIC inline void REGISTER_2118(uint8 Byte, CMemory *mem,
 	if (!ppu->VMA.High) {
 #ifdef DEBUGGER
 		if (Settings.TraceVRAM && !CPU.InDMA) {
-			printf("VRAM write byte: $%04X (%d,%d)\n",
-			       ppu->VMA.Address, mem->FillRAM[0x2115] & 3,
+			printf("VRAM write byte: $%04X (%d,%d)\n", ppu->VMA.Address, mem->FillRAM[0x2115] & 3,
 			       (mem->FillRAM[0x2115] & 0x0c) >> 2);
 		}
 #endif
 		ppu->VMA.Address += ppu->VMA.Increment;
 	}
-	//    mem->FillRAM [0x2118] = Byte;
+	// mem->FillRAM[0x2118] = Byte;
 }
 
-STATIC inline void REGISTER_2118_tile(uint8 Byte, CMemory *mem,
-				      struct InternalPPU *ippu,
-				      struct SPPU *ppu)
+STATIC inline void REGISTER_2118_tile(uint8 Byte, CMemory *mem, struct InternalPPU *ippu, struct SPPU *ppu)
 {
 	uint32 address;
 	uint32 rem = ppu->VMA.Address & ppu->VMA.Mask1;
-	address =
-	    (((ppu->VMA.Address & ~ppu->VMA.Mask1) + (rem >> ppu->VMA.Shift) +
-	      ((rem & (ppu->VMA.FullGraphicCount - 1)) << 3))
-	     << 1) &
-	    0xffff;
+	address = (((ppu->VMA.Address & ~ppu->VMA.Mask1) + (rem >> ppu->VMA.Shift) +
+		    ((rem & (ppu->VMA.FullGraphicCount - 1)) << 3))
+		   << 1) &
+		  0xffff;
 	mem->VRAM[address] = Byte;
 	ippu->TileCached[TILE_2BIT][address >> 4] = FALSE;
 	ippu->TileCached[TILE_4BIT][address >> 5] = FALSE;
 	ippu->TileCached[TILE_8BIT][address >> 6] = FALSE;
 	if (!ppu->VMA.High)
 		ppu->VMA.Address += ppu->VMA.Increment;
-	//    mem->FillRAM [0x2118] = Byte;
+	// mem->FillRAM[0x2118] = Byte;
 }
 
-STATIC inline void REGISTER_2118_linear(uint8 Byte, CMemory *mem,
-					struct InternalPPU *ippu,
-					struct SPPU *ppu)
+STATIC inline void REGISTER_2118_linear(uint8 Byte, CMemory *mem, struct InternalPPU *ippu, struct SPPU *ppu)
 {
 	uint32 address;
 	mem->VRAM[address = (ppu->VMA.Address << 1) & 0xFFFF] = Byte;
@@ -418,25 +399,22 @@ STATIC inline void REGISTER_2118_linear(uint8 Byte, CMemory *mem,
 	ippu->TileCached[TILE_8BIT][address >> 6] = FALSE;
 	if (!ppu->VMA.High)
 		ppu->VMA.Address += ppu->VMA.Increment;
-	//    mem->FillRAM [0x2118] = Byte;
+	// mem->FillRAM[0x2118] = Byte;
 }
 
-STATIC inline void REGISTER_2119(uint8 Byte, CMemory *mem,
-				 struct InternalPPU *ippu, struct SPPU *ppu)
+STATIC inline void REGISTER_2119(uint8 Byte, CMemory *mem, struct InternalPPU *ippu, struct SPPU *ppu)
 {
 	uint32 address;
 	if (ppu->VMA.FullGraphicCount) {
 		uint32 rem = ppu->VMA.Address & ppu->VMA.Mask1;
-		address = ((((ppu->VMA.Address & ~ppu->VMA.Mask1) +
-			     (rem >> ppu->VMA.Shift) +
+		address = ((((ppu->VMA.Address & ~ppu->VMA.Mask1) + (rem >> ppu->VMA.Shift) +
 			     ((rem & (ppu->VMA.FullGraphicCount - 1)) << 3))
 			    << 1) +
 			   1) &
 			  0xFFFF;
 		mem->VRAM[address] = Byte;
 	} else {
-		mem->VRAM[address = ((ppu->VMA.Address << 1) + 1) & 0xFFFF] =
-		    Byte;
+		mem->VRAM[address = ((ppu->VMA.Address << 1) + 1) & 0xFFFF] = Byte;
 	}
 	ippu->TileCached[TILE_2BIT][address >> 4] = FALSE;
 	ippu->TileCached[TILE_4BIT][address >> 5] = FALSE;
@@ -444,39 +422,33 @@ STATIC inline void REGISTER_2119(uint8 Byte, CMemory *mem,
 	if (ppu->VMA.High) {
 #ifdef DEBUGGER
 		if (Settings.TraceVRAM && !CPU.InDMA) {
-			printf("VRAM write word: $%04X (%d,%d)\n",
-			       ppu->VMA.Address, mem->FillRAM[0x2115] & 3,
+			printf("VRAM write word: $%04X (%d,%d)\n", ppu->VMA.Address, mem->FillRAM[0x2115] & 3,
 			       (mem->FillRAM[0x2115] & 0x0c) >> 2);
 		}
 #endif
 		ppu->VMA.Address += ppu->VMA.Increment;
 	}
-	//    mem->FillRAM [0x2119] = Byte;
+	// mem->FillRAM[0x2119] = Byte;
 }
 
-STATIC inline void REGISTER_2119_tile(uint8 Byte, CMemory *mem,
-				      struct InternalPPU *ippu,
-				      struct SPPU *ppu)
+STATIC inline void REGISTER_2119_tile(uint8 Byte, CMemory *mem, struct InternalPPU *ippu, struct SPPU *ppu)
 {
 	uint32 rem = ppu->VMA.Address & ppu->VMA.Mask1;
-	uint32 address =
-	    ((((ppu->VMA.Address & ~ppu->VMA.Mask1) + (rem >> ppu->VMA.Shift) +
-	       ((rem & (ppu->VMA.FullGraphicCount - 1)) << 3))
-	      << 1) +
-	     1) &
-	    0xFFFF;
+	uint32 address = ((((ppu->VMA.Address & ~ppu->VMA.Mask1) + (rem >> ppu->VMA.Shift) +
+			    ((rem & (ppu->VMA.FullGraphicCount - 1)) << 3))
+			   << 1) +
+			  1) &
+			 0xFFFF;
 	mem->VRAM[address] = Byte;
 	ippu->TileCached[TILE_2BIT][address >> 4] = FALSE;
 	ippu->TileCached[TILE_4BIT][address >> 5] = FALSE;
 	ippu->TileCached[TILE_8BIT][address >> 6] = FALSE;
 	if (ppu->VMA.High)
 		ppu->VMA.Address += ppu->VMA.Increment;
-	//    mem->FillRAM [0x2119] = Byte;
+	// mem->FillRAM[0x2119] = Byte;
 }
 
-STATIC inline void REGISTER_2119_linear(uint8 Byte, CMemory *mem,
-					struct InternalPPU *ippu,
-					struct SPPU *ppu)
+STATIC inline void REGISTER_2119_linear(uint8 Byte, CMemory *mem, struct InternalPPU *ippu, struct SPPU *ppu)
 {
 	uint32 address;
 	mem->VRAM[address = ((ppu->VMA.Address << 1) + 1) & 0xFFFF] = Byte;
@@ -485,11 +457,10 @@ STATIC inline void REGISTER_2119_linear(uint8 Byte, CMemory *mem,
 	ippu->TileCached[TILE_8BIT][address >> 6] = FALSE;
 	if (ppu->VMA.High)
 		ppu->VMA.Address += ppu->VMA.Increment;
-	//    mem->FillRAM [0x2119] = Byte;
+	// mem->FillRAM[0x2119] = Byte;
 }
 
-STATIC inline void REGISTER_2122(uint8 Byte, CMemory *mem,
-				 struct InternalPPU *ippu, struct SPPU *ppu)
+STATIC inline void REGISTER_2122(uint8 Byte, CMemory *mem, struct InternalPPU *ippu, struct SPPU *ppu)
 {
 	// CG-RAM (palette) write
 
@@ -506,15 +477,10 @@ STATIC inline void REGISTER_2122(uint8 Byte, CMemory *mem,
 			if (Settings.SixteenBit)
 #endif
 			{
-				ippu->Blue[ppu->CGADD] =
-				    ippu->XB[(Byte >> 2) & 0x1f];
-				ippu->Green[ppu->CGADD] =
-				    ippu->XB[(ppu->CGDATA[ppu->CGADD] >> 5) &
-					     0x1f];
-				ippu->ScreenColors[ppu->CGADD] =
-				    (uint16)BUILD_PIXEL(ippu->Red[ppu->CGADD],
-							ippu->Green[ppu->CGADD],
-							ippu->Blue[ppu->CGADD]);
+				ippu->Blue[ppu->CGADD] = ippu->XB[(Byte >> 2) & 0x1f];
+				ippu->Green[ppu->CGADD] = ippu->XB[(ppu->CGDATA[ppu->CGADD] >> 5) & 0x1f];
+				ippu->ScreenColors[ppu->CGADD] = (uint16)BUILD_PIXEL(
+				    ippu->Red[ppu->CGADD], ippu->Green[ppu->CGADD], ippu->Blue[ppu->CGADD]);
 			}
 		}
 		ppu->CGADD++;
@@ -532,22 +498,17 @@ STATIC inline void REGISTER_2122(uint8 Byte, CMemory *mem,
 #endif
 			{
 				ippu->Red[ppu->CGADD] = ippu->XB[Byte & 0x1f];
-				ippu->Green[ppu->CGADD] =
-				    ippu->XB[(ppu->CGDATA[ppu->CGADD] >> 5) &
-					     0x1f];
-				ippu->ScreenColors[ppu->CGADD] =
-				    (uint16)BUILD_PIXEL(ippu->Red[ppu->CGADD],
-							ippu->Green[ppu->CGADD],
-							ippu->Blue[ppu->CGADD]);
+				ippu->Green[ppu->CGADD] = ippu->XB[(ppu->CGDATA[ppu->CGADD] >> 5) & 0x1f];
+				ippu->ScreenColors[ppu->CGADD] = (uint16)BUILD_PIXEL(
+				    ippu->Red[ppu->CGADD], ippu->Green[ppu->CGADD], ippu->Blue[ppu->CGADD]);
 			}
 		}
 	}
 	ppu->CGFLIP ^= 1;
-	//    mem->FillRAM [0x2122] = Byte;
+	// mem->FillRAM[0x2122] = Byte;
 }
 
-STATIC inline void REGISTER_2180(uint8 Byte, CMemory *mem,
-				 struct InternalPPU *ippu, struct SPPU *ppu)
+STATIC inline void REGISTER_2180(uint8 Byte, CMemory *mem, struct InternalPPU *ippu, struct SPPU *ppu)
 {
 	mem->RAM[ppu->WRAM++] = Byte;
 	ppu->WRAM &= 0x1FFFF;

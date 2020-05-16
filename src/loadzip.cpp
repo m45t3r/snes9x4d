@@ -69,8 +69,7 @@ bool8 LoadZip(const char *zipname, int32 *TotalFileSize, int32 *headers)
 	if (file == NULL)
 		return (FALSE);
 
-	// find largest file in zip file (under MAX_ROM_SIZE)
-	// or a file with extension .1
+	// find largest file in zip file (under MAX_ROM_SIZE) or a file with extension .1
 	char filename[132];
 	int filesize = 0;
 	int port = unzGoToFirstFile(file);
@@ -106,8 +105,7 @@ bool8 LoadZip(const char *zipname, int32 *TotalFileSize, int32 *headers)
 		}
 		port = unzGoToNextFile(file);
 	}
-	if (!(port == UNZ_END_OF_LIST_OF_FILE || port == UNZ_OK) ||
-	    filesize == 0) {
+	if (!(port == UNZ_END_OF_LIST_OF_FILE || port == UNZ_OK) || filesize == 0) {
 		assert(unzClose(file) == UNZ_OK);
 		return (FALSE);
 	}
@@ -164,8 +162,7 @@ bool8 LoadZip(const char *zipname, int32 *TotalFileSize, int32 *headers)
 			return (FALSE);
 		}
 
-		if ((FileSize - calc_size == 512 && !Settings.ForceNoHeader) ||
-		    Settings.ForceHeader) {
+		if ((FileSize - calc_size == 512 && !Settings.ForceNoHeader) || Settings.ForceHeader) {
 			memmove(ptr, ptr + 512, calc_size);
 			(*headers)++;
 			FileSize -= 512;
@@ -179,11 +176,9 @@ bool8 LoadZip(const char *zipname, int32 *TotalFileSize, int32 *headers)
 			more = TRUE;
 			ext[0]++;
 		} else if (ptr - Memory.ROM < CMemory::MAX_ROM_SIZE + 0x200 &&
-			   (((len = strlen(filename)) == 7 || len == 8) &&
-			    strncasecmp(filename, "sf", 2) == 0 &&
-			    isdigit(filename[2]) && isdigit(filename[3]) &&
-			    isdigit(filename[4]) && isdigit(filename[5]) &&
-			    isalpha(filename[len - 1]))) {
+			   (((len = strlen(filename)) == 7 || len == 8) && strncasecmp(filename, "sf", 2) == 0 &&
+			    isdigit(filename[2]) && isdigit(filename[3]) && isdigit(filename[4]) &&
+			    isdigit(filename[5]) && isalpha(filename[len - 1]))) {
 			more = TRUE;
 			filename[len - 1]++;
 		} else
@@ -191,8 +186,7 @@ bool8 LoadZip(const char *zipname, int32 *TotalFileSize, int32 *headers)
 
 		if (more) {
 			if (unzLocateFile(file, filename, 1) != UNZ_OK ||
-			    unzGetCurrentFileInfo(file, &info, filename, 128,
-						  NULL, 0, NULL, 0) != UNZ_OK ||
+			    unzGetCurrentFileInfo(file, &info, filename, 128, NULL, 0, NULL, 0) != UNZ_OK ||
 			    unzOpenCurrentFile(file) != UNZ_OK)
 				break;
 		}

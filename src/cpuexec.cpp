@@ -71,8 +71,7 @@ void S9xMainLoop(void)
 				if (--cpu->NMICycleCount == 0) {
 					cpu->Flags &= ~NMI_FLAG;
 					if (cpu->WaitingForInterrupt) {
-						cpu->WaitingForInterrupt =
-						    FALSE;
+						cpu->WaitingForInterrupt = FALSE;
 						++cpu->PC;
 					}
 					S9xOpcode_NMI();
@@ -80,21 +79,14 @@ void S9xMainLoop(void)
 			}
 
 #ifdef DEBUGGER
-			if ((cpu->Flags & BREAK_FLAG) &&
-			    !(cpu->Flags & SINGLE_STEP_FLAG)) {
+			if ((cpu->Flags & BREAK_FLAG) && !(cpu->Flags & SINGLE_STEP_FLAG)) {
 				for (int Break = 0; Break != 6; Break++) {
-					if (S9xBreakpoint[Break].Enabled &&
-					    S9xBreakpoint[Break].Bank ==
-						Registers.PB &&
-					    S9xBreakpoint[Break].Address ==
-						cpu->PC - cpu->PCBase) {
-						if (S9xBreakpoint[Break]
-							.Enabled == 2)
-							S9xBreakpoint[Break]
-							    .Enabled = TRUE;
+					if (S9xBreakpoint[Break].Enabled && S9xBreakpoint[Break].Bank == Registers.PB &&
+					    S9xBreakpoint[Break].Address == cpu->PC - cpu->PCBase) {
+						if (S9xBreakpoint[Break].Enabled == 2)
+							S9xBreakpoint[Break].Enabled = TRUE;
 						else
-							cpu->Flags |=
-							    DEBUG_MODE_FLAG;
+							cpu->Flags |= DEBUG_MODE_FLAG;
 					}
 				}
 			}
@@ -104,15 +96,10 @@ void S9xMainLoop(void)
 			if (cpu->Flags & IRQ_PENDING_FLAG) {
 				if (cpu->IRQCycleCount == 0) {
 					if (cpu->WaitingForInterrupt) {
-						cpu->WaitingForInterrupt =
-						    FALSE;
+						cpu->WaitingForInterrupt = FALSE;
 						cpu->PC++;
 					}
-					if (cpu->IRQActive)
-					//					if
-					//(cpu->IRQActive &&
-					//! Settings.DisableIRQ)
-					{
+					if (cpu->IRQActive /* && !Settings.DisableIRQ */) {
 						if (!CHECKFLAG(IRQ))
 							S9xOpcode_IRQ();
 					} else
@@ -165,8 +152,7 @@ void S9xMainLoop(void)
 		cpu->Flags &= ~SCAN_KEYS_FLAG;
 	}
 #ifdef DETECT_NASTY_FX_INTERLEAVE
-	if (cpu->BRKTriggered && Settings.SuperFX &&
-	    !cpu->TriedInterleavedMode2) {
+	if (cpu->BRKTriggered && Settings.SuperFX && !cpu->TriedInterleavedMode2) {
 		cpu->TriedInterleavedMode2 = TRUE;
 		cpu->BRKTriggered = FALSE;
 		S9xDeinterleaveMode2();
@@ -190,8 +176,7 @@ void S9xSetIRQ(uint32 source, struct SCPUState *cpu)
 
 void S9xClearIRQ(uint32 source) { CLEAR_IRQ_SOURCE(source); }
 
-void S9xDoHBlankProcessing(struct SCPUState *cpu, struct SAPU *apu,
-			   struct SIAPU *iapu)
+void S9xDoHBlankProcessing(struct SCPUState *cpu, struct SAPU *apu, struct SIAPU *iapu)
 {
 	struct SPPU *ppu = &PPU;
 	struct InternalPPU *ippu = &IPPU;
@@ -223,9 +208,7 @@ void S9xDoHBlankProcessing(struct SCPUState *cpu, struct SAPU *apu,
 		cpu->NextEvent = -1;
 		ICPU.Scanline++;
 
-		if (++cpu->V_Counter > (Settings.PAL
-					    ? SNES_MAX_PAL_VCOUNTER
-					    : SNES_MAX_NTSC_VCOUNTER)) {
+		if (++cpu->V_Counter > (Settings.PAL ? SNES_MAX_PAL_VCOUNTER : SNES_MAX_NTSC_VCOUNTER)) {
 			ppu->OAMAddr = ppu->SavedOAMAddr;
 			ppu->OAMFlip = 0;
 			cpu->V_Counter = 0;
@@ -236,8 +219,7 @@ void S9xDoHBlankProcessing(struct SCPUState *cpu, struct SAPU *apu,
 			S9xStartHDMA();
 		}
 
-		if (ppu->VTimerEnabled && !ppu->HTimerEnabled &&
-		    cpu->V_Counter == ppu->IRQVBeamPos) {
+		if (ppu->VTimerEnabled && !ppu->HTimerEnabled && cpu->V_Counter == ppu->IRQVBeamPos) {
 			S9xSetIRQ(PPU_V_BEAM_IRQ_SOURCE, cpu);
 		}
 
@@ -258,8 +240,7 @@ void S9xDoHBlankProcessing(struct SCPUState *cpu, struct SAPU *apu,
 					uint8 tmp = 0;
 					if (PPU.OAMPriorityRotation)
 						tmp = (PPU.OAMAddr & 0xFE) >> 1;
-					if ((PPU.OAMFlip & 1) ||
-					    PPU.FirstSprite != tmp) {
+					if ((PPU.OAMFlip & 1) || PPU.FirstSprite != tmp) {
 						PPU.FirstSprite = tmp;
 						IPPU.OBJChanged = TRUE;
 					}
@@ -284,8 +265,7 @@ void S9xDoHBlankProcessing(struct SCPUState *cpu, struct SAPU *apu,
 			cpu->Flags &= ~NMI_FLAG;
 			S9xStartScreenRefresh();
 		}
-		if (cpu->V_Counter >= FIRST_VISIBLE_LINE &&
-		    cpu->V_Counter < ppu->ScreenHeight + FIRST_VISIBLE_LINE) {
+		if (cpu->V_Counter >= FIRST_VISIBLE_LINE && cpu->V_Counter < ppu->ScreenHeight + FIRST_VISIBLE_LINE) {
 			RenderLine(cpu->V_Counter - FIRST_VISIBLE_LINE, ppu);
 		}
 		// Use TimerErrorCounter to skip update of SPC700 timers once
@@ -293,16 +273,15 @@ void S9xDoHBlankProcessing(struct SCPUState *cpu, struct SAPU *apu,
 		// called once every emulated 63.5 microseconds, which
 		// coresponds to 15.750KHz, but the SPC700 timers need to be
 		// updated at multiples of 8KHz, hence the error correction.
-		//	IAPU.TimerErrorCounter++;
-		//	if (IAPU.TimerErrorCounter >= )
-		//	    IAPU.TimerErrorCounter = 0;
-		//	else
+		// IAPU.TimerErrorCounter++;
+		// if (IAPU.TimerErrorCounter >= )
+		//    IAPU.TimerErrorCounter = 0;
+		// else
 		{
 			if (apu->TimerEnabled[2]) {
 				apu->Timer[2] += 4;
 				while (apu->Timer[2] >= apu->TimerTarget[2]) {
-					iapu->RAM[0xff] =
-					    (iapu->RAM[0xff] + 1) & 0xf;
+					iapu->RAM[0xff] = (iapu->RAM[0xff] + 1) & 0xf;
 					apu->Timer[2] -= apu->TimerTarget[2];
 #ifdef SPC700_SHUTDOWN
 					iapu->WaitCounter++;
@@ -313,10 +292,8 @@ void S9xDoHBlankProcessing(struct SCPUState *cpu, struct SAPU *apu,
 			if (cpu->V_Counter & 1) {
 				if (apu->TimerEnabled[0]) {
 					apu->Timer[0]++;
-					if (apu->Timer[0] >=
-					    apu->TimerTarget[0]) {
-						iapu->RAM[0xfd] =
-						    (iapu->RAM[0xfd] + 1) & 0xf;
+					if (apu->Timer[0] >= apu->TimerTarget[0]) {
+						iapu->RAM[0xfd] = (iapu->RAM[0xfd] + 1) & 0xf;
 						apu->Timer[0] = 0;
 #ifdef SPC700_SHUTDOWN
 						iapu->WaitCounter++;
@@ -326,10 +303,8 @@ void S9xDoHBlankProcessing(struct SCPUState *cpu, struct SAPU *apu,
 				}
 				if (apu->TimerEnabled[1]) {
 					apu->Timer[1]++;
-					if (apu->Timer[1] >=
-					    apu->TimerTarget[1]) {
-						iapu->RAM[0xfe] =
-						    (iapu->RAM[0xfe] + 1) & 0xf;
+					if (apu->Timer[1] >= apu->TimerTarget[1]) {
+						iapu->RAM[0xfe] = (iapu->RAM[0xfe] + 1) & 0xf;
 						apu->Timer[1] = 0;
 #ifdef SPC700_SHUTDOWN
 						iapu->WaitCounter++;
@@ -343,19 +318,16 @@ void S9xDoHBlankProcessing(struct SCPUState *cpu, struct SAPU *apu,
 
 	case HTIMER_BEFORE_EVENT:
 	case HTIMER_AFTER_EVENT:
-		if (ppu->HTimerEnabled &&
-		    (!ppu->VTimerEnabled ||
-		     cpu->V_Counter == ppu->IRQVBeamPos)) {
+		if (ppu->HTimerEnabled && (!ppu->VTimerEnabled || cpu->V_Counter == ppu->IRQVBeamPos)) {
 			S9xSetIRQ(PPU_H_BEAM_IRQ_SOURCE, cpu);
 		}
 		break;
 	}
-	//    S9xReschedule ();
+	// S9xReschedule ();
 	uint8 which;
 	long max;
 
-	if (cpu->WhichEvent == HBLANK_START_EVENT ||
-	    cpu->WhichEvent == HTIMER_AFTER_EVENT) {
+	if (cpu->WhichEvent == HBLANK_START_EVENT || cpu->WhichEvent == HTIMER_AFTER_EVENT) {
 		which = HBLANK_END_EVENT;
 		max = Settings.H_Max;
 	} else {
@@ -363,13 +335,9 @@ void S9xDoHBlankProcessing(struct SCPUState *cpu, struct SAPU *apu,
 		max = Settings.HBlankStart;
 	}
 
-	if (ppu->HTimerEnabled && (long)ppu->HTimerPosition < max &&
-	    (long)ppu->HTimerPosition > cpu->NextEvent &&
-	    (!ppu->VTimerEnabled ||
-	     (ppu->VTimerEnabled && cpu->V_Counter == ppu->IRQVBeamPos))) {
-		which = (long)ppu->HTimerPosition < Settings.HBlankStart
-			    ? HTIMER_BEFORE_EVENT
-			    : HTIMER_AFTER_EVENT;
+	if (ppu->HTimerEnabled && (long)ppu->HTimerPosition < max && (long)ppu->HTimerPosition > cpu->NextEvent &&
+	    (!ppu->VTimerEnabled || (ppu->VTimerEnabled && cpu->V_Counter == ppu->IRQVBeamPos))) {
+		which = (long)ppu->HTimerPosition < Settings.HBlankStart ? HTIMER_BEFORE_EVENT : HTIMER_AFTER_EVENT;
 		max = ppu->HTimerPosition;
 	}
 	cpu->NextEvent = max;

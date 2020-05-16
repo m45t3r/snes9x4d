@@ -75,38 +75,28 @@ typedef enum {
 	S9X_NOT_EQUAL
 } S9xCheatComparisonType;
 
-typedef enum {
-	S9X_8_BITS,
-	S9X_16_BITS,
-	S9X_24_BITS,
-	S9X_32_BITS
-} S9xCheatDataSize;
+typedef enum { S9X_8_BITS, S9X_16_BITS, S9X_24_BITS, S9X_32_BITS } S9xCheatDataSize;
 
 void S9xInitCheatData();
 
 const char *S9xGameGenieToRaw(const char *code, uint32 &address, uint8 &byte);
-const char *S9xProActionReplayToRaw(const char *code, uint32 &address,
-				    uint8 &byte);
-const char *S9xGoldFingerToRaw(const char *code, uint32 &address, bool8 &sram,
-			       uint8 &num_bytes, uint8 bytes[3]);
+const char *S9xProActionReplayToRaw(const char *code, uint32 &address, uint8 &byte);
+const char *S9xGoldFingerToRaw(const char *code, uint32 &address, bool8 &sram, uint8 &num_bytes, uint8 bytes[3]);
 void S9xApplyCheats();
 void S9xApplyCheat(uint32 which1);
 void S9xRemoveCheats();
 void S9xRemoveCheat(uint32 which1);
 void S9xEnableCheat(uint32 which1);
 void S9xDisableCheat(uint32 which1);
-void S9xAddCheat(bool8 enable, bool8 save_current_value, uint32 address,
-		 uint8 byte);
+void S9xAddCheat(bool8 enable, bool8 save_current_value, uint32 address, uint8 byte);
 void S9xDeleteCheats();
 void S9xDeleteCheat(uint32 which1);
 bool8 S9xLoadCheatFile(const char *filename);
 bool8 S9xSaveCheatFile(const char *filename);
 
 void S9xStartCheatSearch(SCheatData *);
-void S9xSearchForChange(SCheatData *, S9xCheatComparisonType cmp,
-			S9xCheatDataSize size, bool8 is_signed, bool8 update);
-void S9xSearchForValue(SCheatData *, S9xCheatComparisonType cmp,
-		       S9xCheatDataSize size, uint32 value, bool8 is_signed,
+void S9xSearchForChange(SCheatData *, S9xCheatComparisonType cmp, S9xCheatDataSize size, bool8 is_signed, bool8 update);
+void S9xSearchForValue(SCheatData *, S9xCheatComparisonType cmp, S9xCheatDataSize size, uint32 value, bool8 is_signed,
 		       bool8 update);
 void S9xOutputCheatSearchResults(SCheatData *);
 

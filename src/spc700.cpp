@@ -77,18 +77,17 @@ END_EXTERN_C
 #define OP2 (*(iapu->PC + 2))
 
 #ifdef SPC700_SHUTDOWN
-#define APUShutdown()                                                          \
-	if (Settings.Shutdown && (iapu->PC == iapu->WaitAddress1 ||            \
-				  iapu->PC == iapu->WaitAddress2)) {           \
-		if (iapu->WaitCounter == 0) {                                  \
-			if (!ICPU.CPUExecuting)                                \
-				apu->Cycles = CPU.Cycles = CPU.NextEvent;      \
-			else                                                   \
-				iapu->APUExecuting = FALSE;                    \
-		} else if (iapu->WaitCounter >= 2)                             \
-			iapu->WaitCounter = 1;                                 \
-		else                                                           \
-			iapu->WaitCounter--;                                   \
+#define APUShutdown()                                                                                                  \
+	if (Settings.Shutdown && (iapu->PC == iapu->WaitAddress1 || iapu->PC == iapu->WaitAddress2)) {                 \
+		if (iapu->WaitCounter == 0) {                                                                          \
+			if (!ICPU.CPUExecuting)                                                                        \
+				apu->Cycles = CPU.Cycles = CPU.NextEvent;                                              \
+			else                                                                                           \
+				iapu->APUExecuting = FALSE;                                                            \
+		} else if (iapu->WaitCounter >= 2)                                                                     \
+			iapu->WaitCounter = 1;                                                                         \
+		else                                                                                                   \
+			iapu->WaitCounter--;                                                                           \
 	}
 #else
 #define APUShutdown()
@@ -106,8 +105,7 @@ void STOP(char *s)
 	S9xAPUOPrint(buffer, IAPU.PC - IAPU.RAM);
 #endif
 
-	sprintf(String, "Sound CPU in unknown state executing %s at %04X\n%s\n",
-		s, IAPU.PC - IAPU.RAM, buffer);
+	sprintf(String, "Sound CPU in unknown state executing %s at %04X\n%s\n", s, IAPU.PC - IAPU.RAM, buffer);
 	S9xMessage(S9X_ERROR, S9X_APU_STOPPED, String);
 	APU.TimerEnabled[0] = APU.TimerEnabled[1] = APU.TimerEnabled[2] = FALSE;
 	IAPU.APUExecuting = FALSE;
@@ -119,104 +117,99 @@ void STOP(char *s)
 #endif
 }
 #endif
-#define TCALL(n)                                                               \
-	{                                                                      \
-		PushW(iapu->PC - iapu->RAM + 1);                               \
-		iapu->PC =                                                     \
-		    iapu->RAM + (apu->ExtraRAM[((15 - n) << 1)] +              \
-				 (apu->ExtraRAM[((15 - n) << 1) + 1] << 8));   \
+#define TCALL(n)                                                                                                       \
+	{                                                                                                              \
+		PushW(iapu->PC - iapu->RAM + 1);                                                                       \
+		iapu->PC = iapu->RAM + (apu->ExtraRAM[((15 - n) << 1)] + (apu->ExtraRAM[((15 - n) << 1) + 1] << 8));   \
 	}
 
 // XXX: HalfCarry
-#define SBC(a, b)                                                              \
-	int16 Int16 = (short)(a) - (short)(b) + (short)(APUCheckCarry()) - 1;  \
-	APUClearHalfCarry();                                                   \
-	iapu->_Carry = Int16 >= 0;                                             \
-	if ((((a) ^ (b)) & 0x80) && (((a) ^ (uint8)Int16) & 0x80))             \
-		APUSetOverflow();                                              \
-	else                                                                   \
-		APUClearOverflow();                                            \
-	(a) = (uint8)Int16;                                                    \
+#define SBC(a, b)                                                                                                      \
+	int16 Int16 = (short)(a) - (short)(b) + (short)(APUCheckCarry()) - 1;                                          \
+	APUClearHalfCarry();                                                                                           \
+	iapu->_Carry = Int16 >= 0;                                                                                     \
+	if ((((a) ^ (b)) & 0x80) && (((a) ^ (uint8)Int16) & 0x80))                                                     \
+		APUSetOverflow();                                                                                      \
+	else                                                                                                           \
+		APUClearOverflow();                                                                                    \
+	(a) = (uint8)Int16;                                                                                            \
 	APUSetZN8((uint8)Int16);
 
 // XXX: HalfCarry
-#define ADC(a, b)                                                              \
-	uint16 Work16 = (a) + (b) + APUCheckCarry();                           \
-	APUClearHalfCarry();                                                   \
-	iapu->_Carry = Work16 >= 0x100;                                        \
-	if (~((a) ^ (b)) & ((b) ^ (uint8)Work16) & 0x80)                       \
-		APUSetOverflow();                                              \
-	else                                                                   \
-		APUClearOverflow();                                            \
-	(a) = (uint8)Work16;                                                   \
+#define ADC(a, b)                                                                                                      \
+	uint16 Work16 = (a) + (b) + APUCheckCarry();                                                                   \
+	APUClearHalfCarry();                                                                                           \
+	iapu->_Carry = Work16 >= 0x100;                                                                                \
+	if (~((a) ^ (b)) & ((b) ^ (uint8)Work16) & 0x80)                                                               \
+		APUSetOverflow();                                                                                      \
+	else                                                                                                           \
+		APUClearOverflow();                                                                                    \
+	(a) = (uint8)Work16;                                                                                           \
 	APUSetZN8((uint8)Work16);
 
-#define CMP(a, b)                                                              \
-	int16 Int16 = (short)(a) - (short)(b);                                 \
-	iapu->_Carry = Int16 >= 0;                                             \
+#define CMP(a, b)                                                                                                      \
+	int16 Int16 = (short)(a) - (short)(b);                                                                         \
+	iapu->_Carry = Int16 >= 0;                                                                                     \
 	APUSetZN8((uint8)Int16);
 
-#define ASL(b)                                                                 \
-	iapu->_Carry = ((b)&0x80) != 0;                                        \
-	(b) <<= 1;                                                             \
+#define ASL(b)                                                                                                         \
+	iapu->_Carry = ((b)&0x80) != 0;                                                                                \
+	(b) <<= 1;                                                                                                     \
 	APUSetZN8(b);
-#define LSR(b)                                                                 \
-	iapu->_Carry = (b)&1;                                                  \
-	(b) >>= 1;                                                             \
+#define LSR(b)                                                                                                         \
+	iapu->_Carry = (b)&1;                                                                                          \
+	(b) >>= 1;                                                                                                     \
 	APUSetZN8(b);
-#define ROL(b)                                                                 \
-	uint16 Work16 = ((b) << 1) | APUCheckCarry();                          \
-	iapu->_Carry = Work16 >= 0x100;                                        \
-	(b) = (uint8)Work16;                                                   \
+#define ROL(b)                                                                                                         \
+	uint16 Work16 = ((b) << 1) | APUCheckCarry();                                                                  \
+	iapu->_Carry = Work16 >= 0x100;                                                                                \
+	(b) = (uint8)Work16;                                                                                           \
 	APUSetZN8(b);
-#define ROR(b)                                                                 \
-	uint16 Work16 = (b) | ((uint16)APUCheckCarry() << 8);                  \
-	iapu->_Carry = (uint8)Work16 & 1;                                      \
-	Work16 >>= 1;                                                          \
-	(b) = (uint8)Work16;                                                   \
+#define ROR(b)                                                                                                         \
+	uint16 Work16 = (b) | ((uint16)APUCheckCarry() << 8);                                                          \
+	iapu->_Carry = (uint8)Work16 & 1;                                                                              \
+	Work16 >>= 1;                                                                                                  \
+	(b) = (uint8)Work16;                                                                                           \
 	APUSetZN8(b);
 
-#define Push(b)                                                                \
-	*(iapu->RAM + 0x100 + areg->S) = b;                                    \
+#define Push(b)                                                                                                        \
+	*(iapu->RAM + 0x100 + areg->S) = b;                                                                            \
 	areg->S = ((areg->S - 1) & 0xff);
 
-#define Pop(b)                                                                 \
-	areg->S = ((areg->S + 1) & 0xff);                                      \
+#define Pop(b)                                                                                                         \
+	areg->S = ((areg->S + 1) & 0xff);                                                                              \
 	(b) = *(iapu->RAM + 0x100 + areg->S);
 
 #ifdef FAST_LSB_WORD_ACCESS
-#define PushW(w)                                                               \
-	*(uint16 *)(iapu->RAM + 0xff + areg->S) = w;                           \
-	areg->S = ((areg->S - 2) & 0xff);                                      \
+#define PushW(w)                                                                                                       \
+	*(uint16 *)(iapu->RAM + 0xff + areg->S) = w;                                                                   \
+	areg->S = ((areg->S - 2) & 0xff);                                                                              \
 	;
-#define PopW(w)                                                                \
-	areg->S = ((areg->S + 2) & 0xff);                                      \
+#define PopW(w)                                                                                                        \
+	areg->S = ((areg->S + 2) & 0xff);                                                                              \
 	w = *(uint16 *)(iapu->RAM + 0xff + areg->S);
 #else
-#define PushW(w)                                                               \
-	*(iapu->RAM + 0xff + areg->S) = w;                                     \
-	*(iapu->RAM + 0x100 + areg->S) = (w >> 8);                             \
-	areg->S = ((areg->S - 2) & 0xff);                                      \
+#define PushW(w)                                                                                                       \
+	*(iapu->RAM + 0xff + areg->S) = w;                                                                             \
+	*(iapu->RAM + 0x100 + areg->S) = (w >> 8);                                                                     \
+	areg->S = ((areg->S - 2) & 0xff);                                                                              \
 	;
-#define PopW(w)                                                                \
-	areg->S = ((areg->S + 2) & 0xff);                                      \
-	;                                                                      \
-	(w) = *(iapu->RAM + 0xff + areg->S) +                                  \
-	      (*(iapu->RAM + 0x100 + areg->S) << 8);
+#define PopW(w)                                                                                                        \
+	areg->S = ((areg->S + 2) & 0xff);                                                                              \
+	;                                                                                                              \
+	(w) = *(iapu->RAM + 0xff + areg->S) + (*(iapu->RAM + 0x100 + areg->S) << 8);
 #endif
 
-#define Relative()                                                             \
-	int8 Int8 = OP1;                                                       \
+#define Relative()                                                                                                     \
+	int8 Int8 = OP1;                                                                                               \
 	int16 Int16 = (int)(iapu->PC + 2 - iapu->RAM) + Int8;
 
-#define Relative2()                                                            \
-	int8 Int8 = OP2;                                                       \
+#define Relative2()                                                                                                    \
+	int8 Int8 = OP2;                                                                                               \
 	int16 Int16 = (int)(iapu->PC + 3 - iapu->RAM) + Int8;
 
 #ifdef FAST_LSB_WORD_ACCESS
-#define IndexedXIndirect()                                                     \
-	iapu->Address =                                                        \
-	    *(uint16 *)(iapu->DirectPage + ((OP1 + areg->X) & 0xff));
+#define IndexedXIndirect() iapu->Address = *(uint16 *)(iapu->DirectPage + ((OP1 + areg->X) & 0xff));
 
 #define Absolute() iapu->Address = *(uint16 *)(iapu->PC + 1);
 
@@ -224,32 +217,29 @@ void STOP(char *s)
 
 #define AbsoluteY() iapu->Address = *(uint16 *)(iapu->PC + 1) + areg->YA.B.Y;
 
-#define MemBit()                                                               \
-	iapu->Address = *(uint16 *)(iapu->PC + 1);                             \
-	iapu->Bit = (uint8)(iapu->Address >> 13);                              \
+#define MemBit()                                                                                                       \
+	iapu->Address = *(uint16 *)(iapu->PC + 1);                                                                     \
+	iapu->Bit = (uint8)(iapu->Address >> 13);                                                                      \
 	iapu->Address &= 0x1fff;
 
-#define IndirectIndexedY()                                                     \
-	iapu->Address = *(uint16 *)(iapu->DirectPage + OP1) + areg->YA.B.Y;
+#define IndirectIndexedY() iapu->Address = *(uint16 *)(iapu->DirectPage + OP1) + areg->YA.B.Y;
 #else
-#define IndexedXIndirect()                                                     \
-	iapu->Address =                                                        \
-	    *(iapu->DirectPage + ((OP1 + areg->X) & 0xff)) +                   \
-	    (*(iapu->DirectPage + ((OP1 + areg->X + 1) & 0xff)) << 8);
+#define IndexedXIndirect()                                                                                             \
+	iapu->Address = *(iapu->DirectPage + ((OP1 + areg->X) & 0xff)) +                                               \
+			(*(iapu->DirectPage + ((OP1 + areg->X + 1) & 0xff)) << 8);
 #define Absolute() iapu->Address = OP1 + (OP2 << 8);
 
 #define AbsoluteX() iapu->Address = OP1 + (OP2 << 8) + areg->X;
 
 #define AbsoluteY() iapu->Address = OP1 + (OP2 << 8) + areg->YA.B.Y;
 
-#define MemBit()                                                               \
-	iapu->Address = OP1 + (OP2 << 8);                                      \
-	iapu->Bit = (int8)(iapu->Address >> 13);                               \
+#define MemBit()                                                                                                       \
+	iapu->Address = OP1 + (OP2 << 8);                                                                              \
+	iapu->Bit = (int8)(iapu->Address >> 13);                                                                       \
 	iapu->Address &= 0x1fff;
 
-#define IndirectIndexedY()                                                     \
-	iapu->Address = *(iapu->DirectPage + OP1) +                            \
-			(*(iapu->DirectPage + OP1 + 1) << 8) + areg->YA.B.Y;
+#define IndirectIndexedY()                                                                                             \
+	iapu->Address = *(iapu->DirectPage + OP1) + (*(iapu->DirectPage + OP1 + 1) << 8) + areg->YA.B.Y;
 #endif
 
 void Apu00(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
@@ -258,85 +248,37 @@ void Apu00(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 	iapu->PC++;
 }
 
-void Apu01(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	TCALL(0)
-}
+void Apu01(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { TCALL(0) }
 
-void Apu11(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	TCALL(1)
-}
+void Apu11(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { TCALL(1) }
 
-void Apu21(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	TCALL(2)
-}
+void Apu21(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { TCALL(2) }
 
-void Apu31(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	TCALL(3)
-}
+void Apu31(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { TCALL(3) }
 
-void Apu41(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	TCALL(4)
-}
+void Apu41(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { TCALL(4) }
 
-void Apu51(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	TCALL(5)
-}
+void Apu51(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { TCALL(5) }
 
-void Apu61(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	TCALL(6)
-}
+void Apu61(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { TCALL(6) }
 
-void Apu71(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	TCALL(7)
-}
+void Apu71(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { TCALL(7) }
 
-void Apu81(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	TCALL(8)
-}
+void Apu81(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { TCALL(8) }
 
-void Apu91(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	TCALL(9)
-}
+void Apu91(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { TCALL(9) }
 
-void ApuA1(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	TCALL(10)
-}
+void ApuA1(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { TCALL(10) }
 
-void ApuB1(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	TCALL(11)
-}
+void ApuB1(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { TCALL(11) }
 
-void ApuC1(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	TCALL(12)
-}
+void ApuC1(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { TCALL(12) }
 
-void ApuD1(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	TCALL(13)
-}
+void ApuD1(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { TCALL(13) }
 
-void ApuE1(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	TCALL(14)
-}
+void ApuE1(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { TCALL(14) }
 
-void ApuF1(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	TCALL(15)
-}
+void ApuF1(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { TCALL(15) }
 
 void Apu3F(struct SAPURegisters *areg, struct SIAPU *iapu,
 	   struct SAPU *apu) // CALL absolute
@@ -355,193 +297,95 @@ void Apu4F(struct SAPURegisters *areg, struct SIAPU *iapu,
 	iapu->PC = iapu->RAM + 0xff00 + Work8;
 }
 
-#define SET(b)                                                                 \
-	S9xAPUSetByteZ((uint8)(S9xAPUGetByteZ(OP1, iapu) | (1 << (b))), OP1,   \
-		       iapu, apu);                                             \
+#define SET(b)                                                                                                         \
+	S9xAPUSetByteZ((uint8)(S9xAPUGetByteZ(OP1, iapu) | (1 << (b))), OP1, iapu, apu);                               \
 	iapu->PC += 2
 
-void Apu02(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	SET(0);
-}
+void Apu02(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { SET(0); }
 
-void Apu22(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	SET(1);
-}
+void Apu22(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { SET(1); }
 
-void Apu42(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	SET(2);
-}
+void Apu42(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { SET(2); }
 
-void Apu62(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	SET(3);
-}
+void Apu62(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { SET(3); }
 
-void Apu82(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	SET(4);
-}
+void Apu82(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { SET(4); }
 
-void ApuA2(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	SET(5);
-}
+void ApuA2(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { SET(5); }
 
-void ApuC2(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	SET(6);
-}
+void ApuC2(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { SET(6); }
 
-void ApuE2(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	SET(7);
-}
+void ApuE2(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { SET(7); }
 
-#define CLR(b)                                                                 \
-	S9xAPUSetByteZ((uint8)(S9xAPUGetByteZ(OP1, iapu) & ~(1 << (b))), OP1,  \
-		       iapu, apu);                                             \
+#define CLR(b)                                                                                                         \
+	S9xAPUSetByteZ((uint8)(S9xAPUGetByteZ(OP1, iapu) & ~(1 << (b))), OP1, iapu, apu);                              \
 	iapu->PC += 2;
 
-void Apu12(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	CLR(0);
-}
+void Apu12(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { CLR(0); }
 
-void Apu32(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	CLR(1);
-}
+void Apu32(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { CLR(1); }
 
-void Apu52(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	CLR(2);
-}
+void Apu52(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { CLR(2); }
 
-void Apu72(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	CLR(3);
-}
+void Apu72(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { CLR(3); }
 
-void Apu92(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	CLR(4);
-}
+void Apu92(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { CLR(4); }
 
-void ApuB2(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	CLR(5);
-}
+void ApuB2(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { CLR(5); }
 
-void ApuD2(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	CLR(6);
-}
+void ApuD2(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { CLR(6); }
 
-void ApuF2(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	CLR(7);
-}
+void ApuF2(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { CLR(7); }
 
-#define BBS(b)                                                                 \
-	uint8 Work8 = OP1;                                                     \
-	Relative2();                                                           \
-	if (S9xAPUGetByteZ(Work8, iapu) & (1 << (b))) {                        \
-		iapu->PC = iapu->RAM + (uint16)Int16;                          \
-		apu->Cycles += iapu->TwoCycles;                                \
-	} else                                                                 \
+#define BBS(b)                                                                                                         \
+	uint8 Work8 = OP1;                                                                                             \
+	Relative2();                                                                                                   \
+	if (S9xAPUGetByteZ(Work8, iapu) & (1 << (b))) {                                                                \
+		iapu->PC = iapu->RAM + (uint16)Int16;                                                                  \
+		apu->Cycles += iapu->TwoCycles;                                                                        \
+	} else                                                                                                         \
 		iapu->PC += 3
 
-void Apu03(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	BBS(0);
-}
+void Apu03(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { BBS(0); }
 
-void Apu23(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	BBS(1);
-}
+void Apu23(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { BBS(1); }
 
-void Apu43(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	BBS(2);
-}
+void Apu43(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { BBS(2); }
 
-void Apu63(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	BBS(3);
-}
+void Apu63(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { BBS(3); }
 
-void Apu83(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	BBS(4);
-}
+void Apu83(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { BBS(4); }
 
-void ApuA3(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	BBS(5);
-}
+void ApuA3(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { BBS(5); }
 
-void ApuC3(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	BBS(6);
-}
+void ApuC3(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { BBS(6); }
 
-void ApuE3(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	BBS(7);
-}
+void ApuE3(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { BBS(7); }
 
-#define BBC(b)                                                                 \
-	uint8 Work8 = OP1;                                                     \
-	Relative2();                                                           \
-	if (!(S9xAPUGetByteZ(Work8, iapu) & (1 << (b)))) {                     \
-		iapu->PC = iapu->RAM + (uint16)Int16;                          \
-		apu->Cycles += iapu->TwoCycles;                                \
-	} else                                                                 \
+#define BBC(b)                                                                                                         \
+	uint8 Work8 = OP1;                                                                                             \
+	Relative2();                                                                                                   \
+	if (!(S9xAPUGetByteZ(Work8, iapu) & (1 << (b)))) {                                                             \
+		iapu->PC = iapu->RAM + (uint16)Int16;                                                                  \
+		apu->Cycles += iapu->TwoCycles;                                                                        \
+	} else                                                                                                         \
 		iapu->PC += 3
 
-void Apu13(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	BBC(0);
-}
+void Apu13(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { BBC(0); }
 
-void Apu33(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	BBC(1);
-}
+void Apu33(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { BBC(1); }
 
-void Apu53(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	BBC(2);
-}
+void Apu53(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { BBC(2); }
 
-void Apu73(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	BBC(3);
-}
+void Apu73(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { BBC(3); }
 
-void Apu93(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	BBC(4);
-}
+void Apu93(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { BBC(4); }
 
-void ApuB3(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	BBC(5);
-}
+void ApuB3(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { BBC(5); }
 
-void ApuD3(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	BBC(6);
-}
+void ApuD3(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { BBC(6); }
 
-void ApuF3(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
-{
-	BBC(7);
-}
+void ApuF3(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu) { BBC(7); }
 
 void Apu04(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 {
@@ -643,8 +487,7 @@ void Apu18(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 void Apu19(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 {
 	// OR (X),(Y)
-	uint8 Work8 =
-	    S9xAPUGetByteZ(areg->X, iapu) | S9xAPUGetByteZ(areg->YA.B.Y, iapu);
+	uint8 Work8 = S9xAPUGetByteZ(areg->X, iapu) | S9xAPUGetByteZ(areg->YA.B.Y, iapu);
 	APUSetZN8(Work8);
 	S9xAPUSetByteZ(Work8, areg->X, iapu, apu);
 	iapu->PC++;
@@ -724,13 +567,9 @@ void ApuCA(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 	// MOV1 membit,C
 	MemBit();
 	if (APUCheckCarry()) {
-		S9xAPUSetByte(S9xAPUGetByte(iapu->Address, iapu) |
-				  (1 << iapu->Bit),
-			      iapu->Address, iapu, apu);
+		S9xAPUSetByte(S9xAPUGetByte(iapu->Address, iapu) | (1 << iapu->Bit), iapu->Address, iapu, apu);
 	} else {
-		S9xAPUSetByte(S9xAPUGetByte(iapu->Address, iapu) &
-				  ~(1 << iapu->Bit),
-			      iapu->Address, iapu, apu);
+		S9xAPUSetByte(S9xAPUGetByte(iapu->Address, iapu) & ~(1 << iapu->Bit), iapu->Address, iapu, apu);
 	}
 	iapu->PC += 3;
 }
@@ -739,8 +578,7 @@ void ApuEA(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 {
 	// NOT1 membit
 	MemBit();
-	S9xAPUSetByte(S9xAPUGetByte(iapu->Address, iapu) ^ (1 << iapu->Bit),
-		      iapu->Address, iapu, apu);
+	S9xAPUSetByte(S9xAPUGetByte(iapu->Address, iapu) ^ (1 << iapu->Bit), iapu->Address, iapu, apu);
 	iapu->PC += 3;
 }
 
@@ -1023,8 +861,7 @@ void Apu40(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 void Apu1A(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 {
 	// DECW dp
-	uint16 Work16 =
-	    S9xAPUGetByteZ(OP1, iapu) + (S9xAPUGetByteZ(OP1 + 1, iapu) << 8);
+	uint16 Work16 = S9xAPUGetByteZ(OP1, iapu) + (S9xAPUGetByteZ(OP1 + 1, iapu) << 8);
 	Work16--;
 	S9xAPUSetByteZ((uint8)Work16, OP1, iapu, apu);
 	S9xAPUSetByteZ(Work16 >> 8, OP1 + 1, iapu, apu);
@@ -1035,8 +872,7 @@ void Apu1A(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 void Apu5A(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 {
 	// CMPW YA,dp
-	uint16 Work16 =
-	    S9xAPUGetByteZ(OP1, iapu) + (S9xAPUGetByteZ(OP1 + 1, iapu) << 8);
+	uint16 Work16 = S9xAPUGetByteZ(OP1, iapu) + (S9xAPUGetByteZ(OP1 + 1, iapu) << 8);
 	int32 Int32 = (long)areg->YA.W - (long)Work16;
 	iapu->_Carry = Int32 >= 0;
 	APUSetZN16((uint16)Int32);
@@ -1046,8 +882,7 @@ void Apu5A(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 void Apu3A(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 {
 	// INCW dp
-	uint16 Work16 =
-	    S9xAPUGetByteZ(OP1, iapu) + (S9xAPUGetByteZ(OP1 + 1, iapu) << 8);
+	uint16 Work16 = S9xAPUGetByteZ(OP1, iapu) + (S9xAPUGetByteZ(OP1 + 1, iapu) << 8);
 	Work16++;
 	S9xAPUSetByteZ((uint8)Work16, OP1, iapu, apu);
 	S9xAPUSetByteZ(Work16 >> 8, OP1 + 1, iapu, apu);
@@ -1058,8 +893,7 @@ void Apu3A(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 void Apu7A(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 {
 	// ADDW YA,dp
-	uint16 Work16 =
-	    S9xAPUGetByteZ(OP1, iapu) + (S9xAPUGetByteZ(OP1 + 1, iapu) << 8);
+	uint16 Work16 = S9xAPUGetByteZ(OP1, iapu) + (S9xAPUGetByteZ(OP1 + 1, iapu) << 8);
 	uint32 Work32 = (uint32)areg->YA.W + Work16;
 	APUClearHalfCarry();
 	iapu->_Carry = Work32 >= 0x10000;
@@ -1075,18 +909,15 @@ void Apu7A(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 void Apu9A(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 {
 	// SUBW YA,dp
-	uint16 Work16 =
-	    S9xAPUGetByteZ(OP1, iapu) + (S9xAPUGetByteZ(OP1 + 1, iapu) << 8);
+	uint16 Work16 = S9xAPUGetByteZ(OP1, iapu) + (S9xAPUGetByteZ(OP1 + 1, iapu) << 8);
 	int32 Int32 = (long)areg->YA.W - (long)Work16;
 	APUClearHalfCarry();
 	iapu->_Carry = Int32 >= 0;
-	if (((areg->YA.W ^ Work16) & 0x8000) &&
-	    ((areg->YA.W ^ (uint16)Int32) & 0x8000))
+	if (((areg->YA.W ^ Work16) & 0x8000) && ((areg->YA.W ^ (uint16)Int32) & 0x8000))
 		APUSetOverflow();
 	else
 		APUClearOverflow();
-	if (((areg->YA.W ^ Work16) & 0x0080) &&
-	    ((areg->YA.W ^ (uint16)Int32) & 0x0080))
+	if (((areg->YA.W ^ Work16) & 0x0080) && ((areg->YA.W ^ (uint16)Int32) & 0x0080))
 		APUSetHalfCarry();
 	areg->YA.W = (uint16)Int32;
 	APUSetZN16(areg->YA.W);
@@ -1403,8 +1234,7 @@ void Apu38(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 void Apu39(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 {
 	// AND (X),(Y)
-	uint8 Work8 =
-	    S9xAPUGetByteZ(areg->X, iapu) & S9xAPUGetByteZ(areg->YA.B.Y, iapu);
+	uint8 Work8 = S9xAPUGetByteZ(areg->X, iapu) & S9xAPUGetByteZ(areg->YA.B.Y, iapu);
 	APUSetZN8(Work8);
 	S9xAPUSetByteZ(Work8, areg->X, iapu, apu);
 	iapu->PC++;
@@ -1737,8 +1567,7 @@ void Apu58(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 void Apu59(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 {
 	// EOR (X),(Y)
-	uint8 Work8 =
-	    S9xAPUGetByteZ(areg->X, iapu) ^ S9xAPUGetByteZ(areg->YA.B.Y, iapu);
+	uint8 Work8 = S9xAPUGetByteZ(areg->X, iapu) ^ S9xAPUGetByteZ(areg->YA.B.Y, iapu);
 	APUSetZN8(Work8);
 	S9xAPUSetByteZ(Work8, areg->X, iapu, apu);
 	iapu->PC++;
@@ -2488,29 +2317,20 @@ void ApuFB(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 #include "apumem.h"
 #endif
 
-void (*S9xApuOpcodes[256])(struct SAPURegisters *, struct SIAPU *,
-			   struct SAPU *) = {
-    Apu00, Apu01, Apu02, Apu03, Apu04, Apu05, Apu06, Apu07, Apu08, Apu09, Apu0A,
-    Apu0B, Apu0C, Apu0D, Apu0E, Apu0F, Apu10, Apu11, Apu12, Apu13, Apu14, Apu15,
-    Apu16, Apu17, Apu18, Apu19, Apu1A, Apu1B, Apu1C, Apu1D, Apu1E, Apu1F, Apu20,
-    Apu21, Apu22, Apu23, Apu24, Apu25, Apu26, Apu27, Apu28, Apu29, Apu2A, Apu2B,
-    Apu2C, Apu2D, Apu2E, Apu2F, Apu30, Apu31, Apu32, Apu33, Apu34, Apu35, Apu36,
-    Apu37, Apu38, Apu39, Apu3A, Apu3B, Apu3C, Apu3D, Apu3E, Apu3F, Apu40, Apu41,
-    Apu42, Apu43, Apu44, Apu45, Apu46, Apu47, Apu48, Apu49, Apu4A, Apu4B, Apu4C,
-    Apu4D, Apu4E, Apu4F, Apu50, Apu51, Apu52, Apu53, Apu54, Apu55, Apu56, Apu57,
-    Apu58, Apu59, Apu5A, Apu5B, Apu5C, Apu5D, Apu5E, Apu5F, Apu60, Apu61, Apu62,
-    Apu63, Apu64, Apu65, Apu66, Apu67, Apu68, Apu69, Apu6A, Apu6B, Apu6C, Apu6D,
-    Apu6E, Apu6F, Apu70, Apu71, Apu72, Apu73, Apu74, Apu75, Apu76, Apu77, Apu78,
-    Apu79, Apu7A, Apu7B, Apu7C, Apu7D, Apu7E, Apu7F, Apu80, Apu81, Apu82, Apu83,
-    Apu84, Apu85, Apu86, Apu87, Apu88, Apu89, Apu8A, Apu8B, Apu8C, Apu8D, Apu8E,
-    Apu8F, Apu90, Apu91, Apu92, Apu93, Apu94, Apu95, Apu96, Apu97, Apu98, Apu99,
-    Apu9A, Apu9B, Apu9C, Apu9D, Apu9E, Apu9F, ApuA0, ApuA1, ApuA2, ApuA3, ApuA4,
-    ApuA5, ApuA6, ApuA7, ApuA8, ApuA9, ApuAA, ApuAB, ApuAC, ApuAD, ApuAE, ApuAF,
-    ApuB0, ApuB1, ApuB2, ApuB3, ApuB4, ApuB5, ApuB6, ApuB7, ApuB8, ApuB9, ApuBA,
-    ApuBB, ApuBC, ApuBD, ApuBE, ApuBF, ApuC0, ApuC1, ApuC2, ApuC3, ApuC4, ApuC5,
-    ApuC6, ApuC7, ApuC8, ApuC9, ApuCA, ApuCB, ApuCC, ApuCD, ApuCE, ApuCF, ApuD0,
-    ApuD1, ApuD2, ApuD3, ApuD4, ApuD5, ApuD6, ApuD7, ApuD8, ApuD9, ApuDA, ApuDB,
-    ApuDC, ApuDD, ApuDE, ApuDF, ApuE0, ApuE1, ApuE2, ApuE3, ApuE4, ApuE5, ApuE6,
-    ApuE7, ApuE8, ApuE9, ApuEA, ApuEB, ApuEC, ApuED, ApuEE, ApuEF, ApuF0, ApuF1,
-    ApuF2, ApuF3, ApuF4, ApuF5, ApuF6, ApuF7, ApuF8, ApuF9, ApuFA, ApuFB, ApuFC,
-    ApuFD, ApuFE, ApuFF};
+void (*S9xApuOpcodes[256])(struct SAPURegisters *, struct SIAPU *, struct SAPU *) = {
+    Apu00, Apu01, Apu02, Apu03, Apu04, Apu05, Apu06, Apu07, Apu08, Apu09, Apu0A, Apu0B, Apu0C, Apu0D, Apu0E, Apu0F,
+    Apu10, Apu11, Apu12, Apu13, Apu14, Apu15, Apu16, Apu17, Apu18, Apu19, Apu1A, Apu1B, Apu1C, Apu1D, Apu1E, Apu1F,
+    Apu20, Apu21, Apu22, Apu23, Apu24, Apu25, Apu26, Apu27, Apu28, Apu29, Apu2A, Apu2B, Apu2C, Apu2D, Apu2E, Apu2F,
+    Apu30, Apu31, Apu32, Apu33, Apu34, Apu35, Apu36, Apu37, Apu38, Apu39, Apu3A, Apu3B, Apu3C, Apu3D, Apu3E, Apu3F,
+    Apu40, Apu41, Apu42, Apu43, Apu44, Apu45, Apu46, Apu47, Apu48, Apu49, Apu4A, Apu4B, Apu4C, Apu4D, Apu4E, Apu4F,
+    Apu50, Apu51, Apu52, Apu53, Apu54, Apu55, Apu56, Apu57, Apu58, Apu59, Apu5A, Apu5B, Apu5C, Apu5D, Apu5E, Apu5F,
+    Apu60, Apu61, Apu62, Apu63, Apu64, Apu65, Apu66, Apu67, Apu68, Apu69, Apu6A, Apu6B, Apu6C, Apu6D, Apu6E, Apu6F,
+    Apu70, Apu71, Apu72, Apu73, Apu74, Apu75, Apu76, Apu77, Apu78, Apu79, Apu7A, Apu7B, Apu7C, Apu7D, Apu7E, Apu7F,
+    Apu80, Apu81, Apu82, Apu83, Apu84, Apu85, Apu86, Apu87, Apu88, Apu89, Apu8A, Apu8B, Apu8C, Apu8D, Apu8E, Apu8F,
+    Apu90, Apu91, Apu92, Apu93, Apu94, Apu95, Apu96, Apu97, Apu98, Apu99, Apu9A, Apu9B, Apu9C, Apu9D, Apu9E, Apu9F,
+    ApuA0, ApuA1, ApuA2, ApuA3, ApuA4, ApuA5, ApuA6, ApuA7, ApuA8, ApuA9, ApuAA, ApuAB, ApuAC, ApuAD, ApuAE, ApuAF,
+    ApuB0, ApuB1, ApuB2, ApuB3, ApuB4, ApuB5, ApuB6, ApuB7, ApuB8, ApuB9, ApuBA, ApuBB, ApuBC, ApuBD, ApuBE, ApuBF,
+    ApuC0, ApuC1, ApuC2, ApuC3, ApuC4, ApuC5, ApuC6, ApuC7, ApuC8, ApuC9, ApuCA, ApuCB, ApuCC, ApuCD, ApuCE, ApuCF,
+    ApuD0, ApuD1, ApuD2, ApuD3, ApuD4, ApuD5, ApuD6, ApuD7, ApuD8, ApuD9, ApuDA, ApuDB, ApuDC, ApuDD, ApuDE, ApuDF,
+    ApuE0, ApuE1, ApuE2, ApuE3, ApuE4, ApuE5, ApuE6, ApuE7, ApuE8, ApuE9, ApuEA, ApuEB, ApuEC, ApuED, ApuEE, ApuEF,
+    ApuF0, ApuF1, ApuF2, ApuF3, ApuF4, ApuF5, ApuF6, ApuF7, ApuF8, ApuF9, ApuFA, ApuFB, ApuFC, ApuFD, ApuFE, ApuFF};

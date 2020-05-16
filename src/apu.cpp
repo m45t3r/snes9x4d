@@ -56,8 +56,8 @@
 
 extern int NoiseFreq[32];
 #ifdef DEBUGGER
-void S9xTraceSoundDSP(const char *s, int i1 = 0, int i2 = 0, int i3 = 0,
-		      int i4 = 0, int i5 = 0, int i6 = 0, int i7 = 0);
+void S9xTraceSoundDSP(const char *s, int i1 = 0, int i2 = 0, int i3 = 0, int i4 = 0, int i5 = 0, int i6 = 0,
+		      int i7 = 0);
 #endif
 
 bool8_32 S9xInitAPU()
@@ -157,16 +157,14 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 	switch (reg) {
 	case APU_FLG:
 		if (byte & APU_SOFT_RESET) {
-			apu->DSP[reg] =
-			    APU_MUTE | APU_ECHO_DISABLED | (byte & 0x1f);
+			apu->DSP[reg] = APU_MUTE | APU_ECHO_DISABLED | (byte & 0x1f);
 			apu->DSP[APU_ENDX] = 0;
 			apu->DSP[APU_KOFF] = 0;
 			apu->DSP[APU_KON] = 0;
 			S9xSetEchoWriteEnable(FALSE);
 #ifdef DEBUGGER
 			if (Settings.TraceSoundDSP)
-				S9xTraceSoundDSP("[%d] DSP reset\n",
-						 ICPU.Scanline);
+				S9xTraceSoundDSP("[%d] DSP reset\n", ICPU.Scanline);
 #endif
 			// Kill sound
 			S9xResetSound(FALSE);
@@ -175,8 +173,7 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 			if (byte & APU_MUTE) {
 #ifdef DEBUGGER
 				if (Settings.TraceSoundDSP)
-					S9xTraceSoundDSP("[%d] Mute sound\n",
-							 ICPU.Scanline);
+					S9xTraceSoundDSP("[%d] Mute sound\n", ICPU.Scanline);
 #endif
 				S9xSetSoundMute(TRUE);
 			} else
@@ -185,8 +182,7 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 			SoundData.noise_hertz = NoiseFreq[byte & 0x1f];
 			for (i = 0; i < 8; i++) {
 				if (SoundData.channels[i].type == SOUND_NOISE)
-					S9xSetSoundFrequency(
-					    i, SoundData.noise_hertz);
+					S9xSetSoundFrequency(i, SoundData.noise_hertz);
 			}
 		}
 		break;
@@ -204,11 +200,9 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 #ifdef DEBUGGER
 					if (Settings.TraceSoundDSP) {
 						if (apu->DSP[reg] & mask)
-							S9xTraceSoundDSP("%d,",
-									 c);
+							S9xTraceSoundDSP("%d,", c);
 						else
-							S9xTraceSoundDSP(
-							    "%d(on),", c);
+							S9xTraceSoundDSP("%d(on),", c);
 					}
 #endif
 				} else {
@@ -216,12 +210,11 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 #ifdef DEBUGGER
 					if (Settings.TraceSoundDSP) {
 						if (apu->DSP[reg] & mask)
-							S9xTraceSoundDSP(
-							    "%d(off),", c);
+							S9xTraceSoundDSP("%d(off),", c);
 					}
 #endif
 				}
-				//		S9xSetSoundType (c, type);
+				// S9xSetSoundType (c, type);
 				SoundData.channels[c].type = type;
 			}
 #ifdef DEBUGGER
@@ -234,80 +227,52 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 		if (byte != apu->DSP[APU_MVOL_LEFT]) {
 #ifdef DEBUGGER
 			if (Settings.TraceSoundDSP)
-				S9xTraceSoundDSP("[%d] Master volume left:%d\n",
-						 ICPU.Scanline,
-						 (signed char)byte);
+				S9xTraceSoundDSP("[%d] Master volume left:%d\n", ICPU.Scanline, (signed char)byte);
 #endif
-			//		S9xSetMasterVolume ((signed char) byte,
-			//				    (signed char)
-			// apu->DSP [APU_MVOL_RIGHT]);
+			// S9xSetMasterVolume((signed char)byte, (signed char)apu->DSP[APU_MVOL_RIGHT]);
 			SoundData.master_volume_left = (signed char)byte;
-			SoundData.master_volume_right =
-			    (signed char)apu->DSP[APU_MVOL_RIGHT];
-			SoundData.master_volume[Settings.ReverseStereo] =
-			    (signed char)byte;
-			SoundData.master_volume[1 ^ Settings.ReverseStereo] =
-			    (signed char)apu->DSP[APU_MVOL_RIGHT];
+			SoundData.master_volume_right = (signed char)apu->DSP[APU_MVOL_RIGHT];
+			SoundData.master_volume[Settings.ReverseStereo] = (signed char)byte;
+			SoundData.master_volume[1 ^ Settings.ReverseStereo] = (signed char)apu->DSP[APU_MVOL_RIGHT];
 		}
 		break;
 	case APU_MVOL_RIGHT:
 		if (byte != apu->DSP[APU_MVOL_RIGHT]) {
 #ifdef DEBUGGER
 			if (Settings.TraceSoundDSP)
-				S9xTraceSoundDSP(
-				    "[%d] Master volume right:%d\n",
-				    ICPU.Scanline, (signed char)byte);
+				S9xTraceSoundDSP("[%d] Master volume right:%d\n", ICPU.Scanline, (signed char)byte);
 #endif
-			//		S9xSetMasterVolume ((signed char)
-			// apu->DSP [APU_MVOL_LEFT],
-			//(signed char) byte);
-			SoundData.master_volume_left =
-			    (signed char)apu->DSP[APU_MVOL_LEFT];
-			SoundData.master_volume_right =
-			    (signed char)(signed char)byte;
-			SoundData.master_volume[Settings.ReverseStereo] =
-			    (signed char)apu->DSP[APU_MVOL_LEFT];
-			SoundData.master_volume[1 ^ Settings.ReverseStereo] =
-			    (signed char)byte;
+			// S9xSetMasterVolume((signed char)apu->DSP[APU_MVOL_LEFT], (signed char)byte);
+			SoundData.master_volume_left = (signed char)apu->DSP[APU_MVOL_LEFT];
+			SoundData.master_volume_right = (signed char)(signed char)byte;
+			SoundData.master_volume[Settings.ReverseStereo] = (signed char)apu->DSP[APU_MVOL_LEFT];
+			SoundData.master_volume[1 ^ Settings.ReverseStereo] = (signed char)byte;
 		}
 		break;
 	case APU_EVOL_LEFT:
 		if (byte != apu->DSP[APU_EVOL_LEFT]) {
 #ifdef DEBUGGER
 			if (Settings.TraceSoundDSP)
-				S9xTraceSoundDSP("[%d] Echo volume left:%d\n",
-						 ICPU.Scanline,
-						 (signed char)byte);
+				S9xTraceSoundDSP("[%d] Echo volume left:%d\n", ICPU.Scanline, (signed char)byte);
 #endif
-			//		S9xSetEchoVolume ((signed char) byte,
-			//				  (signed char) apu->DSP
-			//[APU_EVOL_RIGHT]);
+			// S9xSetEchoVolume((signed char)byte, (signed char)apu->DSP[APU_EVOL_RIGHT]);
 			SoundData.echo_volume_left = (signed char)byte;
-			SoundData.echo_volume_right =
-			    (signed char)apu->DSP[APU_EVOL_RIGHT];
-			SoundData.echo_volume[Settings.ReverseStereo] =
-			    (signed char)byte;
-			SoundData.echo_volume[1 ^ Settings.ReverseStereo] =
-			    (signed char)apu->DSP[APU_EVOL_RIGHT];
+			SoundData.echo_volume_right = (signed char)apu->DSP[APU_EVOL_RIGHT];
+			SoundData.echo_volume[Settings.ReverseStereo] = (signed char)byte;
+			SoundData.echo_volume[1 ^ Settings.ReverseStereo] = (signed char)apu->DSP[APU_EVOL_RIGHT];
 		}
 		break;
 	case APU_EVOL_RIGHT:
 		if (byte != apu->DSP[APU_EVOL_RIGHT]) {
 #ifdef DEBUGGER
 			if (Settings.TraceSoundDSP)
-				S9xTraceSoundDSP("[%d] Echo volume right:%d\n",
-						 ICPU.Scanline,
-						 (signed char)byte);
+				S9xTraceSoundDSP("[%d] Echo volume right:%d\n", ICPU.Scanline, (signed char)byte);
 #endif
-			//		S9xSetEchoVolume ((signed char) apu->DSP
-			//[APU_EVOL_LEFT], (signed char) byte);
-			SoundData.echo_volume_left =
-			    (signed char)apu->DSP[APU_EVOL_LEFT];
+			// S9xSetEchoVolume((signed char)apu->DSP[APU_EVOL_LEFT], (signed char)byte);
+			SoundData.echo_volume_left = (signed char)apu->DSP[APU_EVOL_LEFT];
 			SoundData.echo_volume_right = (signed char)byte;
-			SoundData.echo_volume[Settings.ReverseStereo] =
-			    (signed char)apu->DSP[APU_EVOL_LEFT];
-			SoundData.echo_volume[1 ^ Settings.ReverseStereo] =
-			    (signed char)byte;
+			SoundData.echo_volume[Settings.ReverseStereo] = (signed char)apu->DSP[APU_EVOL_LEFT];
+			SoundData.echo_volume[1 ^ Settings.ReverseStereo] = (signed char)byte;
 		}
 		break;
 	case APU_ENDX:
@@ -323,8 +288,7 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 			uint8 mask = 1;
 #ifdef DEBUGGER
 			if (Settings.TraceSoundDSP)
-				S9xTraceSoundDSP("[%d] Key off:",
-						 ICPU.Scanline);
+				S9xTraceSoundDSP("[%d] Key off:", ICPU.Scanline);
 #endif
 			for (int c = 0; c < 8; c++, mask <<= 1) {
 				if ((byte & mask) != 0) {
@@ -335,12 +299,9 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 #endif
 					if (apu->KeyedChannels & mask) {
 						{
-							apu->KeyedChannels &=
-							    ~mask;
-							apu->DSP[APU_KON] &=
-							    ~mask;
-							// apu->DSP [APU_KOFF]
-							// |= mask;
+							apu->KeyedChannels &= ~mask;
+							apu->DSP[APU_KON] &= ~mask;
+							// apu->DSP[APU_KOFF] |= mask;
 							S9xSetSoundKeyOff(c);
 						}
 					}
@@ -367,9 +328,8 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 					if (Settings.TraceSoundDSP)
 						S9xTraceSoundDSP("%d,", c);
 #endif
-					// Pac-In-Time requires that channels
-					// can be key-on regardeless of their
-					// current state.
+					// Pac-In-Time requires that channels can be key-on regardeless of their current
+					// state.
 					apu->KeyedChannels |= mask;
 					apu->DSP[APU_KON] |= mask;
 					apu->DSP[APU_KOFF] &= ~mask;
@@ -393,28 +353,20 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 	case APU_VOL_LEFT + 0x60:
 	case APU_VOL_LEFT + 0x70:
 		// At Shin Megami Tensei suggestion 6/11/00
-		//	if (byte != apu->DSP [reg])
+		// if (byte != apu->DSP [reg])
 		{
 #ifdef DEBUGGER
 			if (Settings.TraceSoundDSP)
-				S9xTraceSoundDSP("[%d] %d volume left: %d\n",
-						 ICPU.Scanline, reg >> 4,
+				S9xTraceSoundDSP("[%d] %d volume left: %d\n", ICPU.Scanline, reg >> 4,
 						 (signed char)byte);
 #endif
-			//		S9xSetSoundVolume (reg >> 4, (signed
-			// char) byte, 				   (signed char)
-			// apu->DSP [reg + 1]);
+			// S9xSetSoundVolume(reg >> 4, (signed char)byte, (signed char)apu->DSP[reg + 1]);
 			int ch = reg >> 4;
 			SoundData.channels[ch].volume_left = (signed char)byte;
-			SoundData.channels[ch].volume_right =
-			    (signed char)apu->DSP[reg + 1];
-			SoundData.channels[ch].left_vol_level =
-			    (SoundData.channels[ch].envx * (signed char)byte) /
-			    128;
+			SoundData.channels[ch].volume_right = (signed char)apu->DSP[reg + 1];
+			SoundData.channels[ch].left_vol_level = (SoundData.channels[ch].envx * (signed char)byte) / 128;
 			SoundData.channels[ch].right_vol_level =
-			    (SoundData.channels[ch].envx *
-			     (signed char)apu->DSP[reg + 1]) /
-			    128;
+			    (SoundData.channels[ch].envx * (signed char)apu->DSP[reg + 1]) / 128;
 		}
 		break;
 	case APU_VOL_RIGHT + 0x00:
@@ -426,28 +378,21 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 	case APU_VOL_RIGHT + 0x60:
 	case APU_VOL_RIGHT + 0x70:
 		// At Shin Megami Tensei suggestion 6/11/00
-		//	if (byte != apu->DSP [reg])
+		// if (byte != apu->DSP [reg])
 		{
 #ifdef DEBUGGER
 			if (Settings.TraceSoundDSP)
-				S9xTraceSoundDSP("[%d] %d volume right: %d\n",
-						 ICPU.Scanline, reg >> 4,
+				S9xTraceSoundDSP("[%d] %d volume right: %d\n", ICPU.Scanline, reg >> 4,
 						 (signed char)byte);
 #endif
-			//		S9xSetSoundVolume (reg >> 4, (signed
-			// char) apu->DSP [reg - 1],
-			// (signed char) byte);
+			// S9xSetSoundVolume(reg >> 4, (signed char)apu->DSP[reg - 1], (signed char)byte);
 			int ch = reg >> 4;
-			SoundData.channels[ch].volume_left =
-			    (signed char)apu->DSP[reg - 1];
+			SoundData.channels[ch].volume_left = (signed char)apu->DSP[reg - 1];
 			SoundData.channels[ch].volume_right = (signed char)byte;
 			SoundData.channels[ch].left_vol_level =
-			    (SoundData.channels[ch].envx *
-			     (signed char)apu->DSP[reg - 1]) /
-			    128;
+			    (SoundData.channels[ch].envx * (signed char)apu->DSP[reg - 1]) / 128;
 			SoundData.channels[ch].right_vol_level =
-			    (SoundData.channels[ch].envx * (signed char)byte) /
-			    128;
+			    (SoundData.channels[ch].envx * (signed char)byte) / 128;
 		}
 		break;
 
@@ -461,16 +406,12 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 	case APU_P_LOW + 0x70:
 #ifdef DEBUGGER
 		if (Settings.TraceSoundDSP)
-			S9xTraceSoundDSP("[%d] %d freq low: %d\n",
-					 ICPU.Scanline, reg >> 4, byte);
+			S9xTraceSoundDSP("[%d] %d freq low: %d\n", ICPU.Scanline, reg >> 4, byte);
 #endif
-		//	    S9xSetSoundHertz (reg >> 4, ((byte + (apu->DSP [reg
-		//+ 1] << 8)) & FREQUENCY_MASK) * 8);
+		// S9xSetSoundHertz(reg >> 4, ((byte + (apu->DSP[reg + 1] << 8)) & FREQUENCY_MASK) * 8);
 		{
 			int ch = reg >> 4;
-			int hertz = ((byte + (apu->DSP[reg + 1] << 8)) &
-				     FREQUENCY_MASK) *
-				    8;
+			int hertz = ((byte + (apu->DSP[reg + 1] << 8)) & FREQUENCY_MASK) * 8;
 			SoundData.channels[ch].hertz = hertz;
 			S9xSetSoundFrequency(ch, hertz);
 			break;
@@ -485,17 +426,12 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 	case APU_P_HIGH + 0x70:
 #ifdef DEBUGGER
 		if (Settings.TraceSoundDSP)
-			S9xTraceSoundDSP("[%d] %d freq high: %d\n",
-					 ICPU.Scanline, reg >> 4, byte);
+			S9xTraceSoundDSP("[%d] %d freq high: %d\n", ICPU.Scanline, reg >> 4, byte);
 #endif
-		//	    S9xSetSoundHertz (reg >> 4,
-		//			      (((byte << 8) + apu->DSP [reg -
-		// 1]) & FREQUENCY_MASK) * 8);
+		// S9xSetSoundHertz(reg >> 4, (((byte << 8) + apu->DSP[reg - 1]) & FREQUENCY_MASK) * 8);
 		{
 			int ch = reg >> 4;
-			int hertz = (((byte << 8) + apu->DSP[reg - 1]) &
-				     FREQUENCY_MASK) *
-				    8;
+			int hertz = (((byte << 8) + apu->DSP[reg - 1]) & FREQUENCY_MASK) * 8;
 			SoundData.channels[ch].hertz = hertz;
 			S9xSetSoundFrequency(ch, hertz);
 		}
@@ -512,8 +448,7 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 		if (byte != apu->DSP[reg]) {
 #ifdef DEBUGGER
 			if (Settings.TraceSoundDSP)
-				S9xTraceSoundDSP("[%d] %d sample number: %d\n",
-						 ICPU.Scanline, reg >> 4, byte);
+				S9xTraceSoundDSP("[%d] %d sample number: %d\n", ICPU.Scanline, reg >> 4, byte);
 #endif
 			S9xSetSoundSample(reg >> 4, byte);
 		}
@@ -530,12 +465,10 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 		if (byte != apu->DSP[reg]) {
 #ifdef DEBUGGER
 			if (Settings.TraceSoundDSP)
-				S9xTraceSoundDSP("[%d] %d adsr1: %02x\n",
-						 ICPU.Scanline, reg >> 4, byte);
+				S9xTraceSoundDSP("[%d] %d adsr1: %02x\n", ICPU.Scanline, reg >> 4, byte);
 #endif
 			{
-				S9xFixEnvelope(reg >> 4, apu->DSP[reg + 2],
-					       byte, apu->DSP[reg + 1]);
+				S9xFixEnvelope(reg >> 4, apu->DSP[reg + 2], byte, apu->DSP[reg + 1]);
 			}
 		}
 		break;
@@ -551,12 +484,10 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 		if (byte != apu->DSP[reg]) {
 #ifdef DEBUGGER
 			if (Settings.TraceSoundDSP)
-				S9xTraceSoundDSP("[%d] %d adsr2: %02x\n",
-						 ICPU.Scanline, reg >> 4, byte);
+				S9xTraceSoundDSP("[%d] %d adsr2: %02x\n", ICPU.Scanline, reg >> 4, byte);
 #endif
 			{
-				S9xFixEnvelope(reg >> 4, apu->DSP[reg + 1],
-					       apu->DSP[reg - 1], byte);
+				S9xFixEnvelope(reg >> 4, apu->DSP[reg + 1], apu->DSP[reg - 1], byte);
 			}
 		}
 		break;
@@ -572,13 +503,10 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 		if (byte != apu->DSP[reg]) {
 #ifdef DEBUGGER
 			if (Settings.TraceSoundDSP)
-				S9xTraceSoundDSP("[%d] %d gain: %02x\n",
-						 ICPU.Scanline, reg >> 4, byte);
+				S9xTraceSoundDSP("[%d] %d gain: %02x\n", ICPU.Scanline, reg >> 4, byte);
 #endif
 			{
-				S9xFixEnvelope(reg >> 4, byte,
-					       apu->DSP[reg - 2],
-					       apu->DSP[reg - 1]);
+				S9xFixEnvelope(reg >> 4, byte, apu->DSP[reg - 2], apu->DSP[reg - 1]);
 			}
 		}
 		break;
@@ -606,8 +534,7 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 	case APU_DIR:
 #ifdef DEBUGGER
 		if (Settings.TraceSoundDSP)
-			S9xTraceSoundDSP("[%d] Sample directory to: %02x\n",
-					 ICPU.Scanline, byte);
+			S9xTraceSoundDSP("[%d] Sample directory to: %02x\n", ICPU.Scanline, byte);
 #endif
 		break;
 
@@ -615,21 +542,17 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 		if (byte != apu->DSP[APU_PMON]) {
 #ifdef DEBUGGER
 			if (Settings.TraceSoundDSP) {
-				S9xTraceSoundDSP("[%d] FreqMod:",
-						 ICPU.Scanline);
+				S9xTraceSoundDSP("[%d] FreqMod:", ICPU.Scanline);
 				uint8 mask = 1;
 				for (int c = 0; c < 8; c++, mask <<= 1) {
 					if (byte & mask) {
 						if (apu->DSP[reg] & mask)
-							S9xTraceSoundDSP("%d",
-									 c);
+							S9xTraceSoundDSP("%d", c);
 						else
-							S9xTraceSoundDSP(
-							    "%d(on),", c);
+							S9xTraceSoundDSP("%d(on),", c);
 					} else {
 						if (apu->DSP[reg] & mask)
-							S9xTraceSoundDSP(
-							    "%d(off),", c);
+							S9xTraceSoundDSP("%d(off),", c);
 					}
 				}
 				S9xTraceSoundDSP("\n");
@@ -648,15 +571,12 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 				for (int c = 0; c < 8; c++, mask <<= 1) {
 					if (byte & mask) {
 						if (apu->DSP[reg] & mask)
-							S9xTraceSoundDSP("%d",
-									 c);
+							S9xTraceSoundDSP("%d", c);
 						else
-							S9xTraceSoundDSP(
-							    "%d(on),", c);
+							S9xTraceSoundDSP("%d(on),", c);
 					} else {
 						if (apu->DSP[reg] & mask)
-							S9xTraceSoundDSP(
-							    "%d(off),", c);
+							S9xTraceSoundDSP("%d(off),", c);
 					}
 				}
 				S9xTraceSoundDSP("\n");
@@ -689,8 +609,7 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 		break;
 	default:
 		// XXX
-		// printf ("Write %02x to unknown APU register %02x\n", byte,
-		// reg);
+		// printf("Write %02x to unknown APU register %02x\n", byte, reg);
 		break;
 	}
 
@@ -702,38 +621,30 @@ void S9xFixEnvelope(int channel, uint8 gain, uint8 adsr1, uint8 adsr2)
 {
 	if (adsr1 & 0x80) {
 		// ADSR mode
-		static unsigned long AttackRate[16] = {
-		    4100, 2600, 1500, 1000, 640, 380, 260, 160,
-		    96,	  64,	40,   24,   16,	 10,  6,   1};
-		static unsigned long DecayRate[8] = {1200, 740, 440, 290,
-						     180,  110, 74,  37};
-		static unsigned long SustainRate[32] = {
-		    ~0,	  38000, 28000, 24000, 19000, 14000, 12000, 9400,
-		    7100, 5900,	 4700,	3500,  2900,  2400,  1800,  1500,
-		    1200, 880,	 740,	590,   440,   370,   290,   220,
-		    180,  150,	 110,	92,    74,    55,    37,    18};
-		// XXX: can DSP be switched to ADSR mode directly from
-		// GAIN/INCREASE/ DECREASE mode? And if so, what stage of the
-		// sequence does it start at?
+		static unsigned long AttackRate[16] = {4100, 2600, 1500, 1000, 640, 380, 260, 160,
+						       96,   64,   40,	 24,   16,  10,	 6,   1};
+		static unsigned long DecayRate[8] = {1200, 740, 440, 290, 180, 110, 74, 37};
+		static unsigned long SustainRate[32] = {~0,   38000, 28000, 24000, 19000, 14000, 12000, 9400,
+							7100, 5900,  4700,  3500,  2900,  2400,	 1800,	1500,
+							1200, 880,   740,   590,   440,	  370,	 290,	220,
+							180,  150,   110,   92,	   74,	  55,	 37,	18};
+		// XXX: can DSP be switched to ADSR mode directly from GAIN/INCREASE/ DECREASE mode? And if so, what
+		// stage of the sequence does it start at?
 		if (S9xSetSoundMode(channel, MODE_ADSR)) {
-			// Hack for ROMs that use a very short attack rate, key
-			// on a channel, then switch to decay mode. e.g. Final
-			// Fantasy II.
+			// Hack for ROMs that use a very short attack rate, key on a channel, then switch to decay mode.
+			// e.g. Final Fantasy II.
 
 			int attack = AttackRate[adsr1 & 0xf];
 
-			if (attack == 1 &&
-			    (!Settings.SoundSync
+			if (attack == 1 && (!Settings.SoundSync
 #ifdef __WIN32__
-			     || Settings.SoundDriver !=
-				    WIN_SNES9X_DIRECT_SOUND_DRIVER
+					    || Settings.SoundDriver != WIN_SNES9X_DIRECT_SOUND_DRIVER
 #endif
-			     ))
+					    ))
 				attack = 0;
 
-			S9xSetSoundADSR(
-			    channel, attack, DecayRate[(adsr1 >> 4) & 7],
-			    SustainRate[adsr2 & 0x1f], (adsr2 >> 5) & 7, 8);
+			S9xSetSoundADSR(channel, attack, DecayRate[(adsr1 >> 4) & 7], SustainRate[adsr2 & 0x1f],
+					(adsr2 >> 5) & 7, 8);
 		}
 	} else {
 		// Gain mode
@@ -744,38 +655,25 @@ void S9xFixEnvelope(int channel, uint8 gain, uint8 adsr1, uint8 adsr2)
 			}
 		} else {
 			static unsigned long IncreaseRate[32] = {
-			    ~0,	 4100, 3100, 2600, 2000, 1500, 1300, 1000,
-			    770, 640,  510,  380,  320,	 260,  190,  160,
-			    130, 96,   80,   64,   48,	 40,   32,   24,
-			    20,	 16,   12,   10,   8,	 6,    4,    2};
+			    ~0,	 4100, 3100, 2600, 2000, 1500, 1300, 1000, 770, 640, 510, 380, 320, 260, 190, 160,
+			    130, 96,   80,   64,   48,	 40,   32,   24,   20,	16,  12,  10,  8,   6,	 4,   2};
 			static unsigned long DecreaseRateExp[32] = {
-			    ~0,	  38000, 28000, 24000, 19000, 14000, 12000,
-			    9400, 7100,	 5900,	4700,  3500,  2900,  2400,
-			    1800, 1500,	 1200,	880,   740,   590,   440,
-			    370,  290,	 220,	180,   150,   110,   92,
-			    74,	  55,	 37,	18};
+			    ~0,	  38000, 28000, 24000, 19000, 14000, 12000, 9400, 7100, 5900, 4700,
+			    3500, 2900,	 2400,	1800,  1500,  1200,  880,   740,  590,	440,  370,
+			    290,  220,	 180,	150,   110,   92,    74,    55,	  37,	18};
 			if (gain & 0x40) {
 				// Increase mode
-				if (S9xSetSoundMode(
-					channel, (gain & 0x20)
-						     ? MODE_INCREASE_BENT_LINE
-						     : MODE_INCREASE_LINEAR)) {
-					S9xSetEnvelopeRate(
-					    channel, IncreaseRate[gain & 0x1f],
-					    1, 127);
+				if (S9xSetSoundMode(channel,
+						    (gain & 0x20) ? MODE_INCREASE_BENT_LINE : MODE_INCREASE_LINEAR)) {
+					S9xSetEnvelopeRate(channel, IncreaseRate[gain & 0x1f], 1, 127);
 				}
 			} else {
 				uint32 rate =
-				    (gain & 0x20)
-					? DecreaseRateExp[gain & 0x1f] / 2
-					: IncreaseRate[gain & 0x1f];
-				int mode = (gain & 0x20)
-					       ? MODE_DECREASE_EXPONENTIAL
-					       : MODE_DECREASE_LINEAR;
+				    (gain & 0x20) ? DecreaseRateExp[gain & 0x1f] / 2 : IncreaseRate[gain & 0x1f];
+				int mode = (gain & 0x20) ? MODE_DECREASE_EXPONENTIAL : MODE_DECREASE_LINEAR;
 
 				if (S9xSetSoundMode(channel, mode))
-					S9xSetEnvelopeRate(channel, rate, -1,
-							   0);
+					S9xSetEnvelopeRate(channel, rate, -1, 0);
 			}
 		}
 	}
@@ -784,7 +682,7 @@ void S9xFixEnvelope(int channel, uint8 gain, uint8 adsr1, uint8 adsr2)
 void S9xSetAPUControl(uint8 byte)
 {
 	// if (byte & 0x40)
-	// printf ("*** Special SPC700 timing enabled\n");
+	// 	printf("*** Special SPC700 timing enabled\n");
 	if ((byte & 1) != 0 && !APU.TimerEnabled[0]) {
 		APU.Timer[0] = 0;
 		IAPU.RAM[0xfd] = 0;
@@ -821,8 +719,7 @@ void S9xSetAPUControl(uint8 byte)
 	} else {
 		if (APU.ShowROM) {
 			APU.ShowROM = FALSE;
-			memmove(&IAPU.RAM[0xffc0], APU.ExtraRAM,
-				sizeof(APUROM));
+			memmove(&IAPU.RAM[0xffc0], APU.ExtraRAM, sizeof(APUROM));
 		}
 	}
 	IAPU.RAM[0xf1] = byte;
@@ -855,9 +752,9 @@ void S9xUpdateAPUTimer(void)
 {
 #if 0
 		while (CPU.Cycles * 10000L >= IAPU.NextAPUTimerPos)
-		//if (CPU.Cycles * 10000L >= IAPU.NextAPUTimerPos)
+		// if (CPU.Cycles * 10000L >= IAPU.NextAPUTimerPos)
 		{
-			//APU_EXECUTE();
+			// APU_EXECUTE();
 
 			IAPU.NextAPUTimerPos += SNES_APUTIMER2_CYCLEx10000;
 
@@ -924,8 +821,7 @@ uint8 S9xGetAPUDSP()
 	case APU_OUTX + 0x70:
 		if (SoundData.channels[reg >> 4].state == SOUND_SILENT)
 			return (0);
-		return ((SoundData.channels[reg >> 4].sample >> 8) |
-			(SoundData.channels[reg >> 4].sample & 0xff));
+		return ((SoundData.channels[reg >> 4].sample >> 8) | (SoundData.channels[reg >> 4].sample & 0xff));
 
 	case APU_ENVX + 0x00:
 	case APU_ENVX + 0x10:
@@ -939,7 +835,7 @@ uint8 S9xGetAPUDSP()
 
 	case APU_ENDX:
 		// To fix speech in Magical Drop 2 6/11/00
-		//	APU.DSP [APU_ENDX] = 0;
+		// APU.DSP[APU_ENDX] = 0;
 		break;
 	default:
 		break;

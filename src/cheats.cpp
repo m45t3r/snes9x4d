@@ -48,20 +48,17 @@
 static bool8 S9xAllHex(const char *code, int len)
 {
 	for (int i = 0; i < len; i++)
-		if ((code[i] < '0' || code[i] > '9') &&
-		    (code[i] < 'a' || code[i] > 'f') &&
+		if ((code[i] < '0' || code[i] > '9') && (code[i] < 'a' || code[i] > 'f') &&
 		    (code[i] < 'A' || code[i] > 'F'))
 			return (FALSE);
 
 	return (TRUE);
 }
 
-const char *S9xProActionReplayToRaw(const char *code, uint32 &address,
-				    uint8 &byte)
+const char *S9xProActionReplayToRaw(const char *code, uint32 &address, uint8 &byte)
 {
 	uint32 data = 0;
-	if (strlen(code) != 8 || !S9xAllHex(code, 8) ||
-	    sscanf(code, "%x", &data) != 1)
+	if (strlen(code) != 8 || !S9xAllHex(code, 8) || sscanf(code, "%x", &data) != 1)
 		return ("Invalid Pro Action Replay code - should be 8 hex "
 			"digits in length.");
 
@@ -70,8 +67,7 @@ const char *S9xProActionReplayToRaw(const char *code, uint32 &address,
 	return (NULL);
 }
 
-const char *S9xGoldFingerToRaw(const char *code, uint32 &address, bool8 &sram,
-			       uint8 &num_bytes, uint8 bytes[3])
+const char *S9xGoldFingerToRaw(const char *code, uint32 &address, bool8 &sram, uint8 &num_bytes, uint8 bytes[3])
 {
 	char tmp[15];
 	if (strlen(code) != 14)
@@ -101,8 +97,7 @@ const char *S9xGameGenieToRaw(const char *code, uint32 &address, uint8 &byte)
 {
 	char new_code[12];
 
-	if (strlen(code) != 9 || *(code + 4) != '-' || !S9xAllHex(code, 4) ||
-	    !S9xAllHex(code + 5, 4))
+	if (strlen(code) != 9 || *(code + 4) != '-' || !S9xAllHex(code, 4) || !S9xAllHex(code + 5, 4))
 		return ("Invalid Game Genie(tm) code - should be 'xxxx-xxxx'.");
 
 	strcpy(new_code, "0x");
@@ -129,9 +124,8 @@ const char *S9xGameGenieToRaw(const char *code, uint32 &address, uint8 &byte)
 	sscanf(new_code, "%x", &data);
 	byte = (uint8)(data >> 24);
 	address = data & 0xffffff;
-	address = ((address & 0x003c00) << 10) + ((address & 0x00003c) << 14) +
-		  ((address & 0xf00000) >> 8) + ((address & 0x000003) << 10) +
-		  ((address & 0x00c000) >> 6) + ((address & 0x0f0000) >> 12) +
+	address = ((address & 0x003c00) << 10) + ((address & 0x00003c) << 14) + ((address & 0xf00000) >> 8) +
+		  ((address & 0x000003) << 10) + ((address & 0x00c000) >> 6) + ((address & 0x0f0000) >> 12) +
 		  ((address & 0x0003c0) >> 6);
 
 	return (NULL);
@@ -153,45 +147,35 @@ void S9xStartCheatSearch(SCheatData *d)
 
 #define TEST_BIT(a, v) ((a)[(v) >> 5] & (1 << ((v)&31)))
 
-#define _C(c, a, b)                                                            \
-	((c) == S9X_LESS_THAN                                                  \
-	     ? (a) < (b)                                                       \
-	     : (c) == S9X_GREATER_THAN                                         \
-		   ? (a) > (b)                                                 \
-		   : (c) == S9X_LESS_THAN_OR_EQUAL                             \
-			 ? (a) <= (b)                                          \
-			 : (c) == S9X_GREATER_THAN_OR_EQUAL                    \
-			       ? (a) >= (b)                                    \
-			       : (c) == S9X_EQUAL ? (a) == (b) : (a) != (b))
+#define _C(c, a, b)                                                                                                    \
+	((c) == S9X_LESS_THAN                                                                                          \
+	     ? (a) < (b)                                                                                               \
+	     : (c) == S9X_GREATER_THAN                                                                                 \
+		   ? (a) > (b)                                                                                         \
+		   : (c) == S9X_LESS_THAN_OR_EQUAL                                                                     \
+			 ? (a) <= (b)                                                                                  \
+			 : (c) == S9X_GREATER_THAN_OR_EQUAL ? (a) >= (b) : (c) == S9X_EQUAL ? (a) == (b) : (a) != (b))
 
-#define _D(s, m, o)                                                            \
-	((s) == S9X_8_BITS                                                     \
-	     ? (uint8)(*((m) + (o)))                                           \
-	     : (s) == S9X_16_BITS                                              \
-		   ? ((uint16)(*((m) + (o)) + (*((m) + (o) + 1) << 8)))        \
-		   : (s) == S9X_24_BITS                                        \
-			 ? ((uint32)(*((m) + (o)) + (*((m) + (o) + 1) << 8) +  \
-				     (*((m) + (o) + 2) << 16)))                \
-			 : ((uint32)(*((m) + (o)) + (*((m) + (o) + 1) << 8) +  \
-				     (*((m) + (o) + 2) << 16) +                \
-				     (*((m) + (o) + 3) << 24))))
+#define _D(s, m, o)                                                                                                    \
+	((s) == S9X_8_BITS ? (uint8)(*((m) + (o)))                                                                     \
+			   : (s) == S9X_16_BITS                                                                        \
+				 ? ((uint16)(*((m) + (o)) + (*((m) + (o) + 1) << 8)))                                  \
+				 : (s) == S9X_24_BITS                                                                  \
+				       ? ((uint32)(*((m) + (o)) + (*((m) + (o) + 1) << 8) + (*((m) + (o) + 2) << 16))) \
+				       : ((uint32)(*((m) + (o)) + (*((m) + (o) + 1) << 8) + (*((m) + (o) + 2) << 16) + \
+						   (*((m) + (o) + 3) << 24))))
 
-#define _DS(s, m, o)                                                           \
-	((s) == S9X_8_BITS                                                     \
-	     ? ((int8) * ((m) + (o)))                                          \
-	     : (s) == S9X_16_BITS                                              \
-		   ? ((int16)(*((m) + (o)) + (*((m) + (o) + 1) << 8)))         \
-		   : (s) == S9X_24_BITS                                        \
-			 ? (((int32)((*((m) + (o)) + (*((m) + (o) + 1) << 8) + \
-				      (*((m) + (o) + 2) << 16))                \
-				     << 8)) >>                                 \
-			    8)                                                 \
-			 : ((int32)(*((m) + (o)) + (*((m) + (o) + 1) << 8) +   \
-				    (*((m) + (o) + 2) << 16) +                 \
+#define _DS(s, m, o)                                                                                                   \
+	((s) == S9X_8_BITS                                                                                             \
+	     ? ((int8) * ((m) + (o)))                                                                                  \
+	     : (s) == S9X_16_BITS                                                                                      \
+		   ? ((int16)(*((m) + (o)) + (*((m) + (o) + 1) << 8)))                                                 \
+		   : (s) == S9X_24_BITS                                                                                \
+			 ? (((int32)((*((m) + (o)) + (*((m) + (o) + 1) << 8) + (*((m) + (o) + 2) << 16)) << 8)) >> 8)  \
+			 : ((int32)(*((m) + (o)) + (*((m) + (o) + 1) << 8) + (*((m) + (o) + 2) << 16) +                \
 				    (*((m) + (o) + 3) << 24))))
 
-void S9xSearchForChange(SCheatData *d, S9xCheatComparisonType cmp,
-			S9xCheatDataSize size, bool8 is_signed, bool8 update)
+void S9xSearchForChange(SCheatData *d, S9xCheatComparisonType cmp, S9xCheatDataSize size, bool8 is_signed, bool8 update)
 {
 	int l;
 
@@ -214,9 +198,7 @@ void S9xSearchForChange(SCheatData *d, S9xCheatComparisonType cmp,
 	int i;
 	if (is_signed) {
 		for (i = 0; i < 0x20000 - l; i++) {
-			if (TEST_BIT(d->WRAM_BITS, i) &&
-			    _C(cmp, _DS(size, d->RAM, i),
-			       _DS(size, d->CWRAM, i))) {
+			if (TEST_BIT(d->WRAM_BITS, i) && _C(cmp, _DS(size, d->RAM, i), _DS(size, d->CWRAM, i))) {
 				if (update)
 					d->CWRAM[i] = d->RAM[i];
 			} else
@@ -224,9 +206,7 @@ void S9xSearchForChange(SCheatData *d, S9xCheatComparisonType cmp,
 		}
 
 		for (i = 0; i < 0x10000 - l; i++) {
-			if (TEST_BIT(d->SRAM_BITS, i) &&
-			    _C(cmp, _DS(size, d->SRAM, i),
-			       _DS(size, d->CSRAM, i))) {
+			if (TEST_BIT(d->SRAM_BITS, i) && _C(cmp, _DS(size, d->SRAM, i), _DS(size, d->CSRAM, i))) {
 				if (update)
 					d->CSRAM[i] = d->SRAM[i];
 			} else
@@ -235,8 +215,7 @@ void S9xSearchForChange(SCheatData *d, S9xCheatComparisonType cmp,
 
 		for (i = 0; i < 0x2000 - l; i++) {
 			if (TEST_BIT(d->IRAM_BITS, i) &&
-			    _C(cmp, _DS(size, d->FillRAM + 0x3000, i),
-			       _DS(size, d->CIRAM, i))) {
+			    _C(cmp, _DS(size, d->FillRAM + 0x3000, i), _DS(size, d->CIRAM, i))) {
 				if (update)
 					d->CIRAM[i] = d->FillRAM[i + 0x3000];
 			} else
@@ -244,9 +223,7 @@ void S9xSearchForChange(SCheatData *d, S9xCheatComparisonType cmp,
 		}
 	} else {
 		for (i = 0; i < 0x20000 - l; i++) {
-			if (TEST_BIT(d->WRAM_BITS, i) &&
-			    _C(cmp, _D(size, d->RAM, i),
-			       _D(size, d->CWRAM, i))) {
+			if (TEST_BIT(d->WRAM_BITS, i) && _C(cmp, _D(size, d->RAM, i), _D(size, d->CWRAM, i))) {
 				if (update)
 					d->CWRAM[i] = d->RAM[i];
 			} else
@@ -254,9 +231,7 @@ void S9xSearchForChange(SCheatData *d, S9xCheatComparisonType cmp,
 		}
 
 		for (i = 0; i < 0x10000 - l; i++) {
-			if (TEST_BIT(d->SRAM_BITS, i) &&
-			    _C(cmp, _D(size, d->SRAM, i),
-			       _D(size, d->CSRAM, i))) {
+			if (TEST_BIT(d->SRAM_BITS, i) && _C(cmp, _D(size, d->SRAM, i), _D(size, d->CSRAM, i))) {
 				if (update)
 					d->CSRAM[i] = d->SRAM[i];
 			} else
@@ -265,8 +240,7 @@ void S9xSearchForChange(SCheatData *d, S9xCheatComparisonType cmp,
 
 		for (i = 0; i < 0x2000 - l; i++) {
 			if (TEST_BIT(d->IRAM_BITS, i) &&
-			    _C(cmp, _D(size, d->FillRAM + 0x3000, i),
-			       _D(size, d->CIRAM, i))) {
+			    _C(cmp, _D(size, d->FillRAM + 0x3000, i), _D(size, d->CIRAM, i))) {
 				if (update)
 					d->CIRAM[i] = d->FillRAM[i + 0x3000];
 			} else
@@ -275,8 +249,7 @@ void S9xSearchForChange(SCheatData *d, S9xCheatComparisonType cmp,
 	}
 }
 
-void S9xSearchForValue(SCheatData *d, S9xCheatComparisonType cmp,
-		       S9xCheatDataSize size, uint32 value, bool8 is_signed,
+void S9xSearchForValue(SCheatData *d, S9xCheatComparisonType cmp, S9xCheatDataSize size, uint32 value, bool8 is_signed,
 		       bool8 update)
 {
 	int l;
@@ -301,8 +274,7 @@ void S9xSearchForValue(SCheatData *d, S9xCheatComparisonType cmp,
 
 	if (is_signed) {
 		for (i = 0; i < 0x20000 - l; i++) {
-			if (TEST_BIT(d->WRAM_BITS, i) &&
-			    _C(cmp, _DS(size, d->RAM, i), (int32)value)) {
+			if (TEST_BIT(d->WRAM_BITS, i) && _C(cmp, _DS(size, d->RAM, i), (int32)value)) {
 				if (update)
 					d->CWRAM[i] = d->RAM[i];
 			} else
@@ -310,8 +282,7 @@ void S9xSearchForValue(SCheatData *d, S9xCheatComparisonType cmp,
 		}
 
 		for (i = 0; i < 0x10000 - l; i++) {
-			if (TEST_BIT(d->SRAM_BITS, i) &&
-			    _C(cmp, _DS(size, d->SRAM, i), (int32)value)) {
+			if (TEST_BIT(d->SRAM_BITS, i) && _C(cmp, _DS(size, d->SRAM, i), (int32)value)) {
 				if (update)
 					d->CSRAM[i] = d->SRAM[i];
 			} else
@@ -319,9 +290,7 @@ void S9xSearchForValue(SCheatData *d, S9xCheatComparisonType cmp,
 		}
 
 		for (i = 0; i < 0x2000 - l; i++) {
-			if (TEST_BIT(d->IRAM_BITS, i) &&
-			    _C(cmp, _DS(size, d->FillRAM + 0x3000, i),
-			       (int32)value)) {
+			if (TEST_BIT(d->IRAM_BITS, i) && _C(cmp, _DS(size, d->FillRAM + 0x3000, i), (int32)value)) {
 				if (update)
 					d->CIRAM[i] = d->FillRAM[i + 0x3000];
 			} else
@@ -329,8 +298,7 @@ void S9xSearchForValue(SCheatData *d, S9xCheatComparisonType cmp,
 		}
 	} else {
 		for (i = 0; i < 0x20000 - l; i++) {
-			if (TEST_BIT(d->WRAM_BITS, i) &&
-			    _C(cmp, _D(size, d->RAM, i), value)) {
+			if (TEST_BIT(d->WRAM_BITS, i) && _C(cmp, _D(size, d->RAM, i), value)) {
 				if (update)
 					d->CWRAM[i] = d->RAM[i];
 			} else
@@ -338,8 +306,7 @@ void S9xSearchForValue(SCheatData *d, S9xCheatComparisonType cmp,
 		}
 
 		for (i = 0; i < 0x10000 - l; i++) {
-			if (TEST_BIT(d->SRAM_BITS, i) &&
-			    _C(cmp, _D(size, d->SRAM, i), value)) {
+			if (TEST_BIT(d->SRAM_BITS, i) && _C(cmp, _D(size, d->SRAM, i), value)) {
 				if (update)
 					d->CSRAM[i] = d->SRAM[i];
 			} else
@@ -347,8 +314,7 @@ void S9xSearchForValue(SCheatData *d, S9xCheatComparisonType cmp,
 		}
 
 		for (i = 0; i < 0x2000 - l; i++) {
-			if (TEST_BIT(d->IRAM_BITS, i) &&
-			    _C(cmp, _D(size, d->FillRAM + 0x3000, i), value)) {
+			if (TEST_BIT(d->IRAM_BITS, i) && _C(cmp, _D(size, d->FillRAM + 0x3000, i), value)) {
 				if (update)
 					d->CIRAM[i] = d->FillRAM[i + 0x3000];
 			} else

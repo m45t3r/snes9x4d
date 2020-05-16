@@ -65,8 +65,7 @@ void S9xSetInfoString(const char *string);
 int S9xMinCommandLineArgs();
 void S9xNextController();
 bool8 S9xLoadROMImage(const char *string);
-const char *S9xSelectFilename(const char *def, const char *dir, const char *ext,
-			      const char *title);
+const char *S9xSelectFilename(const char *def, const char *dir, const char *ext, const char *title);
 
 // const char *S9xChooseFilename (bool8 read_only);
 bool8 S9xOpenSnapshotFile(const char *base, bool8 read_only, STREAM *file);

@@ -241,14 +241,11 @@ static struct {
     /* 32 */ {7, 24, 22}};
 
 static uint8 run_table[128] = {
-    128, 64, 96, 32, 112, 48, 80, 16, 120, 56, 88, 24, 104, 40, 72, 8,
-    124, 60, 92, 28, 108, 44, 76, 12, 116, 52, 84, 20, 100, 36, 68, 4,
-    126, 62, 94, 30, 110, 46, 78, 14, 118, 54, 86, 22, 102, 38, 70, 6,
-    122, 58, 90, 26, 106, 42, 74, 10, 114, 50, 82, 18, 98,  34, 66, 2,
-    127, 63, 95, 31, 111, 47, 79, 15, 119, 55, 87, 23, 103, 39, 71, 7,
-    123, 59, 91, 27, 107, 43, 75, 11, 115, 51, 83, 19, 99,  35, 67, 3,
-    125, 61, 93, 29, 109, 45, 77, 13, 117, 53, 85, 21, 101, 37, 69, 5,
-    121, 57, 89, 25, 105, 41, 73, 9,  113, 49, 81, 17, 97,  33, 65, 1};
+    128, 64, 96,  32, 112, 48, 80,  16, 120, 56, 88,  24, 104, 40, 72,	8,  124, 60, 92,  28, 108, 44, 76,  12, 116, 52,
+    84,	 20, 100, 36, 68,  4,  126, 62, 94,  30, 110, 46, 78,  14, 118, 54, 86,	 22, 102, 38, 70,  6,  122, 58, 90,  26,
+    106, 42, 74,  10, 114, 50, 82,  18, 98,  34, 66,  2,  127, 63, 95,	31, 111, 47, 79,  15, 119, 55, 87,  23, 103, 39,
+    71,	 7,  123, 59, 91,  27, 107, 43, 75,  11, 115, 51, 83,  19, 99,	35, 67,	 3,  125, 61, 93,  29, 109, 45, 77,  13,
+    117, 53, 85,  21, 101, 37, 69,  5,	121, 57, 89,  25, 105, 41, 73,	9,  113, 49, 81,  17, 97,  33, 65,  1};
 
 static inline uint8 GetCodeword(int bits)
 {
@@ -298,8 +295,7 @@ static inline uint8 ProbGetBit(uint8 context)
 			return context_MPS[context]; /* just inverted, so just
 							return it */
 		} else {
-			return context_MPS[context] ^
-			       1; /* we know bit is 1, so use a constant */
+			return context_MPS[context] ^ 1; /* we know bit is 1, so use a constant */
 		}
 	} else if (bit) {
 		context_states[context] = evolution_table[state].MPS_next;
@@ -313,8 +309,7 @@ static inline uint8 GetBit(uint8 cur_bitplane)
 {
 	uint8 bit;
 
-	bit = ProbGetBit(((cur_bitplane & 1) << 4) |
-			 ((prev_bits[cur_bitplane] & high_context_bits) >> 5) |
+	bit = ProbGetBit(((cur_bitplane & 1) << 4) | ((prev_bits[cur_bitplane] & high_context_bits) >> 5) |
 			 (prev_bits[cur_bitplane] & low_context_bits));
 
 	prev_bits[cur_bitplane] <<= 1;
@@ -416,8 +411,7 @@ void SDD1_decompress(uint8 *out, uint8 *in, int len)
 		break;
 	case 3:
 		do {
-			for (byte1 = plane = 0, bit = 1; bit;
-			     bit <<= 1, plane++) {
+			for (byte1 = plane = 0, bit = 1; bit; bit <<= 1, plane++) {
 				if (GetBit(plane))
 					byte1 |= bit;
 			}

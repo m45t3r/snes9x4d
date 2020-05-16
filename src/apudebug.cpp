@@ -321,33 +321,22 @@ static char *S9xMnemonics[256] = {"NOP",
 #define ABSBIT 6
 #define REL 7
 
-static uint8 Modes[256] = {
-    IM,	    IM,	   DP,	   DPREL, DP,	  ABS,	 IM,	 DP,	DP,	DP2DP,
-    ABSBIT, DP,	   ABS,	   IM,	  ABS,	  IM,	 REL,	 IM,	DP,	DPREL,
-    DP,	    ABS,   ABS,	   DP,	  DPIM,	  IM,	 DP,	 DP,	IM,	IM,
-    ABS,    ABS,   IM,	   IM,	  DP,	  DPREL, DP,	 ABS,	IM,	DP,
-    DP,	    DP2DP, ABSBIT, DP,	  ABS,	  IM,	 DPREL,	 REL,	REL,	IM,
-    DP,	    DPREL, DP,	   ABS,	  ABS,	  DP,	 DPIM,	 IM,	DP,	DP,
-    IM,	    IM,	   DP,	   ABS,	  IM,	  IM,	 DP,	 DPREL, DP,	ABS,
-    IM,	    DP,	   DP,	   DP2DP, ABSBIT, DP,	 ABS,	 IM,	ABS,	DP,
-    REL,    IM,	   DP,	   DPREL, DP,	  ABS,	 ABS,	 DP,	DPIM,	IM,
-    DP,	    DP,	   IM,	   IM,	  ABS,	  ABS,	 IM,	 IM,	DP,	DPREL,
-    DP,	    ABS,   IM,	   DP,	  DP,	  DP2DP, ABSBIT, DP,	ABS,	IM,
-    DPREL,  IM,	   REL,	   IM,	  DP,	  DPREL, DP,	 ABS,	ABS,	DP,
-    DPIM,   IM,	   DP,	   DP,	  IM,	  IM,	 DP,	 IM,	IM,	IM,
-    DP,	    DPREL, DP,	   ABS,	  IM,	  DP,	 DP,	 DP2DP, ABSBIT, DP,
-    ABS,    DP,	   IM,	   DPIM,  REL,	  IM,	 DP,	 DPREL, DP,	ABS,
-    ABS,    DP,	   DPIM,   IM,	  DP,	  DP,	 IM,	 IM,	IM,	IM,
-    IM,	    IM,	   DP,	   DPREL, DP,	  ABS,	 IM,	 DP,	DP,	DP2DP,
-    ABSBIT, DP,	   ABS,	   DP,	  IM,	  IM,	 REL,	 IM,	DP,	DPREL,
-    DP,	    ABS,   ABS,	   DP,	  DPIM,	  IM,	 DP,	 DP,	IM,	IM,
-    IM,	    IM,	   IM,	   IM,	  DP,	  DPREL, DP,	 ABS,	IM,	DP,
-    DP,	    ABS,   ABSBIT, DP,	  ABS,	  DP,	 IM,	 IM,	REL,	IM,
-    DP,	    DPREL, DP,	   ABS,	  ABS,	  DP,	 DP,	 DP,	DP,	DP,
-    IM,	    IM,	   DPREL,  IM,	  IM,	  IM,	 DP,	 DPREL, DP,	ABS,
-    IM,	    DP,	   DP,	   ABS,	  ABSBIT, DP,	 ABS,	 IM,	IM,	IM,
-    REL,    IM,	   DP,	   DPREL, DP,	  ABS,	 ABS,	 DP,	DP,	DP,
-    DP2DP,  DP,	   IM,	   IM,	  REL,	  IM};
+static uint8 Modes[256] = {IM,	IM, DP, DPREL, DP, ABS, IM,  DP, DP,   DP2DP, ABSBIT, DP, ABS, IM, ABS,	  IM,
+			   REL, IM, DP, DPREL, DP, ABS, ABS, DP, DPIM, IM,    DP,     DP, IM,  IM, ABS,	  ABS,
+			   IM,	IM, DP, DPREL, DP, ABS, IM,  DP, DP,   DP2DP, ABSBIT, DP, ABS, IM, DPREL, REL,
+			   REL, IM, DP, DPREL, DP, ABS, ABS, DP, DPIM, IM,    DP,     DP, IM,  IM, DP,	  ABS,
+			   IM,	IM, DP, DPREL, DP, ABS, IM,  DP, DP,   DP2DP, ABSBIT, DP, ABS, IM, ABS,	  DP,
+			   REL, IM, DP, DPREL, DP, ABS, ABS, DP, DPIM, IM,    DP,     DP, IM,  IM, ABS,	  ABS,
+			   IM,	IM, DP, DPREL, DP, ABS, IM,  DP, DP,   DP2DP, ABSBIT, DP, ABS, IM, DPREL, IM,
+			   REL, IM, DP, DPREL, DP, ABS, ABS, DP, DPIM, IM,    DP,     DP, IM,  IM, DP,	  IM,
+			   IM,	IM, DP, DPREL, DP, ABS, IM,  DP, DP,   DP2DP, ABSBIT, DP, ABS, DP, IM,	  DPIM,
+			   REL, IM, DP, DPREL, DP, ABS, ABS, DP, DPIM, IM,    DP,     DP, IM,  IM, IM,	  IM,
+			   IM,	IM, DP, DPREL, DP, ABS, IM,  DP, DP,   DP2DP, ABSBIT, DP, ABS, DP, IM,	  IM,
+			   REL, IM, DP, DPREL, DP, ABS, ABS, DP, DPIM, IM,    DP,     DP, IM,  IM, IM,	  IM,
+			   IM,	IM, DP, DPREL, DP, ABS, IM,  DP, DP,   ABS,   ABSBIT, DP, ABS, DP, IM,	  IM,
+			   REL, IM, DP, DPREL, DP, ABS, ABS, DP, DP,   DP,    DP,     DP, IM,  IM, DPREL, IM,
+			   IM,	IM, DP, DPREL, DP, ABS, IM,  DP, DP,   ABS,   ABSBIT, DP, ABS, IM, IM,	  IM,
+			   REL, IM, DP, DPREL, DP, ABS, ABS, DP, DP,   DP,    DP2DP,  DP, IM,  IM, REL,	  IM};
 
 static uint8 ModesToBytes[] = {2, 3, 1, 3, 3, 3, 3, 2};
 
@@ -363,8 +352,7 @@ void S9xOpenCloseSoundTracingFile(bool8 open)
 	}
 }
 
-void S9xTraceSoundDSP(const char *s, int i1 = 0, int i2 = 0, int i3 = 0,
-		      int i4 = 0, int i5 = 0, int i6 = 0, int i7 = 0)
+void S9xTraceSoundDSP(const char *s, int i1 = 0, int i2 = 0, int i3 = 0, int i4 = 0, int i5 = 0, int i6 = 0, int i7 = 0)
 {
 	fprintf(SoundTracing, s, i1, i2, i3, i4, i5, i6, i7);
 }
@@ -393,12 +381,10 @@ int S9xAPUOPrint(char *buffer, uint16 Address)
 		sprintf(buffer, "%04X %02X       ", p - IAPU.RAM, *p);
 		break;
 	case 2:
-		sprintf(buffer, "%04X %02X %02X    ", p - IAPU.RAM, *p,
-			*(p + 1));
+		sprintf(buffer, "%04X %02X %02X    ", p - IAPU.RAM, *p, *(p + 1));
 		break;
 	case 3:
-		sprintf(buffer, "%04X %02X %02X %02X ", p - IAPU.RAM, *p,
-			*(p + 1), *(p + 2));
+		sprintf(buffer, "%04X %02X %02X %02X ", p - IAPU.RAM, *p, *(p + 1), *(p + 2));
 		break;
 	}
 
@@ -421,29 +407,23 @@ int S9xAPUOPrint(char *buffer, uint16 Address)
 		;
 		break;
 	case DPREL:
-		sprintf(mnem, S9xMnemonics[*p], *(p + 1),
-			(int)(p + 3 - IAPU.RAM) + (signed char)*(p + 2));
+		sprintf(mnem, S9xMnemonics[*p], *(p + 1), (int)(p + 3 - IAPU.RAM) + (signed char)*(p + 2));
 		break;
 	case ABSBIT:
-		sprintf(mnem, S9xMnemonics[*p],
-			(*(p + 1) + (*(p + 2) << 8)) & 0x1fff, *(p + 2) >> 5);
+		sprintf(mnem, S9xMnemonics[*p], (*(p + 1) + (*(p + 2) << 8)) & 0x1fff, *(p + 2) >> 5);
 		break;
 	case REL:
-		sprintf(mnem, S9xMnemonics[*p],
-			(int)(p + 2 - IAPU.RAM) + (signed char)*(p + 1));
+		sprintf(mnem, S9xMnemonics[*p], (int)(p + 2 - IAPU.RAM) + (signed char)*(p + 1));
 		break;
 	}
 
-	sprintf(
-	    buffer,
-	    "%s %-20s A:%02X X:%02X Y:%02X S:%02X P:%c%c%c%c%c%c%c%c %03dl "
-	    "%04dl %04dl",
-	    buffer, mnem, APURegisters.YA.B.A, APURegisters.X,
-	    APURegisters.YA.B.Y, APURegisters.S, APUCheckNegative() ? 'N' : 'n',
-	    APUCheckOverflow() ? 'V' : 'v', APUCheckDirectPage() ? 'P' : 'p',
-	    APUCheckBreak() ? 'B' : 'b', APUCheckHalfCarry() ? 'H' : 'h',
-	    APUCheckInterrupt() ? 'I' : 'i', APUCheckZero() ? 'Z' : 'z',
-	    APUCheckCarry() ? 'C' : 'c', CPU.V_Counter, CPU.Cycles, APU.Cycles);
+	sprintf(buffer,
+		"%s %-20s A:%02X X:%02X Y:%02X S:%02X P:%c%c%c%c%c%c%c%c %03dl "
+		"%04dl %04dl",
+		buffer, mnem, APURegisters.YA.B.A, APURegisters.X, APURegisters.YA.B.Y, APURegisters.S,
+		APUCheckNegative() ? 'N' : 'n', APUCheckOverflow() ? 'V' : 'v', APUCheckDirectPage() ? 'P' : 'p',
+		APUCheckBreak() ? 'B' : 'b', APUCheckHalfCarry() ? 'H' : 'h', APUCheckInterrupt() ? 'I' : 'i',
+		APUCheckZero() ? 'Z' : 'z', APUCheckCarry() ? 'C' : 'c', CPU.V_Counter, CPU.Cycles, APU.Cycles);
 
 	return (bytes);
 }
@@ -461,17 +441,13 @@ const char *as_binary(uint8 data)
 
 void S9xPrintAPUState()
 {
-	printf("Master volume left: %d, right: %d\n",
-	       SoundData.master_volume_left, SoundData.master_volume_right);
-	printf("Echo: %s %s, Delay: %d Feedback: %d Left: %d Right: %d\n",
-	       SoundData.echo_write_enabled ? "on" : "off",
-	       as_binary(SoundData.echo_enable),
-	       SoundData.echo_buffer_size >> 9, SoundData.echo_feedback,
+	printf("Master volume left: %d, right: %d\n", SoundData.master_volume_left, SoundData.master_volume_right);
+	printf("Echo: %s %s, Delay: %d Feedback: %d Left: %d Right: %d\n", SoundData.echo_write_enabled ? "on" : "off",
+	       as_binary(SoundData.echo_enable), SoundData.echo_buffer_size >> 9, SoundData.echo_feedback,
 	       SoundData.echo_volume_left, SoundData.echo_volume_right);
 
-	printf("Noise: %s, Frequency: %d, Pitch mod: %s\n",
-	       as_binary(APU.DSP[APU_NON]), NoiseFreq[APU.DSP[APU_FLG] & 0x1f],
-	       as_binary(SoundData.pitch_mod));
+	printf("Noise: %s, Frequency: %d, Pitch mod: %s\n", as_binary(APU.DSP[APU_NON]),
+	       NoiseFreq[APU.DSP[APU_FLG] & 0x1f], as_binary(SoundData.pitch_mod));
 	extern int FilterTaps[8];
 
 	printf("Filter: ");
@@ -488,32 +464,25 @@ void S9xPrintAPUState()
 			printf("muted by user using channel on/off toggle\n");
 		else {
 			int freq = ch->hertz;
-			if (APU.DSP[APU_NON] &
-			    (1 << J)) // ch->type == SOUND_NOISE)
+			if (APU.DSP[APU_NON] & (1 << J)) // ch->type == SOUND_NOISE)
 			{
 				freq = NoiseFreq[APU.DSP[APU_FLG] & 0x1f];
 				printf("noise, ");
 			} else
-				printf("sample %d, ",
-				       APU.DSP[APU_SRCN + J * 0x10]);
+				printf("sample %d, ", APU.DSP[APU_SRCN + J * 0x10]);
 
 			printf("freq: %d", freq);
-			if (J > 0 && (SoundData.pitch_mod & (1 << J)) &&
-			    ch->type != SOUND_NOISE) {
+			if (J > 0 && (SoundData.pitch_mod & (1 << J)) && ch->type != SOUND_NOISE) {
 				printf("(mod), ");
 			} else
 				printf(", ");
 
-			printf("left: %d, right: %d, ", ch->volume_left,
-			       ch->volume_right);
+			printf("left: %d, right: %d, ", ch->volume_left, ch->volume_right);
 
-			static char *envelope[] = {
-			    "silent",  "attack", "decay",   "sustain",
-			    "release", "gain",	 "inc_lin", "inc_bent",
-			    "dec_lin", "dec_exp"};
-			printf("%s envx: %d, target: %d, %ld",
-			       ch->state > 9 ? "???" : envelope[ch->state],
-			       ch->envx, ch->envx_target, ch->erate);
+			static char *envelope[] = {"silent", "attack",	"decay",    "sustain", "release",
+						   "gain",   "inc_lin", "inc_bent", "dec_lin", "dec_exp"};
+			printf("%s envx: %d, target: %d, %ld", ch->state > 9 ? "???" : envelope[ch->state], ch->envx,
+			       ch->envx_target, ch->erate);
 			printf("\n");
 		}
 	}

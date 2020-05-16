@@ -105,10 +105,8 @@ typedef long int16_32;
 #define LSB_FIRST
 /* #define FAST_LSB_WORD_ACCESS */
 
-void _makepath(char *path, const char *drive, const char *dir,
-	       const char *fname, const char *ext);
-void _splitpath(const char *path, char *drive, char *dir, char *fname,
-		char *ext);
+void _makepath(char *path, const char *drive, const char *dir, const char *fname, const char *ext);
+void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
 
 EXTERN_C void S9xGenerateSound();
 
@@ -117,25 +115,18 @@ EXTERN_C void S9xGenerateSound();
 #define READ_3WORD(s) (*(uint32 *)(s)&0x00ffffff)
 #define READ_DWORD(s) (*(uint32 *)(s))
 #define WRITE_WORD(s, d) *(uint16 *)(s) = (d)
-#define WRITE_3WORD(s, d)                                                      \
-	*(uint16 *)(s) = (uint16)(d), *((uint8 *)(s) + 2) = (uint8)((d) >> 16)
+#define WRITE_3WORD(s, d) *(uint16 *)(s) = (uint16)(d), *((uint8 *)(s) + 2) = (uint8)((d) >> 16)
 #define WRITE_DWORD(s, d) *(uint32 *)(s) = (d)
 #else
 #define READ_WORD(s) (*(uint8 *)(s) | (*((uint8 *)(s) + 1) << 8))
-#define READ_3WORD(s)                                                          \
-	(*(uint8 *)(s) | (*((uint8 *)(s) + 1) << 8) |                          \
-	 (*((uint8 *)(s) + 2) << 16))
-#define READ_DWORD(s)                                                          \
-	(*(uint8 *)(s) | (*((uint8 *)(s) + 1) << 8) |                          \
-	 (*((uint8 *)(s) + 2) << 16) | (*((uint8 *)(s) + 3) << 24))
-#define WRITE_WORD(s, d)                                                       \
-	*(uint8 *)(s) = (uint8)(d), *((uint8 *)(s) + 1) = (uint8)((d) >> 8)
-#define WRITE_3WORD(s, d)                                                      \
-	*(uint8 *)(s) = (uint8)(d), *((uint8 *)(s) + 1) = (uint8)((d) >> 8),   \
-		*((uint8 *)(s) + 2) = (uint8)((d) >> 16)
-#define WRITE_DWORD(s, d)                                                      \
-	*(uint8 *)(s) = (uint8)(d), *((uint8 *)(s) + 1) = (uint8)((d) >> 8),   \
-		*((uint8 *)(s) + 2) = (uint8)((d) >> 16),                      \
+#define READ_3WORD(s) (*(uint8 *)(s) | (*((uint8 *)(s) + 1) << 8) | (*((uint8 *)(s) + 2) << 16))
+#define READ_DWORD(s)                                                                                                  \
+	(*(uint8 *)(s) | (*((uint8 *)(s) + 1) << 8) | (*((uint8 *)(s) + 2) << 16) | (*((uint8 *)(s) + 3) << 24))
+#define WRITE_WORD(s, d) *(uint8 *)(s) = (uint8)(d), *((uint8 *)(s) + 1) = (uint8)((d) >> 8)
+#define WRITE_3WORD(s, d)                                                                                              \
+	*(uint8 *)(s) = (uint8)(d), *((uint8 *)(s) + 1) = (uint8)((d) >> 8), *((uint8 *)(s) + 2) = (uint8)((d) >> 16)
+#define WRITE_DWORD(s, d)                                                                                              \
+	*(uint8 *)(s) = (uint8)(d), *((uint8 *)(s) + 1) = (uint8)((d) >> 8), *((uint8 *)(s) + 2) = (uint8)((d) >> 16), \
 		*((uint8 *)(s) + 3) = (uint8)((d) >> 24)
 #endif
 

@@ -105,24 +105,24 @@ struct SAPURegisters {
 	uint8_32 S;
 };
 
-/*
-struct SAPURegisters{
-    uint8  P;
-    YAndA YA;
-    uint8  X;
-    uint8  S;
-    uint16  PC;
+#if 0
+struct SAPURegisters {
+	uint8 P;
+	YAndA YA;
+	uint8 X;
+	uint8 S;
+	uint16 PC;
 };
-*/
+#endif
 
 EXTERN_C struct SAPURegisters APURegisters;
 
 // Needed by ILLUSION OF GAIA
-//#define ONE_APU_CYCLE 14
+// #define ONE_APU_CYCLE 14
 #define ONE_APU_CYCLE 21
 
 // Needed by all games written by the software company called Human
-//#define ONE_APU_CYCLE_HUMAN 17
+// #define ONE_APU_CYCLE_HUMAN 17
 #define ONE_APU_CYCLE_HUMAN 21
 
 // 1.953us := 1.024065.54MHz
@@ -130,37 +130,37 @@ EXTERN_C struct SAPURegisters APURegisters;
 #ifdef SPCTOOL
 EXTERN_C int32 ESPC(int32);
 
-#define APU_EXECUTE()                                                          \
-	{                                                                      \
-		int32 l = (CPU.Cycles - APU.Cycles) / 14;                      \
-		if (l > 0) {                                                   \
-			l -= _EmuSPC(l);                                       \
-			APU.Cycles += l * 14;                                  \
-		}                                                              \
+#define APU_EXECUTE()                                                                                                  \
+	{                                                                                                              \
+		int32 l = (CPU.Cycles - APU.Cycles) / 14;                                                              \
+		if (l > 0) {                                                                                           \
+			l -= _EmuSPC(l);                                                                               \
+			APU.Cycles += l * 14;                                                                          \
+		}                                                                                                      \
 	}
 
 #else
 
 #ifdef DEBUGGER
-#define APU_EXECUTE1()                                                         \
-	{                                                                      \
-		if (APU.Flags & TRACE_FLAG)                                    \
-			S9xTraceAPU();                                         \
-		APU.Cycles += S9xAPUCycles[*IAPU.PC];                          \
-		(*S9xApuOpcodes[*IAPU.PC])(&APURegisters, &IAPU, &APU);        \
+#define APU_EXECUTE1()                                                                                                 \
+	{                                                                                                              \
+		if (APU.Flags & TRACE_FLAG)                                                                            \
+			S9xTraceAPU();                                                                                 \
+		APU.Cycles += S9xAPUCycles[*IAPU.PC];                                                                  \
+		(*S9xApuOpcodes[*IAPU.PC])(&APURegisters, &IAPU, &APU);                                                \
 	}
 #else
-#define APU_EXECUTE1()                                                         \
-	{                                                                      \
-		apu->Cycles += S9xAPUCycles[*iapu->PC];                        \
-		(*S9xApuOpcodes[*iapu->PC])(&APURegisters, iapu, apu);         \
+#define APU_EXECUTE1()                                                                                                 \
+	{                                                                                                              \
+		apu->Cycles += S9xAPUCycles[*iapu->PC];                                                                \
+		(*S9xApuOpcodes[*iapu->PC])(&APURegisters, iapu, apu);                                                 \
 	}
 #endif
 
-#define APU_EXECUTE()                                                          \
-	if (iapu->APUExecuting) {                                              \
-		while (apu->Cycles <= cpu->Cycles)                             \
-			APU_EXECUTE1();                                        \
+#define APU_EXECUTE()                                                                                                  \
+	if (iapu->APUExecuting) {                                                                                      \
+		while (apu->Cycles <= cpu->Cycles)                                                                     \
+			APU_EXECUTE1();                                                                                \
 	}
 #endif
 

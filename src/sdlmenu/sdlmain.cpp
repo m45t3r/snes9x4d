@@ -126,8 +126,7 @@ void S9xParseArg(char **argv, int &i, int argc)
 			Settings.SoundBufferSize = atoi(argv[++i]);
 		else
 			S9xUsage();
-	} else if (strcmp(argv[i], "-l") == 0 ||
-		   strcasecmp(argv[i], "-loadsnapshot") == 0) {
+	} else if (strcmp(argv[i], "-l") == 0 || strcasecmp(argv[i], "-loadsnapshot") == 0) {
 		if (i + 1 < argc)
 			snapshot_filename = argv[++i];
 		else
@@ -292,8 +291,7 @@ extern "C"
 		OutOfMemory();
 	}
 
-	(void)S9xInitSound(Settings.SoundPlaybackRate, Settings.Stereo,
-			   Settings.SoundBufferSize);
+	(void)S9xInitSound(Settings.SoundPlaybackRate, Settings.Stereo, Settings.SoundBufferSize);
 
 	if (!Settings.APUEnabled)
 		S9xSetSoundMute(TRUE);
@@ -388,8 +386,7 @@ extern "C"
 
 	while (1) {
 #ifdef DEBUGGER
-		if (!Settings.Paused ||
-		    (CPU.Flags & (DEBUG_MODE_FLAG | SINGLE_STEP_FLAG)))
+		if (!Settings.Paused || (CPU.Flags & (DEBUG_MODE_FLAG | SINGLE_STEP_FLAG)))
 #else
 		if (!Settings.Paused)
 #endif
@@ -540,8 +537,7 @@ const char *S9xGetSnapshotDirectory()
 	static char filename[PATH_MAX];
 	const char *snapshot;
 
-	if (!(snapshot = getenv("SNES9X_SNAPSHOT_DIR")) &&
-	    !(snapshot = getenv("SNES96_SNAPSHOT_DIR"))) {
+	if (!(snapshot = getenv("SNES9X_SNAPSHOT_DIR")) && !(snapshot = getenv("SNES96_SNAPSHOT_DIR"))) {
 		const char *home = GetHomeDirectory();
 		strcpy(filename, home);
 		strcat(filename, SLASH_STR);
@@ -575,8 +571,7 @@ const char *S9xGetROMDirectory()
 {
 	const char *roms;
 
-	if (!(roms = getenv("SNES9X_ROM_DIR")) &&
-	    !(roms = getenv("SNES96_ROM_DIR")))
+	if (!(roms = getenv("SNES9X_ROM_DIR")) && !(roms = getenv("SNES96_ROM_DIR")))
 		return ("." SLASH_STR "roms");
 	else
 		return (roms);
@@ -654,8 +649,7 @@ bool8_32 S9xDeinitUpdate(int Width, int Height)
 {
 	uint32 spd = (Settings.SupportHiRes ? 256 / 2 : 0);
 	uint32 dpd = (screen->w - 256) / 2;
-	uint32 dpo =
-	    (screen->w - 256) / 4 + (screen->h - 224) / 2 * screen->w / 2;
+	uint32 dpo = (screen->w - 256) / 4 + (screen->h - 224) / 2 * screen->w / 2;
 
 	SDL_LockSurface(screen);
 
@@ -674,14 +668,10 @@ bool8_32 S9xDeinitUpdate(int Width, int Height)
 			if (Scale) {
 #ifdef BILINEAR_SCALE
 				if (Bilinear)
-					(*upscale_p_bilinear)(
-					    (uint32_t *)screen->pixels,
-					    (uint32_t *)GFX.Screen, 512);
+					(*upscale_p_bilinear)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 512);
 				else
 #endif
-					(*upscale_p)((uint32_t *)screen->pixels,
-						     (uint32_t *)GFX.Screen,
-						     512);
+					(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 512);
 			} else
 				goto __jump;
 		}
@@ -690,13 +680,10 @@ bool8_32 S9xDeinitUpdate(int Width, int Height)
 		if (Scale) {
 #ifdef BILINEAR_SCALE
 			if (Bilinear)
-				(*upscale_p_bilinear)(
-				    (uint32_t *)screen->pixels,
-				    (uint32_t *)GFX.Screen, 256);
+				(*upscale_p_bilinear)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 256);
 			else
 #endif
-				(*upscale_p)((uint32_t *)screen->pixels,
-					     (uint32_t *)GFX.Screen, 256);
+				(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 256);
 
 		} else {
 		__jump:
@@ -713,12 +700,9 @@ bool8_32 S9xDeinitUpdate(int Width, int Height)
 	}
 
 	if (GFX.InfoString)
-		S9xDisplayString(GFX.InfoString,
-				 (uint8 *)screen->pixels + screen->w - 256,
-				 screen->pitch, 0);
+		S9xDisplayString(GFX.InfoString, (uint8 *)screen->pixels + screen->w - 256, screen->pitch, 0);
 	else if (Settings.DisplayFrameRate)
-		S9xDisplayFrameRate((uint8 *)screen->pixels + screen->w - 256,
-				    screen->pitch);
+		S9xDisplayFrameRate((uint8 *)screen->pixels + screen->w - 256, screen->pitch);
 
 	SDL_UnlockSurface(screen);
 	SDL_Flip(screen);
@@ -738,8 +722,7 @@ static unsigned long now()
 }
 #endif
 
-void _makepath(char *path, const char *, const char *dir, const char *fname,
-	       const char *ext)
+void _makepath(char *path, const char *, const char *dir, const char *fname, const char *ext)
 {
 	if (dir && *dir) {
 		strcpy(path, dir);
@@ -753,8 +736,7 @@ void _makepath(char *path, const char *, const char *dir, const char *fname,
 	}
 }
 
-void _splitpath(const char *path, char *drive, char *dir, char *fname,
-		char *ext)
+void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext)
 {
 	*drive = 0;
 
@@ -798,8 +780,7 @@ void S9xToggleSoundChannel(int c)
 }
 #endif
 
-inline void timespec_sub(struct timespec *diff, const struct timespec *left,
-			 const struct timespec *right)
+inline void timespec_sub(struct timespec *diff, const struct timespec *left, const struct timespec *right)
 {
 	diff->tv_sec = left->tv_sec - right->tv_sec;
 	diff->tv_nsec = left->tv_nsec - right->tv_nsec;
@@ -845,9 +826,7 @@ void S9xSyncSpeed() // called from S9xMainLoop in ../cpuexec.cpp
 			next1.tv_nsec %= 1000000000;
 		}
 	} else {
-		if (++IPPU.FrameSkip >= (Settings.TurboMode
-					     ? Settings.TurboSkipFrames
-					     : Settings.SkipFrames)) {
+		if (++IPPU.FrameSkip >= (Settings.TurboMode ? Settings.TurboSkipFrames : Settings.SkipFrames)) {
 			IPPU.FrameSkip = 0;
 			IPPU.SkippedFrames = 0;
 			IPPU.RenderThisFrame = TRUE;
@@ -869,8 +848,7 @@ void S9xProcessEvents(bool8_32 block)
 
 			// QUIT Emulator
 			if ((keyssnes[sfc_key[SELECT_1]] == SDL_PRESSED) &&
-			    (keyssnes[sfc_key[START_1]] == SDL_PRESSED) &&
-			    (keyssnes[sfc_key[X_1]] == SDL_PRESSED)) {
+			    (keyssnes[sfc_key[START_1]] == SDL_PRESSED) && (keyssnes[sfc_key[X_1]] == SDL_PRESSED)) {
 				S9xExit();
 			}
 			// RESET ROM Playback

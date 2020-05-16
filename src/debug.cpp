@@ -61,8 +61,7 @@ extern struct SCheatData Cheat;
 
 #ifdef SPCTOOL
 #include "spctool/spc700.h"
-extern "C" void TraceSPC(unsigned char *PC, unsigned short YA, unsigned char X,
-			 SPCFlags PS, unsigned char *SP);
+extern "C" void TraceSPC(unsigned char *PC, unsigned short YA, unsigned char X, SPCFlags PS, unsigned char *SP);
 #endif
 
 FILE *trace = NULL;
@@ -78,73 +77,64 @@ struct SDebug {
 		uint16 Address;
 	} Unassemble;
 } Debug = {{0, 0}, {0, 0}};
-char *HelpMessage[] = {
-    "Command Help:",
-    "?                 - Shows this Command Help",
-    "r                 - Shows the Registers",
-    "i                 - Shows the interrupt vectors",
-    "t                 - Trace current instruction   [Step-into]",
-    "T                 - Toggle CPU instruction tracing to trace.log",
-    "D                 - Toggle DMA tracing to stdout",
-    "H                 - Toggle H-DMA tracing to stdout",
-    "P		       - Toggle DSP tracing to stdout",
-    "U                 - Toggle unknown register read/write tracing",
-    "V                 - Toggle non-DMA V-RAM read/write tracing",
-    "R                 - Reset ROM.",
-    "p                 - Proceed to next instruction [Step-over]",
-    "s                 - Skip to next instruction    [Skip]",
-    "S                 - dump sprite (OBJ) status",
-    "g [Address]       - Go or Go to [Address]",
-    "u [Address]       - Disassemble from PC or [Address]",
-    "d [Address]       - Dump from PC or [Address]",
-    "bv [Number]       - View Breakpoints or View Breakpoint [Number]",
-    "bs [Number] [Address] - Enable/Disable Breakpoint",
-    "                        [Enable example: BS #2 $02:8002]",
-    "                        [Disable example: BS #2]",
-    "c		       - Dump SNES colour palette",
-    "W		       - Show what SNES hardware features a ROM is using",
-    "			 which might not be implemented yet.",
-    "w		       - Show some SNES hardware features used so far in this "
-    "frame",
-    "q		       - Quit emulator",
-    "",
-    "[Address]             - $Bank:Address or $Address",
-    "                        [For example: $01:8123]",
-    "[Number]              - #Number",
-    "                        [For example: #1]",
-    "a                 - Show Sound CPU status",
-    "A                 - Toggle sound CPU instruction tracing to aputrace.log",
-    "B                 - Toggle sound DSP register tracing",
-    "C		       - Dump sound sample addresses",
-    "ad [Address]      - Dump sound CPU RAM from PC or [Address]",
-    "",
-    NULL};
+char *HelpMessage[] = {"Command Help:",
+		       "?                 - Shows this Command Help",
+		       "r                 - Shows the Registers",
+		       "i                 - Shows the interrupt vectors",
+		       "t                 - Trace current instruction   [Step-into]",
+		       "T                 - Toggle CPU instruction tracing to trace.log",
+		       "D                 - Toggle DMA tracing to stdout",
+		       "H                 - Toggle H-DMA tracing to stdout",
+		       "P		       - Toggle DSP tracing to stdout",
+		       "U                 - Toggle unknown register read/write tracing",
+		       "V                 - Toggle non-DMA V-RAM read/write tracing",
+		       "R                 - Reset ROM.",
+		       "p                 - Proceed to next instruction [Step-over]",
+		       "s                 - Skip to next instruction    [Skip]",
+		       "S                 - dump sprite (OBJ) status",
+		       "g [Address]       - Go or Go to [Address]",
+		       "u [Address]       - Disassemble from PC or [Address]",
+		       "d [Address]       - Dump from PC or [Address]",
+		       "bv [Number]       - View Breakpoints or View Breakpoint [Number]",
+		       "bs [Number] [Address] - Enable/Disable Breakpoint",
+		       "                        [Enable example: BS #2 $02:8002]",
+		       "                        [Disable example: BS #2]",
+		       "c		       - Dump SNES colour palette",
+		       "W		       - Show what SNES hardware features a ROM is using",
+		       "			 which might not be implemented yet.",
+		       "w		       - Show some SNES hardware features used so far in this "
+		       "frame",
+		       "q		       - Quit emulator",
+		       "",
+		       "[Address]             - $Bank:Address or $Address",
+		       "                        [For example: $01:8123]",
+		       "[Number]              - #Number",
+		       "                        [For example: #1]",
+		       "a                 - Show Sound CPU status",
+		       "A                 - Toggle sound CPU instruction tracing to aputrace.log",
+		       "B                 - Toggle sound DSP register tracing",
+		       "C		       - Dump sound sample addresses",
+		       "ad [Address]      - Dump sound CPU RAM from PC or [Address]",
+		       "",
+		       NULL};
 
 char *S9xMnemonics[256] = {
-    "BRK", "ORA", "COP", "ORA", "TSB", "ORA", "ASL", "ORA", "PHP", "ORA", "ASL",
-    "PHD", "TSB", "ORA", "ASL", "ORA", "BPL", "ORA", "ORA", "ORA", "TRB", "ORA",
-    "ASL", "ORA", "CLC", "ORA", "INC", "TCS", "TRB", "ORA", "ASL", "ORA", "JSR",
-    "AND", "JSL", "AND", "BIT", "AND", "ROL", "AND", "PLP", "AND", "ROL", "PLD",
-    "BIT", "AND", "ROL", "AND", "BMI", "AND", "AND", "AND", "BIT", "AND", "ROL",
-    "AND", "SEC", "AND", "DEC", "TSC", "BIT", "AND", "ROL", "AND", "RTI", "EOR",
-    "DB ", "EOR", "MVP", "EOR", "LSR", "EOR", "PHA", "EOR", "LSR", "PHK", "JMP",
-    "EOR", "LSR", "EOR", "BVC", "EOR", "EOR", "EOR", "MVN", "EOR", "LSR", "EOR",
-    "CLI", "EOR", "PHY", "TCD", "JMP", "EOR", "LSR", "EOR", "RTS", "ADC", "PER",
-    "ADC", "STZ", "ADC", "ROR", "ADC", "PLA", "ADC", "ROR", "RTL", "JMP", "ADC",
-    "ROR", "ADC", "BVS", "ADC", "ADC", "ADC", "STZ", "ADC", "ROR", "ADC", "SEI",
-    "ADC", "PLY", "TDC", "JMP", "ADC", "ROR", "ADC", "BRA", "STA", "BRL", "STA",
-    "STY", "STA", "STX", "STA", "DEY", "BIT", "TXA", "PHB", "STY", "STA", "STX",
-    "STA", "BCC", "STA", "STA", "STA", "STY", "STA", "STX", "STA", "TYA", "STA",
-    "TXS", "TXY", "STZ", "STA", "STZ", "STA", "LDY", "LDA", "LDX", "LDA", "LDY",
-    "LDA", "LDX", "LDA", "TAY", "LDA", "TAX", "PLB", "LDY", "LDA", "LDX", "LDA",
-    "BCS", "LDA", "LDA", "LDA", "LDY", "LDA", "LDX", "LDA", "CLV", "LDA", "TSX",
-    "TYX", "LDY", "LDA", "LDX", "LDA", "CPY", "CMP", "REP", "CMP", "CPY", "CMP",
-    "DEC", "CMP", "INY", "CMP", "DEX", "WAI", "CPY", "CMP", "DEC", "CMP", "BNE",
-    "CMP", "CMP", "CMP", "PEI", "CMP", "DEC", "CMP", "CLD", "CMP", "PHX", "STP",
-    "JML", "CMP", "DEC", "CMP", "CPX", "SBC", "SEP", "SBC", "CPX", "SBC", "INC",
-    "SBC", "INX", "SBC", "NOP", "XBA", "CPX", "SBC", "INC", "SBC", "BEQ", "SBC",
-    "SBC", "SBC", "PEA", "SBC", "INC", "SBC", "SED", "SBC", "PLX", "XCE", "JSR",
-    "SBC", "INC", "SBC"};
+    "BRK", "ORA", "COP", "ORA", "TSB", "ORA", "ASL", "ORA", "PHP", "ORA", "ASL", "PHD", "TSB", "ORA", "ASL", "ORA",
+    "BPL", "ORA", "ORA", "ORA", "TRB", "ORA", "ASL", "ORA", "CLC", "ORA", "INC", "TCS", "TRB", "ORA", "ASL", "ORA",
+    "JSR", "AND", "JSL", "AND", "BIT", "AND", "ROL", "AND", "PLP", "AND", "ROL", "PLD", "BIT", "AND", "ROL", "AND",
+    "BMI", "AND", "AND", "AND", "BIT", "AND", "ROL", "AND", "SEC", "AND", "DEC", "TSC", "BIT", "AND", "ROL", "AND",
+    "RTI", "EOR", "DB ", "EOR", "MVP", "EOR", "LSR", "EOR", "PHA", "EOR", "LSR", "PHK", "JMP", "EOR", "LSR", "EOR",
+    "BVC", "EOR", "EOR", "EOR", "MVN", "EOR", "LSR", "EOR", "CLI", "EOR", "PHY", "TCD", "JMP", "EOR", "LSR", "EOR",
+    "RTS", "ADC", "PER", "ADC", "STZ", "ADC", "ROR", "ADC", "PLA", "ADC", "ROR", "RTL", "JMP", "ADC", "ROR", "ADC",
+    "BVS", "ADC", "ADC", "ADC", "STZ", "ADC", "ROR", "ADC", "SEI", "ADC", "PLY", "TDC", "JMP", "ADC", "ROR", "ADC",
+    "BRA", "STA", "BRL", "STA", "STY", "STA", "STX", "STA", "DEY", "BIT", "TXA", "PHB", "STY", "STA", "STX", "STA",
+    "BCC", "STA", "STA", "STA", "STY", "STA", "STX", "STA", "TYA", "STA", "TXS", "TXY", "STZ", "STA", "STZ", "STA",
+    "LDY", "LDA", "LDX", "LDA", "LDY", "LDA", "LDX", "LDA", "TAY", "LDA", "TAX", "PLB", "LDY", "LDA", "LDX", "LDA",
+    "BCS", "LDA", "LDA", "LDA", "LDY", "LDA", "LDX", "LDA", "CLV", "LDA", "TSX", "TYX", "LDY", "LDA", "LDX", "LDA",
+    "CPY", "CMP", "REP", "CMP", "CPY", "CMP", "DEC", "CMP", "INY", "CMP", "DEX", "WAI", "CPY", "CMP", "DEC", "CMP",
+    "BNE", "CMP", "CMP", "CMP", "PEI", "CMP", "DEC", "CMP", "CLD", "CMP", "PHX", "STP", "JML", "CMP", "DEC", "CMP",
+    "CPX", "SBC", "SEP", "SBC", "CPX", "SBC", "INC", "SBC", "INX", "SBC", "NOP", "XBA", "CPX", "SBC", "INC", "SBC",
+    "BEQ", "SBC", "SBC", "SBC", "PEA", "SBC", "INC", "SBC", "SED", "SBC", "PLX", "XCE", "JSR", "SBC", "INC", "SBC"};
 int AddrModes[256] = {
     // 0   1  2   3  4  5  6   7  8   9  A  B   C   D   E   F
     3,	10, 3,	19, 6,	6, 6, 12, 0, 1,	 24, 0, 14, 14, 14, 17, // 0
@@ -212,15 +202,12 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		// Immediate[MemoryFlag]
 		if (!CheckFlag(MemoryFlag)) {
 			// Accumulator 16 - Bit
-			sprintf(Line, "%s%02X %02X    %s #$%02X%02X", Line,
-				Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
-				Operant[1], Operant[0]);
+			sprintf(Line, "%s%02X %02X    %s #$%02X%02X", Line, Operant[0], Operant[1],
+				S9xMnemonics[S9xOpcode], Operant[1], Operant[0]);
 			Size = 3;
 		} else {
 			// Accumulator 8 - Bit
-			sprintf(Line, "%s%02X       %s #$%02X", Line,
-				Operant[0], S9xMnemonics[S9xOpcode],
-				Operant[0]);
+			sprintf(Line, "%s%02X       %s #$%02X", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 			Size = 2;
 		}
 		break;
@@ -228,15 +215,12 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		// Immediate[IndexFlag]
 		if (!CheckFlag(IndexFlag)) {
 			// X / Y 16 - Bit
-			sprintf(Line, "%s%02X %02X    %s #$%02X%02X", Line,
-				Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
-				Operant[1], Operant[0]);
+			sprintf(Line, "%s%02X %02X    %s #$%02X%02X", Line, Operant[0], Operant[1],
+				S9xMnemonics[S9xOpcode], Operant[1], Operant[0]);
 			Size = 3;
 		} else {
 			// X / Y 8 - Bit
-			sprintf(Line, "%s%02X       %s #$%02X", Line,
-				Operant[0], S9xMnemonics[S9xOpcode],
-				Operant[0]);
+			sprintf(Line, "%s%02X       %s #$%02X", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 			Size = 2;
 		}
 		break;
@@ -244,16 +228,13 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		// Immediate[Always 8 - Bit]
 		if (1) {
 			// Always 8 - Bit
-			sprintf(Line, "%s%02X       %s #$%02X", Line,
-				Operant[0], S9xMnemonics[S9xOpcode],
-				Operant[0]);
+			sprintf(Line, "%s%02X       %s #$%02X", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 			Size = 2;
 		}
 		break;
 	case 4:
 		// Relative
-		sprintf(Line, "%s%02X       %s $%02X", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s $%02X", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		SByte = Operant[0];
 		Word = Address;
 		Word += SByte;
@@ -263,9 +244,8 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 5:
 		// Relative Long
-		sprintf(Line, "%s%02X %02X    %s $%02X%02X", Line, Operant[0],
-			Operant[1], S9xMnemonics[S9xOpcode], Operant[1],
-			Operant[0]);
+		sprintf(Line, "%s%02X %02X    %s $%02X%02X", Line, Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
+			Operant[1], Operant[0]);
 		SWord = (Operant[1] << 8) | Operant[0];
 		Word = Address;
 		Word += SWord;
@@ -275,8 +255,7 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 6:
 		// Direct
-		sprintf(Line, "%s%02X       %s $%02X", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s $%02X", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = Operant[0];
 		Word += Registers.D.W;
 		sprintf(Line, "%-32s[$00:%04X]", Line, Word);
@@ -284,8 +263,7 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 7:
 		// Direct indexed (with x)
-		sprintf(Line, "%s%02X       %s $%02X,x", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s $%02X,x", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = Operant[0];
 		Word += Registers.D.W;
 		Word += Registers.X.W;
@@ -294,8 +272,7 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 8:
 		// Direct indexed (with y)
-		sprintf(Line, "%s%02X       %s $%02X,y", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s $%02X,y", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = Operant[0];
 		Word += Registers.D.W;
 		Word += Registers.Y.W;
@@ -304,8 +281,7 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 9:
 		// Direct Indirect
-		sprintf(Line, "%s%02X       %s ($%02X)", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s ($%02X)", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = Operant[0];
 		Word += Registers.D.W;
 		Word = S9xGetWord(Word);
@@ -314,8 +290,7 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 10:
 		// Direct Indexed Indirect
-		sprintf(Line, "%s%02X       %s ($%02X,x)", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s ($%02X,x)", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = Operant[0];
 		Word += Registers.D.W;
 		Word += Registers.X.W;
@@ -325,8 +300,7 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 11:
 		// Direct Indirect Indexed
-		sprintf(Line, "%s%02X       %s ($%02X),y", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s ($%02X),y", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = Operant[0];
 		Word += Registers.D.W;
 		Word = S9xGetWord(Word);
@@ -336,8 +310,7 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 12:
 		// Direct Indirect Long
-		sprintf(Line, "%s%02X       %s [$%02X]", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s [$%02X]", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = Operant[0];
 		Word += Registers.D.W;
 		Byte = S9xGetByte(Word + 2);
@@ -347,8 +320,7 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 13:
 		// Direct Indirect Indexed Long
-		sprintf(Line, "%s%02X       %s [$%02X],y", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s [$%02X],y", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = Operant[0];
 		Word += Registers.D.W;
 		Byte = S9xGetByte(Word + 2);
@@ -359,18 +331,16 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 14:
 		// Absolute
-		sprintf(Line, "%s%02X %02X    %s $%02X%02X", Line, Operant[0],
-			Operant[1], S9xMnemonics[S9xOpcode], Operant[1],
-			Operant[0]);
+		sprintf(Line, "%s%02X %02X    %s $%02X%02X", Line, Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
+			Operant[1], Operant[0]);
 		Word = (Operant[1] << 8) | Operant[0];
 		sprintf(Line, "%-32s[$%02X:%04X]", Line, Registers.DB, Word);
 		Size = 3;
 		break;
 	case 15:
 		// Absolute Indexed (With X)
-		sprintf(Line, "%s%02X %02X    %s $%02X%02X,x", Line, Operant[0],
-			Operant[1], S9xMnemonics[S9xOpcode], Operant[1],
-			Operant[0]);
+		sprintf(Line, "%s%02X %02X    %s $%02X%02X,x", Line, Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
+			Operant[1], Operant[0]);
 		Word = (Operant[1] << 8) | Operant[0];
 		Word += Registers.X.W;
 		sprintf(Line, "%-32s[$%02X:%04X]", Line, Registers.DB, Word);
@@ -378,9 +348,8 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 16:
 		// Absolute Indexed (With Y)
-		sprintf(Line, "%s%02X %02X    %s $%02X%02X,y", Line, Operant[0],
-			Operant[1], S9xMnemonics[S9xOpcode], Operant[1],
-			Operant[0]);
+		sprintf(Line, "%s%02X %02X    %s $%02X%02X,y", Line, Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
+			Operant[1], Operant[0]);
 		Word = (Operant[1] << 8) | Operant[0];
 		Word += Registers.Y.W;
 		sprintf(Line, "%-32s[$%02X:%04X]", Line, Registers.DB, Word);
@@ -388,20 +357,16 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 17:
 		// Absolute long
-		sprintf(Line, "%s%02X %02X %02X %s $%02X%02X%02X", Line,
-			Operant[0], Operant[1], Operant[2],
-			S9xMnemonics[S9xOpcode], Operant[2], Operant[1],
-			Operant[0]);
+		sprintf(Line, "%s%02X %02X %02X %s $%02X%02X%02X", Line, Operant[0], Operant[1], Operant[2],
+			S9xMnemonics[S9xOpcode], Operant[2], Operant[1], Operant[0]);
 		Word = (Operant[1] << 8) | Operant[0];
 		sprintf(Line, "%-32s[$%02X:%04X]", Line, Operant[2], Word);
 		Size = 4;
 		break;
 	case 18:
 		// Absolute Indexed long
-		sprintf(Line, "%s%02X %02X %02X %s $%02X%02X%02X,x", Line,
-			Operant[0], Operant[1], Operant[2],
-			S9xMnemonics[S9xOpcode], Operant[2], Operant[1],
-			Operant[0]);
+		sprintf(Line, "%s%02X %02X %02X %s $%02X%02X%02X,x", Line, Operant[0], Operant[1], Operant[2],
+			S9xMnemonics[S9xOpcode], Operant[2], Operant[1], Operant[0]);
 		Word = (Operant[1] << 8) | Operant[0];
 		Word += Registers.X.W;
 		sprintf(Line, "%-32s[$%02X:%04X]", Line, Operant[2], Word);
@@ -409,8 +374,7 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 19:
 		// StackRelative
-		sprintf(Line, "%s%02X       %s $%02X,s", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s $%02X,s", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = Registers.S.W;
 		Word += Operant[0];
 		sprintf(Line, "%-32s[$00:%04X]", Line, Word);
@@ -418,8 +382,7 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 20:
 		// Stack Relative Indirect Indexed
-		sprintf(Line, "%s%02X       %s ($%02X,s),y", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s ($%02X,s),y", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = Registers.S.W;
 		Word += Operant[0];
 		Word = S9xGetWord(Word);
@@ -429,9 +392,8 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 21:
 		// Absolute Indirect
-		sprintf(Line, "%s%02X %02X    %s ($%02X%02X)", Line, Operant[0],
-			Operant[1], S9xMnemonics[S9xOpcode], Operant[1],
-			Operant[0]);
+		sprintf(Line, "%s%02X %02X    %s ($%02X%02X)", Line, Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
+			Operant[1], Operant[0]);
 		Word = (Operant[1] << 8) | Operant[0];
 		Word = S9xGetWord(Word);
 		sprintf(Line, "%-32s[$%02X:%04X]", Line, Registers.PB, Word);
@@ -439,9 +401,8 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 22:
 		// Absolute Indirect Long
-		sprintf(Line, "%s%02X %02X    %s [$%02X%02X]", Line, Operant[0],
-			Operant[1], S9xMnemonics[S9xOpcode], Operant[1],
-			Operant[0]);
+		sprintf(Line, "%s%02X %02X    %s [$%02X%02X]", Line, Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
+			Operant[1], Operant[0]);
 		Word = (Operant[1] << 8) | Operant[0];
 		Byte = S9xGetByte(Word + 2);
 		Word = S9xGetWord(Word);
@@ -450,8 +411,7 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 23:
 		// Absolute Indexed Indirect
-		sprintf(Line, "%s%02X %02X    %s ($%02X%02X,x)", Line,
-			Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
+		sprintf(Line, "%s%02X %02X    %s ($%02X%02X,x)", Line, Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
 			Operant[1], Operant[0]);
 		Word = (Operant[1] << 8) | Operant[0];
 		Word += Registers.X.W;
@@ -466,8 +426,7 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 25:
 		// MVN/MVP SRC DST
-		sprintf(Line, "%s         %s %02X %02X", Line,
-			S9xMnemonics[S9xOpcode], Operant[0], Operant[1]);
+		sprintf(Line, "%s         %s %02X %02X", Line, S9xMnemonics[S9xOpcode], Operant[0], Operant[1]);
 		Size = 3;
 		break;
 	}
@@ -475,13 +434,10 @@ uint8 S9xOPrint(char *Line, uint8 Bank, uint16 Address)
 	sprintf(Line,
 		"%-44s A:%04X X:%04X Y:%04X D:%04X DB:%02X S:%04X "
 		"P:%c%c%c%c%c%c%c%c%c HC:%03d VC:%03ld %02x",
-		Line, Registers.A.W, Registers.X.W, Registers.Y.W,
-		Registers.D.W, Registers.DB, Registers.S.W,
-		CheckEmulation() ? 'E' : 'e', CheckNegative() ? 'N' : 'n',
-		CheckOverflow() ? 'V' : 'v', CheckMemory() ? 'M' : 'm',
-		CheckIndex() ? 'X' : 'x', CheckDecimal() ? 'D' : 'd',
-		CheckIRQ() ? 'I' : 'i', CheckZero() ? 'Z' : 'z',
-		CheckCarry() ? 'C' : 'c', Cycles, CPU.V_Counter, CPU.IRQActive);
+		Line, Registers.A.W, Registers.X.W, Registers.Y.W, Registers.D.W, Registers.DB, Registers.S.W,
+		CheckEmulation() ? 'E' : 'e', CheckNegative() ? 'N' : 'n', CheckOverflow() ? 'V' : 'v',
+		CheckMemory() ? 'M' : 'm', CheckIndex() ? 'X' : 'x', CheckDecimal() ? 'D' : 'd', CheckIRQ() ? 'I' : 'i',
+		CheckZero() ? 'Z' : 'z', CheckCarry() ? 'C' : 'c', Cycles, CPU.V_Counter, CPU.IRQActive);
 
 	CPU.Cycles = Cycles;
 	CPU.WaitAddress = WaitAddress;
@@ -533,15 +489,12 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		// Immediate[MemoryFlag]
 		if (!SA1CheckFlag(MemoryFlag)) {
 			// Accumulator 16 - Bit
-			sprintf(Line, "%s%02X %02X    %s #$%02X%02X", Line,
-				Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
-				Operant[1], Operant[0]);
+			sprintf(Line, "%s%02X %02X    %s #$%02X%02X", Line, Operant[0], Operant[1],
+				S9xMnemonics[S9xOpcode], Operant[1], Operant[0]);
 			Size = 3;
 		} else {
 			// Accumulator 8 - Bit
-			sprintf(Line, "%s%02X       %s #$%02X", Line,
-				Operant[0], S9xMnemonics[S9xOpcode],
-				Operant[0]);
+			sprintf(Line, "%s%02X       %s #$%02X", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 			Size = 2;
 		}
 		break;
@@ -549,15 +502,12 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		// Immediate[IndexFlag]
 		if (!SA1CheckFlag(IndexFlag)) {
 			// X / Y 16 - Bit
-			sprintf(Line, "%s%02X %02X    %s #$%02X%02X", Line,
-				Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
-				Operant[1], Operant[0]);
+			sprintf(Line, "%s%02X %02X    %s #$%02X%02X", Line, Operant[0], Operant[1],
+				S9xMnemonics[S9xOpcode], Operant[1], Operant[0]);
 			Size = 3;
 		} else {
 			// X / Y 8 - Bit
-			sprintf(Line, "%s%02X       %s #$%02X", Line,
-				Operant[0], S9xMnemonics[S9xOpcode],
-				Operant[0]);
+			sprintf(Line, "%s%02X       %s #$%02X", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 			Size = 2;
 		}
 		break;
@@ -565,16 +515,13 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		// Immediate[Always 8 - Bit]
 		if (1) {
 			// Always 8 - Bit
-			sprintf(Line, "%s%02X       %s #$%02X", Line,
-				Operant[0], S9xMnemonics[S9xOpcode],
-				Operant[0]);
+			sprintf(Line, "%s%02X       %s #$%02X", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 			Size = 2;
 		}
 		break;
 	case 4:
 		// Relative
-		sprintf(Line, "%s%02X       %s $%02X", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s $%02X", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		SByte = Operant[0];
 		Word = Address;
 		Word += SByte;
@@ -584,9 +531,8 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 5:
 		// Relative Long
-		sprintf(Line, "%s%02X %02X    %s $%02X%02X", Line, Operant[0],
-			Operant[1], S9xMnemonics[S9xOpcode], Operant[1],
-			Operant[0]);
+		sprintf(Line, "%s%02X %02X    %s $%02X%02X", Line, Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
+			Operant[1], Operant[0]);
 		SWord = (Operant[1] << 8) | Operant[0];
 		Word = Address;
 		Word += SWord;
@@ -596,8 +542,7 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 6:
 		// Direct
-		sprintf(Line, "%s%02X       %s $%02X", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s $%02X", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = Operant[0];
 		Word += SA1Registers.D.W;
 		sprintf(Line, "%-32s[$00:%04X]", Line, Word);
@@ -605,8 +550,7 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 7:
 		// Direct indexed (with x)
-		sprintf(Line, "%s%02X       %s $%02X,x", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s $%02X,x", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = Operant[0];
 		Word += SA1Registers.D.W;
 		Word += SA1Registers.X.W;
@@ -615,8 +559,7 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 8:
 		// Direct indexed (with y)
-		sprintf(Line, "%s%02X       %s $%02X,y", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s $%02X,y", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = Operant[0];
 		Word += SA1Registers.D.W;
 		Word += SA1Registers.Y.W;
@@ -625,8 +568,7 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 9:
 		// Direct Indirect
-		sprintf(Line, "%s%02X       %s ($%02X)", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s ($%02X)", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = Operant[0];
 		Word += SA1Registers.D.W;
 		Word = S9xSA1GetWord(Word);
@@ -635,8 +577,7 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 10:
 		// Direct Indexed Indirect
-		sprintf(Line, "%s%02X       %s ($%02X,x)", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s ($%02X,x)", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = Operant[0];
 		Word += SA1Registers.D.W;
 		Word += SA1Registers.X.W;
@@ -646,8 +587,7 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 11:
 		// Direct Indirect Indexed
-		sprintf(Line, "%s%02X       %s ($%02X),y", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s ($%02X),y", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = Operant[0];
 		Word += SA1Registers.D.W;
 		Word = S9xSA1GetWord(Word);
@@ -657,8 +597,7 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 12:
 		// Direct Indirect Long
-		sprintf(Line, "%s%02X       %s [$%02X]", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s [$%02X]", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = Operant[0];
 		Word += SA1Registers.D.W;
 		Byte = S9xSA1GetByte(Word + 2);
@@ -668,8 +607,7 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 13:
 		// Direct Indirect Indexed Long
-		sprintf(Line, "%s%02X       %s [$%02X],y", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s [$%02X],y", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = Operant[0];
 		Word += SA1Registers.D.W;
 		Byte = S9xSA1GetByte(Word + 2);
@@ -680,18 +618,16 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 14:
 		// Absolute
-		sprintf(Line, "%s%02X %02X    %s $%02X%02X", Line, Operant[0],
-			Operant[1], S9xMnemonics[S9xOpcode], Operant[1],
-			Operant[0]);
+		sprintf(Line, "%s%02X %02X    %s $%02X%02X", Line, Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
+			Operant[1], Operant[0]);
 		Word = (Operant[1] << 8) | Operant[0];
 		sprintf(Line, "%-32s[$%02X:%04X]", Line, SA1Registers.DB, Word);
 		Size = 3;
 		break;
 	case 15:
 		// Absolute Indexed (With X)
-		sprintf(Line, "%s%02X %02X    %s $%02X%02X,x", Line, Operant[0],
-			Operant[1], S9xMnemonics[S9xOpcode], Operant[1],
-			Operant[0]);
+		sprintf(Line, "%s%02X %02X    %s $%02X%02X,x", Line, Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
+			Operant[1], Operant[0]);
 		Word = (Operant[1] << 8) | Operant[0];
 		Word += SA1Registers.X.W;
 		sprintf(Line, "%-32s[$%02X:%04X]", Line, SA1Registers.DB, Word);
@@ -699,9 +635,8 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 16:
 		// Absolute Indexed (With Y)
-		sprintf(Line, "%s%02X %02X    %s $%02X%02X,y", Line, Operant[0],
-			Operant[1], S9xMnemonics[S9xOpcode], Operant[1],
-			Operant[0]);
+		sprintf(Line, "%s%02X %02X    %s $%02X%02X,y", Line, Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
+			Operant[1], Operant[0]);
 		Word = (Operant[1] << 8) | Operant[0];
 		Word += SA1Registers.Y.W;
 		sprintf(Line, "%-32s[$%02X:%04X]", Line, SA1Registers.DB, Word);
@@ -709,20 +644,16 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 17:
 		// Absolute long
-		sprintf(Line, "%s%02X %02X %02X %s $%02X%02X%02X", Line,
-			Operant[0], Operant[1], Operant[2],
-			S9xMnemonics[S9xOpcode], Operant[2], Operant[1],
-			Operant[0]);
+		sprintf(Line, "%s%02X %02X %02X %s $%02X%02X%02X", Line, Operant[0], Operant[1], Operant[2],
+			S9xMnemonics[S9xOpcode], Operant[2], Operant[1], Operant[0]);
 		Word = (Operant[1] << 8) | Operant[0];
 		sprintf(Line, "%-32s[$%02X:%04X]", Line, Operant[2], Word);
 		Size = 4;
 		break;
 	case 18:
 		// Absolute Indexed long
-		sprintf(Line, "%s%02X %02X %02X %s $%02X%02X%02X,x", Line,
-			Operant[0], Operant[1], Operant[2],
-			S9xMnemonics[S9xOpcode], Operant[2], Operant[1],
-			Operant[0]);
+		sprintf(Line, "%s%02X %02X %02X %s $%02X%02X%02X,x", Line, Operant[0], Operant[1], Operant[2],
+			S9xMnemonics[S9xOpcode], Operant[2], Operant[1], Operant[0]);
 		Word = (Operant[1] << 8) | Operant[0];
 		Word += SA1Registers.X.W;
 		sprintf(Line, "%-32s[$%02X:%04X]", Line, Operant[2], Word);
@@ -730,8 +661,7 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 19:
 		// StackRelative
-		sprintf(Line, "%s%02X       %s $%02X,s", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s $%02X,s", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = SA1Registers.S.W;
 		Word += Operant[0];
 		sprintf(Line, "%-32s[$00:%04X]", Line, Word);
@@ -739,8 +669,7 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 20:
 		// Stack Relative Indirect Indexed
-		sprintf(Line, "%s%02X       %s ($%02X,s),y", Line, Operant[0],
-			S9xMnemonics[S9xOpcode], Operant[0]);
+		sprintf(Line, "%s%02X       %s ($%02X,s),y", Line, Operant[0], S9xMnemonics[S9xOpcode], Operant[0]);
 		Word = SA1Registers.S.W;
 		Word += Operant[0];
 		Word = S9xSA1GetWord(Word);
@@ -750,9 +679,8 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 21:
 		// Absolute Indirect
-		sprintf(Line, "%s%02X %02X    %s ($%02X%02X)", Line, Operant[0],
-			Operant[1], S9xMnemonics[S9xOpcode], Operant[1],
-			Operant[0]);
+		sprintf(Line, "%s%02X %02X    %s ($%02X%02X)", Line, Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
+			Operant[1], Operant[0]);
 		Word = (Operant[1] << 8) | Operant[0];
 		Word = S9xSA1GetWord(Word);
 		sprintf(Line, "%-32s[$%02X:%04X]", Line, SA1Registers.PB, Word);
@@ -760,9 +688,8 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 22:
 		// Absolute Indirect Long
-		sprintf(Line, "%s%02X %02X    %s [$%02X%02X]", Line, Operant[0],
-			Operant[1], S9xMnemonics[S9xOpcode], Operant[1],
-			Operant[0]);
+		sprintf(Line, "%s%02X %02X    %s [$%02X%02X]", Line, Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
+			Operant[1], Operant[0]);
 		Word = (Operant[1] << 8) | Operant[0];
 		Byte = S9xSA1GetByte(Word + 2);
 		Word = S9xSA1GetWord(Word);
@@ -771,8 +698,7 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 23:
 		// Absolute Indexed Indirect
-		sprintf(Line, "%s%02X %02X    %s ($%02X%02X,x)", Line,
-			Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
+		sprintf(Line, "%s%02X %02X    %s ($%02X%02X,x)", Line, Operant[0], Operant[1], S9xMnemonics[S9xOpcode],
 			Operant[1], Operant[0]);
 		Word = (Operant[1] << 8) | Operant[0];
 		Word += SA1Registers.X.W;
@@ -787,20 +713,17 @@ uint8 S9xSA1OPrint(char *Line, uint8 Bank, uint16 Address)
 		break;
 	case 25:
 		// MVN/MVP SRC DST
-		sprintf(Line, "%s         %s %02X %02X", Line,
-			S9xMnemonics[S9xOpcode], Operant[0], Operant[1]);
+		sprintf(Line, "%s         %s %02X %02X", Line, S9xMnemonics[S9xOpcode], Operant[0], Operant[1]);
 		Size = 3;
 		break;
 	}
 	sprintf(Line,
 		"%-44s A:%04X X:%04X Y:%04X D:%04X DB:%02X S:%04X "
 		"P:%c%c%c%c%c%c%c%c%c HC:%03ld VC:%03ld",
-		Line, SA1Registers.A.W, SA1Registers.X.W, SA1Registers.Y.W,
-		SA1Registers.D.W, SA1Registers.DB, SA1Registers.S.W,
-		SA1CheckEmulation() ? 'E' : 'e', SA1CheckNegative() ? 'N' : 'n',
-		SA1CheckOverflow() ? 'V' : 'v', SA1CheckMemory() ? 'M' : 'm',
-		SA1CheckIndex() ? 'X' : 'x', SA1CheckDecimal() ? 'D' : 'd',
-		SA1CheckIRQ() ? 'I' : 'i', SA1CheckZero() ? 'Z' : 'z',
+		Line, SA1Registers.A.W, SA1Registers.X.W, SA1Registers.Y.W, SA1Registers.D.W, SA1Registers.DB,
+		SA1Registers.S.W, SA1CheckEmulation() ? 'E' : 'e', SA1CheckNegative() ? 'N' : 'n',
+		SA1CheckOverflow() ? 'V' : 'v', SA1CheckMemory() ? 'M' : 'm', SA1CheckIndex() ? 'X' : 'x',
+		SA1CheckDecimal() ? 'D' : 'd', SA1CheckIRQ() ? 'I' : 'i', SA1CheckZero() ? 'Z' : 'z',
 		SA1CheckCarry() ? 'C' : 'c', CPU.Cycles, CPU.V_Counter);
 
 	return Size;
@@ -858,8 +781,7 @@ void ProcessDebugCommand(char *Line)
 		return;
 	}
 	if (strcasecmp(Line, "less") == 0) {
-		S9xSearchForChange(&Cheat, S9X_LESS_THAN, S9X_8_BITS, FALSE,
-				   TRUE);
+		S9xSearchForChange(&Cheat, S9X_LESS_THAN, S9X_8_BITS, FALSE, TRUE);
 		printf("Recorded all values that have decreased\n");
 		return;
 	}
@@ -898,20 +820,15 @@ void ProcessDebugCommand(char *Line)
 		printf("Vectors:\n");
 		sprintf(String, "      8 Bit   16 Bit ");
 		DPrint(String);
-		sprintf(String, "ABT $00:%04X|$00:%04X", S9xGetWord(0xFFF8),
-			S9xGetWord(0xFFE8));
+		sprintf(String, "ABT $00:%04X|$00:%04X", S9xGetWord(0xFFF8), S9xGetWord(0xFFE8));
 		DPrint(String);
-		sprintf(String, "BRK $00:%04X|$00:%04X", S9xGetWord(0xFFFE),
-			S9xGetWord(0xFFE6));
+		sprintf(String, "BRK $00:%04X|$00:%04X", S9xGetWord(0xFFFE), S9xGetWord(0xFFE6));
 		DPrint(String);
-		sprintf(String, "COP $00:%04X|$00:%04X", S9xGetWord(0xFFF4),
-			S9xGetWord(0xFFE4));
+		sprintf(String, "COP $00:%04X|$00:%04X", S9xGetWord(0xFFF4), S9xGetWord(0xFFE4));
 		DPrint(String);
-		sprintf(String, "IRQ $00:%04X|$00:%04X", S9xGetWord(0xFFFE),
-			S9xGetWord(0xFFEE));
+		sprintf(String, "IRQ $00:%04X|$00:%04X", S9xGetWord(0xFFFE), S9xGetWord(0xFFEE));
 		DPrint(String);
-		sprintf(String, "NMI $00:%04X|$00:%04X", S9xGetWord(0xFFFA),
-			S9xGetWord(0xFFEA));
+		sprintf(String, "NMI $00:%04X|$00:%04X", S9xGetWord(0xFFFA), S9xGetWord(0xFFEA));
 		DPrint(String);
 		sprintf(String, "RES     $00:%04X", S9xGetWord(0xFFFC));
 		DPrint(String);
@@ -943,8 +860,7 @@ void ProcessDebugCommand(char *Line)
 	if (*Line == 'c') {
 		printf("Colours:\n");
 		for (int i = 0; i < 256; i++) {
-			printf("%02x%02x%02x  ", PPU.CGDATA[i] & 0x1f,
-			       (PPU.CGDATA[i] >> 5) & 0x1f,
+			printf("%02x%02x%02x  ", PPU.CGDATA[i] & 0x1f, (PPU.CGDATA[i] >> 5) & 0x1f,
 			       (PPU.CGDATA[i] >> 10) & 0x1f);
 		}
 		printf("\n");
@@ -981,8 +897,7 @@ void ProcessDebugCommand(char *Line)
 		printf("Sprites: Small: %d, Large: %d, OAMAddr: 0x%04x, "
 		       "OBJNameBase: 0x%04x, OBJNameSelect: 0x%04x, First: "
 		       "%d\nVisible count - ",
-		       SmallSize, LargeSize, PPU.OAMAddr, PPU.OBJNameBase,
-		       PPU.OBJNameSelect, PPU.FirstSprite);
+		       SmallSize, LargeSize, PPU.OAMAddr, PPU.OBJNameBase, PPU.OBJNameSelect, PPU.FirstSprite);
 		for (int p = 0; p < 4; p++) {
 			int c = 0;
 			int i;
@@ -994,11 +909,8 @@ void ProcessDebugCommand(char *Line)
 		}
 		printf("\n");
 		for (int i = 0; i < 128; i++) {
-			printf("X:%3d Y:%3d %c%c%d%c ", PPU.OBJ[i].HPos,
-			       PPU.OBJ[i].VPos, PPU.OBJ[i].VFlip ? 'V' : 'v',
-			       PPU.OBJ[i].HFlip ? 'H' : 'h',
-			       PPU.OBJ[i].Priority,
-			       PPU.OBJ[i].Size ? 'S' : 's');
+			printf("X:%3d Y:%3d %c%c%d%c ", PPU.OBJ[i].HPos, PPU.OBJ[i].VPos, PPU.OBJ[i].VFlip ? 'V' : 'v',
+			       PPU.OBJ[i].HFlip ? 'H' : 'h', PPU.OBJ[i].Priority, PPU.OBJ[i].Size ? 'S' : 's');
 			if (i % 4 == 3)
 				printf("\n");
 		}
@@ -1007,13 +919,11 @@ void ProcessDebugCommand(char *Line)
 		if (Line[1] == 'S') {
 			SA1.Flags ^= TRACE_FLAG;
 			if (SA1.Flags & TRACE_FLAG) {
-				printf(
-				    "SA1 CPU instruction tracing enabled.\n");
+				printf("SA1 CPU instruction tracing enabled.\n");
 				if (trace2 == NULL)
 					trace2 = fopen("trace_sa1.log", "wb");
 			} else {
-				printf(
-				    "SA1 CPU instruction tracing disabled.\n");
+				printf("SA1 CPU instruction tracing disabled.\n");
 				fclose(trace2);
 				trace2 = NULL;
 			}
@@ -1050,25 +960,20 @@ void ProcessDebugCommand(char *Line)
 			}
 		}
 
-		printf("APU tracing %s\n",
-		       APU.Flags & TRACE_FLAG ? "enabled" : "disabled");
+		printf("APU tracing %s\n", APU.Flags & TRACE_FLAG ? "enabled" : "disabled");
 	}
 	if (*Line == 'B') {
 		Settings.TraceSoundDSP ^= 1;
-		printf("Sound DSP register tracing %s\n",
-		       Settings.TraceSoundDSP ? "enabled" : "disabled");
+		printf("Sound DSP register tracing %s\n", Settings.TraceSoundDSP ? "enabled" : "disabled");
 		S9xOpenCloseSoundTracingFile(Settings.TraceSoundDSP);
 	}
 	if (*Line == 'b')
 		S9xPrintAPUState();
 
 	if (*Line == 'C') {
-		printf("SPC700 sample addresses at 0x%04x:\n",
-		       APU.DSP[APU_DIR] << 8);
+		printf("SPC700 sample addresses at 0x%04x:\n", APU.DSP[APU_DIR] << 8);
 		for (int i = 0; i < 256; i++) {
-			uint8 *dir =
-			    IAPU.RAM +
-			    (((APU.DSP[APU_DIR] << 8) + i * 4) & 0xffff);
+			uint8 *dir = IAPU.RAM + (((APU.DSP[APU_DIR] << 8) + i * 4) & 0xffff);
 			int addr = *dir + (*(dir + 1) << 8);
 			int addr2 = *(dir + 2) + (*(dir + 3) << 8);
 			printf("%04X %04X;", addr, addr2);
@@ -1098,36 +1003,30 @@ void ProcessDebugCommand(char *Line)
 		*Line = 0;
 	}
 	if (*Line == 'a') {
-		printf("APU in-ports: %02X %02X %02X %02X\n", IAPU.RAM[0xF4],
-		       IAPU.RAM[0xF5], IAPU.RAM[0xF6], IAPU.RAM[0xF7]);
+		printf("APU in-ports: %02X %02X %02X %02X\n", IAPU.RAM[0xF4], IAPU.RAM[0xF5], IAPU.RAM[0xF6],
+		       IAPU.RAM[0xF7]);
 #ifdef SPCTOOL
-		printf("APU out-ports: %02X %02X %02X %02X\n", _SPCOutP[0],
-		       _SPCOutP[1], _SPCOutP[2], _SPCOutP[3]);
+		printf("APU out-ports: %02X %02X %02X %02X\n", _SPCOutP[0], _SPCOutP[1], _SPCOutP[2], _SPCOutP[3]);
 #else
-		printf("APU out-ports: %02X %02X %02X %02X\n", APU.OutPorts[0],
-		       APU.OutPorts[1], APU.OutPorts[2], APU.OutPorts[3]);
+		printf("APU out-ports: %02X %02X %02X %02X\n", APU.OutPorts[0], APU.OutPorts[1], APU.OutPorts[2],
+		       APU.OutPorts[3]);
 #endif
-		printf("ROM/RAM switch: %s\n",
-		       (IAPU.RAM[0xf1] & 0x80) ? "ROM" : "RAM");
+		printf("ROM/RAM switch: %s\n", (IAPU.RAM[0xf1] & 0x80) ? "ROM" : "RAM");
 		for (int i = 0; i < 3; i++)
 			if (APU.TimerEnabled[i])
 				printf("Timer%d enabled, Value: 0x%03X, 4-bit: "
 				       "0x%02X, Target: 0x%03X\n",
-				       i, APU.Timer[i], IAPU.RAM[0xfd + i],
-				       APU.TimerTarget[i]);
+				       i, APU.Timer[i], IAPU.RAM[0xfd + i], APU.TimerTarget[i]);
 	}
 	if (*Line == 'P') {
 		Settings.TraceDSP = !Settings.TraceDSP;
-		printf("DSP tracing %s\n",
-		       Settings.TraceDSP ? "enabled" : "disabled");
+		printf("DSP tracing %s\n", Settings.TraceDSP ? "enabled" : "disabled");
 	}
 	if (Line[0] == 'p') {
 		S9xBreakpoint[5].Enabled = FALSE;
 		Address += S9xOPrint(String, Bank, Address);
-		if (strncmp(&String[18], "JMP", 3) != 0 &&
-		    strncmp(&String[18], "JML", 3) != 0 &&
-		    strncmp(&String[18], "RT", 2) != 0 &&
-		    strncmp(&String[18], "BRA", 3)) {
+		if (strncmp(&String[18], "JMP", 3) != 0 && strncmp(&String[18], "JML", 3) != 0 &&
+		    strncmp(&String[18], "RT", 2) != 0 && strncmp(&String[18], "BRA", 3)) {
 			S9xBreakpoint[5].Enabled = TRUE;
 			S9xBreakpoint[5].Bank = Bank;
 			S9xBreakpoint[5].Address = Address;
@@ -1142,8 +1041,7 @@ void ProcessDebugCommand(char *Line)
 			if (Hold > 4)
 				Hold = 0;
 			if (Hold < 5)
-				if (GetStartAddress(Line + 5, &Bank,
-						    &Address) == -1) {
+				if (GetStartAddress(Line + 5, &Bank, &Address) == -1) {
 					// Clear S9xBreakpoint
 					S9xBreakpoint[Hold].Enabled = FALSE;
 				} else {
@@ -1162,28 +1060,20 @@ void ProcessDebugCommand(char *Line)
 				DPrint("Breakpoints:");
 				for (Number = 0; Number != 5; Number++) {
 					if (S9xBreakpoint[Number].Enabled)
-						sprintf(
-						    String, "%i @ $%02X:%04X",
-						    Number,
-						    S9xBreakpoint[Number].Bank,
-						    S9xBreakpoint[Number]
-							.Address);
+						sprintf(String, "%i @ $%02X:%04X", Number, S9xBreakpoint[Number].Bank,
+							S9xBreakpoint[Number].Address);
 					else
-						sprintf(String, "%i @ Disabled",
-							Number);
+						sprintf(String, "%i @ Disabled", Number);
 					DPrint(String);
 				}
 			} else {
 				// Show selected S9xBreakpoint
 				DPrint("Breakpoint:");
 				if (S9xBreakpoint[Number].Enabled)
-					sprintf(String, "%i @ $%02X:%04X",
-						Number,
-						S9xBreakpoint[Number].Bank,
+					sprintf(String, "%i @ $%02X:%04X", Number, S9xBreakpoint[Number].Bank,
 						S9xBreakpoint[Number].Address);
 				else
-					sprintf(String, "%i @ Disabled",
-						Number);
+					sprintf(String, "%i @ Disabled", Number);
 				DPrint(String);
 			}
 		}
@@ -1214,8 +1104,7 @@ void ProcessDebugCommand(char *Line)
 			if (S9xBreakpoint[i].Enabled) {
 				found = TRUE;
 				if (S9xBreakpoint[i].Bank == Registers.PB &&
-				    S9xBreakpoint[i].Address ==
-					CPU.PC - CPU.PCBase) {
+				    S9xBreakpoint[i].Address == CPU.PC - CPU.PCBase) {
 					S9xBreakpoint[i].Enabled = 2;
 					break;
 				}
@@ -1234,22 +1123,18 @@ void ProcessDebugCommand(char *Line)
 	}
 	if (*Line == 'D') {
 		Settings.TraceDMA = !Settings.TraceDMA;
-		printf("DMA tracing %s\n",
-		       Settings.TraceDMA ? "enabled" : "disabled");
+		printf("DMA tracing %s\n", Settings.TraceDMA ? "enabled" : "disabled");
 	}
 	if (*Line == 'V') {
 		Settings.TraceVRAM = !Settings.TraceVRAM;
-		printf("Non-DMA VRAM write tracing %s\n",
-		       Settings.TraceVRAM ? "enabled" : "disabled");
+		printf("Non-DMA VRAM write tracing %s\n", Settings.TraceVRAM ? "enabled" : "disabled");
 	}
 	if (*Line == 'H') {
 		Settings.TraceHDMA = !Settings.TraceHDMA;
-		printf("H-DMA tracing %s\n",
-		       Settings.TraceHDMA ? "enabled" : "disabled");
+		printf("H-DMA tracing %s\n", Settings.TraceHDMA ? "enabled" : "disabled");
 	}
 	if (*Line == 'U') {
-		Settings.TraceUnknownRegisters =
-		    !Settings.TraceUnknownRegisters;
+		Settings.TraceUnknownRegisters = !Settings.TraceUnknownRegisters;
 		printf("Unknown registers read/write tracing %s\n",
 		       Settings.TraceUnknownRegisters ? "enabled" : "disabled");
 	}
@@ -1267,29 +1152,23 @@ void ProcessDebugCommand(char *Line)
 		for (CLine = 0; CLine != 10; CLine++) {
 			sprintf(String, "$%02X:%04X", Bank, Address);
 			for (CByte = 0; CByte != 16; CByte++) {
-				if (Address + CByte == 0x2140 ||
-				    Address + CByte == 0x2141 ||
-				    Address + CByte == 0x2142 ||
-				    Address + CByte == 0x2143 ||
+				if (Address + CByte == 0x2140 || Address + CByte == 0x2141 ||
+				    Address + CByte == 0x2142 || Address + CByte == 0x2143 ||
 				    Address + CByte == 0x4210) {
 					MemoryByte = 0;
 				} else {
-					MemoryByte = S9xGetByte(
-					    (Bank << 16) + Address + CByte);
+					MemoryByte = S9xGetByte((Bank << 16) + Address + CByte);
 				}
 				sprintf(String, "%s %02X", String, MemoryByte);
 			}
 			sprintf(String, "%s-", String);
 			for (CByte = 0; CByte != 16; CByte++) {
-				if (Address + CByte == 0x2140 ||
-				    Address + CByte == 0x2141 ||
-				    Address + CByte == 0x2142 ||
-				    Address + CByte == 0x2143 ||
+				if (Address + CByte == 0x2140 || Address + CByte == 0x2141 ||
+				    Address + CByte == 0x2142 || Address + CByte == 0x2143 ||
 				    Address + CByte == 0x4210) {
 					MemoryByte = 0;
 				} else {
-					MemoryByte = S9xGetByte(
-					    (Bank << 16) + Address + CByte);
+					MemoryByte = S9xGetByte((Bank << 16) + Address + CByte);
 				}
 				if (MemoryByte < 32 || MemoryByte >= 127)
 					MemoryByte = '?';
@@ -1335,8 +1214,7 @@ void ProcessDebugCommand(char *Line)
 		DPrint(String);
 	}
 	if (Line[0] == 'u') {
-		if (Debug.Unassemble.Bank != 0 ||
-		    Debug.Unassemble.Address != 0) {
+		if (Debug.Unassemble.Bank != 0 || Debug.Unassemble.Address != 0) {
 			Bank = Debug.Unassemble.Bank;
 			Address = Debug.Unassemble.Address;
 		}
@@ -1415,8 +1293,7 @@ static void WhatsUsed()
 	if (PPU.BGMode == 7 && (Memory.FillRAM[0x211a] & 3))
 		printf("Mode 7 flipping, ");
 	if (PPU.BGMode == 7)
-		printf("Mode 7 screen repeat: %d,",
-		       (Memory.FillRAM[0x211a] & 0xc0) >> 6);
+		printf("Mode 7 screen repeat: %d,", (Memory.FillRAM[0x211a] & 0xc0) >> 6);
 	if (Memory.FillRAM[0x2130] & 1)
 		printf("32K colour mode, ");
 	if (PPU.BGMode == 7) {
@@ -1428,12 +1305,10 @@ static void WhatsUsed()
 
 		printf("\nMatrix A: %.3f, B: %.3f, C: %.3f, D: %.3f, Centre X: "
 		       "%d Y:%d\n",
-		       (double)PPU.MatrixA / 256, (double)PPU.MatrixB / 256,
-		       (double)PPU.MatrixC / 256, (double)PPU.MatrixD / 256,
-		       PPU.CentreX, PPU.CentreY);
+		       (double)PPU.MatrixA / 256, (double)PPU.MatrixB / 256, (double)PPU.MatrixC / 256,
+		       (double)PPU.MatrixD / 256, PPU.CentreX, PPU.CentreY);
 	}
-	if ((Memory.FillRAM[0x2106] & 0xf0) &&
-	    (Memory.FillRAM[0x2106] & 0x0f)) {
+	if ((Memory.FillRAM[0x2106] & 0xf0) && (Memory.FillRAM[0x2106] & 0x0f)) {
 		printf("\nMosaic effect(%d) on ", PPU.Mosaic);
 		for (int i = 0; i < 4; i++)
 			if (Memory.FillRAM[0x2106] & (1 << i))
@@ -1453,38 +1328,28 @@ static void WhatsUsed()
 		if (missing.hdma_this_frame & (1 << i)) {
 			printf("H-DMA %d [%d] 0x%02X%04X->0x21%02X %s %s "
 			       "0x%02X%04X %s addressing\n",
-			       i, DMA[i].TransferMode, DMA[i].ABank,
-			       DMA[i].AAddress, DMA[i].BAddress,
-			       DMA[i].AAddressDecrement ? "dec" : "inc",
-			       DMA[i].Repeat ? "repeat" : "continue",
+			       i, DMA[i].TransferMode, DMA[i].ABank, DMA[i].AAddress, DMA[i].BAddress,
+			       DMA[i].AAddressDecrement ? "dec" : "inc", DMA[i].Repeat ? "repeat" : "continue",
 			       DMA[i].IndirectBank, DMA[i].IndirectAddress,
-			       DMA[i].HDMAIndirectAddressing ? "indirect"
-							     : "absolute");
+			       DMA[i].HDMAIndirectAddressing ? "indirect" : "absolute");
 		}
 	}
 	for (i = 0; i < 8; i++) {
 		if (missing.dma_this_frame & (1 << i)) {
-			printf(
-			    "DMA %d %d 0x%02X%04X->0x21%02X Num: %d %s\n", i,
-			    DMA[i].TransferMode, DMA[i].ABank, DMA[i].AAddress,
-			    DMA[i].BAddress, DMA[i].TransferBytes,
-			    DMA[i].AAddressFixed
-				? "fixed"
-				: (DMA[i].AAddressDecrement ? "dec" : "inc"));
+			printf("DMA %d %d 0x%02X%04X->0x21%02X Num: %d %s\n", i, DMA[i].TransferMode, DMA[i].ABank,
+			       DMA[i].AAddress, DMA[i].BAddress, DMA[i].TransferBytes,
+			       DMA[i].AAddressFixed ? "fixed" : (DMA[i].AAddressDecrement ? "dec" : "inc"));
 		}
 	}
 	printf("VRAM write address: 0x%04x(%s), Full Graphic: %d, Address inc: "
 	       "%d\n",
-	       PPU.VMA.Address, PPU.VMA.High ? "Byte" : "Word",
-	       PPU.VMA.FullGraphicCount, PPU.VMA.Increment);
+	       PPU.VMA.Address, PPU.VMA.High ? "Byte" : "Word", PPU.VMA.FullGraphicCount, PPU.VMA.Increment);
 
 	for (i = 0; i < 4; i++) {
 		printf("BG%d: VOffset:%d, HOffset:%d, W:%d, H:%d, TS:%d, "
 		       "BA:0x%04x, TA:0x%04X\n",
-		       i, PPU.BG[i].VOffset, PPU.BG[i].HOffset,
-		       (PPU.BG[i].SCSize & 1) * 32 + 32,
-		       (PPU.BG[i].SCSize & 2) * 16 + 32,
-		       PPU.BG[i].BGSize * 8 + 8, PPU.BG[i].SCBase,
+		       i, PPU.BG[i].VOffset, PPU.BG[i].HOffset, (PPU.BG[i].SCSize & 1) * 32 + 32,
+		       (PPU.BG[i].SCSize & 2) * 16 + 32, PPU.BG[i].BGSize * 8 + 8, PPU.BG[i].SCBase,
 		       PPU.BG[i].NameBase);
 	}
 	char *s = "";
@@ -1601,40 +1466,33 @@ static void WhatsUsed()
 			}
 		printf("\n");
 	}
-	printf("\nWindow 1 (%d, %d, %02x, %02x): ", PPU.Window1Left,
-	       PPU.Window1Right, Memory.FillRAM[0x212e],
+	printf("\nWindow 1 (%d, %d, %02x, %02x): ", PPU.Window1Left, PPU.Window1Right, Memory.FillRAM[0x212e],
 	       Memory.FillRAM[0x212f]);
 	for (i = 0; i < 6; i++)
 		if (PPU.ClipWindow1Enable[i])
 			switch (i) {
 			case 0:
-				printf("BG0(%s-%s),",
-				       PPU.ClipWindow1Inside[i] ? "I" : "O",
+				printf("BG0(%s-%s),", PPU.ClipWindow1Inside[i] ? "I" : "O",
 				       ClipFn(PPU.ClipWindowOverlapLogic[0]));
 				break;
 			case 1:
-				printf("BG1(%s-%s),",
-				       PPU.ClipWindow1Inside[i] ? "I" : "O",
+				printf("BG1(%s-%s),", PPU.ClipWindow1Inside[i] ? "I" : "O",
 				       ClipFn(PPU.ClipWindowOverlapLogic[1]));
 				break;
 			case 2:
-				printf("BG2(%s-%s),",
-				       PPU.ClipWindow1Inside[i] ? "I" : "O",
+				printf("BG2(%s-%s),", PPU.ClipWindow1Inside[i] ? "I" : "O",
 				       ClipFn(PPU.ClipWindowOverlapLogic[2]));
 				break;
 			case 3:
-				printf("BG3(%s-%s),",
-				       PPU.ClipWindow1Inside[i] ? "I" : "O",
+				printf("BG3(%s-%s),", PPU.ClipWindow1Inside[i] ? "I" : "O",
 				       ClipFn(PPU.ClipWindowOverlapLogic[3]));
 				break;
 			case 4:
-				printf("OBJ(%s-%s),",
-				       PPU.ClipWindow1Inside[i] ? "I" : "O",
+				printf("OBJ(%s-%s),", PPU.ClipWindow1Inside[i] ? "I" : "O",
 				       ClipFn(PPU.ClipWindowOverlapLogic[4]));
 				break;
 			case 5:
-				printf("COL(%s-%s)",
-				       PPU.ClipWindow1Inside[i] ? "I" : "O",
+				printf("COL(%s-%s)", PPU.ClipWindow1Inside[i] ? "I" : "O",
 				       ClipFn(PPU.ClipWindowOverlapLogic[5]));
 				break;
 			}
@@ -1644,33 +1502,26 @@ static void WhatsUsed()
 		if (PPU.ClipWindow2Enable[i])
 			switch (i) {
 			case 0:
-				printf("BG0(%s),",
-				       PPU.ClipWindow2Inside[i] ? "I" : "O");
+				printf("BG0(%s),", PPU.ClipWindow2Inside[i] ? "I" : "O");
 				break;
 			case 1:
-				printf("BG1(%s),",
-				       PPU.ClipWindow2Inside[i] ? "I" : "O");
+				printf("BG1(%s),", PPU.ClipWindow2Inside[i] ? "I" : "O");
 				break;
 			case 2:
-				printf("BG2(%s),",
-				       PPU.ClipWindow2Inside[i] ? "I" : "O");
+				printf("BG2(%s),", PPU.ClipWindow2Inside[i] ? "I" : "O");
 				break;
 			case 3:
-				printf("BG3(%s),",
-				       PPU.ClipWindow2Inside[i] ? "I" : "O");
+				printf("BG3(%s),", PPU.ClipWindow2Inside[i] ? "I" : "O");
 				break;
 			case 4:
-				printf("OBJ(%s),",
-				       PPU.ClipWindow2Inside[i] ? "I" : "O");
+				printf("OBJ(%s),", PPU.ClipWindow2Inside[i] ? "I" : "O");
 				break;
 			case 5:
-				printf("COL(%s)",
-				       PPU.ClipWindow2Inside[i] ? "I" : "O");
+				printf("COL(%s)", PPU.ClipWindow2Inside[i] ? "I" : "O");
 				break;
 			}
 
-	printf("\nFixed colour: %02x%02x%02x\n", PPU.FixedColourRed,
-	       PPU.FixedColourGreen, PPU.FixedColourBlue);
+	printf("\nFixed colour: %02x%02x%02x\n", PPU.FixedColourRed, PPU.FixedColourGreen, PPU.FixedColourBlue);
 }
 
 static void WhatsMissing()
@@ -1742,8 +1593,7 @@ static void WhatsMissing()
 	if (missing.virq)
 		printf("V-position IRQ used at line %d, ", missing.virq_pos);
 	if (missing.hirq)
-		printf("H-position IRQ used at position %d, ",
-		       missing.hirq_pos);
+		printf("H-position IRQ used at position %d, ", missing.hirq_pos);
 	printf("\n");
 	if (missing.h_v_latch)
 		printf("H and V-Pos latched, ");
@@ -1765,17 +1615,13 @@ static void WhatsMissing()
 	if (missing.vram_inc)
 		printf("VRAM inc: %d,", missing.vram_inc);
 	if (missing.vram_full_graphic_inc)
-		printf("VRAM full graphic inc: %d,",
-		       missing.vram_full_graphic_inc);
+		printf("VRAM full graphic inc: %d,", missing.vram_full_graphic_inc);
 	printf("\n");
 	for (i = 0; i < 8; i++) {
 		if (missing.hdma[i].used) {
-			printf("HDMA %d, 0x%02X%04X->0x21%02X %s ", i,
-			       missing.hdma[i].abus_bank,
-			       missing.hdma[i].abus_address,
-			       missing.hdma[i].bbus_address,
-			       missing.hdma[i].indirect_address ? "indirect"
-								: "absolute");
+			printf("HDMA %d, 0x%02X%04X->0x21%02X %s ", i, missing.hdma[i].abus_bank,
+			       missing.hdma[i].abus_address, missing.hdma[i].bbus_address,
+			       missing.hdma[i].indirect_address ? "indirect" : "absolute");
 			if (missing.hdma[i].force_table_address_write)
 				printf("Forced address write, ");
 			if (missing.hdma[i].force_table_address_read)
@@ -1789,33 +1635,23 @@ static void WhatsMissing()
 	}
 	for (i = 0; i < 8; i++) {
 		if (missing.dma_channels & (1 << i)) {
-			printf(
-			    "DMA %d %d 0x%02X%04X->0x21%02X Num: %d %s\n", i,
-			    DMA[i].TransferMode, DMA[i].ABank, DMA[i].AAddress,
-			    DMA[i].BAddress, DMA[i].TransferBytes,
-			    DMA[i].AAddressFixed
-				? "fixed"
-				: (DMA[i].AAddressDecrement ? "dec" : "inc"));
+			printf("DMA %d %d 0x%02X%04X->0x21%02X Num: %d %s\n", i, DMA[i].TransferMode, DMA[i].ABank,
+			       DMA[i].AAddress, DMA[i].BAddress, DMA[i].TransferBytes,
+			       DMA[i].AAddressFixed ? "fixed" : (DMA[i].AAddressDecrement ? "dec" : "inc"));
 		}
 	}
 	if (missing.unknownppu_read)
-		printf("Read from unknown PPU register: $%04X\n",
-		       missing.unknownppu_read);
+		printf("Read from unknown PPU register: $%04X\n", missing.unknownppu_read);
 	if (missing.unknownppu_write)
-		printf("Write to unknown PPU register: $%04X\n",
-		       missing.unknownppu_write);
+		printf("Write to unknown PPU register: $%04X\n", missing.unknownppu_write);
 	if (missing.unknowncpu_read)
-		printf("Read from unknown CPU register: $%04X\n",
-		       missing.unknowncpu_read);
+		printf("Read from unknown CPU register: $%04X\n", missing.unknowncpu_read);
 	if (missing.unknowncpu_write)
-		printf("Write to unknown CPU register: $%04X\n",
-		       missing.unknowncpu_write);
+		printf("Write to unknown CPU register: $%04X\n", missing.unknowncpu_write);
 	if (missing.unknowndsp_read)
-		printf("Read from unknown DSP register: $%04X\n",
-		       missing.unknowndsp_read);
+		printf("Read from unknown DSP register: $%04X\n", missing.unknowndsp_read);
 	if (missing.unknowndsp_write)
-		printf("Write to unknown DSP register: $%04X\n",
-		       missing.unknowndsp_write);
+		printf("Write to unknown DSP register: $%04X\n", missing.unknowndsp_write);
 }
 
 void S9xDoDebug()

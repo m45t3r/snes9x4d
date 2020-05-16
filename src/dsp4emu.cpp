@@ -97,8 +97,8 @@
 #define DSP4_WRITE_WORD(x, d) WRITE_WORD(DSP4.output + x, d);
 
 // used to wait for dsp i/o
-#define DSP4_WAIT(x)                                                           \
-	DSP4_Logic = x;                                                        \
+#define DSP4_WAIT(x)                                                                                                   \
+	DSP4_Logic = x;                                                                                                \
 	return;
 
 //////////////////////////////////////////////////////////////
@@ -112,13 +112,12 @@ void DSP4_Multiply(short Multiplicand, short Multiplier, int &Product)
 void DSP4_UnknownOP11(short A, short B, short C, short D, short &M)
 {
 	// 0x155 = 341 = Horizontal Width of the Screen
-	M = ((A * 0x0155 >> 2) & 0xf000) | ((B * 0x0155 >> 6) & 0x0f00) |
-	    ((C * 0x0155 >> 10) & 0x00f0) | ((D * 0x0155 >> 14) & 0x000f);
+	M = ((A * 0x0155 >> 2) & 0xf000) | ((B * 0x0155 >> 6) & 0x0f00) | ((C * 0x0155 >> 10) & 0x00f0) |
+	    ((D * 0x0155 >> 14) & 0x000f);
 }
 
-const unsigned short Op0A_Values[16] = {
-    0x0000, 0x0030, 0x0060, 0x0090, 0x00c0, 0x00f0, 0x0120, 0x0150,
-    0xfe80, 0xfeb0, 0xfee0, 0xff10, 0xff40, 0xff70, 0xffa0, 0xffd0};
+const unsigned short Op0A_Values[16] = {0x0000, 0x0030, 0x0060, 0x0090, 0x00c0, 0x00f0, 0x0120, 0x0150,
+					0xfe80, 0xfeb0, 0xfee0, 0xff10, 0xff40, 0xff70, 0xffa0, 0xffd0};
 
 void DSP4_Op0A(short n2, short &o1, short &o2, short &o3, short &o4)
 {
@@ -297,12 +296,11 @@ void DSP4_Op01()
 
 		// quadratic regression (rough)
 		if (project_focaly >= -0x0f)
-			py_dy = project_focaly * project_focaly * -0.20533553 -
-				1.08330005 * project_focaly - 69.61094639;
-		else
 			py_dy =
-			    project_focaly * project_focaly * -0.000657035759 -
-			    1.07629051 * project_focaly - 65.69315963;
+			    project_focaly * project_focaly * -0.20533553 - 1.08330005 * project_focaly - 69.61094639;
+		else
+			py_dy = project_focaly * project_focaly * -0.000657035759 - 1.07629051 * project_focaly -
+				65.69315963;
 
 		// approximate # of raster lines
 		segments = abs(project_y2 - project_y1);
@@ -328,8 +326,7 @@ void DSP4_Op01()
 #ifdef PRINT
 		printf("(line %d) Op01 check %02X, plane %04X, focal_y %04X, "
 		       "y2 %04X, y1 %04X\n",
-		       c, (uint16)segments, (uint16)(plane),
-		       (uint16)project_focaly, (uint16)project_y2,
+		       c, (uint16)segments, (uint16)(plane), (uint16)project_focaly, (uint16)project_y2,
 		       (uint16)project_y1);
 #endif
 
@@ -515,12 +512,11 @@ void DSP4_Op07()
 
 		// quadratic regression (rough)
 		if (project_focaly >= -0x0f)
-			py_dy = project_focaly * project_focaly * -0.20533553 -
-				1.08330005 * project_focaly - 69.61094639;
-		else
 			py_dy =
-			    project_focaly * project_focaly * -0.000657035759 -
-			    1.07629051 * project_focaly - 65.69315963;
+			    project_focaly * project_focaly * -0.20533553 - 1.08330005 * project_focaly - 69.61094639;
+		else
+			py_dy = project_focaly * project_focaly * -0.000657035759 - 1.07629051 * project_focaly -
+				65.69315963;
 
 		// approximate # of raster lines
 		segments = abs(project_y2 - project_y1);
@@ -770,8 +766,7 @@ void DSP4_Op08()
 			DSP4.output[1] = pos2 & 0xFF;
 
 #ifdef PRINT
-			printf("(line %d) Op08 x_left %04X\n", c,
-			       (uint16)x_left);
+			printf("(line %d) Op08 x_left %04X\n", c, (uint16)x_left);
 #endif
 		}
 		// proceed with projection
@@ -810,8 +805,7 @@ void DSP4_Op08()
 
 				// interpolate between projected points with
 				// shaping
-				left_inc =
-				    ((x2_final - x1_final) << 8) / segments;
+				left_inc = ((x2_final - x1_final) << 8) / segments;
 
 				// project new shapes (right side)
 				x1_final = x_left + dx2;
@@ -819,16 +813,13 @@ void DSP4_Op08()
 
 				// interpolate between projected points with
 				// shaping
-				right_inc =
-				    ((x2_final - x1_final) << 8) / segments;
+				right_inc = ((x2_final - x1_final) << 8) / segments;
 
 				path_plane[0] = plane;
 			}
 
 #ifdef PRINT
-			printf(
-			    "(line %d) Op08 block %d, out %02X, raster %02X\n",
-			    c, block, segments, (uint16)y_left);
+			printf("(line %d) Op08 block %d, out %02X, raster %02X\n", c, block, segments, (uint16)y_left);
 #endif
 
 			// zone 1
@@ -840,10 +831,8 @@ void DSP4_Op08()
 				int16 pos1, pos2;
 
 				// pre-compute
-				pos1 =
-				    path_pos[0] + ((left_inc * lcv) >> 8) + dx1;
-				pos2 = path_pos[1] + ((right_inc * lcv) >> 8) +
-				       dx2;
+				pos1 = path_pos[0] + ((left_inc * lcv) >> 8) + dx1;
+				pos2 = path_pos[1] + ((right_inc * lcv) >> 8) + dx2;
 
 				// clip offscreen data
 				if (pos1 < path_clipLeft[0])
@@ -877,8 +866,7 @@ void DSP4_Op08()
 
 			if (segments > 0) {
 				// project points w/out the envelopes
-				int16 inc =
-				    ((path_x[0] - x_left) << 8) / segments;
+				int16 inc = ((path_x[0] - x_left) << 8) / segments;
 
 				// post-store
 				path_pos[0] += ((inc * lcv) >> 8);
@@ -919,8 +907,7 @@ void DSP4_Op08()
 
 				// interpolate between projected points with
 				// shaping
-				left_inc =
-				    ((x2_final - x1_final) << 8) / segments;
+				left_inc = ((x2_final - x1_final) << 8) / segments;
 
 				// project new shapes (right side)
 				x1_final = x_left + dx2;
@@ -928,8 +915,7 @@ void DSP4_Op08()
 
 				// interpolate between projected points with
 				// shaping
-				right_inc =
-				    ((x2_final - x1_final) << 8) / segments;
+				right_inc = ((x2_final - x1_final) << 8) / segments;
 
 				path_plane[1] = plane;
 			}
@@ -943,10 +929,8 @@ void DSP4_Op08()
 				int16 pos1, pos2;
 
 				// pre-compute
-				pos1 =
-				    path_pos[2] + ((left_inc * lcv) >> 8) + dx1;
-				pos2 = path_pos[3] + ((right_inc * lcv) >> 8) +
-				       dx2;
+				pos1 = path_pos[2] + ((left_inc * lcv) >> 8) + dx1;
+				pos2 = path_pos[3] + ((right_inc * lcv) >> 8) + dx2;
 
 				// clip offscreen data
 				if (pos1 < path_clipLeft[2])
@@ -980,8 +964,7 @@ void DSP4_Op08()
 
 			if (segments > 0) {
 				// project points w/out the envelopes
-				int16 inc =
-				    ((path_x[1] - x_right) << 8) / segments;
+				int16 inc = ((path_x[1] - x_right) << 8) / segments;
 
 				// post-store
 				path_pos[2] += ((inc * lcv) >> 8);
@@ -1135,12 +1118,11 @@ void DSP4_Op0D()
 
 		// quadratic regression (rough)
 		if (project_focaly >= -0x0f)
-			py_dy = project_focaly * project_focaly * -0.20533553 -
-				1.08330005 * project_focaly - 69.61094639;
-		else
 			py_dy =
-			    project_focaly * project_focaly * -0.000657035759 -
-			    1.07629051 * project_focaly - 65.69315963;
+			    project_focaly * project_focaly * -0.20533553 - 1.08330005 * project_focaly - 69.61094639;
+		else
+			py_dy = project_focaly * project_focaly * -0.000657035759 - 1.07629051 * project_focaly -
+				65.69315963;
 
 		// approximate # of raster lines
 		segments = abs(project_y2 - project_y1);
@@ -1165,8 +1147,7 @@ void DSP4_Op0D()
 		++block;
 
 #ifdef PRINT
-		printf("(line %d) Op0D check %02X, plane %04X\n", c,
-		       (uint16)segments, (uint16)(plane));
+		printf("(line %d) Op0D check %02X, plane %04X\n", c, (uint16)segments, (uint16)(plane));
 #endif
 
 		// prepare output
@@ -1296,8 +1277,7 @@ void DSP4_Op09()
 	viewport_bottom = DSP4_READ_WORD(0x0c);
 
 #ifdef PRINT2
-	printf("Window: (%04X,%04X) (%04X,%04X)\n", viewport_left,
-	       viewport_right, viewport_top, viewport_bottom);
+	printf("Window: (%04X,%04X) (%04X,%04X)\n", viewport_left, viewport_right, viewport_top, viewport_bottom);
 #endif
 
 	// cycle through viewport window data
@@ -1395,8 +1375,7 @@ void DSP4_Op09()
 			// debug
 			++block;
 #ifdef PRINT
-			printf("(line %d) Op09 vehicle block %d, Loop %04X\n",
-			       c, block, (uint16)project_y1);
+			printf("(line %d) Op09 vehicle block %d, Loop %04X\n", c, block, (uint16)project_y1);
 			// printf("%04X %04X %04X %04X /
 			// ",focal_back,focal_front,car_left_a,car_left);
 			// printf("%02X %02X ", distance, id);
@@ -1460,8 +1439,7 @@ void DSP4_Op09()
 			// debug
 			++block;
 #ifdef PRINT
-			printf("(line %d) Op09 terrain block %d, Loop %04X\n",
-			       c, block, (uint16)project_y1);
+			printf("(line %d) Op09 terrain block %d, Loop %04X\n", c, block, (uint16)project_y1);
 #endif
 		}
 
@@ -1494,8 +1472,7 @@ void DSP4_Op09()
 
 			// new sprite information
 			command >>= 8;
-			if (command != 0x20 && command != 0x40 &&
-			    command != 0x60 && command != 0xa0 &&
+			if (command != 0x20 && command != 0x40 && command != 0x60 && command != 0xa0 &&
 			    command != 0xc0 && command != 0xe0)
 				break;
 
@@ -1525,8 +1502,7 @@ void DSP4_Op09()
 			clip = FALSE;
 
 			// window clipping
-			if (sp_x < viewport_left - expand ||
-			    sp_x > viewport_right)
+			if (sp_x < viewport_left - expand || sp_x > viewport_right)
 				clip = TRUE;
 			if (sp_y < viewport_top || sp_y > viewport_bottom)
 				clip = TRUE;
@@ -1538,9 +1514,7 @@ void DSP4_Op09()
 				clip = TRUE;
 
 			// tile limitations
-			if ((sp_y >= -expand) &&
-			    ((sp_y < 0) || ((sp_y & 0x01ff) < 0x00eb)) &&
-			    !clip) {
+			if ((sp_y >= -expand) && ((sp_y < 0) || ((sp_y & 0x01ff) < 0x00eb)) && !clip) {
 				short Row = (sp_y >> 3) & 0x1f;
 
 				if (!sprite_size) {
@@ -1551,10 +1525,8 @@ void DSP4_Op09()
 						clip = TRUE;
 				} else {
 					// 2x2 tile
-					if ((RowCount[Row + 0] + 1 <
-					     MaxTilesPerRow) &&
-					    (RowCount[Row + 1] + 1 <
-					     MaxTilesPerRow)) {
+					if ((RowCount[Row + 0] + 1 < MaxTilesPerRow) &&
+					    (RowCount[Row + 1] + 1 < MaxTilesPerRow)) {
 						RowCount[Row + 0] += 2;
 						RowCount[Row + 1] += 2;
 					} else
@@ -1563,9 +1535,8 @@ void DSP4_Op09()
 			}
 
 #ifdef PRINT
-			printf("(line %d) %04X, %04X, %04X / %04X %04X\n", line,
-			       (uint16)sp_x, (uint16)sp_y, (uint16)far_plane,
-			       (uint16)multi_farplane[multi_index1],
+			printf("(line %d) %04X, %04X, %04X / %04X %04X\n", line, (uint16)sp_x, (uint16)sp_y,
+			       (uint16)far_plane, (uint16)multi_farplane[multi_index1],
 			       (uint16)multi_raster[multi_index1]);
 #endif
 
@@ -1580,16 +1551,13 @@ void DSP4_Op09()
 				sp_msb = (sp_x < 0 || sp_x > 255);
 
 #ifdef PRINT2
-				printf(
-				    "(line %d) %04X, %04X, %04X, %04X, %04X\n",
-				    line, (uint16)sp_oam, (uint16)sprite_offset,
-				    (uint16)offset, (uint16)sp_x, (uint16)sp_y);
+				printf("(line %d) %04X, %04X, %04X, %04X, %04X\n", line, (uint16)sp_oam,
+				       (uint16)sprite_offset, (uint16)offset, (uint16)sp_x, (uint16)sp_y);
 #endif
 
 				// emit transparency information
 				if ((sprite_offset & 0x08) &&
-				    ((sprite_type == 1 && sp_y >= 0xcc) ||
-				     (sprite_type == 2 && sp_y >= 0xbb))) {
+				    ((sprite_type == 1 && sp_y >= 0xcc) || (sprite_type == 2 && sp_y >= 0xbb))) {
 					DSP4.out_count = 6;
 
 					// one block of OAM data

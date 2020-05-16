@@ -82,8 +82,7 @@ class CMemory
 	int ScoreHiROM(bool8_32 skip_header);
 	int ScoreLoROM(bool8_32 skip_header);
 	void ApplyROMFixes();
-	void CheckForIPSPatch(const char *rom_filename, bool8_32 header,
-			      int32 &rom_size);
+	void CheckForIPSPatch(const char *rom_filename, bool8_32 header, int32 &rom_size);
 
 	const char *TVStandard();
 	const char *Speed();

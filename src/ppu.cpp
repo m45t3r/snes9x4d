@@ -48,7 +48,6 @@
 #include "gfx.h"
 #include "display.h"
 #include "sa1.h"
-//#include "netplay.h"
 #include "sdd1.h"
 #include "srtc.h"
 
@@ -68,18 +67,15 @@ void S9xUpdateHTimer(struct SPPU *ppu, struct SCPUState *cpu)
 #ifdef DEBUGGER
 		missing.hirq_pos = ppu->IRQHBeamPos;
 #endif
-		ppu->HTimerPosition =
-		    ppu->IRQHBeamPos * Settings.H_Max / SNES_HCOUNTER_MAX;
-		if (ppu->HTimerPosition == Settings.H_Max ||
-		    ppu->HTimerPosition == Settings.HBlankStart) {
+		ppu->HTimerPosition = ppu->IRQHBeamPos * Settings.H_Max / SNES_HCOUNTER_MAX;
+		if (ppu->HTimerPosition == Settings.H_Max || ppu->HTimerPosition == Settings.HBlankStart) {
 			ppu->HTimerPosition--;
 		}
 
 		if (!ppu->VTimerEnabled || cpu->V_Counter == ppu->IRQVBeamPos) {
 			if (ppu->HTimerPosition < cpu->Cycles) {
 				// Missed the IRQ on this line already
-				if (cpu->WhichEvent == HBLANK_END_EVENT ||
-				    cpu->WhichEvent == HTIMER_AFTER_EVENT) {
+				if (cpu->WhichEvent == HBLANK_END_EVENT || cpu->WhichEvent == HTIMER_AFTER_EVENT) {
 					cpu->WhichEvent = HBLANK_END_EVENT;
 					cpu->NextEvent = Settings.H_Max;
 				} else {
@@ -87,22 +83,16 @@ void S9xUpdateHTimer(struct SPPU *ppu, struct SCPUState *cpu)
 					cpu->NextEvent = Settings.HBlankStart;
 				}
 			} else {
-				if (cpu->WhichEvent == HTIMER_BEFORE_EVENT ||
-				    cpu->WhichEvent == HBLANK_START_EVENT) {
-					if (ppu->HTimerPosition >
-					    Settings.HBlankStart) {
+				if (cpu->WhichEvent == HTIMER_BEFORE_EVENT || cpu->WhichEvent == HBLANK_START_EVENT) {
+					if (ppu->HTimerPosition > Settings.HBlankStart) {
 						// HTimer was to trigger before
 						// h-blank start, now triggers
 						// after start of h-blank
-						cpu->NextEvent =
-						    Settings.HBlankStart;
-						cpu->WhichEvent =
-						    HBLANK_START_EVENT;
+						cpu->NextEvent = Settings.HBlankStart;
+						cpu->WhichEvent = HBLANK_START_EVENT;
 					} else {
-						cpu->NextEvent =
-						    ppu->HTimerPosition;
-						cpu->WhichEvent =
-						    HTIMER_BEFORE_EVENT;
+						cpu->NextEvent = ppu->HTimerPosition;
+						cpu->WhichEvent = HTIMER_BEFORE_EVENT;
 					}
 				} else {
 					cpu->WhichEvent = HTIMER_AFTER_EVENT;
@@ -124,8 +114,7 @@ void S9xFixColourBrightness()
 			IPPU.Red[i] = IPPU.XB[PPU.CGDATA[i] & 0x1f];
 			IPPU.Green[i] = IPPU.XB[(PPU.CGDATA[i] >> 5) & 0x1f];
 			IPPU.Blue[i] = IPPU.XB[(PPU.CGDATA[i] >> 10) & 0x1f];
-			IPPU.ScreenColors[i] = BUILD_PIXEL(
-			    IPPU.Red[i], IPPU.Green[i], IPPU.Blue[i]);
+			IPPU.ScreenColors[i] = BUILD_PIXEL(IPPU.Red[i], IPPU.Green[i], IPPU.Blue[i]);
 		}
 	}
 }
@@ -134,8 +123,7 @@ void S9xFixColourBrightness()
 /* S9xSetPPU() */
 /* This function sets a PPU Register to a specific byte */
 /**********************************************************************************************/
-void S9xSetPPU(uint8 Byte, uint16 Address, struct SPPU *ppu,
-	       struct InternalPPU *ippu)
+void S9xSetPPU(uint8 Byte, uint16 Address, struct SPPU *ppu, struct InternalPPU *ippu)
 {
 	if (Address <= 0x2183) {
 		switch (Address) {
@@ -145,17 +133,13 @@ void S9xSetPPU(uint8 Byte, uint16 Address, struct SPPU *ppu,
 				FLUSH_REDRAW();
 				if (ppu->Brightness != (Byte & 0xF)) {
 					ippu->ColorsChanged = TRUE;
-					ippu->DirectColourMapsNeedRebuild =
-					    TRUE;
+					ippu->DirectColourMapsNeedRebuild = TRUE;
 					ppu->Brightness = Byte & 0xF;
 					S9xFixColourBrightness();
-					if (ppu->Brightness >
-					    ippu->MaxBrightness)
-						ippu->MaxBrightness =
-						    ppu->Brightness;
+					if (ppu->Brightness > ippu->MaxBrightness)
+						ippu->MaxBrightness = ppu->Brightness;
 				}
-				if ((Memory.FillRAM[0x2100] & 0x80) !=
-				    (Byte & 0x80)) {
+				if ((Memory.FillRAM[0x2100] & 0x80) != (Byte & 0x80)) {
 					ippu->ColorsChanged = TRUE;
 					ppu->ForcedBlanking = (Byte >> 7) & 1;
 				}
@@ -190,8 +174,7 @@ void S9xSetPPU(uint8 Byte, uint16 Address, struct SPPU *ppu,
 		case 0x2103:
 			// Sprite register write address (high), sprite priority
 			// rotation bit.
-			if ((ppu->OAMPriorityRotation =
-				 (Byte & 0x80) == 0 ? 0 : 1)) {
+			if ((ppu->OAMPriorityRotation = (Byte & 0x80) == 0 ? 0 : 1)) {
 				ppu->FirstSprite = ppu->OAMAddr & 0x7f;
 #ifdef DEBUGGER
 				missing.sprite_priority_rotation = 1;
@@ -240,14 +223,10 @@ void S9xSetPPU(uint8 Byte, uint16 Address, struct SPPU *ppu,
 					missing.mosaic = 1;
 #endif
 				ppu->Mosaic = (Byte >> 4) + 1;
-				ppu->BGMosaic[0] =
-				    (Byte & 1) && ppu->Mosaic > 1;
-				ppu->BGMosaic[1] =
-				    (Byte & 2) && ppu->Mosaic > 1;
-				ppu->BGMosaic[2] =
-				    (Byte & 4) && ppu->Mosaic > 1;
-				ppu->BGMosaic[3] =
-				    (Byte & 8) && ppu->Mosaic > 1;
+				ppu->BGMosaic[0] = (Byte & 1) && ppu->Mosaic > 1;
+				ppu->BGMosaic[1] = (Byte & 2) && ppu->Mosaic > 1;
+				ppu->BGMosaic[2] = (Byte & 4) && ppu->Mosaic > 1;
+				ppu->BGMosaic[3] = (Byte & 8) && ppu->Mosaic > 1;
 			}
 			break;
 		case 0x2107: // [BG0SC]
@@ -299,50 +278,34 @@ void S9xSetPPU(uint8 Byte, uint16 Address, struct SPPU *ppu,
 			break;
 
 		case 0x210D:
-			ppu->BG[0].HOffset =
-			    ((ppu->BG[0].HOffset >> 8) & 0xff) |
-			    ((uint16)Byte << 8);
+			ppu->BG[0].HOffset = ((ppu->BG[0].HOffset >> 8) & 0xff) | ((uint16)Byte << 8);
 			break;
 
 		case 0x210E:
-			ppu->BG[0].VOffset =
-			    ((ppu->BG[0].VOffset >> 8) & 0xff) |
-			    ((uint16)Byte << 8);
+			ppu->BG[0].VOffset = ((ppu->BG[0].VOffset >> 8) & 0xff) | ((uint16)Byte << 8);
 			break;
 		case 0x210F:
-			ppu->BG[1].HOffset =
-			    ((ppu->BG[1].HOffset >> 8) & 0xff) |
-			    ((uint16)Byte << 8);
+			ppu->BG[1].HOffset = ((ppu->BG[1].HOffset >> 8) & 0xff) | ((uint16)Byte << 8);
 			break;
 
 		case 0x2110:
-			ppu->BG[1].VOffset =
-			    ((ppu->BG[1].VOffset >> 8) & 0xff) |
-			    ((uint16)Byte << 8);
+			ppu->BG[1].VOffset = ((ppu->BG[1].VOffset >> 8) & 0xff) | ((uint16)Byte << 8);
 			break;
 
 		case 0x2111:
-			ppu->BG[2].HOffset =
-			    ((ppu->BG[2].HOffset >> 8) & 0xff) |
-			    ((uint16)Byte << 8);
+			ppu->BG[2].HOffset = ((ppu->BG[2].HOffset >> 8) & 0xff) | ((uint16)Byte << 8);
 			break;
 
 		case 0x2112:
-			ppu->BG[2].VOffset =
-			    ((ppu->BG[2].VOffset >> 8) & 0xff) |
-			    ((uint16)Byte << 8);
+			ppu->BG[2].VOffset = ((ppu->BG[2].VOffset >> 8) & 0xff) | ((uint16)Byte << 8);
 			break;
 
 		case 0x2113:
-			ppu->BG[3].HOffset =
-			    ((ppu->BG[3].HOffset >> 8) & 0xff) |
-			    ((uint16)Byte << 8);
+			ppu->BG[3].HOffset = ((ppu->BG[3].HOffset >> 8) & 0xff) | ((uint16)Byte << 8);
 			break;
 
 		case 0x2114:
-			ppu->BG[3].VOffset =
-			    ((ppu->BG[3].VOffset >> 8) & 0xff) |
-			    ((uint16)Byte << 8);
+			ppu->BG[3].VOffset = ((ppu->BG[3].VOffset >> 8) & 0xff) | ((uint16)Byte << 8);
 			break;
 
 		case 0x2115:
@@ -370,8 +333,7 @@ void S9xSetPPU(uint8 Byte, uint16 Address, struct SPPU *ppu,
 				static uint16 IncCount[4] = {0, 32, 64, 128};
 				static uint16 Shift[4] = {0, 5, 6, 7};
 #ifdef DEBUGGER
-				missing.vram_full_graphic_inc =
-				    (Byte & 0x0c) >> 2;
+				missing.vram_full_graphic_inc = (Byte & 0x0c) >> 2;
 #endif
 				ppu->VMA.Increment = 1;
 				uint8 i = (Byte & 0x0c) >> 2;
@@ -420,35 +382,29 @@ void S9xSetPPU(uint8 Byte, uint16 Address, struct SPPU *ppu,
 			break;
 		case 0x211b:
 			// Mode 7 matrix A (low & high)
-			ppu->MatrixA =
-			    ((ppu->MatrixA >> 8) & 0xff) | (Byte << 8);
+			ppu->MatrixA = ((ppu->MatrixA >> 8) & 0xff) | (Byte << 8);
 			ppu->Need16x8Mulitply = TRUE;
 			break;
 		case 0x211c:
 			// Mode 7 matrix B (low & high)
-			ppu->MatrixB =
-			    ((ppu->MatrixB >> 8) & 0xff) | (Byte << 8);
+			ppu->MatrixB = ((ppu->MatrixB >> 8) & 0xff) | (Byte << 8);
 			ppu->Need16x8Mulitply = TRUE;
 			break;
 		case 0x211d:
 			// Mode 7 matrix C (low & high)
-			ppu->MatrixC =
-			    ((ppu->MatrixC >> 8) & 0xff) | (Byte << 8);
+			ppu->MatrixC = ((ppu->MatrixC >> 8) & 0xff) | (Byte << 8);
 			break;
 		case 0x211e:
 			// Mode 7 matrix D (low & high)
-			ppu->MatrixD =
-			    ((ppu->MatrixD >> 8) & 0xff) | (Byte << 8);
+			ppu->MatrixD = ((ppu->MatrixD >> 8) & 0xff) | (Byte << 8);
 			break;
 		case 0x211f:
 			// Mode 7 centre of rotation X (low & high)
-			ppu->CentreX =
-			    ((ppu->CentreX >> 8) & 0xff) | (Byte << 8);
+			ppu->CentreX = ((ppu->CentreX >> 8) & 0xff) | (Byte << 8);
 			break;
 		case 0x2120:
 			// Mode 7 centre of rotation Y (low & high)
-			ppu->CentreY =
-			    ((ppu->CentreY >> 8) & 0xff) | (Byte << 8);
+			ppu->CentreY = ((ppu->CentreY >> 8) & 0xff) | (Byte << 8);
 			break;
 
 		case 0x2121:
@@ -582,12 +538,9 @@ void S9xSetPPU(uint8 Byte, uint16 Address, struct SPPU *ppu,
 				FLUSH_REDRAW();
 
 				ppu->ClipWindowOverlapLogic[0] = (Byte & 0x03);
-				ppu->ClipWindowOverlapLogic[1] =
-				    (Byte & 0x0c) >> 2;
-				ppu->ClipWindowOverlapLogic[2] =
-				    (Byte & 0x30) >> 4;
-				ppu->ClipWindowOverlapLogic[3] =
-				    (Byte & 0xc0) >> 6;
+				ppu->ClipWindowOverlapLogic[1] = (Byte & 0x0c) >> 2;
+				ppu->ClipWindowOverlapLogic[2] = (Byte & 0x30) >> 4;
+				ppu->ClipWindowOverlapLogic[3] = (Byte & 0xc0) >> 6;
 				ppu->RecomputeClipWindows = TRUE;
 			}
 			break;
@@ -598,8 +551,7 @@ void S9xSetPPU(uint8 Byte, uint16 Address, struct SPPU *ppu,
 				FLUSH_REDRAW();
 
 				ppu->ClipWindowOverlapLogic[4] = Byte & 0x03;
-				ppu->ClipWindowOverlapLogic[5] =
-				    (Byte & 0x0c) >> 2;
+				ppu->ClipWindowOverlapLogic[5] = (Byte & 0x0c) >> 2;
 				ppu->RecomputeClipWindows = TRUE;
 			}
 			break;
@@ -652,9 +604,7 @@ void S9xSetPPU(uint8 Byte, uint16 Address, struct SPPU *ppu,
 
 				ppu->RecomputeClipWindows = TRUE;
 #ifdef DEBUGGER
-				if ((Byte & 1) &&
-				    (ppu->BGMode == 3 || ppu->BGMode == 4 ||
-				     ppu->BGMode == 7))
+				if ((Byte & 1) && (ppu->BGMode == 3 || ppu->BGMode == 4 || ppu->BGMode == 7))
 					missing.direct = 1;
 #endif
 			}
@@ -708,8 +658,7 @@ void S9xSetPPU(uint8 Byte, uint16 Address, struct SPPU *ppu,
 					missing.pseudo_512 = 1;
 #endif
 				if (Byte & 0x04) {
-					ppu->ScreenHeight =
-					    SNES_HEIGHT_EXTENDED;
+					ppu->ScreenHeight = SNES_HEIGHT_EXTENDED;
 #ifdef DEBUGGER
 					missing.lines_239 = 1;
 #endif
@@ -867,10 +816,7 @@ void S9xSetPPU(uint8 Byte, uint16 Address, struct SPPU *ppu,
 #ifdef DEBUGGER
 			missing.unknownppu_write = Address;
 			if (Settings.TraceUnknownRegisters) {
-				sprintf(
-				    String,
-				    "Unknown register write: $%02X->$%04X\n",
-				    Byte, Address);
+				sprintf(String, "Unknown register write: $%02X->$%04X\n", Byte, Address);
 				S9xMessage(S9X_TRACE, S9X_PPU_TRACE, String);
 			}
 #endif
@@ -970,8 +916,7 @@ uint8 S9xGetPPU(uint16 Address, struct SPPU *ppu, CMemory *mem)
 #endif
 			return (uint8)(ppu->OAMAddr);
 		case 0x2103:
-			return (((ppu->OAMAddr >> 8) & 1) |
-				(ppu->OAMPriorityRotation << 7));
+			return (((ppu->OAMAddr >> 8) & 1) | (ppu->OAMPriorityRotation << 7));
 		case 0x2104:
 		case 0x2105:
 		case 0x2106:
@@ -1041,8 +986,7 @@ uint8 S9xGetPPU(uint16 Address, struct SPPU *ppu, CMemory *mem)
 		case 0x2136:
 			// 16bit x 8bit multiply read result.
 			if (ppu->Need16x8Mulitply) {
-				int32 r = (int32)ppu->MatrixA *
-					  (int32)(ppu->MatrixB >> 8);
+				int32 r = (int32)ppu->MatrixA * (int32)(ppu->MatrixB >> 8);
 
 				mem->FillRAM[0x2134] = (uint8)r;
 				mem->FillRAM[0x2135] = (uint8)(r >> 8);
@@ -1065,8 +1009,7 @@ uint8 S9xGetPPU(uint16 Address, struct SPPU *ppu, CMemory *mem)
 #endif
 			ppu->HVBeamCounterLatched = 1;
 			ppu->VBeamPosLatched = (uint16)CPU.V_Counter;
-			ppu->HBeamPosLatched = (uint16)(
-			    (CPU.Cycles * SNES_HCOUNTER_MAX) / Settings.H_Max);
+			ppu->HBeamPosLatched = (uint16)((CPU.Cycles * SNES_HCOUNTER_MAX) / Settings.H_Max);
 
 			// Causes screen flicker for Yoshi's Island if
 			// uncommented
@@ -1101,15 +1044,11 @@ uint8 S9xGetPPU(uint16 Address, struct SPPU *ppu, CMemory *mem)
 			else if (ppu->VMA.FullGraphicCount) {
 				uint32 addr = ppu->VMA.Address - 1;
 				uint32 rem = addr & ppu->VMA.Mask1;
-				uint32 address =
-				    (addr & ~ppu->VMA.Mask1) +
-				    (rem >> ppu->VMA.Shift) +
-				    ((rem & (ppu->VMA.FullGraphicCount - 1))
-				     << 3);
+				uint32 address = (addr & ~ppu->VMA.Mask1) + (rem >> ppu->VMA.Shift) +
+						 ((rem & (ppu->VMA.FullGraphicCount - 1)) << 3);
 				byte = mem->VRAM[((address << 1) - 2) & 0xFFFF];
 			} else
-				byte = mem->VRAM[((ppu->VMA.Address << 1) - 2) &
-						 0xffff];
+				byte = mem->VRAM[((ppu->VMA.Address << 1) - 2) & 0xffff];
 
 			if (!ppu->VMA.High) {
 				ppu->VMA.Address += ppu->VMA.Increment;
@@ -1122,20 +1061,15 @@ uint8 S9xGetPPU(uint16 Address, struct SPPU *ppu, CMemory *mem)
 			missing.vram_read = 1;
 #endif
 			if (IPPU.FirstVRAMRead)
-				byte = mem->VRAM[((ppu->VMA.Address << 1) + 1) &
-						 0xffff];
+				byte = mem->VRAM[((ppu->VMA.Address << 1) + 1) & 0xffff];
 			else if (ppu->VMA.FullGraphicCount) {
 				uint32 addr = ppu->VMA.Address - 1;
 				uint32 rem = addr & ppu->VMA.Mask1;
-				uint32 address =
-				    (addr & ~ppu->VMA.Mask1) +
-				    (rem >> ppu->VMA.Shift) +
-				    ((rem & (ppu->VMA.FullGraphicCount - 1))
-				     << 3);
+				uint32 address = (addr & ~ppu->VMA.Mask1) + (rem >> ppu->VMA.Shift) +
+						 ((rem & (ppu->VMA.FullGraphicCount - 1)) << 3);
 				byte = mem->VRAM[((address << 1) - 1) & 0xFFFF];
 			} else
-				byte = mem->VRAM[((ppu->VMA.Address << 1) - 1) &
-						 0xFFFF];
+				byte = mem->VRAM[((ppu->VMA.Address << 1) - 1) & 0xFFFF];
 			if (ppu->VMA.High) {
 				ppu->VMA.Address += ppu->VMA.Increment;
 				IPPU.FirstVRAMRead = FALSE;
@@ -1184,8 +1118,7 @@ uint8 S9xGetPPU(uint16 Address, struct SPPU *ppu, CMemory *mem)
 		case 0x213F:
 			// NTSC/PAL and which field flags
 			ppu->VBeamFlip = ppu->HBeamFlip = 0;
-			return ((Settings.PAL ? 0x10 : 0) |
-				(mem->FillRAM[0x213f] & 0xc0));
+			return ((Settings.PAL ? 0x10 : 0) | (mem->FillRAM[0x213f] & 0xc0));
 
 		case 0x2140:
 		case 0x2141:
@@ -1263,13 +1196,9 @@ uint8 S9xGetPPU(uint16 Address, struct SPPU *ppu, CMemory *mem)
 #ifdef CPU_SHUTDOWN
 				// CPU.WaitAddress = CPU.PCAtOpcodeStart;
 #endif
-				if (SNESGameFixes.APU_OutPorts_ReturnValueFix &&
-				    Address >= 0x2140 && Address <= 0x2143 &&
-				    !CPU.V_Counter) {
-					return (uint8)(
-					    (Address & 1)
-						? ((rand() & 0xff00) >> 8)
-						: (rand() & 0xff));
+				if (SNESGameFixes.APU_OutPorts_ReturnValueFix && Address >= 0x2140 &&
+				    Address <= 0x2143 && !CPU.V_Counter) {
+					return (uint8)((Address & 1) ? ((rand() & 0xff00) >> 8) : (rand() & 0xff));
 				}
 
 				return (APU.OutPorts[Address & 3]);
@@ -1289,9 +1218,7 @@ uint8 S9xGetPPU(uint16 Address, struct SPPU *ppu, CMemory *mem)
 				int r = rand();
 				if (r & 2) {
 					if (r & 4)
-						return (Address & 3 == 1
-							    ? 0xaa
-							    : 0xbb);
+						return (Address & 3 == 1 ? 0xaa : 0xbb);
 					else
 						return ((r >> 3) & 0xff);
 				}
@@ -1340,12 +1267,8 @@ uint8 S9xGetPPU(uint16 Address, struct SPPU *ppu, CMemory *mem)
 #ifdef DEBUGGER
 				missing.unknownppu_read = Address;
 				if (Settings.TraceUnknownRegisters) {
-					sprintf(
-					    String,
-					    "Unknown register read: $%04X\n",
-					    Address);
-					S9xMessage(S9X_TRACE, S9X_PPU_TRACE,
-						   String);
+					sprintf(String, "Unknown register read: $%04X\n", Address);
+					S9xMessage(S9X_TRACE, S9X_PPU_TRACE, String);
 				}
 #endif
 				// XXX:
@@ -1395,8 +1318,7 @@ uint8 S9xGetPPU(uint16 Address, struct SPPU *ppu, CMemory *mem)
 /* S9xSetCPU() */
 /* This function sets a CPU/DMA Register to a specific byte */
 /**********************************************************************************************/
-void S9xSetCPU(uint8 byte, uint16 Address, struct SPPU *ppu,
-	       struct SCPUState *cpu)
+void S9xSetCPU(uint8 byte, uint16 Address, struct SPPU *ppu, struct SCPUState *cpu)
 {
 	int d;
 
@@ -1432,8 +1354,7 @@ void S9xSetCPU(uint8 byte, uint16 Address, struct SPPU *ppu,
 		switch (Address) {
 		case 0x4200:
 			// NMI, V & H IRQ and joypad reading enable flags
-			if ((byte & 0x20) && (!SNESGameFixes.umiharakawaseFix ||
-					      ppu->IRQVBeamPos < 209)) {
+			if ((byte & 0x20) && (!SNESGameFixes.umiharakawaseFix || ppu->IRQVBeamPos < 209)) {
 				if (!ppu->VTimerEnabled) {
 #ifdef DEBUGGER
 					missing.virq = 1;
@@ -1442,10 +1363,8 @@ void S9xSetCPU(uint8 byte, uint16 Address, struct SPPU *ppu,
 					ppu->VTimerEnabled = TRUE;
 					if (ppu->HTimerEnabled)
 						S9xUpdateHTimer(ppu, cpu);
-					else if (ppu->IRQVBeamPos ==
-						 cpu->V_Counter)
-						S9xSetIRQ(PPU_V_BEAM_IRQ_SOURCE,
-							  cpu);
+					else if (ppu->IRQVBeamPos == cpu->V_Counter)
+						S9xSetIRQ(PPU_V_BEAM_IRQ_SOURCE, cpu);
 				}
 			} else {
 				ppu->VTimerEnabled = FALSE;
@@ -1471,22 +1390,16 @@ void S9xSetCPU(uint8 byte, uint16 Address, struct SPPU *ppu,
 			}
 
 			if (!Settings.DaffyDuck)
-				CLEAR_IRQ_SOURCE(PPU_V_BEAM_IRQ_SOURCE |
-						 PPU_H_BEAM_IRQ_SOURCE);
+				CLEAR_IRQ_SOURCE(PPU_V_BEAM_IRQ_SOURCE | PPU_H_BEAM_IRQ_SOURCE);
 
 			if ((byte & 0x80) && !(Memory.FillRAM[0x4200] & 0x80) &&
-			    cpu->V_Counter >=
-				ppu->ScreenHeight + FIRST_VISIBLE_LINE &&
-			    cpu->V_Counter <=
-				ppu->ScreenHeight +
-				    (SNESGameFixes.alienVSpredetorFix ? 25
-								      : 15) &&
+			    cpu->V_Counter >= ppu->ScreenHeight + FIRST_VISIBLE_LINE &&
+			    cpu->V_Counter <= ppu->ScreenHeight + (SNESGameFixes.alienVSpredetorFix ? 25 : 15) &&
 			    // Panic Bomberman clears the NMI pending flag @
 			    // scanline 230 before enabling NMIs again. The NMI
 			    // routine crashes the CPU if it is called without
 			    // the NMI pending flag being set...
-			    (Memory.FillRAM[0x4210] & 0x80) &&
-			    !cpu->NMIActive) {
+			    (Memory.FillRAM[0x4210] & 0x80) && !cpu->NMIActive) {
 				cpu->Flags |= NMI_FLAG;
 				cpu->NMIActive = TRUE;
 				cpu->NMICycleCount = cpu->NMITriggerPoint;
@@ -1511,8 +1424,7 @@ void S9xSetCPU(uint8 byte, uint16 Address, struct SPPU *ppu,
 			break;
 		case 0x4206: {
 			// Divisor
-			uint16 a = Memory.FillRAM[0x4204] +
-				   (Memory.FillRAM[0x4205] << 8);
+			uint16 a = Memory.FillRAM[0x4204] + (Memory.FillRAM[0x4205] << 8);
 			uint16 div = byte ? a / byte : 0xffff;
 			uint16 rem = byte ? a % byte : a;
 
@@ -1532,8 +1444,7 @@ void S9xSetCPU(uint8 byte, uint16 Address, struct SPPU *ppu,
 
 		case 0x4208:
 			d = ppu->IRQHBeamPos;
-			ppu->IRQHBeamPos =
-			    (ppu->IRQHBeamPos & 0xFF) | ((byte & 1) << 8);
+			ppu->IRQHBeamPos = (ppu->IRQHBeamPos & 0xFF) | ((byte & 1) << 8);
 
 			if (ppu->HTimerEnabled && ppu->IRQHBeamPos != d)
 				S9xUpdateHTimer(ppu, cpu);
@@ -1551,16 +1462,14 @@ void S9xSetCPU(uint8 byte, uint16 Address, struct SPPU *ppu,
 					S9xUpdateHTimer(ppu, cpu);
 				else {
 					if (ppu->IRQVBeamPos == cpu->V_Counter)
-						S9xSetIRQ(PPU_V_BEAM_IRQ_SOURCE,
-							  cpu);
+						S9xSetIRQ(PPU_V_BEAM_IRQ_SOURCE, cpu);
 				}
 			}
 			break;
 
 		case 0x420A:
 			d = ppu->IRQVBeamPos;
-			ppu->IRQVBeamPos =
-			    (ppu->IRQVBeamPos & 0xFF) | ((byte & 1) << 8);
+			ppu->IRQVBeamPos = (ppu->IRQVBeamPos & 0xFF) | ((byte & 1) << 8);
 #ifdef DEBUGGER
 			missing.virq_pos = ppu->IRQVBeamPos;
 #endif
@@ -1569,8 +1478,7 @@ void S9xSetCPU(uint8 byte, uint16 Address, struct SPPU *ppu,
 					S9xUpdateHTimer(ppu, cpu);
 				else {
 					if (ppu->IRQVBeamPos == cpu->V_Counter)
-						S9xSetIRQ(PPU_V_BEAM_IRQ_SOURCE,
-							  cpu);
+						S9xSetIRQ(PPU_V_BEAM_IRQ_SOURCE, cpu);
 				}
 			}
 			break;
@@ -1632,8 +1540,7 @@ void S9xSetCPU(uint8 byte, uint16 Address, struct SPPU *ppu,
 			return;
 		case 0x4211:
 			// IRQ ocurred flag (reset on read or write)
-			CLEAR_IRQ_SOURCE(PPU_V_BEAM_IRQ_SOURCE |
-					 PPU_H_BEAM_IRQ_SOURCE);
+			CLEAR_IRQ_SOURCE(PPU_V_BEAM_IRQ_SOURCE | PPU_H_BEAM_IRQ_SOURCE);
 			break;
 		case 0x4212:
 			// v-blank, h-blank and joypad being scanned flags
@@ -1668,8 +1575,7 @@ void S9xSetCPU(uint8 byte, uint16 Address, struct SPPU *ppu,
 		case 0x4370:
 			d = (Address >> 4) & 0x7;
 			DMA[d].TransferDirection = (byte & 128) != 0 ? 1 : 0;
-			DMA[d].HDMAIndirectAddressing =
-			    (byte & 64) != 0 ? 1 : 0;
+			DMA[d].HDMAIndirectAddressing = (byte & 64) != 0 ? 1 : 0;
 			DMA[d].AAddressDecrement = (byte & 16) != 0 ? 1 : 0;
 			DMA[d].AAddressFixed = (byte & 8) != 0 ? 1 : 0;
 			DMA[d].TransferMode = (byte & 7);
@@ -1823,10 +1729,7 @@ void S9xSetCPU(uint8 byte, uint16 Address, struct SPPU *ppu,
 #ifdef DEBUGGER
 			missing.unknowncpu_write = Address;
 			if (Settings.TraceUnknownRegisters) {
-				sprintf(
-				    String,
-				    "Unknown register write: $%02X->$%04X\n",
-				    byte, Address);
+				sprintf(String, "Unknown register write: $%02X->$%04X\n", byte, Address);
 				S9xMessage(S9X_TRACE, S9X_PPU_TRACE, String);
 			}
 #endif
@@ -1856,10 +1759,8 @@ uint8 S9xGetCPU(uint16 Address, struct InternalPPU *ippu, CMemory *mem)
 		case 0x4016: {
 #ifndef _ZAURUS
 			if (mem->FillRAM[0x4016] & 1) {
-				if ((!Settings.SwapJoypads &&
-				     ippu->Controller == SNES_MOUSE_SWAPPED) ||
-				    (Settings.SwapJoypads &&
-				     ippu->Controller == SNES_MOUSE)) {
+				if ((!Settings.SwapJoypads && ippu->Controller == SNES_MOUSE_SWAPPED) ||
+				    (Settings.SwapJoypads && ippu->Controller == SNES_MOUSE)) {
 					if (++PPU.MouseSpeed[0] > 2)
 						PPU.MouseSpeed[0] = 0;
 				}
@@ -1867,8 +1768,7 @@ uint8 S9xGetCPU(uint16 Address, struct InternalPPU *ippu, CMemory *mem)
 			}
 #endif
 			int ind = Settings.SwapJoypads ? 1 : 0;
-			byte = ippu->Joypads[ind] >>
-			       (PPU.Joypad1ButtonReadPos ^ 15);
+			byte = ippu->Joypads[ind] >> (PPU.Joypad1ButtonReadPos ^ 15);
 			PPU.Joypad1ButtonReadPos++;
 			return (byte & 1);
 		}
@@ -1881,14 +1781,12 @@ uint8 S9xGetCPU(uint16 Address, struct InternalPPU *ippu, CMemory *mem)
 				case SNES_MULTIPLAYER5:
 					return (2);
 				case SNES_MOUSE_SWAPPED:
-					if (Settings.SwapJoypads &&
-					    ++PPU.MouseSpeed[0] > 2)
+					if (Settings.SwapJoypads && ++PPU.MouseSpeed[0] > 2)
 						PPU.MouseSpeed[0] = 0;
 					break;
 
 				case SNES_MOUSE:
-					if (!Settings.SwapJoypads &&
-					    ++PPU.MouseSpeed[0] > 2)
+					if (!Settings.SwapJoypads && ++PPU.MouseSpeed[0] > 2)
 						PPU.MouseSpeed[0] = 0;
 					break;
 				}
@@ -1899,43 +1797,25 @@ uint8 S9xGetCPU(uint16 Address, struct InternalPPU *ippu, CMemory *mem)
 #ifndef _ZAURUS
 			if (ippu->Controller == SNES_MULTIPLAYER5) {
 				if (mem->FillRAM[0x4201] & 0x80) {
-					byte =
-					    ((ippu->Joypads[ind] >>
-					      (PPU.Joypad2ButtonReadPos ^ 15)) &
-					     1) |
-					    (((ippu->Joypads[2] >>
-					       (PPU.Joypad2ButtonReadPos ^
-						15)) &
-					      1)
-					     << 1);
+					byte = ((ippu->Joypads[ind] >> (PPU.Joypad2ButtonReadPos ^ 15)) & 1) |
+					       (((ippu->Joypads[2] >> (PPU.Joypad2ButtonReadPos ^ 15)) & 1) << 1);
 					PPU.Joypad2ButtonReadPos++;
 					return (byte);
 				} else {
-					byte =
-					    ((ippu->Joypads[3] >>
-					      (PPU.Joypad3ButtonReadPos ^ 15)) &
-					     1) |
-					    (((ippu->Joypads[4] >>
-					       (PPU.Joypad3ButtonReadPos ^
-						15)) &
-					      1)
-					     << 1);
+					byte = ((ippu->Joypads[3] >> (PPU.Joypad3ButtonReadPos ^ 15)) & 1) |
+					       (((ippu->Joypads[4] >> (PPU.Joypad3ButtonReadPos ^ 15)) & 1) << 1);
 					PPU.Joypad3ButtonReadPos++;
 					return (byte);
 				}
 			}
 #endif
-			return ((ippu->Joypads[ind] >>
-				 (PPU.Joypad2ButtonReadPos++ ^ 15)) &
-				1);
+			return ((ippu->Joypads[ind] >> (PPU.Joypad2ButtonReadPos++ ^ 15)) & 1);
 		}
 		default:
 #ifdef DEBUGGER
 			missing.unknowncpu_read = Address;
 			if (Settings.TraceUnknownRegisters) {
-				sprintf(String,
-					"Unknown register read: $%04X\n",
-					Address);
+				sprintf(String, "Unknown register read: $%04X\n", Address);
 				S9xMessage(S9X_TRACE, S9X_PPU_TRACE, String);
 			}
 #endif
@@ -1999,14 +1879,10 @@ uint8 S9xGetCPU(uint16 Address, struct InternalPPU *ippu, CMemory *mem)
 			mem->FillRAM[0x4210] = 0;
 			return (byte);
 		case 0x4211:
-			byte = (CPU.IRQActive &
-				(PPU_V_BEAM_IRQ_SOURCE | PPU_H_BEAM_IRQ_SOURCE))
-				   ? 0x80
-				   : 0;
+			byte = (CPU.IRQActive & (PPU_V_BEAM_IRQ_SOURCE | PPU_H_BEAM_IRQ_SOURCE)) ? 0x80 : 0;
 			// Super Robot Wars Ex ROM bug requires this.
 			byte |= CPU.Cycles >= Settings.HBlankStart ? 0x40 : 0;
-			CLEAR_IRQ_SOURCE(PPU_V_BEAM_IRQ_SOURCE |
-					 PPU_H_BEAM_IRQ_SOURCE);
+			CLEAR_IRQ_SOURCE(PPU_V_BEAM_IRQ_SOURCE | PPU_H_BEAM_IRQ_SOURCE);
 			return (byte);
 		case 0x4212:
 			// V-blank, h-blank and joypads being read flags
@@ -2155,9 +2031,7 @@ uint8 S9xGetCPU(uint16 Address, struct InternalPPU *ippu, CMemory *mem)
 #ifdef DEBUGGER
 			missing.unknowncpu_read = Address;
 			if (Settings.TraceUnknownRegisters) {
-				sprintf(String,
-					"Unknown register read: $%04X\n",
-					Address);
+				sprintf(String, "Unknown register read: $%04X\n", Address);
 				S9xMessage(S9X_TRACE, S9X_PPU_TRACE, String);
 			}
 
@@ -2208,8 +2082,7 @@ void S9xResetPPU()
 		IPPU.Red[c] = (c & 7) << 2;
 		IPPU.Green[c] = ((c >> 3) & 7) << 2;
 		IPPU.Blue[c] = ((c >> 6) & 2) << 3;
-		PPU.CGDATA[c] =
-		    IPPU.Red[c] | (IPPU.Green[c] << 5) | (IPPU.Blue[c] << 10);
+		PPU.CGDATA[c] = IPPU.Red[c] | (IPPU.Green[c] << 5) | (IPPU.Blue[c] << 10);
 	}
 
 	PPU.FirstSprite = 0;
@@ -2321,13 +2194,10 @@ void S9xResetPPU()
 	for (c = 0; c < 2; c++)
 		memset(&IPPU.Clip[c], 0, sizeof(struct ClipData));
 #ifndef _ZAURUS
-/*
-	if (Settings.MouseMaster)
-	{
-		S9xProcessMouse(0);
-		S9xProcessMouse(1);
-	}
-*/
+		// if (Settings.MouseMaster) {
+		// 	S9xProcessMouse(0);
+		// 	S9xProcessMouse(1);
+		// }
 #endif
 	for (c = 0; c < 0x8000; c += 0x100)
 		memset(&Memory.FillRAM[c], c >> 8, 0x100);
@@ -2345,14 +2215,12 @@ void S9xProcessMouse(int which1)
 	int x, y;
 	uint32 buttons;
 
-	if ((IPPU.Controller == SNES_MOUSE ||
-	     IPPU.Controller == SNES_MOUSE_SWAPPED) &&
+	if ((IPPU.Controller == SNES_MOUSE || IPPU.Controller == SNES_MOUSE_SWAPPED) &&
 	    S9xReadMousePosition(which1, x, y, buttons)) {
 		int delta_x, delta_y;
 #define MOUSE_SIGNATURE 0x1
 		IPPU.Mouse[which1] =
-		    MOUSE_SIGNATURE | (PPU.MouseSpeed[which1] << 4) |
-		    ((buttons & 1) << 6) | ((buttons & 2) << 6);
+		    MOUSE_SIGNATURE | (PPU.MouseSpeed[which1] << 4) | ((buttons & 1) << 6) | ((buttons & 2) << 6);
 
 		delta_x = x - IPPU.PrevMouseX[which1];
 		delta_y = y - IPPU.PrevMouseY[which1];
@@ -2399,13 +2267,11 @@ void ProcessSuperScope()
 	int x, y;
 	uint32 buttons;
 
-	if (IPPU.Controller == SNES_SUPERSCOPE &&
-	    S9xReadSuperScopePosition(x, y, buttons)) {
+	if (IPPU.Controller == SNES_SUPERSCOPE && S9xReadSuperScopePosition(x, y, buttons)) {
 #define SUPERSCOPE_SIGNATURE 0x00ff
 		uint32 scope;
 
-		scope = SUPERSCOPE_SIGNATURE | ((buttons & 1) << (7 + 8)) |
-			((buttons & 2) << (5 + 8)) |
+		scope = SUPERSCOPE_SIGNATURE | ((buttons & 1) << (7 + 8)) | ((buttons & 2) << (5 + 8)) |
 			((buttons & 4) << (3 + 8)) | ((buttons & 8) << (1 + 8));
 		if (x > 255)
 			x = 255;
@@ -2479,8 +2345,7 @@ void S9xUpdateJoypads(struct InternalPPU *ippu)
 #ifndef _ZAURUS
 	// touhaiden controller Fix
 	if (SNESGameFixes.TouhaidenControllerFix &&
-	    (ippu->Controller == SNES_JOYPAD ||
-	     ippu->Controller == SNES_MULTIPLAYER5)) {
+	    (ippu->Controller == SNES_JOYPAD || ippu->Controller == SNES_MULTIPLAYER5)) {
 		for (i = 0; i < 5; i++) {
 			if (ippu->Joypads[i])
 				ippu->Joypads[i] |= 0xffff0000;
@@ -2509,22 +2374,18 @@ void S9xUpdateJoypads(struct InternalPPU *ippu)
 
 		Memory.FillRAM[0x4218] = (uint8)ippu->Joypads[ind];
 		Memory.FillRAM[0x4219] = (uint8)(ippu->Joypads[ind] >> 8);
-		// Memory.FillRAM[0x421a] = (uint8) ippu->Joypads[ind ^ 1];
-		// Memory.FillRAM[0x421b] = (uint8) (ippu->Joypads[ind ^ 1] >>
-		// 8);
+		// Memory.FillRAM[0x421a] = (uint8)ippu->Joypads[ind ^ 1];
+		// Memory.FillRAM[0x421b] = (uint8)(ippu->Joypads[ind ^ 1] >> 8);
 		if (Memory.FillRAM[0x4201] & 0x80) {
 			Memory.FillRAM[0x421c] = (uint8)ippu->Joypads[ind];
-			Memory.FillRAM[0x421d] =
-			    (uint8)(ippu->Joypads[ind] >> 8);
-			// Memory.FillRAM[0x421e] = (uint8) ippu->Joypads[2];
-			// Memory.FillRAM[0x421f] = (uint8) (ippu->Joypads[2] >>
-			// 8);
+			Memory.FillRAM[0x421d] = (uint8)(ippu->Joypads[ind] >> 8);
+			// Memory.FillRAM[0x421e] = (uint8)ippu->Joypads[2];
+			// Memory.FillRAM[0x421f] = (uint8)(ippu->Joypads[2] >> 8);
 		} else {
-			// Memory.FillRAM[0x421c] = (uint8) ippu->Joypads[3];
-			// Memory.FillRAM[0x421d] = (uint8) (ippu->Joypads[3] >>
-			// 8); Memory.FillRAM[0x421e] = (uint8)
-			// ippu->Joypads[4]; Memory.FillRAM[0x421f] = (uint8)
-			// (ippu->Joypads[4] >> 8);
+			// Memory.FillRAM[0x421c] = (uint8)ippu->Joypads[3];
+			// Memory.FillRAM[0x421d] = (uint8)(ippu->Joypads[3] >> 8);
+			// Memory.FillRAM[0x421e] = (uint8)ippu->Joypads[4];
+			// Memory.FillRAM[0x421f] = (uint8)(ippu->Joypads[4] >> 8);
 		}
 	}
 }
@@ -2535,18 +2396,12 @@ void S9xSuperFXExec()
 {
 #if 1
 	if (Settings.SuperFX) {
-		if ((Memory.FillRAM[0x3000 + GSU_SFR] & FLG_G) &&
-		    (Memory.FillRAM[0x3000 + GSU_SCMR] & 0x18) == 0x18) {
+		if ((Memory.FillRAM[0x3000 + GSU_SFR] & FLG_G) && (Memory.FillRAM[0x3000 + GSU_SCMR] & 0x18) == 0x18) {
 			if (!Settings.WinterGold || Settings.StarfoxHack)
 				FxEmulate(~0);
 			else
-				FxEmulate(
-				    (Memory.FillRAM[0x3000 + GSU_CLSR] & 1)
-					? 700
-					: 350);
-			int GSUStatus =
-			    Memory.FillRAM[0x3000 + GSU_SFR] |
-			    (Memory.FillRAM[0x3000 + GSU_SFR + 1] << 8);
+				FxEmulate((Memory.FillRAM[0x3000 + GSU_CLSR] & 1) ? 700 : 350);
+			int GSUStatus = Memory.FillRAM[0x3000 + GSU_SFR] | (Memory.FillRAM[0x3000 + GSU_SFR + 1] << 8);
 			if ((GSUStatus & (FLG_G | FLG_IRQ)) == FLG_IRQ) {
 				// Trigger a GSU IRQ.
 				S9xSetIRQ(GSU_IRQ_SOURCE, &CPU);
@@ -2554,8 +2409,7 @@ void S9xSuperFXExec()
 		}
 	}
 #else
-	uint32 tmp =
-	    (Memory.FillRAM[0x3034] << 16) + *(uint16 *)&Memory.FillRAM[0x301e];
+	uint32 tmp = (Memory.FillRAM[0x3034] << 16) + *(uint16 *)&Memory.FillRAM[0x301e];
 #if 0
 	if (tmp == 0x018428)
 	{
@@ -2578,8 +2432,7 @@ void S9xSuperFXExec()
 			FxPipeString(tmp);
 			/* Make the string 32 chars long */
 			if (strlen(tmp) < 32) {
-				memset(&tmp[strlen(tmp)], ' ',
-				       32 - strlen(tmp));
+				memset(&tmp[strlen(tmp)], ' ', 32 - strlen(tmp));
 				tmp[32] = 0;
 			}
 
@@ -2599,12 +2452,9 @@ void S9xSuperFXExec()
 			 * they did) */
 			for (i = 0; i < 16; i++) {
 				uint32 a = 0;
-				uint32 r1 = ((uint32)avReg[i * 2]) |
-					    (((uint32)avReg[(i * 2) + 1]) << 8);
-				uint32 r2 =
-				    (uint32)(SuperFX.pvRegisters[i * 2]) |
-				    (((uint32)SuperFX.pvRegisters[(i * 2) + 1])
-				     << 8);
+				uint32 r1 = ((uint32)avReg[i * 2]) | (((uint32)avReg[(i * 2) + 1]) << 8);
+				uint32 r2 = (uint32)(SuperFX.pvRegisters[i * 2]) |
+					    (((uint32)SuperFX.pvRegisters[(i * 2) + 1]) << 8);
 				if (i == 15)
 					a = OPCODE_BYTES(vPipe);
 				if (((r1 + a) & 0xffff) != r2)
@@ -2612,47 +2462,33 @@ void S9xSuperFXExec()
 			}
 			{
 				/* Check SFR */
-				uint32 r1 = ((uint32)avReg[0x30]) |
-					    (((uint32)avReg[0x31]) << 8);
+				uint32 r1 = ((uint32)avReg[0x30]) | (((uint32)avReg[0x31]) << 8);
 				uint32 r2 =
-				    (uint32)(SuperFX.pvRegisters[0x30]) |
-				    (((uint32)SuperFX.pvRegisters[0x31]) << 8);
+				    (uint32)(SuperFX.pvRegisters[0x30]) | (((uint32)SuperFX.pvRegisters[0x31]) << 8);
 				if ((r1 & (1 << 1)) != (r2 & (1 << 1)))
-					printf(" Z=%d",
-					       (uint32)(!!(r2 & (1 << 1))));
+					printf(" Z=%d", (uint32)(!!(r2 & (1 << 1))));
 				if ((r1 & (1 << 2)) != (r2 & (1 << 2)))
-					printf(" CY=%d",
-					       (uint32)(!!(r2 & (1 << 2))));
+					printf(" CY=%d", (uint32)(!!(r2 & (1 << 2))));
 				if ((r1 & (1 << 3)) != (r2 & (1 << 3)))
-					printf(" S=%d",
-					       (uint32)(!!(r2 & (1 << 3))));
+					printf(" S=%d", (uint32)(!!(r2 & (1 << 3))));
 				if ((r1 & (1 << 4)) != (r2 & (1 << 4)))
-					printf(" OV=%d",
-					       (uint32)(!!(r2 & (1 << 4))));
+					printf(" OV=%d", (uint32)(!!(r2 & (1 << 4))));
 				if ((r1 & (1 << 5)) != (r2 & (1 << 5)))
-					printf(" G=%d",
-					       (uint32)(!!(r2 & (1 << 5))));
+					printf(" G=%d", (uint32)(!!(r2 & (1 << 5))));
 				if ((r1 & (1 << 6)) != (r2 & (1 << 6)))
-					printf(" R=%d",
-					       (uint32)(!!(r2 & (1 << 6))));
+					printf(" R=%d", (uint32)(!!(r2 & (1 << 6))));
 				if ((r1 & (1 << 8)) != (r2 & (1 << 8)))
-					printf(" ALT1=%d",
-					       (uint32)(!!(r2 & (1 << 8))));
+					printf(" ALT1=%d", (uint32)(!!(r2 & (1 << 8))));
 				if ((r1 & (1 << 9)) != (r2 & (1 << 9)))
-					printf(" ALT2=%d",
-					       (uint32)(!!(r2 & (1 << 9))));
+					printf(" ALT2=%d", (uint32)(!!(r2 & (1 << 9))));
 				if ((r1 & (1 << 10)) != (r2 & (1 << 10)))
-					printf(" IL=%d",
-					       (uint32)(!!(r2 & (1 << 10))));
+					printf(" IL=%d", (uint32)(!!(r2 & (1 << 10))));
 				if ((r1 & (1 << 11)) != (r2 & (1 << 11)))
-					printf(" IH=%d",
-					       (uint32)(!!(r2 & (1 << 11))));
+					printf(" IH=%d", (uint32)(!!(r2 & (1 << 11))));
 				if ((r1 & (1 << 12)) != (r2 & (1 << 12)))
-					printf(" B=%d",
-					       (uint32)(!!(r2 & (1 << 12))));
+					printf(" B=%d", (uint32)(!!(r2 & (1 << 12))));
 				if ((r1 & (1 << 15)) != (r2 & (1 << 15)))
-					printf(" IRQ=%d",
-					       (uint32)(!!(r2 & (1 << 15))));
+					printf(" IRQ=%d", (uint32)(!!(r2 & (1 << 15))));
 			}
 			{
 				/* Check PBR */
@@ -2677,36 +2513,31 @@ void S9xSuperFXExec()
 			}
 			{
 				/* Check CBR */
-				uint32 r1 = ((uint32)avReg[0x3e]) |
-					    (((uint32)avReg[0x3f]) << 8);
+				uint32 r1 = ((uint32)avReg[0x3e]) | (((uint32)avReg[0x3f]) << 8);
 				uint32 r2 =
-				    (uint32)(SuperFX.pvRegisters[0x3e]) |
-				    (((uint32)SuperFX.pvRegisters[0x3f]) << 8);
+				    (uint32)(SuperFX.pvRegisters[0x3e]) | (((uint32)SuperFX.pvRegisters[0x3f]) << 8);
 				if (r1 != r2)
 					printf(" CBR=$%04x", r2);
 			}
 			{
 				/* Check COLR */
 				if (vColr != FxGetColorRegister())
-					printf(" COLR=$%02x",
-					       FxGetColorRegister());
+					printf(" COLR=$%02x", FxGetColorRegister());
 			}
 			{
 				/* Check POR */
 				if (vPor != FxGetPlotOptionRegister())
-					printf(" POR=$%02x",
-					       FxGetPlotOptionRegister());
+					printf(" POR=$%02x", FxGetPlotOptionRegister());
 			}
 			printf("\n");
 		}
 		S9xExit();
 	} else {
-		uint32 t = (Memory.FillRAM[0x3034] << 16) +
-			   (Memory.FillRAM[0x301f] << 8) +
-			   (Memory.FillRAM[0x301e] << 0);
+		uint32 t =
+		    (Memory.FillRAM[0x3034] << 16) + (Memory.FillRAM[0x301f] << 8) + (Memory.FillRAM[0x301e] << 0);
 
 		printf("%06x: %d\n", t, FxEmulate(2000000));
-		//	FxEmulate (2000000);
+		// FxEmulate(2000000);
 	}
 #if 0
 	if (!(CPU.Flags & TRACE_FLAG))

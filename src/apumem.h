@@ -74,8 +74,7 @@ INLINE uint8 S9xAPUGetByteZ(uint8 Address, struct SIAPU *iapu)
 		return (iapu->DirectPage[Address]);
 }
 
-INLINE void S9xAPUSetByteZ(uint8 byte, uint8 Address, struct SIAPU *iapu,
-			   struct SAPU *apu)
+INLINE void S9xAPUSetByteZ(uint8 byte, uint8 Address, struct SIAPU *iapu, struct SAPU *apu)
 {
 	if (Address >= 0xf0 && iapu->DirectPage == iapu->RAM) {
 		if (Address == 0xf3)
@@ -88,8 +87,7 @@ INLINE void S9xAPUSetByteZ(uint8 byte, uint8 Address, struct SIAPU *iapu,
 			iapu->RAM[Address] = byte;
 			if (Address >= 0xfa) {
 				if (byte == 0)
-					apu->TimerTarget[Address - 0xfa] =
-					    0x100;
+					apu->TimerTarget[Address - 0xfa] = 0x100;
 				else
 					apu->TimerTarget[Address - 0xfa] = byte;
 			}
@@ -125,8 +123,7 @@ INLINE uint8 S9xAPUGetByte(uint32 Address, struct SIAPU *iapu)
 		return (iapu->RAM[Address]);
 }
 
-INLINE void S9xAPUSetByte(uint8 byte, uint32 Address, struct SIAPU *iapu,
-			  struct SAPU *apu)
+INLINE void S9xAPUSetByte(uint8 byte, uint32 Address, struct SIAPU *iapu, struct SAPU *apu)
 {
 	Address &= 0xffff;
 
@@ -141,8 +138,7 @@ INLINE void S9xAPUSetByte(uint8 byte, uint32 Address, struct SIAPU *iapu,
 			iapu->RAM[Address] = byte;
 			if (Address >= 0xfa) {
 				if (byte == 0)
-					apu->TimerTarget[Address - 0xfa] =
-					    0x100;
+					apu->TimerTarget[Address - 0xfa] = 0x100;
 				else
 					apu->TimerTarget[Address - 0xfa] = byte;
 			}

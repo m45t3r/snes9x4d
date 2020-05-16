@@ -42,12 +42,7 @@
 #define _messages_h_
 
 /* Types of message sent to S9xMessage routine */
-enum { S9X_TRACE,
-       S9X_DEBUG,
-       S9X_WARNING,
-       S9X_INFO,
-       S9X_ERROR,
-       S9X_FATAL_ERROR };
+enum { S9X_TRACE, S9X_DEBUG, S9X_WARNING, S9X_INFO, S9X_ERROR, S9X_FATAL_ERROR };
 
 /* Individual message numbers */
 enum { S9X_ROM_INFO,

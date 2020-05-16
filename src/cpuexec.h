@@ -44,17 +44,15 @@
 #include "memmap.h"
 #include "65c816.h"
 
-#define DO_HBLANK_CHECK()                                                      \
-	if (cpu->Cycles >= cpu->NextEvent)                                     \
+#define DO_HBLANK_CHECK()                                                                                              \
+	if (cpu->Cycles >= cpu->NextEvent)                                                                             \
 		S9xDoHBlankProcessing(cpu, apu, iapu);
 
 struct SOpcodes {
 #ifdef __WIN32__
-	void(__cdecl *S9xOpcode)(struct SRegisters *, struct SICPU *,
-				 struct SCPUState *);
+	void(__cdecl *S9xOpcode)(struct SRegisters *, struct SICPU *, struct SCPUState *);
 #else
-	void (*S9xOpcode)(struct SRegisters *, struct SICPU *,
-			  struct SCPUState *);
+	void (*S9xOpcode)(struct SRegisters *, struct SICPU *, struct SCPUState *);
 #endif
 };
 
@@ -85,20 +83,19 @@ extern uint8 S9xE0M0X1[256];
 extern struct SICPU ICPU;
 END_EXTERN_C
 
-#define S9xUnpackStatus_OP()                                                   \
-	{                                                                      \
-		icpu->_Zero = (reg->PL & Zero) == 0;                           \
-		icpu->_Negative = (reg->PL & Negative);                        \
-		icpu->_Carry = (reg->PL & Carry);                              \
-		icpu->_Overflow = (reg->PL & Overflow) >> 6;                   \
+#define S9xUnpackStatus_OP()                                                                                           \
+	{                                                                                                              \
+		icpu->_Zero = (reg->PL & Zero) == 0;                                                                   \
+		icpu->_Negative = (reg->PL & Negative);                                                                \
+		icpu->_Carry = (reg->PL & Carry);                                                                      \
+		icpu->_Overflow = (reg->PL & Overflow) >> 6;                                                           \
 	}
 
-#define S9xPackStatus_OP()                                                     \
-	{                                                                      \
-		reg->PL &= ~(Zero | Negative | Carry | Overflow);              \
-		reg->PL |= (icpu->_Carry) | (((icpu->_Zero) == 0) << 1) |      \
-			   (icpu->_Negative & 0x80) |                          \
-			   ((icpu->_Overflow) << 6);                           \
+#define S9xPackStatus_OP()                                                                                             \
+	{                                                                                                              \
+		reg->PL &= ~(Zero | Negative | Carry | Overflow);                                                      \
+		reg->PL |= (icpu->_Carry) | (((icpu->_Zero) == 0) << 1) | (icpu->_Negative & 0x80) |                   \
+			   ((icpu->_Overflow) << 6);                                                                   \
 	}
 
 STATIC inline void S9xUnpackStatus()
@@ -112,8 +109,7 @@ STATIC inline void S9xUnpackStatus()
 STATIC inline void S9xPackStatus()
 {
 	Registers.PL &= ~(Zero | Negative | Carry | Overflow);
-	Registers.PL |= ICPU._Carry | ((ICPU._Zero == 0) << 1) |
-			(ICPU._Negative & 0x80) | (ICPU._Overflow << 6);
+	Registers.PL |= ICPU._Carry | ((ICPU._Zero == 0) << 1) | (ICPU._Negative & 0x80) | (ICPU._Overflow << 6);
 }
 
 /*STATIC inline void CLEAR_IRQ_SOURCE (uint32 M)
@@ -122,11 +118,11 @@ STATIC inline void S9xPackStatus()
     if (!CPU.IRQActive)
 	CPU.Flags &= ~IRQ_PENDING_FLAG;
 }*/
-#define CLEAR_IRQ_SOURCE(M)                                                    \
-	{                                                                      \
-		CPU.IRQActive &= ~(M);                                         \
-		if (!CPU.IRQActive)                                            \
-			CPU.Flags &= ~IRQ_PENDING_FLAG;                        \
+#define CLEAR_IRQ_SOURCE(M)                                                                                            \
+	{                                                                                                              \
+		CPU.IRQActive &= ~(M);                                                                                 \
+		if (!CPU.IRQActive)                                                                                    \
+			CPU.Flags &= ~IRQ_PENDING_FLAG;                                                                \
 	}
 
 STATIC inline void S9xFixCycles(struct SRegisters *reg, struct SICPU *icpu)
@@ -168,8 +164,7 @@ STATIC inline void S9xReschedule()
 	uint8 which;
 	long max;
 
-	if (CPU.WhichEvent == HBLANK_START_EVENT ||
-	    CPU.WhichEvent == HTIMER_AFTER_EVENT) {
+	if (CPU.WhichEvent == HBLANK_START_EVENT || CPU.WhichEvent == HTIMER_AFTER_EVENT) {
 		which = HBLANK_END_EVENT;
 		max = Settings.H_Max;
 	} else {
@@ -177,13 +172,9 @@ STATIC inline void S9xReschedule()
 		max = Settings.HBlankStart;
 	}
 
-	if (PPU.HTimerEnabled && (long)PPU.HTimerPosition < max &&
-	    (long)PPU.HTimerPosition > CPU.NextEvent &&
-	    (!PPU.VTimerEnabled ||
-	     (PPU.VTimerEnabled && CPU.V_Counter == PPU.IRQVBeamPos))) {
-		which = (long)PPU.HTimerPosition < Settings.HBlankStart
-			    ? HTIMER_BEFORE_EVENT
-			    : HTIMER_AFTER_EVENT;
+	if (PPU.HTimerEnabled && (long)PPU.HTimerPosition < max && (long)PPU.HTimerPosition > CPU.NextEvent &&
+	    (!PPU.VTimerEnabled || (PPU.VTimerEnabled && CPU.V_Counter == PPU.IRQVBeamPos))) {
+		which = (long)PPU.HTimerPosition < Settings.HBlankStart ? HTIMER_BEFORE_EVENT : HTIMER_AFTER_EVENT;
 		max = PPU.HTimerPosition;
 	}
 	CPU.NextEvent = max;

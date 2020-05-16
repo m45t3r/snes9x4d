@@ -82,34 +82,25 @@ typedef struct {
 
 enum { INT_V, uint8_ARRAY_V, uint16_ARRAY_V, uint32_ARRAY_V };
 
-#define Offset(field, structure)                                               \
-	((int)(((char *)(&(((structure)NULL)->field))) - ((char *)NULL)))
+#define Offset(field, structure) ((int)(((char *)(&(((structure)NULL)->field))) - ((char *)NULL)))
 
 #define COUNT(ARRAY) (sizeof(ARRAY) / sizeof(ARRAY[0]))
 
 #undef OFFSET
 #define OFFSET(f) Offset(f, struct SCPUState *)
 
-static FreezeData SnapCPU[] = {{OFFSET(Flags), 4, INT_V},
-			       {OFFSET(BranchSkip), 1, INT_V},
-			       {OFFSET(NMIActive), 1, INT_V},
-			       {OFFSET(IRQActive), 1, INT_V},
-			       {OFFSET(WaitingForInterrupt), 1, INT_V},
-			       {OFFSET(WhichEvent), 1, INT_V},
-			       {OFFSET(Cycles), 4, INT_V},
-			       {OFFSET(NextEvent), 4, INT_V},
-			       {OFFSET(V_Counter), 4, INT_V},
-			       {OFFSET(MemSpeed), 4, INT_V},
-			       {OFFSET(MemSpeedx2), 4, INT_V},
-			       {OFFSET(FastROMSpeed), 4, INT_V}};
+static FreezeData SnapCPU[] = {
+    {OFFSET(Flags), 4, INT_V},	   {OFFSET(BranchSkip), 1, INT_V},	    {OFFSET(NMIActive), 1, INT_V},
+    {OFFSET(IRQActive), 1, INT_V}, {OFFSET(WaitingForInterrupt), 1, INT_V}, {OFFSET(WhichEvent), 1, INT_V},
+    {OFFSET(Cycles), 4, INT_V},	   {OFFSET(NextEvent), 4, INT_V},	    {OFFSET(V_Counter), 4, INT_V},
+    {OFFSET(MemSpeed), 4, INT_V},  {OFFSET(MemSpeedx2), 4, INT_V},	    {OFFSET(FastROMSpeed), 4, INT_V}};
 
 #undef OFFSET
 #define OFFSET(f) Offset(f, struct SRegisters *)
 
-static FreezeData SnapRegisters[] = {
-    {OFFSET(PB), 1, INT_V},  {OFFSET(DB), 1, INT_V},  {OFFSET(P.W), 2, INT_V},
-    {OFFSET(A.W), 2, INT_V}, {OFFSET(D.W), 2, INT_V}, {OFFSET(S.W), 2, INT_V},
-    {OFFSET(X.W), 2, INT_V}, {OFFSET(Y.W), 2, INT_V}, {OFFSET(PC), 2, INT_V}};
+static FreezeData SnapRegisters[] = {{OFFSET(PB), 1, INT_V},  {OFFSET(DB), 1, INT_V},  {OFFSET(P.W), 2, INT_V},
+				     {OFFSET(A.W), 2, INT_V}, {OFFSET(D.W), 2, INT_V}, {OFFSET(S.W), 2, INT_V},
+				     {OFFSET(X.W), 2, INT_V}, {OFFSET(Y.W), 2, INT_V}, {OFFSET(PC), 2, INT_V}};
 
 #undef OFFSET
 #define OFFSET(f) Offset(f, struct SPPU *)
@@ -154,14 +145,12 @@ static FreezeData SnapPPU[] = {{OFFSET(BGMode), 1, INT_V},
 			       {OFFSET(CGFLIP), 1, INT_V},
 			       {OFFSET(CGDATA), 256, uint16_ARRAY_V},
 			       {OFFSET(FirstSprite), 1, INT_V},
-#define O(N)                                                                   \
-	{OFFSET(OBJ[N].HPos), 2, INT_V}, {OFFSET(OBJ[N].VPos), 2, INT_V},      \
-	    {OFFSET(OBJ[N].Name), 2, INT_V}, {OFFSET(OBJ[N].VFlip), 1, INT_V}, \
-	    {OFFSET(OBJ[N].HFlip), 1, INT_V},                                  \
-	    {OFFSET(OBJ[N].Priority), 1, INT_V},                               \
-	    {OFFSET(OBJ[N].Palette), 1, INT_V},                                \
-	{                                                                      \
-		OFFSET(OBJ[N].Size), 1, INT_V                                  \
+#define O(N)                                                                                                           \
+	{OFFSET(OBJ[N].HPos), 2, INT_V}, {OFFSET(OBJ[N].VPos), 2, INT_V}, {OFFSET(OBJ[N].Name), 2, INT_V},             \
+	    {OFFSET(OBJ[N].VFlip), 1, INT_V}, {OFFSET(OBJ[N].HFlip), 1, INT_V}, {OFFSET(OBJ[N].Priority), 1, INT_V},   \
+	    {OFFSET(OBJ[N].Palette), 1, INT_V},                                                                        \
+	{                                                                                                              \
+		OFFSET(OBJ[N].Size), 1, INT_V                                                                          \
 	}
 
 			       O(0),
@@ -336,13 +325,11 @@ static FreezeData SnapPPU[] = {{OFFSET(BGMode), 1, INT_V},
 			       {OFFSET(Window1Right), 1, INT_V},
 			       {OFFSET(Window2Left), 1, INT_V},
 			       {OFFSET(Window2Right), 1, INT_V},
-#define O(N)                                                                   \
-	{OFFSET(ClipWindowOverlapLogic[N]), 1, INT_V},                         \
-	    {OFFSET(ClipWindow1Enable[N]), 1, INT_V},                          \
-	    {OFFSET(ClipWindow2Enable[N]), 1, INT_V},                          \
-	    {OFFSET(ClipWindow1Inside[N]), 1, INT_V},                          \
-	{                                                                      \
-		OFFSET(ClipWindow2Inside[N]), 1, INT_V                         \
+#define O(N)                                                                                                           \
+	{OFFSET(ClipWindowOverlapLogic[N]), 1, INT_V}, {OFFSET(ClipWindow1Enable[N]), 1, INT_V},                       \
+	    {OFFSET(ClipWindow2Enable[N]), 1, INT_V}, {OFFSET(ClipWindow1Inside[N]), 1, INT_V},                        \
+	{                                                                                                              \
+		OFFSET(ClipWindow2Inside[N]), 1, INT_V                                                                 \
 	}
 
 			       O(0),
@@ -365,24 +352,23 @@ static FreezeData SnapPPU[] = {{OFFSET(BGMode), 1, INT_V},
 #define OFFSET(f) Offset(f, struct SDMA *)
 
 static FreezeData SnapDMA[] = {
-#define O(N)                                                                   \
-	{OFFSET(TransferDirection) + N * sizeof(struct SDMA), 1, INT_V},       \
-	    {OFFSET(AAddressFixed) + N * sizeof(struct SDMA), 1, INT_V},       \
-	    {OFFSET(AAddressDecrement) + N * sizeof(struct SDMA), 1, INT_V},   \
-	    {OFFSET(TransferMode) + N * sizeof(struct SDMA), 1, INT_V},        \
-	    {OFFSET(ABank) + N * sizeof(struct SDMA), 1, INT_V},               \
-	    {OFFSET(AAddress) + N * sizeof(struct SDMA), 2, INT_V},            \
-	    {OFFSET(Address) + N * sizeof(struct SDMA), 2, INT_V},             \
-	    {OFFSET(BAddress) + N * sizeof(struct SDMA), 1, INT_V},            \
-	    {OFFSET(TransferBytes) + N * sizeof(struct SDMA), 2, INT_V},       \
-	    {OFFSET(HDMAIndirectAddressing) + N * sizeof(struct SDMA), 1,      \
-	     INT_V},                                                           \
-	    {OFFSET(IndirectAddress) + N * sizeof(struct SDMA), 2, INT_V},     \
-	    {OFFSET(IndirectBank) + N * sizeof(struct SDMA), 1, INT_V},        \
-	    {OFFSET(Repeat) + N * sizeof(struct SDMA), 1, INT_V},              \
-	    {OFFSET(LineCount) + N * sizeof(struct SDMA), 1, INT_V},           \
-	{                                                                      \
-		OFFSET(FirstLine) + N * sizeof(struct SDMA), 1, INT_V          \
+#define O(N)                                                                                                           \
+	{OFFSET(TransferDirection) + N * sizeof(struct SDMA), 1, INT_V},                                               \
+	    {OFFSET(AAddressFixed) + N * sizeof(struct SDMA), 1, INT_V},                                               \
+	    {OFFSET(AAddressDecrement) + N * sizeof(struct SDMA), 1, INT_V},                                           \
+	    {OFFSET(TransferMode) + N * sizeof(struct SDMA), 1, INT_V},                                                \
+	    {OFFSET(ABank) + N * sizeof(struct SDMA), 1, INT_V},                                                       \
+	    {OFFSET(AAddress) + N * sizeof(struct SDMA), 2, INT_V},                                                    \
+	    {OFFSET(Address) + N * sizeof(struct SDMA), 2, INT_V},                                                     \
+	    {OFFSET(BAddress) + N * sizeof(struct SDMA), 1, INT_V},                                                    \
+	    {OFFSET(TransferBytes) + N * sizeof(struct SDMA), 2, INT_V},                                               \
+	    {OFFSET(HDMAIndirectAddressing) + N * sizeof(struct SDMA), 1, INT_V},                                      \
+	    {OFFSET(IndirectAddress) + N * sizeof(struct SDMA), 2, INT_V},                                             \
+	    {OFFSET(IndirectBank) + N * sizeof(struct SDMA), 1, INT_V},                                                \
+	    {OFFSET(Repeat) + N * sizeof(struct SDMA), 1, INT_V},                                                      \
+	    {OFFSET(LineCount) + N * sizeof(struct SDMA), 1, INT_V},                                                   \
+	{                                                                                                              \
+		OFFSET(FirstLine) + N * sizeof(struct SDMA), 1, INT_V                                                  \
 	}
 
     O(0), O(1), O(2), O(3), O(4),
@@ -428,36 +414,23 @@ static FreezeData SnapSoundData[] = {{OFFSET(master_volume_left), 2, INT_V},
 				     {OFFSET(echo_channel_enable), 4, INT_V},
 				     {OFFSET(pitch_mod), 4, INT_V},
 				     {OFFSET(dummy), 3, uint32_ARRAY_V},
-#define O(N)                                                                   \
-	{OFFSET(channels[N].state), 4, INT_V},                                 \
-	    {OFFSET(channels[N].type), 4, INT_V},                              \
-	    {OFFSET(channels[N].volume_left), 2, INT_V},                       \
-	    {OFFSET(channels[N].volume_right), 2, INT_V},                      \
-	    {OFFSET(channels[N].hertz), 4, INT_V},                             \
-	    {OFFSET(channels[N].count), 4, INT_V},                             \
-	    {OFFSET(channels[N].loop), 1, INT_V},                              \
-	    {OFFSET(channels[N].envx), 4, INT_V},                              \
-	    {OFFSET(channels[N].left_vol_level), 2, INT_V},                    \
-	    {OFFSET(channels[N].right_vol_level), 2, INT_V},                   \
-	    {OFFSET(channels[N].envx_target), 2, INT_V},                       \
-	    {OFFSET(channels[N].env_error), 4, INT_V},                         \
-	    {OFFSET(channels[N].erate), 4, INT_V},                             \
-	    {OFFSET(channels[N].direction), 4, INT_V},                         \
-	    {OFFSET(channels[N].attack_rate), 4, INT_V},                       \
-	    {OFFSET(channels[N].decay_rate), 4, INT_V},                        \
-	    {OFFSET(channels[N].sustain_rate), 4, INT_V},                      \
-	    {OFFSET(channels[N].release_rate), 4, INT_V},                      \
-	    {OFFSET(channels[N].sustain_level), 4, INT_V},                     \
-	    {OFFSET(channels[N].sample), 2, INT_V},                            \
-	    {OFFSET(channels[N].decoded), 16, uint16_ARRAY_V},                 \
-	    {OFFSET(channels[N].previous16), 2, uint16_ARRAY_V},               \
-	    {OFFSET(channels[N].sample_number), 2, INT_V},                     \
-	    {OFFSET(channels[N].last_block), 1, INT_V},                        \
-	    {OFFSET(channels[N].needs_decode), 1, INT_V},                      \
-	    {OFFSET(channels[N].block_pointer), 4, INT_V},                     \
-	    {OFFSET(channels[N].sample_pointer), 4, INT_V},                    \
-	{                                                                      \
-		OFFSET(channels[N].mode), 4, INT_V                             \
+#define O(N)                                                                                                           \
+	{OFFSET(channels[N].state), 4, INT_V}, {OFFSET(channels[N].type), 4, INT_V},                                   \
+	    {OFFSET(channels[N].volume_left), 2, INT_V}, {OFFSET(channels[N].volume_right), 2, INT_V},                 \
+	    {OFFSET(channels[N].hertz), 4, INT_V}, {OFFSET(channels[N].count), 4, INT_V},                              \
+	    {OFFSET(channels[N].loop), 1, INT_V}, {OFFSET(channels[N].envx), 4, INT_V},                                \
+	    {OFFSET(channels[N].left_vol_level), 2, INT_V}, {OFFSET(channels[N].right_vol_level), 2, INT_V},           \
+	    {OFFSET(channels[N].envx_target), 2, INT_V}, {OFFSET(channels[N].env_error), 4, INT_V},                    \
+	    {OFFSET(channels[N].erate), 4, INT_V}, {OFFSET(channels[N].direction), 4, INT_V},                          \
+	    {OFFSET(channels[N].attack_rate), 4, INT_V}, {OFFSET(channels[N].decay_rate), 4, INT_V},                   \
+	    {OFFSET(channels[N].sustain_rate), 4, INT_V}, {OFFSET(channels[N].release_rate), 4, INT_V},                \
+	    {OFFSET(channels[N].sustain_level), 4, INT_V}, {OFFSET(channels[N].sample), 2, INT_V},                     \
+	    {OFFSET(channels[N].decoded), 16, uint16_ARRAY_V}, {OFFSET(channels[N].previous16), 2, uint16_ARRAY_V},    \
+	    {OFFSET(channels[N].sample_number), 2, INT_V}, {OFFSET(channels[N].last_block), 1, INT_V},                 \
+	    {OFFSET(channels[N].needs_decode), 1, INT_V}, {OFFSET(channels[N].block_pointer), 4, INT_V},               \
+	    {OFFSET(channels[N].sample_pointer), 4, INT_V},                                                            \
+	{                                                                                                              \
+		OFFSET(channels[N].mode), 4, INT_V                                                                     \
 	}
 
 				     O(0),
@@ -475,32 +448,28 @@ static FreezeData SnapSoundData[] = {{OFFSET(master_volume_left), 2, INT_V},
 #define OFFSET(f) Offset(f, struct SRegisters *)
 //#define OFFSET(f) Offset(f,struct SSA1Registers *)
 
-static FreezeData SnapSA1Registers[] = {
-    {OFFSET(PB), 1, INT_V},  {OFFSET(DB), 1, INT_V},  {OFFSET(P.W), 2, INT_V},
-    {OFFSET(A.W), 2, INT_V}, {OFFSET(D.W), 2, INT_V}, {OFFSET(S.W), 2, INT_V},
-    {OFFSET(X.W), 2, INT_V}, {OFFSET(Y.W), 2, INT_V}, {OFFSET(PC), 2, INT_V}};
+static FreezeData SnapSA1Registers[] = {{OFFSET(PB), 1, INT_V},	 {OFFSET(DB), 1, INT_V},  {OFFSET(P.W), 2, INT_V},
+					{OFFSET(A.W), 2, INT_V}, {OFFSET(D.W), 2, INT_V}, {OFFSET(S.W), 2, INT_V},
+					{OFFSET(X.W), 2, INT_V}, {OFFSET(Y.W), 2, INT_V}, {OFFSET(PC), 2, INT_V}};
 
 #undef OFFSET
 #define OFFSET(f) Offset(f, struct SCPUState *)
 
-static FreezeData SnapSA1[] = {
-    {OFFSET(Flags), 4, INT_V},	       {OFFSET(NMIActive), 1, INT_V},
-    {OFFSET(IRQActive), 1, INT_V},     {OFFSET(WaitingForInterrupt), 1, INT_V},
-    {OFFSET(op1), 2, INT_V},	       {OFFSET(op2), 2, INT_V},
-    {OFFSET(arithmetic_op), 4, INT_V}, {OFFSET(sum), 8, INT_V},
-    {OFFSET(overflow), 1, INT_V}};
+static FreezeData SnapSA1[] = {{OFFSET(Flags), 4, INT_V},	  {OFFSET(NMIActive), 1, INT_V},
+			       {OFFSET(IRQActive), 1, INT_V},	  {OFFSET(WaitingForInterrupt), 1, INT_V},
+			       {OFFSET(op1), 2, INT_V},		  {OFFSET(op2), 2, INT_V},
+			       {OFFSET(arithmetic_op), 4, INT_V}, {OFFSET(sum), 8, INT_V},
+			       {OFFSET(overflow), 1, INT_V}};
 
 static char ROMFilename[_MAX_PATH];
 // static char SnapshotFilename [_MAX_PATH];
 
 static void Freeze(STREAM);
 static int Unfreeze(STREAM);
-void FreezeStruct(STREAM stream, const char *name, void *base,
-		  FreezeData *fields, int num_fields);
+void FreezeStruct(STREAM stream, const char *name, void *base, FreezeData *fields, int num_fields);
 void FreezeBlock(STREAM stream, const char *name, uint8 *block, int size);
 
-int UnfreezeStruct(STREAM stream, const char *name, void *base,
-		   FreezeData *fields, int num_fields);
+int UnfreezeStruct(STREAM stream, const char *name, void *base, FreezeData *fields, int num_fields);
 int UnfreezeBlock(STREAM stream, const char *name, uint8 *block, int size);
 
 bool8_32 Snapshot(const char *filename) { return (S9xFreezeGame(filename)); }
@@ -518,10 +487,7 @@ bool8_32 S9xFreezeGame(const char *filename)
 	return (FALSE);
 }
 
-bool8_32 S9xLoadSnapshot(const char *filename)
-{
-	return (S9xUnfreezeGame(filename));
-}
+bool8_32 S9xLoadSnapshot(const char *filename) { return (S9xUnfreezeGame(filename)); }
 
 bool8_32 S9xUnfreezeGame(const char *filename)
 {
@@ -538,8 +504,7 @@ bool8_32 S9xUnfreezeGame(const char *filename)
 		if ((result = Unfreeze(snapshot)) != SUCCESS) {
 			switch (result) {
 			case WRONG_FORMAT:
-				S9xMessage(S9X_ERROR, S9X_WRONG_FORMAT,
-					   "File not in Snes9x freeze format");
+				S9xMessage(S9X_ERROR, S9X_WRONG_FORMAT, "File not in Snes9x freeze format");
 				break;
 			case WRONG_VERSION:
 				S9xMessage(S9X_ERROR, S9X_WRONG_VERSION,
@@ -552,8 +517,7 @@ bool8_32 S9xUnfreezeGame(const char *filename)
 					"ROM image \"%s\" for freeze file not "
 					"found",
 					ROMFilename);
-				S9xMessage(S9X_ERROR, S9X_ROM_NOT_FOUND,
-					   String);
+				S9xMessage(S9X_ERROR, S9X_ROM_NOT_FOUND, String);
 				break;
 			}
 			S9xCloseSnapshotFile(snapshot);
@@ -572,7 +536,6 @@ static void Freeze(STREAM stream)
 	int i;
 
 	S9xSetSoundMute(TRUE);
-//#ifndef _ZAURUS
 #ifdef ZSNES_FX
 	if (Settings.SuperFX)
 		S9xSuperFXPreSaveState();
@@ -581,19 +544,15 @@ static void Freeze(STREAM stream)
 	S9xSRTCPreSaveState();
 #endif
 	for (i = 0; i < 8; i++) {
-		SoundData.channels[i].previous16[0] =
-		    (int16)SoundData.channels[i].previous[0];
-		SoundData.channels[i].previous16[1] =
-		    (int16)SoundData.channels[i].previous[1];
+		SoundData.channels[i].previous16[0] = (int16)SoundData.channels[i].previous[0];
+		SoundData.channels[i].previous16[1] = (int16)SoundData.channels[i].previous[1];
 	}
 	sprintf(buffer, "%s:%04d\n", SNAPSHOT_MAGIC, SNAPSHOT_VERSION);
 	WRITE_STREAM(buffer, strlen(buffer), stream);
-	sprintf(buffer, "NAM:%06d:%s%c", strlen(Memory.ROMFilename) + 1,
-		Memory.ROMFilename, 0);
+	sprintf(buffer, "NAM:%06d:%s%c", strlen(Memory.ROMFilename) + 1, Memory.ROMFilename, 0);
 	WRITE_STREAM(buffer, strlen(buffer) + 1, stream);
 	FreezeStruct(stream, "CPU", &CPU, SnapCPU, COUNT(SnapCPU));
-	FreezeStruct(stream, "REG", &Registers, SnapRegisters,
-		     COUNT(SnapRegisters));
+	FreezeStruct(stream, "REG", &Registers, SnapRegisters, COUNT(SnapRegisters));
 	FreezeStruct(stream, "PPU", &PPU, SnapPPU, COUNT(SnapPPU));
 	FreezeStruct(stream, "DMA", DMA, SnapDMA, COUNT(SnapDMA));
 
@@ -605,18 +564,15 @@ static void Freeze(STREAM stream)
 	if (Settings.APUEnabled) {
 		// APU
 		FreezeStruct(stream, "APU", &APU, SnapAPU, COUNT(SnapAPU));
-		FreezeStruct(stream, "ARE", &APURegisters, SnapAPURegisters,
-			     COUNT(SnapAPURegisters));
+		FreezeStruct(stream, "ARE", &APURegisters, SnapAPURegisters, COUNT(SnapAPURegisters));
 		FreezeBlock(stream, "ARA", IAPU.RAM, 0x10000);
-		FreezeStruct(stream, "SOU", &SoundData, SnapSoundData,
-			     COUNT(SnapSoundData));
+		FreezeStruct(stream, "SOU", &SoundData, SnapSoundData, COUNT(SnapSoundData));
 	}
 	if (Settings.SA1) {
 		SA1Registers.PC = SA1.PC - SA1.PCBase;
 		S9xSA1PackStatus();
 		FreezeStruct(stream, "SA1", &SA1, SnapSA1, COUNT(SnapSA1));
-		FreezeStruct(stream, "SAR", &SA1Registers, SnapSA1Registers,
-			     COUNT(SnapSA1Registers));
+		FreezeStruct(stream, "SAR", &SA1Registers, SnapSA1Registers, COUNT(SnapSA1Registers));
 	}
 	S9xSetSoundMute(FALSE);
 #ifdef ZSNES_FX
@@ -637,36 +593,29 @@ static int Unfreeze(STREAM stream)
 		return (WRONG_FORMAT);
 	if (strncmp(buffer, SNAPSHOT_MAGIC, strlen(SNAPSHOT_MAGIC)) != 0)
 		return (WRONG_FORMAT);
-	if ((version = atoi(&buffer[strlen(SNAPSHOT_MAGIC) + 1])) >
-	    SNAPSHOT_VERSION)
+	if ((version = atoi(&buffer[strlen(SNAPSHOT_MAGIC) + 1])) > SNAPSHOT_VERSION)
 		return (WRONG_VERSION);
 
-	if ((result = UnfreezeBlock(stream, "NAM", (uint8 *)rom_filename,
-				    _MAX_PATH)) != SUCCESS)
+	if ((result = UnfreezeBlock(stream, "NAM", (uint8 *)rom_filename, _MAX_PATH)) != SUCCESS)
 		return (result);
-	/*
-	    if (strcasecmp (rom_filename, Memory.ROMFilename) != 0 ||
-		 strcasecmp (S9xBasename( rom_filename ), S9xBasename( buffer ))
-	   != 0 ){ S9xMessage (S9X_WARNING, S9X_FREEZE_ROM_NAME, "Current loaded
-	   ROM image doesn't match that required by freeze-game file.");
-	    }
-	*/
+
+	// if (strcasecmp(rom_filename, Memory.ROMFilename) != 0 ||
+	//     strcasecmp(S9xBasename(rom_filename), S9xBasename(buffer)) != 0) {
+	// 	S9xMessage(S9X_WARNING, S9X_FREEZE_ROM_NAME,
+	// 		   "Current loaded ROM image doesn't match that required by freeze-game file.");
+	// }
 	uint32 old_flags = CPU.Flags;
 	uint32 sa1_old_flags = SA1.Flags;
 	S9xReset();
 	S9xSetSoundMute(TRUE);
 
-	if ((result = UnfreezeStruct(stream, "CPU", &CPU, SnapCPU,
-				     COUNT(SnapCPU))) != SUCCESS)
+	if ((result = UnfreezeStruct(stream, "CPU", &CPU, SnapCPU, COUNT(SnapCPU))) != SUCCESS)
 		return (result);
 	Memory.FixROMSpeed();
-	CPU.Flags |= old_flags & (DEBUG_MODE_FLAG | TRACE_FLAG |
-				  SINGLE_STEP_FLAG | FRAME_ADVANCE_FLAG);
-	if ((result = UnfreezeStruct(stream, "REG", &Registers, SnapRegisters,
-				     COUNT(SnapRegisters))) != SUCCESS)
+	CPU.Flags |= old_flags & (DEBUG_MODE_FLAG | TRACE_FLAG | SINGLE_STEP_FLAG | FRAME_ADVANCE_FLAG);
+	if ((result = UnfreezeStruct(stream, "REG", &Registers, SnapRegisters, COUNT(SnapRegisters))) != SUCCESS)
 		return (result);
-	if ((result = UnfreezeStruct(stream, "PPU", &PPU, SnapPPU,
-				     COUNT(SnapPPU))) != SUCCESS)
+	if ((result = UnfreezeStruct(stream, "PPU", &PPU, SnapPPU, COUNT(SnapPPU))) != SUCCESS)
 		return (result);
 
 	IPPU.ColorsChanged = TRUE;
@@ -675,35 +624,27 @@ static int Unfreeze(STREAM stream)
 	S9xFixColourBrightness();
 	IPPU.RenderThisFrame = FALSE;
 
-	if ((result = UnfreezeStruct(stream, "DMA", DMA, SnapDMA,
-				     COUNT(SnapDMA))) != SUCCESS)
+	if ((result = UnfreezeStruct(stream, "DMA", DMA, SnapDMA, COUNT(SnapDMA))) != SUCCESS)
 		return (result);
-	if ((result = UnfreezeBlock(stream, "VRA", Memory.VRAM, 0x10000)) !=
-	    SUCCESS)
+	if ((result = UnfreezeBlock(stream, "VRA", Memory.VRAM, 0x10000)) != SUCCESS)
 		return (result);
-	if ((result = UnfreezeBlock(stream, "RAM", Memory.RAM, 0x20000)) !=
-	    SUCCESS)
+	if ((result = UnfreezeBlock(stream, "RAM", Memory.RAM, 0x20000)) != SUCCESS)
 		return (result);
 	if ((result = UnfreezeBlock(stream, "SRA", ::SRAM, 0x20000)) != SUCCESS)
 		return (result);
-	if ((result = UnfreezeBlock(stream, "FIL", Memory.FillRAM, 0x8000)) !=
-	    SUCCESS)
+	if ((result = UnfreezeBlock(stream, "FIL", Memory.FillRAM, 0x8000)) != SUCCESS)
 		return (result);
 
-	if (UnfreezeStruct(stream, "APU", &APU, SnapAPU, COUNT(SnapAPU)) ==
-	    SUCCESS) {
-		if ((result = UnfreezeStruct(
-			 stream, "ARE", &APURegisters, SnapAPURegisters,
-			 COUNT(SnapAPURegisters))) != SUCCESS)
+	if (UnfreezeStruct(stream, "APU", &APU, SnapAPU, COUNT(SnapAPU)) == SUCCESS) {
+		if ((result = UnfreezeStruct(stream, "ARE", &APURegisters, SnapAPURegisters,
+					     COUNT(SnapAPURegisters))) != SUCCESS)
 			return (result);
 
-		if ((result = UnfreezeBlock(stream, "ARA", IAPU.RAM,
-					    0x10000)) != SUCCESS)
+		if ((result = UnfreezeBlock(stream, "ARA", IAPU.RAM, 0x10000)) != SUCCESS)
 			return (result);
 
-		if ((result = UnfreezeStruct(stream, "SOU", &SoundData,
-					     SnapSoundData,
-					     COUNT(SnapSoundData))) != SUCCESS)
+		if ((result = UnfreezeStruct(stream, "SOU", &SoundData, SnapSoundData, COUNT(SnapSoundData))) !=
+		    SUCCESS)
 			return (result);
 
 		S9xSetSoundMute(FALSE);
@@ -723,11 +664,9 @@ static int Unfreeze(STREAM stream)
 		S9xSetSoundMute(TRUE);
 	}
 
-	if ((result = UnfreezeStruct(stream, "SA1", &SA1, SnapSA1,
-				     COUNT(SnapSA1))) == SUCCESS) {
-		if ((result = UnfreezeStruct(
-			 stream, "SAR", &SA1Registers, SnapSA1Registers,
-			 COUNT(SnapSA1Registers))) != SUCCESS)
+	if ((result = UnfreezeStruct(stream, "SA1", &SA1, SnapSA1, COUNT(SnapSA1))) == SUCCESS) {
+		if ((result = UnfreezeStruct(stream, "SAR", &SA1Registers, SnapSA1Registers,
+					     COUNT(SnapSA1Registers))) != SUCCESS)
 			return (result);
 
 		S9xFixSA1AfterSnapshotLoad();
@@ -746,7 +685,7 @@ static int Unfreeze(STREAM stream)
 		S9xSuperFXPostLoadState();
 #endif
 
-	//    S9xSRTCPostLoadState ();
+	// S9xSRTCPostLoadState();
 	if (Settings.SDD1)
 		S9xSDD1PostLoadState();
 
@@ -765,8 +704,7 @@ int FreezeSize(int size, int type)
 	}
 }
 
-void FreezeStruct(STREAM stream, const char *name, void *base,
-		  FreezeData *fields, int num_fields)
+void FreezeStruct(STREAM stream, const char *name, void *base, FreezeData *fields, int num_fields)
 {
 	// Work out the size of the required block
 	int len = 0;
@@ -774,11 +712,8 @@ void FreezeStruct(STREAM stream, const char *name, void *base,
 	int j;
 
 	for (i = 0; i < num_fields; i++) {
-		if (fields[i].offset +
-			FreezeSize(fields[i].size, fields[i].type) >
-		    len)
-			len = fields[i].offset +
-			      FreezeSize(fields[i].size, fields[i].type);
+		if (fields[i].offset + FreezeSize(fields[i].size, fields[i].type) > len)
+			len = fields[i].offset + FreezeSize(fields[i].size, fields[i].type);
 	}
 
 	uint8 *block = (uint8 *)malloc(len);
@@ -796,22 +731,19 @@ void FreezeStruct(STREAM stream, const char *name, void *base,
 				*ptr++ = *((uint8 *)base + fields[i].offset);
 				break;
 			case 2:
-				word = *((uint16 *)((uint8 *)base +
-						    fields[i].offset));
+				word = *((uint16 *)((uint8 *)base + fields[i].offset));
 				*ptr++ = (uint8)(word >> 8);
 				*ptr++ = (uint8)word;
 				break;
 			case 4:
-				dword = *((uint32 *)((uint8 *)base +
-						     fields[i].offset));
+				dword = *((uint32 *)((uint8 *)base + fields[i].offset));
 				*ptr++ = (uint8)(dword >> 24);
 				*ptr++ = (uint8)(dword >> 16);
 				*ptr++ = (uint8)(dword >> 8);
 				*ptr++ = (uint8)dword;
 				break;
 			case 8:
-				qword = *((int64 *)((uint8 *)base +
-						    fields[i].offset));
+				qword = *((int64 *)((uint8 *)base + fields[i].offset));
 				*ptr++ = (uint8)(qword >> 56);
 				*ptr++ = (uint8)(qword >> 48);
 				*ptr++ = (uint8)(qword >> 40);
@@ -824,22 +756,19 @@ void FreezeStruct(STREAM stream, const char *name, void *base,
 			}
 			break;
 		case uint8_ARRAY_V:
-			memmove(ptr, (uint8 *)base + fields[i].offset,
-				fields[i].size);
+			memmove(ptr, (uint8 *)base + fields[i].offset, fields[i].size);
 			ptr += fields[i].size;
 			break;
 		case uint16_ARRAY_V:
 			for (j = 0; j < fields[i].size; j++) {
-				word = *((uint16 *)((uint8 *)base +
-						    fields[i].offset + j * 2));
+				word = *((uint16 *)((uint8 *)base + fields[i].offset + j * 2));
 				*ptr++ = (uint8)(word >> 8);
 				*ptr++ = (uint8)word;
 			}
 			break;
 		case uint32_ARRAY_V:
 			for (j = 0; j < fields[i].size; j++) {
-				dword = *((uint32 *)((uint8 *)base +
-						     fields[i].offset + j * 4));
+				dword = *((uint32 *)((uint8 *)base + fields[i].offset + j * 4));
 				*ptr++ = (uint8)(dword >> 24);
 				*ptr++ = (uint8)(dword >> 16);
 				*ptr++ = (uint8)(dword >> 8);
@@ -861,8 +790,7 @@ void FreezeBlock(STREAM stream, const char *name, uint8 *block, int size)
 	WRITE_STREAM(block, size, stream);
 }
 
-int UnfreezeStruct(STREAM stream, const char *name, void *base,
-		   FreezeData *fields, int num_fields)
+int UnfreezeStruct(STREAM stream, const char *name, void *base, FreezeData *fields, int num_fields)
 {
 	// Work out the size of the required block
 	int len = 0;
@@ -870,11 +798,8 @@ int UnfreezeStruct(STREAM stream, const char *name, void *base,
 	int j;
 
 	for (i = 0; i < num_fields; i++) {
-		if (fields[i].offset +
-			FreezeSize(fields[i].size, fields[i].type) >
-		    len)
-			len = fields[i].offset +
-			      FreezeSize(fields[i].size, fields[i].type);
+		if (fields[i].offset + FreezeSize(fields[i].size, fields[i].type) > len)
+			len = fields[i].offset + FreezeSize(fields[i].size, fields[i].type);
 	}
 
 	uint8 *block = (uint8 *)malloc(len);
@@ -900,16 +825,14 @@ int UnfreezeStruct(STREAM stream, const char *name, void *base,
 			case 2:
 				word = *ptr++ << 8;
 				word |= *ptr++;
-				*((uint16 *)((uint8 *)base +
-					     fields[i].offset)) = word;
+				*((uint16 *)((uint8 *)base + fields[i].offset)) = word;
 				break;
 			case 4:
 				dword = *ptr++ << 24;
 				dword |= *ptr++ << 16;
 				dword |= *ptr++ << 8;
 				dword |= *ptr++;
-				*((uint32 *)((uint8 *)base +
-					     fields[i].offset)) = dword;
+				*((uint32 *)((uint8 *)base + fields[i].offset)) = dword;
 				break;
 			case 8:
 				qword = (int64)*ptr++ << 56;
@@ -920,22 +843,19 @@ int UnfreezeStruct(STREAM stream, const char *name, void *base,
 				qword |= (int64)*ptr++ << 16;
 				qword |= (int64)*ptr++ << 8;
 				qword |= (int64)*ptr++;
-				*((int64 *)((uint8 *)base + fields[i].offset)) =
-				    qword;
+				*((int64 *)((uint8 *)base + fields[i].offset)) = qword;
 				break;
 			}
 			break;
 		case uint8_ARRAY_V:
-			memmove((uint8 *)base + fields[i].offset, ptr,
-				fields[i].size);
+			memmove((uint8 *)base + fields[i].offset, ptr, fields[i].size);
 			ptr += fields[i].size;
 			break;
 		case uint16_ARRAY_V:
 			for (j = 0; j < fields[i].size; j++) {
 				word = *ptr++ << 8;
 				word |= *ptr++;
-				*((uint16 *)((uint8 *)base + fields[i].offset +
-					     j * 2)) = word;
+				*((uint16 *)((uint8 *)base + fields[i].offset + j * 2)) = word;
 			}
 			break;
 		case uint32_ARRAY_V:
@@ -944,8 +864,7 @@ int UnfreezeStruct(STREAM stream, const char *name, void *base,
 				dword |= *ptr++ << 16;
 				dword |= *ptr++ << 8;
 				dword |= *ptr++;
-				*((uint32 *)((uint8 *)base + fields[i].offset +
-					     j * 4)) = dword;
+				*((uint32 *)((uint8 *)base + fields[i].offset + j * 4)) = dword;
 			}
 			break;
 		}
@@ -986,10 +905,9 @@ int UnfreezeBlock(STREAM stream, const char *name, uint8 *block, int size)
 
 bool8_32 S9xSPCDump(const char *filename)
 {
-	static uint8 header[] = {'S', 'N', 'E', 'S', '-', 'S', 'P', 'C', '7',
-				 '0', '0', ' ', 'S', 'o', 'u', 'n', 'd', ' ',
-				 'F', 'i', 'l', 'e', ' ', 'D', 'a', 't', 'a',
-				 ' ', 'v', '0', '.', '3', '0', 26,  26,	 26};
+	static uint8 header[] = {'S', 'N', 'E', 'S', '-', 'S', 'P', 'C', '7', '0', '0', ' ',
+				 'S', 'o', 'u', 'n', 'd', ' ', 'F', 'i', 'l', 'e', ' ', 'D',
+				 'a', 't', 'a', ' ', 'v', '0', '.', '3', '0', 26,  26,	26};
 	static uint8 version = {0x1e};
 
 	FILE *fs;
@@ -1022,18 +940,12 @@ bool8_32 S9xSPCDump(const char *filename)
 	// 0256: SPC700 RAM: 64K
 	// ----: DSP Registers: 256 bytes
 
-	if (fwrite(header, sizeof(header), 1, fs) != 1 ||
-	    fputc(version, fs) == EOF || fseek(fs, 37, SEEK_SET) == EOF ||
-	    fputc(APURegisters.PC & 0xff, fs) == EOF ||
-	    fputc(APURegisters.PC >> 8, fs) == EOF ||
-	    fputc(APURegisters.YA.B.A, fs) == EOF ||
-	    fputc(APURegisters.X, fs) == EOF ||
-	    fputc(APURegisters.YA.B.Y, fs) == EOF ||
-	    fputc(APURegisters.P, fs) == EOF ||
-	    fputc(APURegisters.S, fs) == EOF ||
-	    fseek(fs, 256, SEEK_SET) == EOF ||
-	    fwrite(IAPU.RAM, 0x10000, 1, fs) != 1 ||
-	    fwrite(APU.DSP, 1, 256, fs) != 1 ||
+	if (fwrite(header, sizeof(header), 1, fs) != 1 || fputc(version, fs) == EOF || fseek(fs, 37, SEEK_SET) == EOF ||
+	    fputc(APURegisters.PC & 0xff, fs) == EOF || fputc(APURegisters.PC >> 8, fs) == EOF ||
+	    fputc(APURegisters.YA.B.A, fs) == EOF || fputc(APURegisters.X, fs) == EOF ||
+	    fputc(APURegisters.YA.B.Y, fs) == EOF || fputc(APURegisters.P, fs) == EOF ||
+	    fputc(APURegisters.S, fs) == EOF || fseek(fs, 256, SEEK_SET) == EOF ||
+	    fwrite(IAPU.RAM, 0x10000, 1, fs) != 1 || fwrite(APU.DSP, 1, 256, fs) != 1 ||
 	    fwrite(APU.ExtraRAM, 64, 1, fs) != 1 || fclose(fs) < 0) {
 		S9xSetSoundMute(FALSE);
 		return (FALSE);
@@ -1051,8 +963,7 @@ bool8_32 S9xUnfreezeZSNES(const char *filename)
 	if (!(fs = fopen(filename, "rb")))
 		return (FALSE);
 
-	if (fread(t, 64, 1, fs) == 1 &&
-	    strncmp((char *)t, "ZSNES Save State File V0.6", 26) == 0) {
+	if (fread(t, 64, 1, fs) == 1 && strncmp((char *)t, "ZSNES Save State File V0.6", 26) == 0) {
 		S9xReset();
 		S9xSetSoundMute(TRUE);
 
@@ -1197,8 +1108,7 @@ bool8_32 S9xUnfreezeZSNES(const char *filename)
 			S9xSetCPU(t[165 + i], 0x4300 + i, &PPU, &CPU);
 
 		if (t[294])
-			CPU.IRQActive |=
-			    PPU_V_BEAM_IRQ_SOURCE | PPU_H_BEAM_IRQ_SOURCE;
+			CPU.IRQActive |= PPU_V_BEAM_IRQ_SOURCE | PPU_H_BEAM_IRQ_SOURCE;
 
 		S9xSetCPU(t[296], 0x420c, &PPU, &CPU);
 		// hdmadata t[297] + 8 * 19
@@ -1303,10 +1213,7 @@ bool8_32 S9xUnfreezeZSNES(const char *filename)
 			S9xSetSA1(t[15], 0x2206); // NMI hi
 			S9xSetSA1(t[16], 0x2207); // IRQ low
 			S9xSetSA1(t[17], 0x2208); // IRQ hi
-			S9xSetSA1(
-			    ((READ_DWORD(&t[28]) - (4096 * 1024 - 0x6000))) >>
-				13,
-			    0x2224);
+			S9xSetSA1(((READ_DWORD(&t[28]) - (4096 * 1024 - 0x6000))) >> 13, 0x2224);
 			S9xSetSA1(t[36], 0x2201);
 			S9xSetSA1(t[41], 0x2209);
 

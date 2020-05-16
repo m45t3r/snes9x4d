@@ -39,11 +39,11 @@ char SaveSlotNum_old = 255;
 bool8_32 highres_current = FALSE;
 char snapscreen[17120] = {};
 
-#define strfmt(str, format, args...)                                           \
-	do {                                                                   \
-		char tmp[SBUFFER];                                             \
-		snprintf(tmp, sizeof(tmp) - 1, format, args);                  \
-		strncpy(str, tmp, sizeof(tmp));                                \
+#define strfmt(str, format, args...)                                                                                   \
+	do {                                                                                                           \
+		char tmp[SBUFFER];                                                                                     \
+		snprintf(tmp, sizeof(tmp) - 1, format, args);                                                          \
+		strncpy(str, tmp, sizeof(tmp));                                                                        \
 	} while (0)
 
 void sys_sleep(int us)
@@ -76,8 +76,7 @@ void menu_init()
 
 void menu_dispupdate(void)
 {
-	const char *Rates[8] = {"off",	 "8192",  "11025", "16000",
-				"22050", "32000", "44100", "48000"};
+	const char *Rates[8] = {"off", "8192", "11025", "16000", "22050", "32000", "44100", "48000"};
 	char disptxt[MAX_MENU_ITEMS][SBUFFER] = {
 #ifdef MIYOO
 	    "  Snes9x4D " BUILD_VERSION " for Miyoo  ",
@@ -144,11 +143,9 @@ void menu_dispupdate(void)
 	if (Settings.SkipFrames == AUTO_FRAMERATE)
 		strfmt(disptxt[11], "%s Auto", disptxt[11]);
 	else
-		strfmt(disptxt[11], "%s %02d/%d", disptxt[11],
-		       (int)Memory.ROMFramesPerSecond, Settings.SkipFrames);
+		strfmt(disptxt[11], "%s %02d/%d", disptxt[11], (int)Memory.ROMFramesPerSecond, Settings.SkipFrames);
 
-	strfmt(disptxt[12], "%s %s", disptxt[12],
-	       Rates[Settings.SoundPlaybackRate]);
+	strfmt(disptxt[12], "%s %s", disptxt[12], Rates[Settings.SoundPlaybackRate]);
 
 	if (Settings.Stereo)
 		strfmt(disptxt[13], "%s True", disptxt[13]);
@@ -161,8 +158,7 @@ void menu_dispupdate(void)
 		else
 			strfmt(disptxt[i], "  %s", disptxt[i]);
 
-		S9xDisplayString(disptxt[i], GFX.Screen, GFX.Pitch,
-				 i * 10 + 64);
+		S9xDisplayString(disptxt[i], GFX.Screen, GFX.Pitch, i * 10 + 64);
 	}
 
 	// show screen shot for snapshot
@@ -219,155 +215,108 @@ void menu_loop(void)
 			else {
 				switch (cursor) {
 				case 2:
-					if ((keyssnes[sfc_key[A_1]] ==
-					     SDL_PRESSED)) {
+					if ((keyssnes[sfc_key[A_1]] == SDL_PRESSED)) {
 						S9xReset();
 						exit_loop = TRUE;
 					}
 					break;
 				case 3:
-					if (keyssnes[sfc_key[A_1]] ==
-					    SDL_PRESSED) {
-						memcpy(snapscreen,
-						       snapscreen_tmp, 16050);
+					if (keyssnes[sfc_key[A_1]] == SDL_PRESSED) {
+						memcpy(snapscreen, snapscreen_tmp, 16050);
 						show_screenshot();
 						strcpy(fname, " Saving...");
-						S9xDisplayString(
-						    fname, GFX.Screen + 280,
-						    GFX.Pitch, 204);
+						S9xDisplayString(fname, GFX.Screen + 280, GFX.Pitch, 204);
 						menu_flip();
-						sprintf(ext, ".s0%d",
-							SaveSlotNum);
-						strcpy(fname,
-						       S9xGetFilename(ext));
+						sprintf(ext, ".s0%d", SaveSlotNum);
+						strcpy(fname, S9xGetFilename(ext));
 						save_screenshot(fname);
-						sprintf(ext, ".00%d",
-							SaveSlotNum);
-						strcpy(fname,
-						       S9xGetFilename(ext));
+						sprintf(ext, ".00%d", SaveSlotNum);
+						strcpy(fname, S9xGetFilename(ext));
 						S9xFreezeGame(fname);
 						sync();
 						exit_loop = TRUE;
 					}
 					break;
 				case 4:
-					if (keyssnes[sfc_key[A_1]] ==
-					    SDL_PRESSED) {
-						sprintf(ext, ".00%d",
-							SaveSlotNum);
-						strcpy(fname,
-						       S9xGetFilename(ext));
+					if (keyssnes[sfc_key[A_1]] == SDL_PRESSED) {
+						sprintf(ext, ".00%d", SaveSlotNum);
+						strcpy(fname, S9xGetFilename(ext));
 						S9xLoadSnapshot(fname);
 						exit_loop = TRUE;
 					}
 					break;
 				case 5:
-					if (keyssnes[sfc_key[LEFT_1]] ==
-					    SDL_PRESSED)
+					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED)
 						SaveSlotNum--;
-					else if (keyssnes[sfc_key[RIGHT_1]] ==
-						 SDL_PRESSED)
+					else if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
 						SaveSlotNum++;
 
 					if (SaveSlotNum > MAX_SAVE_STATE_SLOTS)
 						SaveSlotNum = 0;
 					else if (SaveSlotNum < 0)
-						SaveSlotNum =
-						    MAX_SAVE_STATE_SLOTS;
+						SaveSlotNum = MAX_SAVE_STATE_SLOTS;
 					break;
 				case 6:
-					if (keyssnes[sfc_key[LEFT_1]] ==
-						SDL_PRESSED ||
-					    keyssnes[sfc_key[RIGHT_1]] ==
-						SDL_PRESSED)
-						Settings.DisplayFrameRate =
-						    !Settings.DisplayFrameRate;
+					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED ||
+					    keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
+						Settings.DisplayFrameRate = !Settings.DisplayFrameRate;
 					break;
 				case 7:
-					if (keyssnes[sfc_key[LEFT_1]] ==
-						SDL_PRESSED ||
-					    keyssnes[sfc_key[RIGHT_1]] ==
-						SDL_PRESSED)
-						Settings.Transparency =
-						    !Settings.Transparency;
+					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED ||
+					    keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
+						Settings.Transparency = !Settings.Transparency;
 					break;
 				case 8:
 #ifdef TL_COLOR_OPS
-					if (keyssnes[sfc_key[LEFT_1]] ==
-						SDL_PRESSED ||
-					    keyssnes[sfc_key[RIGHT_1]] ==
-						SDL_PRESSED)
-						Settings.FastColor =
-						    !Settings.FastColor;
+					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED ||
+					    keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
+						Settings.FastColor = !Settings.FastColor;
 #endif
 					break;
 				case 9:
-					if (keyssnes[sfc_key[LEFT_1]] ==
-						SDL_PRESSED ||
-					    keyssnes[sfc_key[RIGHT_1]] ==
-						SDL_PRESSED)
+					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED ||
+					    keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
 						Scale = !Scale;
 					break;
 				case 10:
 #ifdef BILINEAR_SCALE
-					if (keyssnes[sfc_key[LEFT_1]] ==
-						SDL_PRESSED ||
-					    keyssnes[sfc_key[RIGHT_1]] ==
-						SDL_PRESSED)
+					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED ||
+					    keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
 						Bilinear = !Bilinear;
 #endif
 					break;
 				case 11:
-					if (Settings.SkipFrames ==
-					    AUTO_FRAMERATE)
+					if (Settings.SkipFrames == AUTO_FRAMERATE)
 						Settings.SkipFrames = 10;
 
-					if (keyssnes[sfc_key[LEFT_1]] ==
-					    SDL_PRESSED)
+					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED)
 						Settings.SkipFrames--;
-					else if (keyssnes[sfc_key[RIGHT_1]] ==
-						 SDL_PRESSED)
+					else if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
 						Settings.SkipFrames++;
 
 					if (Settings.SkipFrames >= 10)
-						Settings.SkipFrames =
-						    AUTO_FRAMERATE;
+						Settings.SkipFrames = AUTO_FRAMERATE;
 					else if (Settings.SkipFrames <= 1)
 						Settings.SkipFrames = 1;
 					break;
 				case 12:
-					if (keyssnes[sfc_key[LEFT_1]] ==
-					    SDL_PRESSED) {
-						Settings.SoundPlaybackRate =
-						    (Settings
-							 .SoundPlaybackRate -
-						     1) &
-						    7;
-					} else if (keyssnes[sfc_key[RIGHT_1]] ==
-						   SDL_PRESSED) {
-						Settings.SoundPlaybackRate =
-						    (Settings
-							 .SoundPlaybackRate +
-						     1) &
-						    7;
+					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED) {
+						Settings.SoundPlaybackRate = (Settings.SoundPlaybackRate - 1) & 7;
+					} else if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED) {
+						Settings.SoundPlaybackRate = (Settings.SoundPlaybackRate + 1) & 7;
 					}
 					break;
 				case 13:
-					if (keyssnes[sfc_key[LEFT_1]] ==
-						SDL_PRESSED ||
-					    keyssnes[sfc_key[RIGHT_1]] ==
-						SDL_PRESSED)
-						Settings.Stereo =
-						    !Settings.Stereo;
+					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED ||
+					    keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
+						Settings.Stereo = !Settings.Stereo;
 					break;
 				case 14:
-					if (keyssnes[sfc_key[A_1]] ==
-					    SDL_PRESSED)
+					if (keyssnes[sfc_key[A_1]] == SDL_PRESSED)
 						show_credits();
 					break;
 				case 15:
-					if (keyssnes[sfc_key[A_1]] ==
-					    SDL_PRESSED)
+					if (keyssnes[sfc_key[A_1]] == SDL_PRESSED)
 						S9xExit();
 					break;
 				}
@@ -390,8 +339,7 @@ void menu_loop(void)
 	S9xInitDisplay(0, 0);
 	if (old_fast_color != Settings.FastColor)
 		S9xBuildLookupTable();
-	if (old_sound_playback_rate != Settings.SoundPlaybackRate ||
-	    old_stereo != Settings.Stereo)
+	if (old_sound_playback_rate != Settings.SoundPlaybackRate || old_stereo != Settings.Stereo)
 		S9xReinitSound();
 }
 
@@ -437,9 +385,7 @@ void capt_screenshot() // 107px*80px
 	for (int y = yoffset; y < SURFACE_HEIGHT - yoffset; y += 3) // 240/3=80
 	{
 		s += 22 * (Scale_disp != TRUE);
-		for (int x = 0;
-		     x < SURFACE_WIDTH * 2 - 128 * (Scale_disp != TRUE);
-		     x += 3 * 2) // 640/6=107
+		for (int x = 0; x < SURFACE_WIDTH * 2 - 128 * (Scale_disp != TRUE); x += 3 * 2) // 640/6=107
 		{
 			uint8 *d = GFX.Screen + y * GFX.Pitch + x;
 			snapscreen[s++] = *d++;
@@ -511,8 +457,7 @@ void show_credits()
 			int j = i + line;
 			if (j >= 30)
 				j -= 30;
-			S9xDisplayString(disptxt[j], GFX.Screen, GFX.Pitch,
-					 i * 10 + 80 - ypix);
+			S9xDisplayString(disptxt[j], GFX.Screen, GFX.Pitch, i * 10 + 80 - ypix);
 		}
 
 		ypix += 2;

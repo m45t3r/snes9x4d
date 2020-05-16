@@ -56,19 +56,15 @@
 extern "C" {
 
 #ifdef MMX
-void _2xSaILine(uint8 *srcPtr, uint8 *deltaPtr, uint32 srcPitch, uint32 width,
-		uint8 *dstPtr, uint32 dstPitch);
-void _2xSaISuperEagleLine(uint8 *srcPtr, uint8 *deltaPtr, uint32 srcPitch,
-			  uint32 width, uint8 *dstPtr, uint32 dstPitch);
-void _2xSaISuper2xSaILine(uint8 *srcPtr, uint8 *deltaPtr, uint32 srcPitch,
-			  uint32 width, uint8 *dstPtr, uint32 dstPitch);
+void _2xSaILine(uint8 *srcPtr, uint8 *deltaPtr, uint32 srcPitch, uint32 width, uint8 *dstPtr, uint32 dstPitch);
+void _2xSaISuperEagleLine(uint8 *srcPtr, uint8 *deltaPtr, uint32 srcPitch, uint32 width, uint8 *dstPtr,
+			  uint32 dstPitch);
+void _2xSaISuper2xSaILine(uint8 *srcPtr, uint8 *deltaPtr, uint32 srcPitch, uint32 width, uint8 *dstPtr,
+			  uint32 dstPitch);
 void Init_2xSaIMMX(uint32 BitFormat);
-void BilinearMMX(uint16 *A, uint16 *B, uint16 *C, uint16 *D, uint16 *dx,
-		 uint16 *dy, uint8 *dP);
-void BilinearMMXGrid0(uint16 *A, uint16 *B, uint16 *C, uint16 *D, uint16 *dx,
-		      uint16 *dy, uint8 *dP);
-void BilinearMMXGrid1(uint16 *A, uint16 *B, uint16 *C, uint16 *D, uint16 *dx,
-		      uint16 *dy, uint8 *dP);
+void BilinearMMX(uint16 *A, uint16 *B, uint16 *C, uint16 *D, uint16 *dx, uint16 *dy, uint8 *dP);
+void BilinearMMXGrid0(uint16 *A, uint16 *B, uint16 *C, uint16 *D, uint16 *dx, uint16 *dy, uint8 *dP);
+void BilinearMMXGrid1(uint16 *A, uint16 *B, uint16 *C, uint16 *D, uint16 *dx, uint16 *dy, uint8 *dP);
 void EndMMX();
 
 #endif
@@ -110,8 +106,7 @@ int Init_2xSaI(uint32 BitFormat)
 	return 1;
 }
 
-static inline int GetResult1(uint32 A, uint32 B, uint32 C, uint32 D,
-			     uint32 /* E */)
+static inline int GetResult1(uint32 A, uint32 B, uint32 C, uint32 D, uint32 /* E */)
 {
 	int x = 0;
 	int y = 0;
@@ -132,8 +127,7 @@ static inline int GetResult1(uint32 A, uint32 B, uint32 C, uint32 D,
 	return r;
 }
 
-static inline int GetResult2(uint32 A, uint32 B, uint32 C, uint32 D,
-			     uint32 /* E */)
+static inline int GetResult2(uint32 A, uint32 B, uint32 C, uint32 D, uint32 /* E */)
 {
 	int x = 0;
 	int y = 0;
@@ -178,18 +172,16 @@ static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D)
 static inline uint32 INTERPOLATE(uint32 A, uint32 B)
 {
 	if (A != B) {
-		return (((A & colorMask) >> 1) + ((B & colorMask) >> 1) +
-			(A & B & lowPixelMask));
+		return (((A & colorMask) >> 1) + ((B & colorMask) >> 1) + (A & B & lowPixelMask));
 	} else
 		return A;
 }
 
 static inline uint32 Q_INTERPOLATE(uint32 A, uint32 B, uint32 C, uint32 D)
 {
-	register uint32 x = ((A & qcolorMask) >> 2) + ((B & qcolorMask) >> 2) +
-			    ((C & qcolorMask) >> 2) + ((D & qcolorMask) >> 2);
-	register uint32 y = (A & qlowpixelMask) + (B & qlowpixelMask) +
-			    (C & qlowpixelMask) + (D & qlowpixelMask);
+	register uint32 x =
+	    ((A & qcolorMask) >> 2) + ((B & qcolorMask) >> 2) + ((C & qcolorMask) >> 2) + ((D & qcolorMask) >> 2);
+	register uint32 y = (A & qlowpixelMask) + (B & qlowpixelMask) + (C & qlowpixelMask) + (D & qlowpixelMask);
 
 	y = (y >> 2) & qlowpixelMask;
 	return x + y;
@@ -203,8 +195,7 @@ static inline uint32 Q_INTERPOLATE(uint32 A, uint32 B, uint32 C, uint32 D)
 #define RED_MASK555 0x7C007C00
 #define GREEN_MASK555 0x03E003E0
 
-void Super2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
-		uint32 dstPitch, int width, int height)
+void Super2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch, int width, int height)
 {
 	uint16 *bP;
 	uint8 *dP;
@@ -213,8 +204,7 @@ void Super2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
 #ifdef MMX
 	if (cpu_mmx) {
 		while (height--) {
-			_2xSaISuper2xSaILine(srcPtr, deltaPtr, srcPitch, width,
-					     dstPtr, dstPitch);
+			_2xSaISuper2xSaILine(srcPtr, deltaPtr, srcPitch, width, dstPtr, dstPitch);
 			srcPtr += srcPitch;
 			dstPtr += dstPitch * 2;
 			deltaPtr += srcPitch;
@@ -233,11 +223,9 @@ void Super2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
 			for (uint32 finish = width; finish; finish -= inc_bP) {
 				uint32 color4, color5, color6;
 				uint32 color1, color2, color3;
-				uint32 colorA0, colorA1, colorA2, colorA3,
-				    colorB0, colorB1, colorB2, colorB3, colorS1,
+				uint32 colorA0, colorA1, colorA2, colorA3, colorB0, colorB1, colorB2, colorB3, colorS1,
 				    colorS2;
-				uint32 product1a, product1b, product2a,
-				    product2b;
+				uint32 product1a, product1b, product2a, product2b;
 
 				//---------------------------------------    B1
 				// B2
@@ -271,82 +259,53 @@ void Super2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
 				//--------------------------------------
 				if (color2 == color6 && color5 != color3) {
 					product2b = product1b = color2;
-				} else if (color5 == color3 &&
-					   color2 != color6) {
+				} else if (color5 == color3 && color2 != color6) {
 					product2b = product1b = color5;
-				} else if (color5 == color3 &&
-					   color2 == color6) {
+				} else if (color5 == color3 && color2 == color6) {
 					register int r = 0;
 
-					r += GetResult(color6, color5, color1,
-						       colorA1);
-					r += GetResult(color6, color5, color4,
-						       colorB1);
-					r += GetResult(color6, color5, colorA2,
-						       colorS1);
-					r += GetResult(color6, color5, colorB2,
-						       colorS2);
+					r += GetResult(color6, color5, color1, colorA1);
+					r += GetResult(color6, color5, color4, colorB1);
+					r += GetResult(color6, color5, colorA2, colorS1);
+					r += GetResult(color6, color5, colorB2, colorS2);
 
 					if (r > 0)
 						product2b = product1b = color6;
 					else if (r < 0)
 						product2b = product1b = color5;
 					else {
-						product2b = product1b =
-						    INTERPOLATE(color5, color6);
+						product2b = product1b = INTERPOLATE(color5, color6);
 					}
 				} else {
-					if (color6 == color3 &&
-					    color3 == colorA1 &&
-					    color2 != colorA2 &&
+					if (color6 == color3 && color3 == colorA1 && color2 != colorA2 &&
 					    color3 != colorA0)
-						product2b = Q_INTERPOLATE(
-						    color3, color3, color3,
-						    color2);
-					else if (color5 == color2 &&
-						 color2 == colorA2 &&
-						 colorA1 != color3 &&
+						product2b = Q_INTERPOLATE(color3, color3, color3, color2);
+					else if (color5 == color2 && color2 == colorA2 && colorA1 != color3 &&
 						 color2 != colorA3)
-						product2b = Q_INTERPOLATE(
-						    color2, color2, color2,
-						    color3);
+						product2b = Q_INTERPOLATE(color2, color2, color2, color3);
 					else
-						product2b =
-						    INTERPOLATE(color2, color3);
+						product2b = INTERPOLATE(color2, color3);
 
-					if (color6 == color3 &&
-					    color6 == colorB1 &&
-					    color5 != colorB2 &&
+					if (color6 == color3 && color6 == colorB1 && color5 != colorB2 &&
 					    color6 != colorB0)
-						product1b = Q_INTERPOLATE(
-						    color6, color6, color6,
-						    color5);
-					else if (color5 == color2 &&
-						 color5 == colorB2 &&
-						 colorB1 != color6 &&
+						product1b = Q_INTERPOLATE(color6, color6, color6, color5);
+					else if (color5 == color2 && color5 == colorB2 && colorB1 != color6 &&
 						 color5 != colorB3)
-						product1b = Q_INTERPOLATE(
-						    color6, color5, color5,
-						    color5);
+						product1b = Q_INTERPOLATE(color6, color5, color5, color5);
 					else
-						product1b =
-						    INTERPOLATE(color5, color6);
+						product1b = INTERPOLATE(color5, color6);
 				}
 
-				if (color5 == color3 && color2 != color6 &&
-				    color4 == color5 && color5 != colorA2)
+				if (color5 == color3 && color2 != color6 && color4 == color5 && color5 != colorA2)
 					product2a = INTERPOLATE(color2, color5);
-				else if (color5 == color1 && color6 == color5 &&
-					 color4 != color2 && color5 != colorA0)
+				else if (color5 == color1 && color6 == color5 && color4 != color2 && color5 != colorA0)
 					product2a = INTERPOLATE(color2, color5);
 				else
 					product2a = color2;
 
-				if (color2 == color6 && color5 != color3 &&
-				    color1 == color2 && color2 != colorB2)
+				if (color2 == color6 && color5 != color3 && color1 == color2 && color2 != colorB2)
 					product1a = INTERPOLATE(color2, color5);
-				else if (color4 == color2 && color3 == color2 &&
-					 color1 != color5 && color2 != colorB0)
+				else if (color4 == color2 && color3 == color2 && color1 != color5 && color2 != colorB0)
 					product1a = INTERPOLATE(color2, color5);
 				else
 					product1a = color5;
@@ -368,8 +327,7 @@ void Super2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
 	}
 }
 
-void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
-		uint32 dstPitch, int width, int height)
+void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch, int width, int height)
 {
 	uint8 *dP;
 	uint16 *bP;
@@ -379,8 +337,7 @@ void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
 #ifdef MMX
 	if (cpu_mmx) {
 		while (height--) {
-			_2xSaISuperEagleLine(srcPtr, deltaPtr, srcPitch, width,
-					     dstPtr, dstPitch);
+			_2xSaISuperEagleLine(srcPtr, deltaPtr, srcPitch, width, dstPtr, dstPitch);
 			srcPtr += srcPitch;
 			dstPtr += dstPitch * 2;
 			deltaPtr += srcPitch;
@@ -400,10 +357,8 @@ void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
 			for (uint32 finish = width; finish; finish -= inc_bP) {
 				uint32 color4, color5, color6;
 				uint32 color1, color2, color3;
-				uint32 colorA1, colorA2, colorB1, colorB2,
-				    colorS1, colorS2;
-				uint32 product1a, product1b, product2a,
-				    product2b;
+				uint32 colorA1, colorA2, colorB1, colorB2, colorS1, colorS2;
+				uint32 product1a, product1b, product2a, product2b;
 
 				colorB1 = *(bP - Nextline);
 				colorB2 = *(bP - Nextline + 1);
@@ -424,104 +379,74 @@ void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
 				// --------------------------------------
 				if (color2 == color6 && color5 != color3) {
 					product1b = product2a = color2;
-					if ((color1 == color2) ||
-					    (color6 == colorB2)) {
-						product1a =
-						    INTERPOLATE(color2, color5);
-						product1a = INTERPOLATE(
-						    color2, product1a);
+					if ((color1 == color2) || (color6 == colorB2)) {
+						product1a = INTERPOLATE(color2, color5);
+						product1a = INTERPOLATE(color2, product1a);
 						//                       product1a
 						//                       =
 						//                       color2;
 					} else {
-						product1a =
-						    INTERPOLATE(color5, color6);
+						product1a = INTERPOLATE(color5, color6);
 					}
 
-					if ((color6 == colorS2) ||
-					    (color2 == colorA1)) {
-						product2b =
-						    INTERPOLATE(color2, color3);
-						product2b = INTERPOLATE(
-						    color2, product2b);
+					if ((color6 == colorS2) || (color2 == colorA1)) {
+						product2b = INTERPOLATE(color2, color3);
+						product2b = INTERPOLATE(color2, product2b);
 						//                       product2b
 						//                       =
 						//                       color2;
 					} else {
-						product2b =
-						    INTERPOLATE(color2, color3);
+						product2b = INTERPOLATE(color2, color3);
 					}
-				} else if (color5 == color3 &&
-					   color2 != color6) {
+				} else if (color5 == color3 && color2 != color6) {
 					product2b = product1a = color5;
 
-					if ((colorB1 == color5) ||
-					    (color3 == colorS1)) {
-						product1b =
-						    INTERPOLATE(color5, color6);
-						product1b = INTERPOLATE(
-						    color5, product1b);
+					if ((colorB1 == color5) || (color3 == colorS1)) {
+						product1b = INTERPOLATE(color5, color6);
+						product1b = INTERPOLATE(color5, product1b);
 						//                       product1b
 						//                       =
 						//                       color5;
 					} else {
-						product1b =
-						    INTERPOLATE(color5, color6);
+						product1b = INTERPOLATE(color5, color6);
 					}
 
-					if ((color3 == colorA2) ||
-					    (color4 == color5)) {
-						product2a =
-						    INTERPOLATE(color5, color2);
-						product2a = INTERPOLATE(
-						    color5, product2a);
+					if ((color3 == colorA2) || (color4 == color5)) {
+						product2a = INTERPOLATE(color5, color2);
+						product2a = INTERPOLATE(color5, product2a);
 						//                       product2a
 						//                       =
 						//                       color5;
 					} else {
-						product2a =
-						    INTERPOLATE(color2, color3);
+						product2a = INTERPOLATE(color2, color3);
 					}
 
-				} else if (color5 == color3 &&
-					   color2 == color6) {
+				} else if (color5 == color3 && color2 == color6) {
 					register int r = 0;
 
-					r += GetResult(color6, color5, color1,
-						       colorA1);
-					r += GetResult(color6, color5, color4,
-						       colorB1);
-					r += GetResult(color6, color5, colorA2,
-						       colorS1);
-					r += GetResult(color6, color5, colorB2,
-						       colorS2);
+					r += GetResult(color6, color5, color1, colorA1);
+					r += GetResult(color6, color5, color4, colorB1);
+					r += GetResult(color6, color5, colorA2, colorS1);
+					r += GetResult(color6, color5, colorB2, colorS2);
 
 					if (r > 0) {
 						product1b = product2a = color2;
-						product1a = product2b =
-						    INTERPOLATE(color5, color6);
+						product1a = product2b = INTERPOLATE(color5, color6);
 					} else if (r < 0) {
 						product2b = product1a = color5;
-						product1b = product2a =
-						    INTERPOLATE(color5, color6);
+						product1b = product2a = INTERPOLATE(color5, color6);
 					} else {
 						product2b = product1a = color5;
 						product1b = product2a = color2;
 					}
 				} else {
-					product2b = product1a =
-					    INTERPOLATE(color2, color6);
-					product2b = Q_INTERPOLATE(
-					    color3, color3, color3, product2b);
-					product1a = Q_INTERPOLATE(
-					    color5, color5, color5, product1a);
+					product2b = product1a = INTERPOLATE(color2, color6);
+					product2b = Q_INTERPOLATE(color3, color3, color3, product2b);
+					product1a = Q_INTERPOLATE(color5, color5, color5, product1a);
 
-					product2a = product1b =
-					    INTERPOLATE(color5, color3);
-					product2a = Q_INTERPOLATE(
-					    color2, color2, color2, product2a);
-					product1b = Q_INTERPOLATE(
-					    color6, color6, color6, product1b);
+					product2a = product1b = INTERPOLATE(color5, color3);
+					product2a = Q_INTERPOLATE(color2, color2, color2, product2a);
+					product1b = Q_INTERPOLATE(color6, color6, color6, product1b);
 
 					//                    product1a =
 					//                    color5; product1b
@@ -549,8 +474,7 @@ void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
 	}
 }
 
-void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
-	    uint32 dstPitch, int width, int height)
+void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch, int width, int height)
 {
 	uint8 *dP;
 	uint16 *bP;
@@ -559,8 +483,7 @@ void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
 #ifdef MMX
 	if (cpu_mmx) {
 		while (height--) {
-			_2xSaILine(srcPtr, deltaPtr, srcPitch, width, dstPtr,
-				   dstPitch);
+			_2xSaILine(srcPtr, deltaPtr, srcPitch, width, dstPtr, dstPitch);
 			srcPtr += srcPitch;
 			dstPtr += dstPitch * 2;
 			deltaPtr += srcPitch;
@@ -580,8 +503,7 @@ void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
 			for (uint32 finish = width; finish; finish -= inc_bP) {
 
 				register uint32 colorA, colorB;
-				uint32 colorC, colorD, colorE, colorF, colorG,
-				    colorH, colorI, colorJ, colorK, colorL,
+				uint32 colorC, colorD, colorE, colorF, colorG, colorH, colorI, colorJ, colorK, colorL,
 
 				    colorM, colorN, colorO, colorP;
 				uint32 product, product1, product2;
@@ -612,58 +534,40 @@ void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
 				colorP = *(bP + Nextline + Nextline + 2);
 
 				if ((colorA == colorD) && (colorB != colorC)) {
-					if (((colorA == colorE) &&
-					     (colorB == colorL)) ||
-					    ((colorA == colorC) &&
-					     (colorA == colorF) &&
-					     (colorB != colorE) &&
+					if (((colorA == colorE) && (colorB == colorL)) ||
+					    ((colorA == colorC) && (colorA == colorF) && (colorB != colorE) &&
 					     (colorB == colorJ))) {
 						product = colorA;
 					} else {
-						product =
-						    INTERPOLATE(colorA, colorB);
+						product = INTERPOLATE(colorA, colorB);
 					}
 
-					if (((colorA == colorG) &&
-					     (colorC == colorO)) ||
-					    ((colorA == colorB) &&
-					     (colorA == colorH) &&
-					     (colorG != colorC) &&
+					if (((colorA == colorG) && (colorC == colorO)) ||
+					    ((colorA == colorB) && (colorA == colorH) && (colorG != colorC) &&
 					     (colorC == colorM))) {
 						product1 = colorA;
 					} else {
-						product1 =
-						    INTERPOLATE(colorA, colorC);
+						product1 = INTERPOLATE(colorA, colorC);
 					}
 					product2 = colorA;
-				} else if ((colorB == colorC) &&
-					   (colorA != colorD)) {
-					if (((colorB == colorF) &&
-					     (colorA == colorH)) ||
-					    ((colorB == colorE) &&
-					     (colorB == colorD) &&
-					     (colorA != colorF) &&
+				} else if ((colorB == colorC) && (colorA != colorD)) {
+					if (((colorB == colorF) && (colorA == colorH)) ||
+					    ((colorB == colorE) && (colorB == colorD) && (colorA != colorF) &&
 					     (colorA == colorI))) {
 						product = colorB;
 					} else {
-						product =
-						    INTERPOLATE(colorA, colorB);
+						product = INTERPOLATE(colorA, colorB);
 					}
 
-					if (((colorC == colorH) &&
-					     (colorA == colorF)) ||
-					    ((colorC == colorG) &&
-					     (colorC == colorD) &&
-					     (colorA != colorH) &&
+					if (((colorC == colorH) && (colorA == colorF)) ||
+					    ((colorC == colorG) && (colorC == colorD) && (colorA != colorH) &&
 					     (colorA == colorI))) {
 						product1 = colorC;
 					} else {
-						product1 =
-						    INTERPOLATE(colorA, colorC);
+						product1 = INTERPOLATE(colorA, colorC);
 					}
 					product2 = colorB;
-				} else if ((colorA == colorD) &&
-					   (colorB == colorC)) {
+				} else if ((colorA == colorD) && (colorB == colorC)) {
 					if (colorA == colorB) {
 						product = colorA;
 						product1 = colorA;
@@ -671,67 +575,43 @@ void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
 					} else {
 						register int r = 0;
 
-						product1 =
-						    INTERPOLATE(colorA, colorC);
-						product =
-						    INTERPOLATE(colorA, colorB);
+						product1 = INTERPOLATE(colorA, colorC);
+						product = INTERPOLATE(colorA, colorB);
 
-						r += GetResult1(colorA, colorB,
-								colorG, colorE,
-								colorI);
-						r += GetResult2(colorB, colorA,
-								colorK, colorF,
-								colorJ);
-						r += GetResult2(colorB, colorA,
-								colorH, colorN,
-								colorM);
-						r += GetResult1(colorA, colorB,
-								colorL, colorO,
-								colorP);
+						r += GetResult1(colorA, colorB, colorG, colorE, colorI);
+						r += GetResult2(colorB, colorA, colorK, colorF, colorJ);
+						r += GetResult2(colorB, colorA, colorH, colorN, colorM);
+						r += GetResult1(colorA, colorB, colorL, colorO, colorP);
 
 						if (r > 0)
 							product2 = colorA;
 						else if (r < 0)
 							product2 = colorB;
 						else {
-							product2 =
-							    Q_INTERPOLATE(
-								colorA, colorB,
-								colorC, colorD);
+							product2 = Q_INTERPOLATE(colorA, colorB, colorC, colorD);
 						}
 					}
 				} else {
-					product2 = Q_INTERPOLATE(
-					    colorA, colorB, colorC, colorD);
+					product2 = Q_INTERPOLATE(colorA, colorB, colorC, colorD);
 
-					if ((colorA == colorC) &&
-					    (colorA == colorF) &&
-					    (colorB != colorE) &&
+					if ((colorA == colorC) && (colorA == colorF) && (colorB != colorE) &&
 					    (colorB == colorJ)) {
 						product = colorA;
-					} else if ((colorB == colorE) &&
-						   (colorB == colorD) &&
-						   (colorA != colorF) &&
+					} else if ((colorB == colorE) && (colorB == colorD) && (colorA != colorF) &&
 						   (colorA == colorI)) {
 						product = colorB;
 					} else {
-						product =
-						    INTERPOLATE(colorA, colorB);
+						product = INTERPOLATE(colorA, colorB);
 					}
 
-					if ((colorA == colorB) &&
-					    (colorA == colorH) &&
-					    (colorG != colorC) &&
+					if ((colorA == colorB) && (colorA == colorH) && (colorG != colorC) &&
 					    (colorC == colorM)) {
 						product1 = colorA;
-					} else if ((colorC == colorG) &&
-						   (colorC == colorD) &&
-						   (colorA != colorH) &&
+					} else if ((colorC == colorG) && (colorC == colorD) && (colorA != colorH) &&
 						   (colorA == colorI)) {
 						product1 = colorC;
 					} else {
-						product1 =
-						    INTERPOLATE(colorA, colorC);
+						product1 = INTERPOLATE(colorA, colorC);
 					}
 				}
 
@@ -752,9 +632,8 @@ void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
 }
 
 #ifdef MMX
-void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
-		 uint8 *dstPtr, uint32 dstPitch, uint32 dstWidth,
-		 uint32 dstHeight, int width, int height)
+void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */, uint8 *dstPtr, uint32 dstPitch,
+		 uint32 dstWidth, uint32 dstHeight, int width, int height)
 {
 	uint8 *dP;
 	uint16 *bP;
@@ -816,8 +695,7 @@ void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
 				if (A == D && B != C) {
 					f1 = (x1 >> 1) + (0x10000 >> 2);
 					f2 = (y1 >> 1) + (0x10000 >> 2);
-					if (y1 <= f1 && A == J &&
-					    A != E) // close to B
+					if (y1 <= f1 && A == J && A != E) // close to B
 					{
 						a1 = f1 - y1;
 						colorA[c] = A;
@@ -826,8 +704,7 @@ void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
 						colorD[c] = 0;
 						dx[c] = a1;
 						dy[c] = 0;
-					} else if (y1 >= f1 && A == G &&
-						   A != L) // close to C
+					} else if (y1 >= f1 && A == G && A != L) // close to C
 					{
 						a1 = y1 - f1;
 						colorA[c] = A;
@@ -836,8 +713,7 @@ void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
 						colorD[c] = 0;
 						dx[c] = a1;
 						dy[c] = 0;
-					} else if (x1 >= f2 && A == E &&
-						   A != J) // close to B
+					} else if (x1 >= f2 && A == E && A != J) // close to B
 					{
 						a1 = x1 - f2;
 						colorA[c] = A;
@@ -846,8 +722,7 @@ void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
 						colorD[c] = 0;
 						dx[c] = a1;
 						dy[c] = 0;
-					} else if (x1 <= f2 && A == L &&
-						   A != G) // close to C
+					} else if (x1 <= f2 && A == L && A != G) // close to C
 					{
 						a1 = f2 - x1;
 						colorA[c] = A;
@@ -880,8 +755,7 @@ void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
 				    if (B == C && A != D) {
 					f1 = (x1 >> 1) + (0x10000 >> 2);
 					f2 = (y1 >> 1) + (0x10000 >> 2);
-					if (y2 >= f1 && B == H &&
-					    B != F) // close to A
+					if (y2 >= f1 && B == H && B != F) // close to A
 					{
 						a1 = y2 - f1;
 						colorA[c] = B;
@@ -890,8 +764,7 @@ void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
 						colorD[c] = 0;
 						dx[c] = a1;
 						dy[c] = 0;
-					} else if (y2 <= f1 && B == I &&
-						   B != K) // close to D
+					} else if (y2 <= f1 && B == I && B != K) // close to D
 					{
 						a1 = f1 - y2;
 						colorA[c] = B;
@@ -900,8 +773,7 @@ void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
 						colorD[c] = 0;
 						dx[c] = a1;
 						dy[c] = 0;
-					} else if (x2 >= f2 && B == F &&
-						   B != H) // close to A
+					} else if (x2 >= f2 && B == F && B != H) // close to A
 					{
 						a1 = x2 - f2;
 						colorA[c] = B;
@@ -910,8 +782,7 @@ void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
 						colorD[c] = 0;
 						dx[c] = a1;
 						dy[c] = 0;
-					} else if (x2 <= f2 && B == K &&
-						   B != I) // close to D
+					} else if (x2 <= f2 && B == K && B != I) // close to D
 					{
 						a1 = f2 - x2;
 						colorA[c] = B;
@@ -979,8 +850,7 @@ static uint32 Bilinear(uint32 A, uint32 B, uint32 x)
 	return (result & redblueMask) | ((result >> 16) & greenMask);
 }
 
-static uint32 Bilinear4(uint32 A, uint32 B, uint32 C, uint32 D, uint32 x,
-			uint32 y)
+static uint32 Bilinear4(uint32 A, uint32 B, uint32 C, uint32 D, uint32 x, uint32 y)
 {
 	unsigned long areaA, areaB, areaC, areaD;
 	unsigned long result, xy;
@@ -1004,9 +874,8 @@ static uint32 Bilinear4(uint32 A, uint32 B, uint32 C, uint32 D, uint32 x,
 	return (result & redblueMask) | ((result >> 16) & greenMask);
 }
 
-void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
-		 uint8 *dstPtr, uint32 dstPitch, uint32 dstWidth,
-		 uint32 dstHeight, int width, int height)
+void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */, uint8 *dstPtr, uint32 dstPitch,
+		 uint32 dstWidth, uint32 dstHeight, int width, int height)
 {
 	uint8 *dP;
 	uint16 *bP;
@@ -1071,18 +940,15 @@ void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
 				{
 					a1 = f1 - y1;
 					product1 = Bilinear(A, B, a1);
-				} else if (y1 >= f1 && A == G &&
-					   A != L) // close to C
+				} else if (y1 >= f1 && A == G && A != L) // close to C
 				{
 					a1 = y1 - f1;
 					product1 = Bilinear(A, C, a1);
-				} else if (x1 >= f2 && A == E &&
-					   A != J) // close to B
+				} else if (x1 >= f2 && A == E && A != J) // close to B
 				{
 					a1 = x1 - f2;
 					product1 = Bilinear(A, B, a1);
-				} else if (x1 <= f2 && A == L &&
-					   A != G) // close to C
+				} else if (x1 <= f2 && A == L && A != G) // close to C
 				{
 					a1 = f2 - x1;
 					product1 = Bilinear(A, C, a1);
@@ -1104,18 +970,15 @@ void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
 				{
 					a1 = y2 - f1;
 					product1 = Bilinear(B, A, a1);
-				} else if (y2 <= f1 && B == I &&
-					   B != K) // close to D
+				} else if (y2 <= f1 && B == I && B != K) // close to D
 				{
 					a1 = f1 - y2;
 					product1 = Bilinear(B, D, a1);
-				} else if (x2 >= f2 && B == F &&
-					   B != H) // close to A
+				} else if (x2 >= f2 && B == F && B != H) // close to A
 				{
 					a1 = x2 - f2;
 					product1 = Bilinear(B, A, a1);
-				} else if (x2 <= f2 && B == K &&
-					   B != I) // close to D
+				} else if (x2 <= f2 && B == K && B != I) // close to D
 				{
 					a1 = f2 - x2;
 					product1 = Bilinear(B, D, a1);

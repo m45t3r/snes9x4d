@@ -62,8 +62,8 @@
 #define S9xUnpackStatus S9xSA1UnpackStatus
 #define S9xPackStatus S9xSA1PackStatus
 #define S9xFixCycles S9xSA1FixCycles
+#if 0
 // CSNES Not even used
-/*
 #define Immediate8 SA1Immediate8
 #define Immediate16 SA1Immediate16
 #define Relative SA1Relative
@@ -86,7 +86,7 @@
 #define DirectIndirectLong SA1DirectIndirectLong
 #define StackRelative SA1StackRelative
 #define StackRelativeIndirectIndexed SA1StackRelativeIndirectIndexed
-*/
+#endif
 
 //#undef CPU_SHUTDOWN
 #undef VAR_CYCLES
@@ -128,8 +128,7 @@ void S9xSA1MainLoop()
 #ifdef CPU_SHUTDOWN
 			SA1.PCAtOpcodeStart = SA1.PC;
 #endif
-			(*SA1.S9xOpcodes[*SA1.PC++].S9xOpcode)(&SA1Registers,
-							       &SA1ICPU, &SA1);
+			(*SA1.S9xOpcodes[*SA1.PC++].S9xOpcode)(&SA1Registers, &SA1ICPU, &SA1);
 		}
 	} else
 #endif
@@ -137,7 +136,6 @@ void S9xSA1MainLoop()
 #ifdef CPU_SHUTDOWN
 			SA1.PCAtOpcodeStart = SA1.PC;
 #endif
-			(*SA1ICPU.S9xOpcodes[*SA1.PC++].S9xOpcode)(
-			    &SA1Registers, &SA1ICPU, &SA1);
+			(*SA1ICPU.S9xOpcodes[*SA1.PC++].S9xOpcode)(&SA1Registers, &SA1ICPU, &SA1);
 		}
 }

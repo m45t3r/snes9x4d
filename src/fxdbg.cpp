@@ -136,8 +136,7 @@ void FxPipeString(char *pvString)
 	vByte2 = PRGBANK(USEX16(R15 + 1));
 
 	/* Print ROM address of the pipe */
-	sprintf(pvString, "%02x:%04x %02x       ", USEX8(vPipeBank),
-		USEX16(GSU.vPipeAdr), USEX8(PIPE));
+	sprintf(pvString, "%02x:%04x %02x       ", USEX8(vPipeBank), USEX16(GSU.vPipeAdr), USEX8(PIPE));
 	p = &pvString[strlen(pvString)];
 
 	/* Check if it's a branch instruction */
@@ -151,25 +150,21 @@ void FxPipeString(char *pvString)
 	}
 	/* Check for 'move' instruction */
 	else if (PIPE >= 0x10 && PIPE <= 0x1f && TF(B))
-		sprintf(p, "move r%d,r%d", USEX8(PIPE & 0x0f),
-			GSU.pvSreg - GSU.avReg);
+		sprintf(p, "move r%d,r%d", USEX8(PIPE & 0x0f), GSU.pvSreg - GSU.avReg);
 	/* Check for 'ibt', 'lms' or 'sms' */
 	else if (PIPE >= 0xa0 && PIPE <= 0xaf) {
 		sprintf(&pvString[11], "%02x    ", USEX8(vPipe1));
-		if ((GSU.vStatusReg & 0x300) == 0x100 ||
-		    (GSU.vStatusReg & 0x300) == 0x200)
+		if ((GSU.vStatusReg & 0x300) == 0x100 || (GSU.vStatusReg & 0x300) == 0x200)
 			sprintf(p, m, USEX16(vByte1) << 1);
 		else
 			sprintf(p, m, USEX16(vByte1));
 	}
 	/* Check for 'moves' */
 	else if (PIPE >= 0xb0 && PIPE <= 0xbf && TF(B))
-		sprintf(p, "moves r%d,r%d", GSU.pvDreg - GSU.avReg,
-			USEX8(PIPE & 0x0f));
+		sprintf(p, "moves r%d,r%d", GSU.pvDreg - GSU.avReg, USEX8(PIPE & 0x0f));
 	/* Check for 'iwt', 'lm' or 'sm' */
 	else if (PIPE >= 0xf0) {
-		sprintf(&pvString[11], "%02x %02x ", USEX8(vPipe1),
-			USEX8(vPipe2));
+		sprintf(&pvString[11], "%02x %02x ", USEX8(vPipe1), USEX8(vPipe2));
 		sprintf(p, m, USEX8(vByte1) | (USEX16(vByte2) << 8));
 	}
 	/* Normal instruction */
