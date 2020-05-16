@@ -183,8 +183,9 @@ void menu_dispupdate(void)
 
 void menu_loop(void)
 {
-	bool old_stereo = Settings.Stereo;
-	int old_sound_playback_rate = Settings.SoundPlaybackRate;
+	bool8_32 old_stereo = Settings.Stereo;
+	bool8_32 old_fast_color = Settings.FastColor;
+	uint32 old_sound_playback_rate = Settings.SoundPlaybackRate;
 	bool8_32 exit_loop = false;
 	char fname[SBUFFER], ext[8];
 	char snapscreen_tmp[sizeof(snapscreen)];
@@ -387,6 +388,8 @@ void menu_loop(void)
 	Settings.SupportHiRes = highres_current;
 	S9xDeinitDisplay();
 	S9xInitDisplay(0, 0);
+	if (old_fast_color != Settings.FastColor)
+		S9xBuildLookupTable();
 	if (old_sound_playback_rate != Settings.SoundPlaybackRate ||
 	    old_stereo != Settings.Stereo)
 		S9xReinitSound();

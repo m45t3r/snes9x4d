@@ -172,17 +172,6 @@ extern uint8 mul_brightness[16][32];
 #define SUB_SCREEN_DEPTH 0
 #define MAIN_SCREEN_DEPTH 32
 
-// for rs-90 light COLOR_ADD
-//    #define MASK1 0b1111011111011110
-//    #define MASK2 0b0111101111101111
-//
-//    c1 = C1 & MASK1;
-//    c2 = C2 & MASK1;
-//    a = (c1>>1) + (c2>>1);
-//    b = a & 0x8410
-//    c = b- (b >> 4);
-//    z = ((a | c) & MASK2)<<1;
-//
 #define MASK1 0xF7DE
 #define MASK2 0x7BEF
 
@@ -287,6 +276,7 @@ void S9xSetupOBJ(struct SOBJ *);
 void S9xUpdateScreen();
 void RenderLine(uint8 line, struct SPPU *);
 void S9xBuildDirectColourMaps();
+bool8_32 S9xBuildLookupTable();
 
 bool8_32 S9xGraphicsInit();
 void S9xGraphicsDeinit();
