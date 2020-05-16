@@ -49,10 +49,27 @@ quality. Some of them are described below:
   stutter less
 - Sound Rate (default `32000`): sets sound rate. The official sound rate of
   SNES is ~32000 so this is the minimum recommended value to have a good
-  sound quality, but you may reduce it to improve performance
+  sound quality, but you may reduce it to improve performance. You can also
+  disable sound by setting this option to `off`.
 - Stereo (default `False`): enables/disables stereo mixing (making a Mono
   output). Disabling it improves performance, but the Mono mixing results in
   some missing instruments in games
+
+My personal performance tip is to disable Stereo and Transparency, and enable
+Fast Color. This makes the most performance gains in games where those options
+doesn't break anything.
+
+Setting Frameskip to `Auto` is the only current way to have framerate limit,
+so it is recommended unless the game is too heavy and `Auto` causes too much
+stuttering (in this case, using a fixed Frameskip is better). When you need to
+set a fixed Frameskip, my recommended values are either `60/3` (20FPS) or
+`60/4` (15FPS). Anything else introduces too much input lag, making most games
+unplayable.
+
+If you want to play with Sound Rate, `22050` still gives a very good sound, but
+in my experience it doesn't improve performance that much. `16000` is
+acceptable and anything below it is better to simply disable sound (that gives
+much better performance gains).
 
 ## Setup environment
 
