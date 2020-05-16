@@ -91,11 +91,16 @@ void menu_dispupdate(void)
 	    "State Slot               ",
 	    "Display Frame Rate       ",
 	    "Transparency             ",
+#ifdef TL_COLOR_OPS
+	    "Fast Color               ",
+#else
+	    "N/A                      ",
+#endif
 	    "Full Screen              ",
 #ifdef BILINEAR_SCALE
 	    "Bilinear Filtering       ",
 #else
-	    "N/A",
+	    "N/A                      ",
 #endif
 	    "Frameskip                ",
 	    "Sound Rate               ",
@@ -113,35 +118,42 @@ void menu_dispupdate(void)
 		strfmt(disptxt[6], "%s False", disptxt[6]);
 
 	if (Settings.Transparency)
-		strfmt(disptxt[7], "%s On", disptxt[7]);
+		strfmt(disptxt[7], "%s True", disptxt[7]);
 	else
-		strfmt(disptxt[7], "%s Off", disptxt[7]);
+		strfmt(disptxt[7], "%s False", disptxt[7]);
 
-	if (Scale)
+#ifdef TL_COLOR_OPS
+	if (Settings.FastColor)
 		strfmt(disptxt[8], "%s True", disptxt[8]);
 	else
 		strfmt(disptxt[8], "%s False", disptxt[8]);
+#endif
 
-#ifdef BILINEAR_SCALE
-	if (Bilinear)
+	if (Scale)
 		strfmt(disptxt[9], "%s True", disptxt[9]);
 	else
 		strfmt(disptxt[9], "%s False", disptxt[9]);
+
+#ifdef BILINEAR_SCALE
+	if (Bilinear)
+		strfmt(disptxt[10], "%s True", disptxt[10]);
+	else
+		strfmt(disptxt[10], "%s False", disptxt[10]);
 #endif
 
 	if (Settings.SkipFrames == AUTO_FRAMERATE)
-		strfmt(disptxt[10], "%s Auto", disptxt[10]);
+		strfmt(disptxt[11], "%s Auto", disptxt[11]);
 	else
-		strfmt(disptxt[10], "%s %02d/%d", disptxt[10],
+		strfmt(disptxt[11], "%s %02d/%d", disptxt[11],
 		       (int)Memory.ROMFramesPerSecond, Settings.SkipFrames);
 
-	strfmt(disptxt[11], "%s %s", disptxt[11],
+	strfmt(disptxt[12], "%s %s", disptxt[12],
 	       Rates[Settings.SoundPlaybackRate]);
 
 	if (Settings.Stereo)
-		strfmt(disptxt[12], "%s True", disptxt[12]);
+		strfmt(disptxt[13], "%s True", disptxt[13]);
 	else
-		strfmt(disptxt[12], "%s False", disptxt[12]);
+		strfmt(disptxt[13], "%s False", disptxt[13]);
 
 	for (int i = 0; i < MAX_MENU_ITEMS; i++) {
 		if (i == cursor)
@@ -157,8 +169,7 @@ void menu_dispupdate(void)
 	if (SaveSlotNum_old != SaveSlotNum) {
 		char temp[SBUFFER];
 		strcpy(temp, "Loading...");
-		S9xDisplayString(temp, GFX.Screen + 280, GFX.Pitch,
-				 210 /*204*/);
+		S9xDisplayString(temp, GFX.Screen + 280, GFX.Pitch, 210);
 		menu_flip();
 		char fname[SBUFFER], ext[8];
 		sprintf(ext, ".s0%d", SaveSlotNum);
@@ -280,13 +291,23 @@ void menu_loop(void)
 						    !Settings.Transparency;
 					break;
 				case 8:
+#ifdef TL_COLOR_OPS
+					if (keyssnes[sfc_key[LEFT_1]] ==
+						SDL_PRESSED ||
+					    keyssnes[sfc_key[RIGHT_1]] ==
+						SDL_PRESSED)
+						Settings.FastColor =
+						    !Settings.FastColor;
+#endif
+					break;
+				case 9:
 					if (keyssnes[sfc_key[LEFT_1]] ==
 						SDL_PRESSED ||
 					    keyssnes[sfc_key[RIGHT_1]] ==
 						SDL_PRESSED)
 						Scale = !Scale;
 					break;
-				case 9:
+				case 10:
 #ifdef BILINEAR_SCALE
 					if (keyssnes[sfc_key[LEFT_1]] ==
 						SDL_PRESSED ||
@@ -295,7 +316,7 @@ void menu_loop(void)
 						Bilinear = !Bilinear;
 #endif
 					break;
-				case 10:
+				case 11:
 					if (Settings.SkipFrames ==
 					    AUTO_FRAMERATE)
 						Settings.SkipFrames = 10;
@@ -313,7 +334,7 @@ void menu_loop(void)
 					else if (Settings.SkipFrames <= 1)
 						Settings.SkipFrames = 1;
 					break;
-				case 11:
+				case 12:
 					if (keyssnes[sfc_key[LEFT_1]] ==
 					    SDL_PRESSED) {
 						Settings.SoundPlaybackRate =
@@ -330,7 +351,7 @@ void menu_loop(void)
 						    7;
 					}
 					break;
-				case 12:
+				case 13:
 					if (keyssnes[sfc_key[LEFT_1]] ==
 						SDL_PRESSED ||
 					    keyssnes[sfc_key[RIGHT_1]] ==
@@ -338,12 +359,12 @@ void menu_loop(void)
 						Settings.Stereo =
 						    !Settings.Stereo;
 					break;
-				case 13:
+				case 14:
 					if (keyssnes[sfc_key[A_1]] ==
 					    SDL_PRESSED)
 						show_credits();
 					break;
-				case 14:
+				case 15:
 					if (keyssnes[sfc_key[A_1]] ==
 					    SDL_PRESSED)
 						S9xExit();
@@ -428,7 +449,7 @@ void capt_screenshot() // 107px*80px
 void show_screenshot()
 {
 	int s = 0;
-	const int start_y = SURFACE_HEIGHT - 88;
+	const int start_y = SURFACE_HEIGHT - 80;
 	const int start_x = SURFACE_WIDTH - 72;
 
 	for (int y = start_y; y < start_y + 80; y++) {

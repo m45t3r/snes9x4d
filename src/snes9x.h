@@ -327,7 +327,7 @@ struct SSettings {
 	bool8_32 GlideEnable;
 	bool8_32 OpenGLEnable;
 	int32 AutoSaveDelay; // Time in seconds before S-RAM auto-saved if
-			     // modified.
+			     // modified
 	bool8_32 ApplyCheats;
 	bool8_32 TurboMode;
 	uint32 TurboSkipFrames;
@@ -343,6 +343,10 @@ struct SSettings {
 	bool8_32 BS; // Japanese Satellite System games.
 	bool8_32 DaffyDuck;
 	uint8 APURAMInitialValue;
+
+#ifdef TL_COLOR_OPS
+	bool8_32 FastColor;
+#endif
 
 #ifdef __WIN32__
 	int SoundDriver;

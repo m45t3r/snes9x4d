@@ -28,9 +28,13 @@ This emulator has multiple options that can be accessed using `Reset` button in
 BittBoy/PocketGo. Some of them may improve performance at the expense of
 quality. Some of them are described below:
 
-- Transparency (default `On`): enables/disables transparency effects in games.
-  Disabling it may improve performance, but it may also break some effects in
-  games and even make some of them unplayable
+- Transparency (default `True`): enables/disables transparency effects in
+  games. Disabling it may improve performance, but it may also break some
+  effects in games and even make some of them unplayable because of missing
+  effects
+- Fast Color (default `True`): enables/disables some color optimizations.
+  Enabling it may improve performance, but some colors may look wrong, possibly
+  making some games unplayable. Disable it if this becomes a problem
 - Full Screen (default `False`): enables/disables full screen. There is a small
   performance impact for it, and it also makes the aspect ratio wrong
 - Billinear Filtering (default `False`): enables/disables bilinear filtering.
@@ -44,7 +48,7 @@ quality. Some of them are described below:
   (like `Star Fox`) it is better to set a fixed frameskip to make the game
   stutter less
 - Sound Rate (default `32000`): sets sound rate. The official sound rate of
-  SNES is ~32000 so this is the recommended value to have the best available
+  SNES is ~32000 so this is the minimum recommended value to have a good
   sound quality, but you may reduce it to improve performance
 - Stereo (default `False`): enables/disables stereo mixing (making a Mono
   output). Disabling it improves performance, but the Mono mixing results in
@@ -156,7 +160,9 @@ Some tips to port this project to another Dingoo-like device:
       faster. But it is also somewhat wrong, so it breaks colors in some games,
       like the menu in F-Zero and the intro in Street Fighter Alpha 2 (but not
       in-game). If your device is slow it is worth it, but if your device is
-      fast enough to run games at full speed without it is better to disable it
+      fast enough to run games at full speed without it is better to disable
+      it. It is also a menu option now, so the user can enable/disable it
+      on-the-fly.
 - If your device is like Miyoo and doesn't have an standard Dingoo layout, you
   should define your own custom layout by creating a file
   `src/sdlmenu/<device>.h` and mapping the SDL buttons accordingly (see

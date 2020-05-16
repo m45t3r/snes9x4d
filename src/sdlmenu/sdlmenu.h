@@ -1,7 +1,7 @@
 #ifndef ___MENU_h_
 #define ___MENU_h_
 
-#define MAX_MENU_ITEMS 15
+#define MAX_MENU_ITEMS 16
 #define MAX_SAVE_STATE_SLOTS 5
 #define MENU_HEIGHT 224
 #define MENU_WIDTH 256

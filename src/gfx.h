@@ -54,10 +54,8 @@ struct SGFX {
 
 	// Setup in call to S9xGraphicsInit()
 	int Delta;
-#ifndef TL_COLOR_OPS
 	uint16 *X2;
 	uint16 *ZERO_OR_X2;
-#endif
 	uint16 *ZERO;
 	uint32 RealPitch; // True pitch of Screen buffer.
 	uint32 Pitch2; // Same as RealPitch except while using speed up hack for
@@ -140,6 +138,9 @@ extern uint32 odd_low[4][16];
 extern uint32 even_high[4][16];
 extern uint32 even_low[4][16];
 extern SBG BG;
+// External port interface which must be implemented or initialised for each
+// port.
+extern struct SGFX GFX;
 extern uint16 DirectColourMaps[8][256];
 
 // extern uint8 add32_32 [32][32];
@@ -185,93 +186,87 @@ extern uint8 mul_brightness[16][32];
 #define MASK1 0xF7DE
 #define MASK2 0x7BEF
 
-#ifdef TL_COLOR_OPS
 inline uint16_t COLOR_ADD(uint16_t C1, uint16_t C2)
 {
-	uint16_t a, b, c, z, c1, c2;
-
-	c1 = C1 & MASK1;
-	c2 = C2 & MASK1;
-	a = (c1 >> 1) + (c2 >> 1);
-	b = a & 0x8410;
-	c = b - (b >> 4);
-	z = ((a | c) & MASK2) << 1;
-	return z;
-}
-#else
-#define COLOR_ADD(C1, C2)                                                      \
-	(GFX.X2[((((C1)&RGB_REMOVE_LOW_BITS_MASK) +                            \
-		  ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >>                          \
-		 1) +                                                          \
-		((C1) & (C2)&RGB_LOW_BITS_MASK)] |                             \
-	 (((C1) ^ (C2)) & RGB_LOW_BITS_MASK))
-#endif
-
-#define COLOR_ADD1_2(C1, C2)                                                   \
-	(((((C1)&RGB_REMOVE_LOW_BITS_MASK) +                                   \
-	   ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >>                                 \
-	  1) +                                                                 \
-	     ((C1) & (C2)&RGB_LOW_BITS_MASK) |                                 \
-	 ALPHA_BITS_MASK)
-
-// for rs-90 light COLOR_SUB (really fast?)
-//    #define MASK1 0xF7DE
-//    #define MASK2 0x7BEF
-//
-//    c1 = (C1 & MASK1)>>1;
-//    c2 = (C2 & MASK1)>>1;
-//    c2 = (c2 ^ 0xffff) + 0x0821;
-//    a = c1 + c2;
-//    b = a & 0x8410;
-//    c = b - (b>>4);
-//    c = c ^ 0x7bcf;
-//    z = ((a & c) & MASK2)<<1;
-//
-
 #ifdef TL_COLOR_OPS
+	if (Settings.FastColor) {
+		uint16_t a, b, c, z, c1, c2;
+
+		c1 = C1 & MASK1;
+		c2 = C2 & MASK1;
+		a = (c1 >> 1) + (c2 >> 1);
+		b = a & 0x8410;
+		c = b - (b >> 4);
+		z = ((a | c) & MASK2) << 1;
+		return z;
+	} else
+#endif
+	{
+		return (GFX.X2[((((C1)&RGB_REMOVE_LOW_BITS_MASK) +
+				 ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >>
+				1) +
+			       ((C1) & (C2)&RGB_LOW_BITS_MASK)] |
+			(((C1) ^ (C2)) & RGB_LOW_BITS_MASK));
+	}
+}
+
+inline uint16_t COLOR_ADD1_2(uint16_t C1, uint16_t C2)
+{
+	return (((((C1)&RGB_REMOVE_LOW_BITS_MASK) +
+		  ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >>
+		 1) +
+		    ((C1) & (C2)&RGB_LOW_BITS_MASK) |
+		ALPHA_BITS_MASK);
+}
+
 inline uint16_t COLOR_SUB(uint16_t C1, uint16_t C2)
 {
-	uint16_t a, b, c, z, c1, c2;
-	c1 = (C1 & MASK1) >> 1;
-	c2 = (C2 & MASK1) >> 1;
-	c2 = (c2 ^ 0xffff) + 0x0821;
-	a = c1 + c2;
-	b = a & 0x8410;
-	c = b - (b >> 4);
-	c = c ^ 0x7bcf;
-	z = ((a & c) & MASK2) << 1;
-
-	return z;
-}
-#else
-#define COLOR_SUB(C1, C2)                                                      \
-	(GFX.ZERO_OR_X2[(((C1) | RGB_HI_BITS_MASKx2) -                         \
-			 ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >>                   \
-			1] +                                                   \
-	 ((C1)&RGB_LOW_BITS_MASK) - ((C2)&RGB_LOW_BITS_MASK))
-#endif
-
 #ifdef TL_COLOR_OPS
+	if (Settings.FastColor) {
+		uint16_t a, b, c, z, c1, c2;
+		c1 = (C1 & MASK1) >> 1;
+		c2 = (C2 & MASK1) >> 1;
+		c2 = (c2 ^ 0xffff) + 0x0821;
+		a = c1 + c2;
+		b = a & 0x8410;
+		c = b - (b >> 4);
+		c = c ^ 0x7bcf;
+		z = ((a & c) & MASK2) << 1;
+
+		return z;
+	} else
+#endif
+	{
+		return (GFX.ZERO_OR_X2[(((C1) | RGB_HI_BITS_MASKx2) -
+					((C2)&RGB_REMOVE_LOW_BITS_MASK)) >>
+				       1] +
+			((C1)&RGB_LOW_BITS_MASK) - ((C2)&RGB_LOW_BITS_MASK));
+	}
+}
+
 inline uint16_t COLOR_SUB1_2(uint16_t C1, uint16_t C2)
 {
-	uint16_t a, b, c, z, c1, c2;
-	c1 = (C1 & MASK1) >> 1;
-	c2 = (C2 & MASK1) >> 1;
-	c2 = (c2 ^ 0xffff) + 0x0821;
-	a = c1 + c2;
-	b = a & 0x8410;
-	c = b - (b >> 4);
-	c = c ^ 0x7bcf;
-	z = (a & c) & MASK2;
+#ifdef TL_COLOR_OPS
+	if (Settings.FastColor) {
+		uint16_t a, b, c, z, c1, c2;
+		c1 = (C1 & MASK1) >> 1;
+		c2 = (C2 & MASK1) >> 1;
+		c2 = (c2 ^ 0xffff) + 0x0821;
+		a = c1 + c2;
+		b = a & 0x8410;
+		c = b - (b >> 4);
+		c = c ^ 0x7bcf;
+		z = (a & c) & MASK2;
 
-	return z;
-}
-#else
-#define COLOR_SUB1_2(C1, C2)                                                   \
-	GFX.ZERO[(((C1) | RGB_HI_BITS_MASKx2) -                                \
-		  ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >>                          \
-		 1]
+		return z;
+	} else
 #endif
+	{
+		return GFX.ZERO[(((C1) | RGB_HI_BITS_MASKx2) -
+				 ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >>
+				1];
+	}
+}
 
 typedef void (*NormalTileRenderer)(uint32 Tile, uint32 Offset, uint32 StartLine,
 				   uint32 LineCount, struct SGFX *gfx);
@@ -292,10 +287,6 @@ void S9xSetupOBJ(struct SOBJ *);
 void S9xUpdateScreen();
 void RenderLine(uint8 line, struct SPPU *);
 void S9xBuildDirectColourMaps();
-
-// External port interface which must be implemented or initialised for each
-// port.
-extern struct SGFX GFX;
 
 bool8_32 S9xGraphicsInit();
 void S9xGraphicsDeinit();
