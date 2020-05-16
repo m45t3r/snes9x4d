@@ -498,7 +498,7 @@ void S9xStartScreenRefresh()
 					gfx->PPL = gfx->Pitch;
 				gfx->PPLx2 = gfx->PPL << 1;
 			}
-#if defined(USE_GLIDE) || defined(USE_OPENGL)
+#ifdef USE_OPENGL
 			gfx->ZPitch = gfx->RealPitch;
 			if (Settings.SixteenBit)
 				gfx->ZPitch >>= 1;
@@ -507,21 +507,8 @@ void S9xStartScreenRefresh()
 			ippu->RenderedScreenWidth = 256;
 			ippu->RenderedScreenHeight = ppu->ScreenHeight;
 			ippu->DoubleWidthPixels = FALSE;
-#ifdef USE_GLIDE
-			if (Settings.GlideEnable) {
-				// Speed up hack for Glide: render low res. SNES
-				// images into a handy 256x256 sized buffer that
-				// can be uploaded into texture memory with one
-				// Glide call without having to copy it into a
-				// second, suitably sized buffer first.
-				gfx->Pitch2 = gfx->Pitch = 256 * sizeof(uint16);
-				gfx->PPL = 256;
-				gfx->PPLx2 = gfx->Pitch;
-				gfx->ZPitch = 256;
-			} else
-#endif
 #ifdef USE_OPENGL
-			    if (Settings.OpenGLEnable) {
+			if (Settings.OpenGLEnable) {
 				gfx->Pitch2 = gfx->Pitch = 256 * sizeof(uint16);
 				gfx->PPL = 256;
 				gfx->PPLx2 = gfx->Pitch;
@@ -617,9 +604,6 @@ void S9xEndScreenRefresh(struct SPPU *ppu)
 			ppu->CGDATA[0] = saved;
 		}
 		if (
-#ifdef USE_GLIDE
-		    !Settings.GlideEnable &&
-#endif
 #ifdef USE_OPENGL
 		    !Settings.OpenGLEnable &&
 #endif
@@ -2892,18 +2876,11 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 			if (Settings.SixteenBit)
 #endif
 			{
-#if defined(USE_GLIDE) || defined(USE_OPENGL)
-				if (
-#ifdef USE_GLIDE
-				    (Settings.GlideEnable && gfx->Pitch == 512) ||
-#endif
 #ifdef USE_OPENGL
-				    (Settings.OpenGLEnable && gfx->Pitch == 512) ||
-#endif
-				    0) {
-					// Have to back out of the speed up hack where the low res. SNES image was
-					// rendered into a 256x239 sized buffer, ignoring the true, larger size of the
-					// buffer.
+				if (Settings.OpenGLEnable && gfx->Pitch == 512) {
+					// Have to back out of the speed up hack where the low res. SNES image
+					// was rendered into a 256x239 sized buffer, ignoring the true, larger
+					// size of the buffer.
 
 					for (int32 y = (int32)gfx->StartY - 1; y >= 0; y--) {
 						uint16 *p = (uint16 *)(gfx->Screen + y * gfx->Pitch) + 255;

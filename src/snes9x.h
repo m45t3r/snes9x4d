@@ -50,10 +50,6 @@
 #include "65c816.h"
 #include "messages.h"
 
-#if defined(USE_GLIDE) && !defined(GFX_MULTI_FORMAT)
-#define GFX_MULTI_FORMAT
-#endif
-
 #define ROM_NAME_LEN 23
 
 #ifdef ZLIB
@@ -313,7 +309,7 @@ struct SSettings {
 	bool8_32 NetPlayServer;
 	char ServerName[128];
 	int Port;
-	bool8_32 GlideEnable;
+	bool8_32 GlideEnable; // Unused
 	bool8_32 OpenGLEnable;
 	int32 AutoSaveDelay; // Time in seconds before S-RAM auto-saved if modified
 	bool8_32 ApplyCheats;
