@@ -1267,20 +1267,11 @@ void DrawLargePixel16Sub(uint32 Tile, uint32 Offset, uint32 StartPixel,
 	uint8 *Depth = gfx->ZBuffer + Offset;
 	uint16 pixel;
 
-#ifdef TL_COLOR_OPS
-#define LARGE_SUB_PIXEL(s, p)                                                  \
-	(Depth[z + gfx->DepthDelta]                                            \
-	     ? (Depth[z + gfx->DepthDelta] != 1                                \
-		    ? COLOR_SUB1_2(p, *(s + gfx->Delta))                       \
-		    : COLOR_SUB(p, gfx->FixedColour))                          \
-	     : p)
-#else
 #define LARGE_SUB_PIXEL(s, p)                                                  \
 	(Depth[z + gfx->DepthDelta] ? (Depth[z + gfx->DepthDelta] != 1         \
 					   ? COLOR_SUB(p, *(s + gfx->Delta))   \
 					   : COLOR_SUB(p, gfx->FixedColour))   \
 				    : p)
-#endif
 
 	RENDER_TILE_LARGE(gfx->ScreenColors[pixel], LARGE_SUB_PIXEL)
 }
