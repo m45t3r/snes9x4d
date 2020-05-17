@@ -2851,23 +2851,15 @@ void DisplayChar(uint8 *Screen, uint8 c, uint32 pitch)
 
 void S9xDisplayFrameRate(uint8 *screen, uint32 pitch)
 {
-#ifdef PANDORA
-	// the pandora directly hands over the correct position for the string
-	// since it is resolution dependant!
-	uint8 *Screen = screen;
-#else
 	uint8 *Screen = screen + 2 + 400 + (IPPU.RenderedScreenHeight - font_height - 1) * pitch;
-#endif
 	char string[16];
-	//    int len = 5;
 
 	sprintf(string, "%02d/%02d", IPPU.DisplayedRenderedFrameCount, (int)Memory.ROMFramesPerSecond);
 
-	int i;
 #ifdef _ZAURUS
 	Screen += (font_width - 1) * sizeof(uint16);
 #endif
-	for (i = 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) {
 		DisplayChar(Screen, string[i], pitch);
 		Screen += (font_width - 1) * sizeof(uint16);
 	}
