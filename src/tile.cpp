@@ -55,121 +55,6 @@ uint8 ConvertTile(uint8 *pCache, uint32 TileAddr)
 	register uint32 *p = (uint32 *)pCache;
 	register uint32 non_zero = 0;
 
-#ifdef __ARM__
-#define f(from, to_lo, to_hi, pix)                                                                                     \
-	"	movs	" #from ", " #from ", lsl #(17)	\n"                                                            \
-	"	addcs	" #to_hi ", " #to_hi ", #(1 << ( 0 + 1 + " #pix ")) \n"                                        \
-	"	addmi	" #to_hi ", " #to_hi ", #(1 << ( 8 + 1 + " #pix ")) \n"                                        \
-	"	movs	" #from ", " #from ", lsl #2	\n"                                                               \
-	"	addcs	" #to_hi ", " #to_hi ", #(1 << (16 + 1 + " #pix ")) \n"                                        \
-	"	addmi	" #to_hi ", " #to_hi ", #(1 << (24 + 1 + " #pix ")) \n"                                        \
-	"	movs	" #from ", " #from ", lsl #2	\n"                                                               \
-	"	addcs	" #to_lo ", " #to_lo ", #(1 << ( 0 + 1 + " #pix ")) \n"                                        \
-	"	addmi	" #to_lo ", " #to_lo ", #(1 << ( 8 + 1 + " #pix ")) \n"                                        \
-	"	movs	" #from ", " #from ", lsl #2	\n"                                                               \
-	"	addcs	" #to_lo ", " #to_lo ", #(1 << (16 + 1 + " #pix ")) \n"                                        \
-	"	addmi	" #to_lo ", " #to_lo ", #(1 << (24 + 1 + " #pix ")) \n"                                        \
-                                                                                                                       \
-	"	movs	" #from ", " #from ", lsl #2	\n"                                                               \
-	"	addcs	" #to_hi ", " #to_hi ", #(1 << ( 0 + " #pix ")) \n"                                            \
-	"	addmi	" #to_hi ", " #to_hi ", #(1 << ( 8 + " #pix ")) \n"                                            \
-	"	movs	" #from ", " #from ", lsl #2	\n"                                                               \
-	"	addcs	" #to_hi ", " #to_hi ", #(1 << (16 + " #pix ")) \n"                                            \
-	"	addmi	" #to_hi ", " #to_hi ", #(1 << (24 + " #pix ")) \n"                                            \
-	"	movs	" #from ", " #from ", lsl #2	\n"                                                               \
-	"	addcs	" #to_lo ", " #to_lo ", #(1 << ( 0 + " #pix ")) \n"                                            \
-	"	addmi	" #to_lo ", " #to_lo ", #(1 << ( 8 + " #pix ")) \n"                                            \
-	"	movs	" #from ", " #from ", lsl #2	\n"                                                               \
-	"	addcs	" #to_lo ", " #to_lo ", #(1 << (16 + " #pix ")) \n"                                            \
-	"	addmi	" #to_lo ", " #to_lo ", #(1 << (24 + " #pix ")) \n"
-
-	switch (BG.BitShift) {
-	case 8:
-		__asm__ volatile("	mov	r0, #8		\n"
-				 "	mov	%[non_zero], #0	\n"
-
-				 "1:	\n"
-
-				 "	mov	r1, #0		\n"
-				 "	mov	r2, #0		\n"
-
-				 "	ldrh	r3, [%[tp], #16]	\n"
-				 "	ldrh	r4, [%[tp], #32]	\n"
-
-				 f(r3, r2, r1, 2) f(r4, r2, r1, 4)
-
-				     "	ldrh	r3, [%[tp], #48]	\n"
-				     "	ldrh	r4, [%[tp]], #2	\n"
-
-				 f(r3, r2, r1, 6) f(r4, r2, r1, 0)
-
-				     "	stmia	%[p]!, {r1, r2} \n"
-
-				     "	orr	%[non_zero], %[non_zero], r1	\n"
-				     "	orr	%[non_zero], %[non_zero], r2	\n"
-
-				     "	subs	r0, r0, #1	\n"
-				     "	bne	1b		\n"
-
-				 : [ non_zero ] "+r"(non_zero), [ tp ] "+r"(tp), [ p ] "+r"(p)
-				 :
-				 : "r0", "r1", "r2", "r3", "r4", "cc");
-		break;
-
-	case 4:
-		__asm__ volatile("	mov	r0, #8		\n"
-				 "	mov	%[non_zero], #0	\n"
-				 "1:	\n"
-
-				 "	mov	r1, #0		\n"
-				 "	mov	r2, #0		\n"
-
-				 "	ldrh	r3, [%[tp], #16]\n"
-				 "	ldrh	r4, [%[tp]], #2	\n"
-
-				 f(r3, r2, r1, 2) f(r4, r2, r1, 0)
-
-				     "	stmia	%[p]!, {r1, r2} \n"
-
-				     "	orr	%[non_zero], %[non_zero], r1	\n"
-				     "	orr	%[non_zero], %[non_zero], r2	\n"
-
-				     "	subs	r0, r0, #1	\n"
-				     "	bne	1b		\n"
-
-				 : [ non_zero ] "+r"(non_zero), [ tp ] "+r"(tp), [ p ] "+r"(p)
-				 :
-				 : "r0", "r1", "r2", "r3", "r4", "cc");
-		break;
-
-	case 2:
-		__asm__ volatile("	mov	r0, #8		\n"
-				 "	mov	%[non_zero], #0	\n"
-				 "1:	\n"
-
-				 "	ldrh	r3, [%[tp]], #2	\n"
-
-				 "	mov	r1, #0		\n"
-				 "	mov	r2, #0		\n"
-
-				 f(r3, r2, r1, 0)
-
-				     "	stmia	%[p]!, {r1, r2} \n"
-
-				     "	orr	%[non_zero], %[non_zero], r1	\n"
-				     "	orr	%[non_zero], %[non_zero], r2	\n"
-
-				     "	subs	r0, r0, #1	\n"
-				     "	bne	1b		\n"
-
-				 : [ non_zero ] "+r"(non_zero), [ tp ] "+r"(tp), [ p ] "+r"(p)
-				 :
-				 : "r0", "r1", "r2", "r3", "cc");
-		break;
-	}
-#undef f
-
-#else
 	uint8 line;
 
 	switch (BG.BitShift) {
@@ -263,7 +148,6 @@ uint8 ConvertTile(uint8 *pCache, uint32 TileAddr)
 		}
 		break;
 	}
-#endif
 	return (non_zero ? TRUE : BLANK_TILE);
 }
 
