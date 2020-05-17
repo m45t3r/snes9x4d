@@ -780,33 +780,26 @@ void S9xToggleSoundChannel(int c)
 }
 #endif
 
-inline void timespec_sub(struct timespec *diff, const struct timespec *left, const struct timespec *right)
-{
-	diff->tv_sec = left->tv_sec - right->tv_sec;
-	diff->tv_nsec = left->tv_nsec - right->tv_nsec;
-}
-
 void S9xSyncSpeed() // called from S9xMainLoop in ../cpuexec.cpp
 {
 	if (!Settings.TurboMode && Settings.SkipFrames == AUTO_FRAMERATE) {
-		static struct timespec next1 = {0, 0};
-		struct timespec now, diff;
+		static struct timeval next1 = {0, 0};
+		struct timeval now;
 
-		while (clock_gettime(CLOCK_MONOTONIC, &now) < 0)
+		while (gettimeofday(&now, NULL) < 0)
 			;
 		if (next1.tv_sec == 0) {
 			next1 = now;
-			next1.tv_nsec += Settings.FrameTime * 1000;
+			next1.tv_usec++;
 		}
 
-		timespec_sub(&diff, &next1, &now);
-
-		if (diff.tv_nsec > 0) {
+		if (timercmp(&next1, &now, >)) {
 			if (IPPU.SkippedFrames == 0) {
-				CHECK_SOUND();
-				nanosleep(&diff, NULL);
-				while (clock_gettime(CLOCK_MONOTONIC, &now) < 0)
-					;
+				do {
+					CHECK_SOUND();
+					while (gettimeofday(&now, NULL) < 0)
+						;
+				} while (timercmp(&next1, &now, >));
 			}
 			IPPU.RenderThisFrame = TRUE;
 			IPPU.SkippedFrames = 0;
@@ -820,10 +813,10 @@ void S9xSyncSpeed() // called from S9xMainLoop in ../cpuexec.cpp
 				next1 = now;
 			}
 		}
-		next1.tv_nsec += Settings.FrameTime * 1000;
-		if (next1.tv_nsec >= 1000000000) {
-			next1.tv_sec += next1.tv_nsec / 1000000000;
-			next1.tv_nsec %= 1000000000;
+		next1.tv_usec += Settings.FrameTime;
+		if (next1.tv_usec >= 1000000) {
+			next1.tv_sec += next1.tv_usec / 1000000;
+			next1.tv_usec %= 1000000;
 		}
 	} else {
 		if (++IPPU.FrameSkip >= (Settings.TurboMode ? Settings.TurboSkipFrames : Settings.SkipFrames)) {
