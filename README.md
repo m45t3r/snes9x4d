@@ -25,8 +25,8 @@ if your device freeze reduce the overclock or return to default.
 ## Options
 
 This emulator has multiple options that can be accessed using `Reset` button in
-BittBoy/PocketGo. Some of them may improve performance at the expense of
-quality. Some of them are described below:
+BittBoy/PocketGo. They may improve performance at the expense of quality. Some
+of them are described below:
 
 - Transparency (default `True`): enables/disables transparency effects in
   games. Disabling it may improve performance, but it may also break some
