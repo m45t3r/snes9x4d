@@ -28,13 +28,14 @@ This emulator has multiple options that can be accessed using `Reset` button in
 BittBoy/PocketGo. They may improve performance at the expense of quality. Some
 of them are described below:
 
-- Transparency (default `True`): enables/disables transparency effects in
+- Transparency (default `False`): enables/disables transparency effects in
   games. Disabling it may improve performance, but it may also break some
   effects in games and even make some of them unplayable because of missing
   effects
 - Fast Color (default `True`): enables/disables some color optimizations.
   Enabling it may improve performance, but some colors may look wrong, possibly
-  making some games unplayable. Disable it if this becomes a problem
+  making some games unplayable. The problem seems more common when transparency
+  is also enabled. Disable it if this becomes a problem
 - Full Screen (default `False`): enables/disables full screen. There is a small
   performance impact for it, and it also makes the aspect ratio wrong
 - Billinear Filtering (default `False`): enables/disables bilinear filtering.
