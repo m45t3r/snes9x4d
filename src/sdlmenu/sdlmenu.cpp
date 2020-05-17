@@ -338,7 +338,7 @@ void menu_loop(void)
 	S9xDeinitDisplay();
 	S9xInitDisplay(0, 0);
 	if (old_fast_color != Settings.FastColor)
-		S9xBuildLookupTable();
+		S9xInitColorOps();
 	if (old_sound_playback_rate != Settings.SoundPlaybackRate || old_stereo != Settings.Stereo)
 		S9xReinitSound();
 }

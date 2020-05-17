@@ -160,6 +160,71 @@ void DrawLargePixel16Sub(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 P
 void DrawLargePixel16Sub1_2(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Pixels, uint32 StartLine,
 			    uint32 LineCount, struct SGFX *gfx);
 
+uint16_t (*COLOR_ADD)(uint16_t C1, uint16_t C2);
+uint16_t (*COLOR_SUB)(uint16_t C1, uint16_t C2);
+uint16_t (*COLOR_SUB1_2)(uint16_t C1, uint16_t C2);
+
+uint16_t FAST_COLOR_ADD(uint16_t C1, uint16_t C2)
+{
+	uint16_t a, b, c, z, c1, c2;
+
+	c1 = C1 & MASK1;
+	c2 = C2 & MASK1;
+	a = (c1 >> 1) + (c2 >> 1);
+	b = a & 0x8410;
+	c = b - (b >> 4);
+	z = ((a | c) & MASK2) << 1;
+	return z;
+}
+
+uint16_t LOOKUP_COLOR_ADD(uint16_t C1, uint16_t C2)
+{
+	return (GFX.X2[((((C1)&RGB_REMOVE_LOW_BITS_MASK) + ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >> 1) +
+		       ((C1) & (C2)&RGB_LOW_BITS_MASK)] |
+		(((C1) ^ (C2)) & RGB_LOW_BITS_MASK));
+}
+
+uint16_t FAST_COLOR_SUB(uint16_t C1, uint16_t C2)
+{
+	uint16_t a, b, c, z, c1, c2;
+	c1 = (C1 & MASK1) >> 1;
+	c2 = (C2 & MASK1) >> 1;
+	c2 = (c2 ^ 0xffff) + 0x0821;
+	a = c1 + c2;
+	b = a & 0x8410;
+	c = b - (b >> 4);
+	c = c ^ 0x7bcf;
+	z = ((a & c) & MASK2) << 1;
+
+	return z;
+}
+
+uint16_t LOOKUP_COLOR_SUB(uint16_t C1, uint16_t C2)
+{
+	return (GFX.ZERO_OR_X2[(((C1) | RGB_HI_BITS_MASKx2) - ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >> 1] +
+		((C1)&RGB_LOW_BITS_MASK) - ((C2)&RGB_LOW_BITS_MASK));
+}
+
+uint16_t FAST_COLOR_SUB1_2(uint16_t C1, uint16_t C2)
+{
+	uint16_t a, b, c, z, c1, c2;
+	c1 = (C1 & MASK1) >> 1;
+	c2 = (C2 & MASK1) >> 1;
+	c2 = (c2 ^ 0xffff) + 0x0821;
+	a = c1 + c2;
+	b = a & 0x8410;
+	c = b - (b >> 4);
+	c = c ^ 0x7bcf;
+	z = (a & c) & MASK2;
+
+	return z;
+}
+
+inline uint16_t LOOKUP_COLOR_SUB1_2(uint16_t C1, uint16_t C2)
+{
+	return GFX.ZERO[(((C1) | RGB_HI_BITS_MASKx2) - ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >> 1];
+}
+
 bool8_32 S9xGraphicsInit()
 {
 	register uint32 PixelOdd = 1;
@@ -302,13 +367,7 @@ bool8_32 S9xGraphicsInit()
 	GFX.ZERO_OR_X2 = NULL;
 	GFX.ZERO = NULL;
 
-	return S9xBuildLookupTable();
-}
-
-void S9xGraphicsDeinit(void)
-{
-	// Free any memory allocated in S9xGraphicsInit
-	S9xFreeLookupTable();
+	return S9xInitColorOps();
 }
 
 void S9xFreeLookupTable()
@@ -327,9 +386,19 @@ void S9xFreeLookupTable()
 	}
 }
 
-bool8_32 S9xBuildLookupTable()
+void S9xGraphicsDeinit(void)
+{
+	// Free any memory allocated in S9xGraphicsInit
+	S9xFreeLookupTable();
+}
+
+bool8_32 S9xInitColorOps()
 {
 	if (Settings.SixteenBit && !Settings.FastColor) {
+		COLOR_ADD = LOOKUP_COLOR_ADD;
+		COLOR_SUB = LOOKUP_COLOR_SUB;
+		COLOR_SUB1_2 = LOOKUP_COLOR_SUB1_2;
+
 		if (!(GFX.X2 = (uint16 *)malloc(sizeof(uint16) * 0x10000)))
 			return (FALSE);
 
@@ -434,6 +503,10 @@ bool8_32 S9xBuildLookupTable()
 			}
 		}
 	} else {
+		COLOR_ADD = FAST_COLOR_ADD;
+		COLOR_SUB = FAST_COLOR_SUB;
+		COLOR_SUB1_2 = FAST_COLOR_SUB1_2;
+
 		S9xFreeLookupTable();
 	}
 
