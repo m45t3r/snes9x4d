@@ -2511,7 +2511,7 @@ inline void CPUShutdown(struct SICPU *icpu, struct SCPUState *cpu)
 }
 #endif
 #else
-#define CPUShutdown()
+#define CPUShutdown(icpu, cpu)
 #endif
 
 /* BCC */

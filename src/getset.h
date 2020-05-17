@@ -102,7 +102,7 @@ INLINE uint8 S9xGetByte(uint32 Address, struct SCPUState *cpu)
 		return (*(GetAddress + (Address & 0xffff)));
 	}
 
-	switch ((int)GetAddress) {
+	switch ((intptr_t)GetAddress) {
 	case CMemory::MAP_PPU:
 #ifdef VAR_CYCLES
 		if (!cpu->InDMA)
@@ -230,7 +230,7 @@ INLINE uint16 S9xGetWord(uint32 Address, struct SCPUState *cpu)
 		return READ_WORD(GetAddress + (Address & 0xffff));
 	}
 
-	switch ((int)GetAddress) {
+	switch ((intptr_t)GetAddress) {
 	case CMemory::MAP_PPU:
 #ifdef VAR_CYCLES
 		if (!cpu->InDMA)
@@ -377,7 +377,7 @@ INLINE void S9xSetByte(uint8 Byte, uint32 Address, struct SCPUState *cpu)
 		return;
 	}
 
-	switch ((int)SetAddress) {
+	switch ((intptr_t)SetAddress) {
 	case CMemory::MAP_PPU:
 #ifdef VAR_CYCLES
 		if (!cpu->InDMA)
@@ -533,7 +533,7 @@ INLINE void S9xSetWord(uint16 Word, uint32 Address, struct SCPUState *cpu)
 		return;
 	}
 
-	switch ((int)SetAddress) {
+	switch ((intptr_t)SetAddress) {
 	case CMemory::MAP_PPU:
 #ifdef VAR_CYCLES
 		if (!cpu->InDMA)
@@ -678,7 +678,7 @@ INLINE uint8 *GetBasePointer(uint32 Address)
 		return s7r.bank50;
 	}
 #endif
-	switch ((int)GetAddress) {
+	switch ((intptr_t)GetAddress) {
 #ifndef _ZAURUS
 	case CMemory::MAP_SPC7110_DRAM:
 #ifdef SPC7110_DEBUG
@@ -743,7 +743,7 @@ INLINE uint8 *S9xGetMemPointer(uint32 Address)
 	if (Settings.SPC7110 && ((Address & 0x7FFFFF) == 0x4800))
 		return s7r.bank50;
 #endif
-	switch ((int)GetAddress) {
+	switch ((intptr_t)GetAddress) {
 #ifndef _ZAURUS
 	case CMemory::MAP_SPC7110_DRAM:
 #ifdef SPC7110_DEBUG
@@ -805,7 +805,7 @@ INLINE void S9xSetPCBase(uint32 Address, struct SCPUState *cpu)
 		return;
 	}
 
-	switch ((int)GetAddress) {
+	switch ((intptr_t)GetAddress) {
 	case CMemory::MAP_PPU:
 #ifdef VAR_CYCLES
 		cpu->MemSpeed = ONE_CYCLE;
