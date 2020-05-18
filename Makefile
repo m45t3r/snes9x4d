@@ -61,7 +61,8 @@ INCLUDE = -I. -Isrc/ -Isrc/unzip
 LDLIBS  = -lSDL -lz -lm $(SDL_LIBS)
 
 OFLAGS = -Ofast -march=armv5te -mtune=arm926ej-s \
-	 -fomit-frame-pointer -fno-strict-aliasing -fno-stack-protector
+	 -fomit-frame-pointer -fno-strict-aliasing -fno-stack-protector \
+	 -flto
 
 ifeq ($(PGO), GENERATE)
   OFLAGS += -fprofile-generate -fprofile-dir=./profile
