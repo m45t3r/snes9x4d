@@ -58,17 +58,22 @@ SDL_LIBS := $(shell $(SYSROOT)/usr/bin/sdl-config --libs)
 
 INCLUDE = -I. -Isrc/ -Isrc/unzip
 
-LDLIBS  = -lSDL -lz -lm $(SDL_LIBS)
+LDFLAGS = -lSDL -lz -lm $(SDL_LIBS) -Wl,--as-needed -Wl,--gc-sections -s
 
-OFLAGS = -Ofast -march=armv5te -mtune=arm926ej-s \
-	 -fomit-frame-pointer -fno-strict-aliasing -fno-stack-protector \
-	 -flto
+OFLAGS = -Ofast -march=armv5te -mtune=arm926ej-s -marm \
+	 -flto=4 -fwhole-program -fuse-linker-plugin \
+	 -fdata-sections -ffunction-sections \
+	 -fno-stack-protector -fomit-frame-pointer \
 
 ifeq ($(PGO), GENERATE)
   OFLAGS += -fprofile-generate -fprofile-dir=./profile
-  LDLIBS += -lgcov
+  LDFLAGS += -lgcov
 else ifeq ($(PGO), APPLY)
-  OFLAGS += -fprofile-use -fprofile-dir=./profile -fbranch-probabilities
+  LDFLAGS += -fprofile-use -fprofile-dir=./profile -fbranch-probabilities
+else
+  OFLAGS += -falign-functions=1 -falign-jumps=1 -falign-loops=1 \
+	    -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-unroll-loops \
+	    -fmerge-all-constants
 endif
 
 CCFLAGS = $(OFLAGS) \
@@ -91,7 +96,7 @@ $(UNZIPDEFINES) \
 -D__SDL__ \
 
 CXXFLAGS = --std=gnu++03 \
-	   -fno-exceptions -fno-rtti -fno-math-errno -fno-threadsafe-statics \
+	   -fno-exceptions -fno-rtti -fno-threadsafe-statics \
 $(CCFLAGS)
 
 CFLAGS = --std=gnu11 $(CCFLAGS)
@@ -105,7 +110,7 @@ format:
 	find . -regex '.*\.\(cpp\|hpp\|cc\|cxx\)' -exec clang-format -style=file -i {} \;
 
 snes9x4d: $(OBJECTS)
-	$(CXX) -o $@ $(OBJECTS) $(LDLIBS)
+	$(CXX) -o $@ $(OBJECTS) $(LDFLAGS)
 	$(STRIP) $@
 
 .cpp.o:
