@@ -798,20 +798,17 @@ void S9xSetPPU(uint8 Byte, uint16 Address, struct SPPU *ppu, struct InternalPPU 
 			break;
 		}
 	} else {
-		//#ifndef _ZAURUS
 		if (Settings.SA1) {
 			if (Address >= 0x2200 && Address < 0x23ff)
 				S9xSetSA1(Byte, Address);
 			else
 				Memory.FillRAM[Address] = Byte;
 			return;
-		}
-		//#ifndef _ZAURUS
-		else
-		    /*			// Dai Kaijyu Monogatari II
-					    if (Address == 0x2801 &&
-		       Settings.SRTC) S9xSetSRTC(Byte, Address); else
-		    */
+		} else
+		    // Dai Kaijyu Monogatari II
+		    // if (Address == 0x2801 && Settings.SRTC)
+		    // 	S9xSetSRTC(Byte, Address);
+		    // else
 		    if (Address < 0x3000 || Address >= 0x3000 + 768) {
 #ifdef DEBUGGER
 			missing.unknownppu_write = Address;
@@ -1246,10 +1243,8 @@ uint8 S9xGetPPU(uint16 Address, struct SPPU *ppu, CMemory *mem)
 			return (1);
 		}
 	} else {
-		//#ifndef _ZAURUS
 		if (Settings.SA1)
 			return (S9xGetSA1(Address));
-		//#endif
 		if (Address <= 0x2fff || Address >= 0x3000 + 768) {
 			switch (Address) {
 			case 0x21c2:
@@ -1275,11 +1270,8 @@ uint8 S9xGetPPU(uint16 Address, struct SPPU *ppu, CMemory *mem)
 				return (0); // mem->FillRAM[Address]);
 			}
 		}
-		//#ifndef _ZAURUS
 		if (!Settings.SuperFX)
-			//#endif
 			return (0x30);
-//#ifndef _ZAURUS
 #ifdef ZSNES_FX
 		if (Address < 0x3040)
 			byte = S9xSuperFXReadReg(Address);
@@ -1715,7 +1707,6 @@ void S9xSetCPU(uint8 byte, uint16 Address, struct SPPU *ppu, struct SCPUState *c
 		case 0x4803:
 			// printf ("%02x->%04x\n", byte, Address);
 			break;
-			//#ifndef _ZAURUS
 		case 0x4804:
 		case 0x4805:
 		case 0x4806:
@@ -1724,7 +1715,6 @@ void S9xSetCPU(uint8 byte, uint16 Address, struct SPPU *ppu, struct SCPUState *c
 
 			S9xSetSDD1MemoryMap(Address - 0x4804, byte & 7);
 			break;
-			//#endif
 		default:
 #ifdef DEBUGGER
 			missing.unknowncpu_write = Address;
@@ -2390,7 +2380,6 @@ void S9xUpdateJoypads(struct InternalPPU *ippu)
 	}
 }
 
-//#ifndef _ZAURUS
 #ifndef ZSNES_FX
 void S9xSuperFXExec()
 {
@@ -2559,4 +2548,3 @@ void S9xSuperFXExec()
 #endif
 }
 #endif
-//#endif

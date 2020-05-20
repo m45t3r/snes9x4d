@@ -1231,7 +1231,6 @@ void CMemory::TalesROMMap(bool8_32 Interleaved)
 	WriteProtectROM();
 }
 
-//#ifndef _ZAURUS
 void CMemory::AlphaROMMap()
 {
 	int c;
@@ -1443,7 +1442,6 @@ void CMemory::SA1ROMMap()
 
 	BWRAM = SRAM;
 }
-//#endif
 
 void CMemory::LoROM24MBSMap()
 {

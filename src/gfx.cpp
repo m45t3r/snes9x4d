@@ -3372,10 +3372,10 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 				RenderScreen(gfx->Screen, FALSE, TRUE, SUB_SCREEN_DEPTH);
 			}
 		}
-	}
-	// #ifndef _ZAURUS
-	else {
-		// if (Settings.SixteenBit)
+	} else {
+#ifndef _ZAURUS
+		if (Settings.SixteenBit)
+#endif
 		{
 			uint32 back = ippu->ScreenColors[0] | (ippu->ScreenColors[0] << 16);
 			if (PPU.ForcedBlanking)
@@ -3394,15 +3394,13 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 				}
 			}
 		}
-		/*	else
-			{
-			    for (uint32 y = starty; y <= endy; y++)
-			    {
-				ZeroMemory (gfx->Screen + y * gfx->Pitch2,
-					    ippu->RenderedScreenWidth);
-			    }
+#ifndef _ZAURUS
+		else {
+			for (uint32 y = starty; y <= endy; y++) {
+				ZeroMemory(gfx->Screen + y * gfx->Pitch2, ippu->RenderedScreenWidth);
 			}
-		*/
+		}
+#endif
 		if (!PPU.ForcedBlanking) {
 			for (uint32 y = starty; y <= endy; y++) {
 				ZeroMemory(gfx->ZBuffer + y * gfx->ZPitch, ippu->RenderedScreenWidth);
@@ -3481,26 +3479,28 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 						Mode7Depths[1] = 5;
 						bg = 0;
 					}
-					/*
+
+#ifndef _ZAURUS
 					if (!Settings.SixteenBit)
-							DrawBGMode7Background(gfx->Screen, bg);
+						DrawBGMode7Background(gfx->Screen, bg);
 					else {
 						if (!Settings.Mode7Interpolate) {
-					*/
-					DrawBGMode7Background16(gfx->Screen, bg);
-					/*
-					} else {
-						DrawBGMode7Background16_i (gfx->Screen, bg);
+#endif
+							DrawBGMode7Background16(gfx->Screen, bg);
+#ifndef _ZAURUS
+						} else {
+							DrawBGMode7Background16_i(gfx->Screen, bg);
+						}
 					}
-					*/
+#endif
 				}
 			}
 		}
 	}
-	//#endif
 	if (Settings.SupportHiRes && PPU.BGMode != 5 && PPU.BGMode != 6) {
 		if (ippu->DoubleWidthPixels) {
-			// Mixure of background modes used on screen - scale width of all non-mode 5 and 6 pixels.
+			// Mixure of background modes used on screen - scale width of all non-mode 5 and
+			// 6 pixels.
 #ifndef _ZAURUS
 			if (Settings.SixteenBit) {
 #endif
