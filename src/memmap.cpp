@@ -427,13 +427,12 @@ again:
 				break;
 			case 2:
 #if 0
-		if (!Settings.ForceLoROM &&
-		    strncmp ((char *) &ROM [0x7fc0], "SUPER FORMATION SOCCE", 21) != 0 &&
-		    strncmp ((char *) &ROM [0x7fc0], "Star Ocean", 10) != 0)
-		{
-		    LoROM = FALSE;
-		    HiROM = TRUE;
-		}
+				if (!Settings.ForceLoROM &&
+				    strncmp((char *)&ROM[0x7fc0], "SUPER FORMATION SOCCE", 21) != 0 &&
+				    strncmp((char *)&ROM[0x7fc0], "Star Ocean", 10) != 0) {
+					LoROM = FALSE;
+					HiROM = TRUE;
+				}
 #endif
 				break;
 			case 5:

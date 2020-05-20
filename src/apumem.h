@@ -145,20 +145,19 @@ INLINE void S9xAPUSetByte(uint8 byte, uint32 Address, struct SIAPU *iapu, struct
 		}
 	} else {
 #if 0
-if (Address >= 0x2500 && Address <= 0x2504)
-printf ("%06d %04x <- %02x\n", ICPU.Scanline, Address, byte);
-if (Address == 0x26c6)
-{
-    extern FILE *apu_trace;
-    extern FILE *trace;
-    apu->Flags |= TRACE_FLAG;
-    CPU.Flags |= TRACE_FLAG;
-    if (apu_trace == NULL)
-	apu_trace = fopen ("aputrace.log", "wb");
-    if (trace == NULL)
-	trace = fopen ("trace.log", "wb");
-    printf ("TRACING SWITCHED ON\n");
-}
+		if (Address >= 0x2500 && Address <= 0x2504)
+			printf("%06d %04x <- %02x\n", ICPU.Scanline, Address, byte);
+		if (Address == 0x26c6) {
+			extern FILE *apu_trace;
+			extern FILE *trace;
+			apu->Flags |= TRACE_FLAG;
+			CPU.Flags |= TRACE_FLAG;
+			if (apu_trace == NULL)
+				apu_trace = fopen("aputrace.log", "wb");
+			if (trace == NULL)
+				trace = fopen("trace.log", "wb");
+			printf("TRACING SWITCHED ON\n");
+		}
 #endif
 		if (Address < 0xffc0)
 			iapu->RAM[Address] = byte;

@@ -124,20 +124,6 @@ struct SRegisters {
 	pair Y;
 };
 
-#if 0
-struct SRegisters {
-	uint8 PB;
-	uint8 DB;
-	pair P;
-	pair A;
-	pair D;
-	pair S;
-	pair X;
-	pair Y;
-	uint16 PC;
-};
-#endif
-
 struct SICPU {
 	uint8 *Speed;
 	struct SOpcodes *S9xOpcodes;

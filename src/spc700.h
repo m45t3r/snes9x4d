@@ -105,16 +105,6 @@ struct SAPURegisters {
 	uint8_32 S;
 };
 
-#if 0
-struct SAPURegisters {
-	uint8 P;
-	YAndA YA;
-	uint8 X;
-	uint8 S;
-	uint16 PC;
-};
-#endif
-
 EXTERN_C struct SAPURegisters APURegisters;
 
 // Needed by ILLUSION OF GAIA
