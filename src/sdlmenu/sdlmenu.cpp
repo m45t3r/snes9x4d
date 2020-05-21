@@ -90,11 +90,6 @@ void menu_dispupdate(void)
 	    "State Slot               ",
 	    "Display Frame Rate       ",
 	    "Transparency             ",
-#ifdef TL_COLOR_OPS
-	    "Fast Color               ",
-#else
-	    "N/A                      ",
-#endif
 	    "Full Screen              ",
 #ifdef BILINEAR_SCALE
 	    "Bilinear Filtering       ",
@@ -121,36 +116,29 @@ void menu_dispupdate(void)
 	else
 		strfmt(disptxt[7], "%s False", disptxt[7]);
 
-#ifdef TL_COLOR_OPS
-	if (Settings.FastColor)
+	if (Scale)
 		strfmt(disptxt[8], "%s True", disptxt[8]);
 	else
 		strfmt(disptxt[8], "%s False", disptxt[8]);
-#endif
-
-	if (Scale)
-		strfmt(disptxt[9], "%s True", disptxt[9]);
-	else
-		strfmt(disptxt[9], "%s False", disptxt[9]);
 
 #ifdef BILINEAR_SCALE
 	if (Bilinear)
-		strfmt(disptxt[10], "%s True", disptxt[10]);
+		strfmt(disptxt[9], "%s True", disptxt[9]);
 	else
-		strfmt(disptxt[10], "%s False", disptxt[10]);
+		strfmt(disptxt[9], "%s False", disptxt[9]);
 #endif
 
 	if (Settings.SkipFrames == AUTO_FRAMERATE)
-		strfmt(disptxt[11], "%s Auto", disptxt[11]);
+		strfmt(disptxt[10], "%s Auto", disptxt[10]);
 	else
-		strfmt(disptxt[11], "%s %02d/%d", disptxt[11], (int)Memory.ROMFramesPerSecond, Settings.SkipFrames);
+		strfmt(disptxt[10], "%s %02d/%d", disptxt[10], (int)Memory.ROMFramesPerSecond, Settings.SkipFrames);
 
-	strfmt(disptxt[12], "%s %s", disptxt[12], Rates[Settings.SoundPlaybackRate]);
+	strfmt(disptxt[11], "%s %s", disptxt[11], Rates[Settings.SoundPlaybackRate]);
 
 	if (Settings.Stereo)
-		strfmt(disptxt[13], "%s True", disptxt[13]);
+		strfmt(disptxt[12], "%s True", disptxt[12]);
 	else
-		strfmt(disptxt[13], "%s False", disptxt[13]);
+		strfmt(disptxt[12], "%s False", disptxt[12]);
 
 	for (int i = 0; i < MAX_MENU_ITEMS; i++) {
 		if (i == cursor)
@@ -180,7 +168,6 @@ void menu_dispupdate(void)
 void menu_loop(void)
 {
 	bool8_32 old_stereo = Settings.Stereo;
-	bool8_32 old_fast_color = Settings.FastColor;
 	uint32 old_sound_playback_rate = Settings.SoundPlaybackRate;
 	bool8_32 exit_loop = false;
 	char fname[SBUFFER], ext[8];
@@ -267,25 +254,18 @@ void menu_loop(void)
 						Settings.Transparency = !Settings.Transparency;
 					break;
 				case 8:
-#ifdef TL_COLOR_OPS
-					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED ||
-					    keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
-						Settings.FastColor = !Settings.FastColor;
-#endif
-					break;
-				case 9:
 					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED ||
 					    keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
 						Scale = !Scale;
 					break;
-				case 10:
+				case 9:
 #ifdef BILINEAR_SCALE
 					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED ||
 					    keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
 						Bilinear = !Bilinear;
 #endif
 					break;
-				case 11:
+				case 10:
 					if (Settings.SkipFrames == AUTO_FRAMERATE)
 						Settings.SkipFrames = 10;
 
@@ -299,23 +279,23 @@ void menu_loop(void)
 					else if (Settings.SkipFrames <= 1)
 						Settings.SkipFrames = 1;
 					break;
-				case 12:
+				case 11:
 					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED) {
 						Settings.SoundPlaybackRate = (Settings.SoundPlaybackRate - 1) & 7;
 					} else if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED) {
 						Settings.SoundPlaybackRate = (Settings.SoundPlaybackRate + 1) & 7;
 					}
 					break;
-				case 13:
+				case 12:
 					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED ||
 					    keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
 						Settings.Stereo = !Settings.Stereo;
 					break;
-				case 14:
+				case 13:
 					if (keyssnes[sfc_key[A_1]] == SDL_PRESSED)
 						show_credits();
 					break;
-				case 15:
+				case 14:
 					if (keyssnes[sfc_key[A_1]] == SDL_PRESSED)
 						S9xExit();
 					break;
@@ -337,8 +317,6 @@ void menu_loop(void)
 	Settings.SupportHiRes = highres_current;
 	S9xDeinitDisplay();
 	S9xInitDisplay(0, 0);
-	if (old_fast_color != Settings.FastColor)
-		S9xInitColorOps();
 	if (old_sound_playback_rate != Settings.SoundPlaybackRate || old_stereo != Settings.Stereo)
 		S9xReinitSound();
 }

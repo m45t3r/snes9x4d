@@ -160,78 +160,6 @@ void DrawLargePixel16Sub(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 P
 void DrawLargePixel16Sub1_2(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Pixels, uint32 StartLine,
 			    uint32 LineCount, struct SGFX *gfx);
 
-uint16_t (*COLOR_ADD)(uint16_t C1, uint16_t C2);
-uint16_t (*COLOR_SUB)(uint16_t C1, uint16_t C2);
-uint16_t (*COLOR_SUB1_2)(uint16_t C1, uint16_t C2);
-
-uint16_t FAST_COLOR_ADD(uint16_t C1, uint16_t C2)
-{
-	const int RED_MASK = 0x1F << RED_SHIFT_BITS;
-	const int GREEN_MASK = 0x1F << GREEN_SHIFT_BITS;
-	const int BLUE_MASK = 0x1F;
-
-	int rb = C1 & (RED_MASK | BLUE_MASK);
-	rb += C2 & (RED_MASK | BLUE_MASK);
-	int rbcarry = rb & ((0x20 << RED_SHIFT_BITS) | (0x20 << 0));
-	int g = (C1 & (GREEN_MASK)) + (C2 & (GREEN_MASK));
-	int rgbsaturate = (((g & (0x20 << GREEN_SHIFT_BITS)) | rbcarry) >> 5) * 0x1f;
-	uint16_t retval = (rb & (RED_MASK | BLUE_MASK)) | (g & GREEN_MASK) | rgbsaturate;
-#if GREEN_SHIFT_BITS == 6
-	retval |= (retval & 0x0400) >> 5;
-#endif
-
-	return retval;
-}
-
-uint16_t LOOKUP_COLOR_ADD(uint16_t C1, uint16_t C2)
-{
-	return (GFX.X2[((((C1)&RGB_REMOVE_LOW_BITS_MASK) + ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >> 1) +
-		       ((C1) & (C2)&RGB_LOW_BITS_MASK)] |
-		(((C1) ^ (C2)) & RGB_LOW_BITS_MASK));
-}
-
-uint16_t FAST_COLOR_SUB(uint16_t C1, uint16_t C2)
-{
-	int rb1 = (C1 & (THIRD_COLOR_MASK | FIRST_COLOR_MASK)) | ((0x20 << 0) | (0x20 << RED_SHIFT_BITS));
-	int rb2 = C2 & (THIRD_COLOR_MASK | FIRST_COLOR_MASK);
-	int rb = rb1 - rb2;
-	int rbcarry = rb & ((0x20 << RED_SHIFT_BITS) | (0x20 << 0));
-	int g = ((C1 & (SECOND_COLOR_MASK)) | (0x20 << GREEN_SHIFT_BITS)) - (C2 & (SECOND_COLOR_MASK));
-	int rgbsaturate = (((g & (0x20 << GREEN_SHIFT_BITS)) | rbcarry) >> 5) * 0x1f;
-	uint16 retval = ((rb & (THIRD_COLOR_MASK | FIRST_COLOR_MASK)) | (g & SECOND_COLOR_MASK)) & rgbsaturate;
-#if GREEN_SHIFT_BITS == 6
-	retval |= (retval & 0x0400) >> 5;
-#endif
-
-	return retval;
-}
-
-uint16_t LOOKUP_COLOR_SUB(uint16_t C1, uint16_t C2)
-{
-	return (GFX.ZERO_OR_X2[(((C1) | RGB_HI_BITS_MASKx2) - ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >> 1] +
-		((C1)&RGB_LOW_BITS_MASK) - ((C2)&RGB_LOW_BITS_MASK));
-}
-
-uint16_t FAST_COLOR_SUB1_2(uint16_t C1, uint16_t C2)
-{
-	uint16_t a, b, c, z, c1, c2;
-	c1 = (C1 & MASK1) >> 1;
-	c2 = (C2 & MASK1) >> 1;
-	c2 = (c2 ^ 0xffff) + 0x0821;
-	a = c1 + c2;
-	b = a & 0x8410;
-	c = b - (b >> 4);
-	c = c ^ 0x7bcf;
-	z = (a & c) & MASK2;
-
-	return z;
-}
-
-inline uint16_t LOOKUP_COLOR_SUB1_2(uint16_t C1, uint16_t C2)
-{
-	return GFX.ZERO[(((C1) | RGB_HI_BITS_MASKx2) - ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >> 1];
-}
-
 bool8_32 S9xGraphicsInit()
 {
 	register uint32 PixelOdd = 1;
@@ -369,118 +297,13 @@ bool8_32 S9xGraphicsInit()
 #endif
 	S9xFixColourBrightness();
 
-	// Just making sure we are not freeing unitialized memory by mistake
-	GFX.X2 = NULL;
-	GFX.ZERO_OR_X2 = NULL;
-	GFX.ZERO = NULL;
-
-	return S9xInitColorOps();
-}
-
-void S9xFreeLookupTable()
-{
-	if (GFX.X2) {
-		free((char *)GFX.X2);
-		GFX.X2 = NULL;
-	}
-	if (GFX.ZERO_OR_X2) {
-		free((char *)GFX.ZERO_OR_X2);
-		GFX.ZERO_OR_X2 = NULL;
-	}
-	if (GFX.ZERO) {
-		free((char *)GFX.ZERO);
-		GFX.ZERO = NULL;
-	}
-}
-
-void S9xGraphicsDeinit(void)
-{
-	// Free any memory allocated in S9xGraphicsInit
-	S9xFreeLookupTable();
-}
-
-bool8_32 S9xInitColorOps()
-{
-	if (Settings.SixteenBit && !Settings.FastColor) {
-		COLOR_ADD = LOOKUP_COLOR_ADD;
-		COLOR_SUB = LOOKUP_COLOR_SUB;
-		COLOR_SUB1_2 = LOOKUP_COLOR_SUB1_2;
-
-		if (!(GFX.X2 = (uint16 *)malloc(sizeof(uint16) * 0x10000)))
-			return (FALSE);
-
-		if (!(GFX.ZERO_OR_X2 = (uint16 *)malloc(sizeof(uint16) * 0x10000)) ||
-		    !(GFX.ZERO = (uint16 *)malloc(sizeof(uint16) * 0x10000))) {
-			if (GFX.ZERO_OR_X2) {
-				free((char *)GFX.ZERO_OR_X2);
-				GFX.ZERO_OR_X2 = NULL;
-			}
-			if (GFX.X2) {
-				free((char *)GFX.X2);
-				GFX.X2 = NULL;
-			}
+	if (Settings.SixteenBit) {
+		if (!(GFX.ZERO = (uint16 *)malloc(sizeof(uint16) * 0x10000))) {
 			return (FALSE);
 		}
 		uint32 r, g, b;
 
-		// Build a lookup table that multiplies a packed RGB value by 2
-		// with saturation.
-		for (r = 0; r <= MAX_RED; r++) {
-			uint32 r2 = r << 1;
-			if (r2 > MAX_RED)
-				r2 = MAX_RED;
-			for (g = 0; g <= MAX_GREEN; g++) {
-				uint32 g2 = g << 1;
-				if (g2 > MAX_GREEN)
-					g2 = MAX_GREEN;
-				for (b = 0; b <= MAX_BLUE; b++) {
-					uint32 b2 = b << 1;
-					if (b2 > MAX_BLUE)
-						b2 = MAX_BLUE;
-					GFX.X2[BUILD_PIXEL2(r, g, b)] = BUILD_PIXEL2(r2, g2, b2);
-					GFX.X2[BUILD_PIXEL2(r, g, b) & ~ALPHA_BITS_MASK] = BUILD_PIXEL2(r2, g2, b2);
-				}
-			}
-		}
-
 		ZeroMemory(GFX.ZERO, 0x10000 * sizeof(uint16));
-		ZeroMemory(GFX.ZERO_OR_X2, 0x10000 * sizeof(uint16));
-		// Build a lookup table that if the top bit of the color value
-		// is zero then the value is zero, otherwise multiply the value
-		// by 2. Used by the color subtraction code.
-		for (r = 0; r <= MAX_RED; r++) {
-			uint32 r2 = r;
-			if ((r2 & 0x10) == 0)
-				r2 = 0;
-			else
-				r2 = (r2 << 1) & MAX_RED;
-
-			if (r2 == 0)
-				r2 = 1;
-			for (g = 0; g <= MAX_GREEN; g++) {
-				uint32 g2 = g;
-				if ((g2 & GREEN_HI_BIT) == 0)
-					g2 = 0;
-				else
-					g2 = (g2 << 1) & MAX_GREEN;
-
-				if (g2 == 0)
-					g2 = 1;
-				for (b = 0; b <= MAX_BLUE; b++) {
-					uint32 b2 = b;
-					if ((b2 & 0x10) == 0)
-						b2 = 0;
-					else
-						b2 = (b2 << 1) & MAX_BLUE;
-
-					if (b2 == 0)
-						b2 = 1;
-					GFX.ZERO_OR_X2[BUILD_PIXEL2(r, g, b)] = BUILD_PIXEL2(r2, g2, b2);
-					GFX.ZERO_OR_X2[BUILD_PIXEL2(r, g, b) & ~ALPHA_BITS_MASK] =
-					    BUILD_PIXEL2(r2, g2, b2);
-				}
-			}
-		}
 
 		// Build a lookup table that if the top bit of the color value
 		// is zero then the value is zero, otherwise its just the value.
@@ -510,14 +333,19 @@ bool8_32 S9xInitColorOps()
 			}
 		}
 	} else {
-		COLOR_ADD = FAST_COLOR_ADD;
-		COLOR_SUB = FAST_COLOR_SUB;
-		COLOR_SUB1_2 = FAST_COLOR_SUB1_2;
-
-		S9xFreeLookupTable();
+		GFX.ZERO = NULL;
 	}
 
 	return (TRUE);
+}
+
+void S9xGraphicsDeinit(void)
+{
+	// Free any memory allocated in S9xGraphicsInit
+	if (GFX.ZERO) {
+		free((char *)GFX.ZERO);
+		GFX.ZERO = NULL;
+	}
 }
 
 void S9xBuildDirectColourMaps()

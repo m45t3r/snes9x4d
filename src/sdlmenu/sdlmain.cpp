@@ -271,9 +271,6 @@ extern "C"
 	Settings.ApplyCheats = TRUE;
 	Settings.TurboMode = FALSE;
 	Settings.TurboSkipFrames = 15;
-#ifdef TL_COLOR_OPS
-	Settings.FastColor = TRUE;
-#endif
 	if (Settings.ForceNoTransparency)
 		Settings.Transparency = FALSE;
 	if (Settings.Transparency)

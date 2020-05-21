@@ -328,10 +328,6 @@ struct SSettings {
 	bool8_32 DaffyDuck;
 	uint8 APURAMInitialValue;
 
-#ifdef TL_COLOR_OPS
-	bool8_32 FastColor;
-#endif
-
 #ifdef __WIN32__
 	int SoundDriver;
 #endif

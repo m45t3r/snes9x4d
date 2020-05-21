@@ -32,10 +32,6 @@ of them are described below:
   games. Disabling it may improve performance, but it may also break some
   effects in games and even make some of them unplayable because of missing
   effects
-- Fast Color (default `True`): enables/disables some color optimizations.
-  Enabling it may improve performance, but some colors may look wrong, possibly
-  making some games unplayable. The problem seems more common when transparency
-  is also enabled. Disable it if this becomes a problem
 - Full Screen (default `False`): enables/disables full screen. There is a small
   performance impact for it, and it also makes the aspect ratio wrong
 - Billinear Filtering (default `False`): enables/disables bilinear filtering.
@@ -172,15 +168,6 @@ Some tips to port this project to another Dingoo-like device:
       disabling many features that doesn't make sense to embedded devices. So
       it should be enabled (and there are good chances that the code will
       simply not build without it)
-    + `TL_COLOR_OPS` is an interesting optimization from
-      [drowsnug95](https://github.com/drowsnug95/snes9x4d-rs90/) port. It
-      allows color operations without a lookup table, and it is significantly
-      faster. But it is also somewhat wrong, so it breaks colors in some games,
-      like the menu in F-Zero and the intro in Street Fighter Alpha 2 (but not
-      in-game). If your device is slow it is worth it, but if your device is
-      fast enough to run games at full speed without it is better to disable
-      it. It is also a menu option now, so the user can enable/disable it
-      on-the-fly.
 - If your device is like Miyoo and doesn't have an standard Dingoo layout, you
   should define your own custom layout by creating a file
   `src/sdlmenu/<device>.h` and mapping the SDL buttons accordingly (see

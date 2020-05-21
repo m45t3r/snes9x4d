@@ -54,8 +54,6 @@ struct SGFX {
 
 	// Setup in call to S9xGraphicsInit()
 	int Delta;
-	uint16 *X2;
-	uint16 *ZERO_OR_X2;
 	uint16 *ZERO;
 	uint32 RealPitch; // True pitch of Screen buffer.
 	uint32 Pitch2;	  // Same as RealPitch except while using speed up hack for Glide.
@@ -157,10 +155,24 @@ extern uint8 mul_brightness[16][32];
 #define SUB_SCREEN_DEPTH 0
 #define MAIN_SCREEN_DEPTH 32
 
-#define MASK1 0xF7DE
-#define MASK2 0x7BEF
+inline uint16_t COLOR_ADD(uint16_t C1, uint16_t C2)
+{
+	const int RED_MASK = 0x1F << RED_SHIFT_BITS;
+	const int GREEN_MASK = 0x1F << GREEN_SHIFT_BITS;
+	const int BLUE_MASK = 0x1F;
 
-extern uint16_t (*COLOR_ADD)(uint16_t C1, uint16_t C2);
+	int rb = C1 & (RED_MASK | BLUE_MASK);
+	rb += C2 & (RED_MASK | BLUE_MASK);
+	int rbcarry = rb & ((0x20 << RED_SHIFT_BITS) | (0x20 << 0));
+	int g = (C1 & (GREEN_MASK)) + (C2 & (GREEN_MASK));
+	int rgbsaturate = (((g & (0x20 << GREEN_SHIFT_BITS)) | rbcarry) >> 5) * 0x1f;
+	uint16_t retval = (rb & (RED_MASK | BLUE_MASK)) | (g & GREEN_MASK) | rgbsaturate;
+#if GREEN_SHIFT_BITS == 6
+	retval |= (retval & 0x0400) >> 5;
+#endif
+
+	return retval;
+}
 
 inline uint16_t COLOR_ADD1_2(uint16_t C1, uint16_t C2)
 {
@@ -169,9 +181,26 @@ inline uint16_t COLOR_ADD1_2(uint16_t C1, uint16_t C2)
 		ALPHA_BITS_MASK);
 }
 
-extern uint16_t (*COLOR_SUB)(uint16_t C1, uint16_t C2);
+inline uint16_t COLOR_SUB(uint16_t C1, uint16_t C2)
+{
+	int rb1 = (C1 & (THIRD_COLOR_MASK | FIRST_COLOR_MASK)) | ((0x20 << 0) | (0x20 << RED_SHIFT_BITS));
+	int rb2 = C2 & (THIRD_COLOR_MASK | FIRST_COLOR_MASK);
+	int rb = rb1 - rb2;
+	int rbcarry = rb & ((0x20 << RED_SHIFT_BITS) | (0x20 << 0));
+	int g = ((C1 & (SECOND_COLOR_MASK)) | (0x20 << GREEN_SHIFT_BITS)) - (C2 & (SECOND_COLOR_MASK));
+	int rgbsaturate = (((g & (0x20 << GREEN_SHIFT_BITS)) | rbcarry) >> 5) * 0x1f;
+	uint16_t retval = ((rb & (THIRD_COLOR_MASK | FIRST_COLOR_MASK)) | (g & SECOND_COLOR_MASK)) & rgbsaturate;
+#if GREEN_SHIFT_BITS == 6
+	retval |= (retval & 0x0400) >> 5;
+#endif
 
-extern uint16_t (*COLOR_SUB1_2)(uint16_t C1, uint16_t C2);
+	return retval;
+}
+
+inline uint16_t COLOR_SUB1_2(uint16_t C1, uint16_t C2)
+{
+	return GFX.ZERO[(((C1) | RGB_HI_BITS_MASKx2) - ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >> 1];
+}
 
 typedef void (*NormalTileRenderer)(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount, struct SGFX *gfx);
 typedef void (*ClippedTileRenderer)(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Width, uint32 StartLine,
@@ -187,7 +216,6 @@ void S9xSetupOBJ(struct SOBJ *);
 void S9xUpdateScreen();
 void RenderLine(uint8 line, struct SPPU *);
 void S9xBuildDirectColourMaps();
-bool8_32 S9xInitColorOps();
 
 bool8_32 S9xGraphicsInit();
 void S9xGraphicsDeinit();
