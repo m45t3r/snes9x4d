@@ -261,7 +261,7 @@ extern "C"
 	Settings.MultiPlayer5 = FALSE;
 	Settings.ControllerOption = SNES_MULTIPLAYER5;
 	Settings.ControllerOption = 0;
-	Settings.Transparency = FALSE; // TRUE
+	Settings.Transparency = TRUE;
 	Settings.SixteenBit = TRUE;
 	Settings.SupportHiRes = FALSE; // autodetected for known highres roms
 	Settings.NetPlay = FALSE;

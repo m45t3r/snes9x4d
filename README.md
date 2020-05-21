@@ -28,7 +28,7 @@ This emulator has multiple options that can be accessed using `Reset` button in
 BittBoy/PocketGo. They may improve performance at the expense of quality. Some
 of them are described below:
 
-- Transparency (default `False`): enables/disables transparency effects in
+- Transparency (default `True`): enables/disables transparency effects in
   games. Disabling it may improve performance, but it may also break some
   effects in games and even make some of them unplayable because of missing
   effects
