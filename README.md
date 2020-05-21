@@ -41,27 +41,29 @@ of them are described below:
   frames, for example assuming a NTSC (USA or Japanese) ROM with 60Hz of
   refresh rate, setting Frameskip to `60/2` will skip every other frame
   (rendering only 30 frames per second instead of 60). `Auto` tries to skip
-  frames as much as necessary to keep full speed, but in some heavy games
-  (like `Star Fox`) it is better to set a fixed frameskip to make the game
-  stutter less
+  frames as much as necessary to keep full speed
+- Auto Frameskip (default `Max. 3`): defines the maximum frames to skip when
+  `Frameskip` is set to `Auto`. You can increase it to allow the game to render
+  faster, at the expense of more stuttering and input lag. My recommendation
+  is to not use a value bigger than `Max. 4`. For games that need fast reaction
+  times you may want to decrease this value
 - Sound Rate (default `32000`): sets sound rate. The official sound rate of
   SNES is ~32000 so this is the minimum recommended value to have a good
   sound quality, but you may reduce it to improve performance. You can also
-  disable sound by setting this option to `off`.
-- Stereo (default `False`): enables/disables stereo mixing (making a Mono
-  output). Disabling it improves performance, but the Mono mixing results in
-  some missing instruments in games
+  disable sound by setting this option to `off`
+- Stereo (default `False`): enables/disables stereo mixing. Disabling it
+  improves performance, but the Mono mixing results in some missing instruments
+  in games
 
-My personal performance tip is to disable Stereo and Transparency, and enable
-Fast Color. This makes the most performance gains in games where those options
-doesn't break anything.
+My personal performance tip is to disable Stereo and Transparency. This makes
+the most performance gains in games where those options doesn't break anything.
 
-Setting Frameskip to `Auto` is the only current way to have framerate limit,
-so it is recommended unless the game is too heavy and `Auto` causes too much
-stuttering (in this case, using a fixed Frameskip is better). When you need to
-set a fixed Frameskip, my recommended values are either `60/3` (20FPS) or
-`60/4` (15FPS). Anything else introduces too much input lag, making most games
-unplayable.
+Setting Frameskip to `Auto` is the only current way to have a framerate limit,
+so it is recommended to always use it. You can adjust the maximum number of
+frames to skip using `Auto Frameskip` option. Still, `Auto Frameskip` does
+bring some overhead so it may make sense to use fixed Frameskip values
+sometimes, but keep it in mind that the game can go too fast in areas where
+there is little going on (for example, game menus).
 
 If you want to play with Sound Rate, `22050` still gives a very good sound, but
 in my experience it doesn't improve performance that much. `16000` is
