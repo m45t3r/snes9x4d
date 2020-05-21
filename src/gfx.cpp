@@ -166,15 +166,21 @@ uint16_t (*COLOR_SUB1_2)(uint16_t C1, uint16_t C2);
 
 uint16_t FAST_COLOR_ADD(uint16_t C1, uint16_t C2)
 {
-	uint16_t a, b, c, z, c1, c2;
+	const int RED_MASK = 0x1F << RED_SHIFT_BITS;
+	const int GREEN_MASK = 0x1F << GREEN_SHIFT_BITS;
+	const int BLUE_MASK = 0x1F;
 
-	c1 = C1 & MASK1;
-	c2 = C2 & MASK1;
-	a = (c1 >> 1) + (c2 >> 1);
-	b = a & 0x8410;
-	c = b - (b >> 4);
-	z = ((a | c) & MASK2) << 1;
-	return z;
+	int rb = C1 & (RED_MASK | BLUE_MASK);
+	rb += C2 & (RED_MASK | BLUE_MASK);
+	int rbcarry = rb & ((0x20 << RED_SHIFT_BITS) | (0x20 << 0));
+	int g = (C1 & (GREEN_MASK)) + (C2 & (GREEN_MASK));
+	int rgbsaturate = (((g & (0x20 << GREEN_SHIFT_BITS)) | rbcarry) >> 5) * 0x1f;
+	uint16_t retval = (rb & (RED_MASK | BLUE_MASK)) | (g & GREEN_MASK) | rgbsaturate;
+#if GREEN_SHIFT_BITS == 6
+	retval |= (retval & 0x0400) >> 5;
+#endif
+
+	return retval;
 }
 
 uint16_t LOOKUP_COLOR_ADD(uint16_t C1, uint16_t C2)
@@ -186,17 +192,18 @@ uint16_t LOOKUP_COLOR_ADD(uint16_t C1, uint16_t C2)
 
 uint16_t FAST_COLOR_SUB(uint16_t C1, uint16_t C2)
 {
-	uint16_t a, b, c, z, c1, c2;
-	c1 = (C1 & MASK1) >> 1;
-	c2 = (C2 & MASK1) >> 1;
-	c2 = (c2 ^ 0xffff) + 0x0821;
-	a = c1 + c2;
-	b = a & 0x8410;
-	c = b - (b >> 4);
-	c = c ^ 0x7bcf;
-	z = ((a & c) & MASK2) << 1;
+	int rb1 = (C1 & (THIRD_COLOR_MASK | FIRST_COLOR_MASK)) | ((0x20 << 0) | (0x20 << RED_SHIFT_BITS));
+	int rb2 = C2 & (THIRD_COLOR_MASK | FIRST_COLOR_MASK);
+	int rb = rb1 - rb2;
+	int rbcarry = rb & ((0x20 << RED_SHIFT_BITS) | (0x20 << 0));
+	int g = ((C1 & (SECOND_COLOR_MASK)) | (0x20 << GREEN_SHIFT_BITS)) - (C2 & (SECOND_COLOR_MASK));
+	int rgbsaturate = (((g & (0x20 << GREEN_SHIFT_BITS)) | rbcarry) >> 5) * 0x1f;
+	uint16 retval = ((rb & (THIRD_COLOR_MASK | FIRST_COLOR_MASK)) | (g & SECOND_COLOR_MASK)) & rgbsaturate;
+#if GREEN_SHIFT_BITS == 6
+	retval |= (retval & 0x0400) >> 5;
+#endif
 
-	return z;
+	return retval;
 }
 
 uint16_t LOOKUP_COLOR_SUB(uint16_t C1, uint16_t C2)
@@ -2650,6 +2657,8 @@ void DrawBGMode7Background16Sub1_2_i(uint8 *Screen, int bg)
 	MAX_RED = MAX_RED_##F;                                                                                         \
 	MAX_GREEN = MAX_GREEN_##F;                                                                                     \
 	MAX_BLUE = MAX_BLUE_##F;                                                                                       \
+	RED_SHIFT_BITS = RED_SHIFT_BITS_##F;                                                                           \
+	GREEN_SHIFT_BITS = GREEN_SHIFT_BITS_##F;                                                                       \
 	GREEN_HI_BIT = ((MAX_GREEN_##F + 1) >> 1);                                                                     \
 	SPARE_RGB_BIT_MASK = SPARE_RGB_BIT_MASK_##F;                                                                   \
 	RGB_LOW_BITS_MASK = (RED_LOW_BIT_MASK_##F | GREEN_LOW_BIT_MASK_##F | BLUE_LOW_BIT_MASK_##F);                   \
@@ -3542,11 +3551,6 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 
 _BUILD_PIXEL(RGB565)
 _BUILD_PIXEL(RGB555)
-_BUILD_PIXEL(BGR565)
-_BUILD_PIXEL(BGR555)
-_BUILD_PIXEL(GBR565)
-_BUILD_PIXEL(GBR555)
-_BUILD_PIXEL(RGB5551)
 
 bool8_32 S9xSetRenderPixelFormat(int format)
 {
@@ -3560,21 +3564,6 @@ bool8_32 S9xSetRenderPixelFormat(int format)
 		return (TRUE);
 	case RGB555:
 		_BUILD_SETUP(RGB555)
-		return (TRUE);
-	case BGR565:
-		_BUILD_SETUP(BGR565)
-		return (TRUE);
-	case BGR555:
-		_BUILD_SETUP(BGR555)
-		return (TRUE);
-	case GBR565:
-		_BUILD_SETUP(GBR565)
-		return (TRUE);
-	case GBR555:
-		_BUILD_SETUP(GBR555)
-		return (TRUE);
-	case RGB5551:
-		_BUILD_SETUP(RGB5551)
 		return (TRUE);
 	default:
 		break;
