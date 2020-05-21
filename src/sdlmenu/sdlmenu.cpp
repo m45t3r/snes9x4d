@@ -292,7 +292,7 @@ void menu_loop(void)
 					if (MaxAutoFrameSkip > 10)
 						MaxAutoFrameSkip = 0;
 					else if (MaxAutoFrameSkip < 0)
-						SaveSlotNum = 10;
+						MaxAutoFrameSkip = 10;
 					break;
 				case 12:
 					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED) {
