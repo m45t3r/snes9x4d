@@ -47,8 +47,8 @@
 
 #include <sys/types.h>
 
-/* #define PIXEL_FORMAT RGB565 */
-#define GFX_MULTI_FORMAT
+#define PIXEL_FORMAT RGB565
+// #define GFX_MULTI_FORMAT
 
 #ifndef snes9x_types_defined
 #define snes9x_types_defined
