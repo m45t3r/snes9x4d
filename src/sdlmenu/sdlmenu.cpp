@@ -18,11 +18,12 @@
 #include "sdlaudio.h"
 #include "sdlvideo.h"
 
-extern Uint16 sfc_key[SBUFFER];
+extern uint16 sfc_key[SBUFFER];
 extern bool8_32 Scale;
 #ifdef BILINEAR_SCALE
 extern bool8_32 Bilinear;
 #endif
+extern int32 MaxAutoFrameSkip;
 extern short SaveSlotNum;
 extern short vol;
 
@@ -97,6 +98,7 @@ void menu_dispupdate(void)
 	    "N/A                      ",
 #endif
 	    "Frameskip                ",
+	    "Auto Frameskip           ",
 	    "Sound Rate               ",
 	    "Stereo                   ",
 	    "Credits                  ",
@@ -133,12 +135,14 @@ void menu_dispupdate(void)
 	else
 		strfmt(disptxt[10], "%s %02d/%d", disptxt[10], (int)Memory.ROMFramesPerSecond, Settings.SkipFrames);
 
-	strfmt(disptxt[11], "%s %s", disptxt[11], Rates[Settings.SoundPlaybackRate]);
+	strfmt(disptxt[11], "%s Max. %d", disptxt[11], MaxAutoFrameSkip);
+
+	strfmt(disptxt[12], "%s %s", disptxt[12], Rates[Settings.SoundPlaybackRate]);
 
 	if (Settings.Stereo)
-		strfmt(disptxt[12], "%s True", disptxt[12]);
+		strfmt(disptxt[13], "%s True", disptxt[13]);
 	else
-		strfmt(disptxt[12], "%s False", disptxt[12]);
+		strfmt(disptxt[13], "%s False", disptxt[13]);
 
 	for (int i = 0; i < MAX_MENU_ITEMS; i++) {
 		if (i == cursor)
@@ -280,22 +284,33 @@ void menu_loop(void)
 						Settings.SkipFrames = 1;
 					break;
 				case 11:
+					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED)
+						MaxAutoFrameSkip--;
+					else if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
+						MaxAutoFrameSkip++;
+
+					if (MaxAutoFrameSkip > 10)
+						MaxAutoFrameSkip = 0;
+					else if (MaxAutoFrameSkip < 0)
+						SaveSlotNum = 10;
+					break;
+				case 12:
 					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED) {
 						Settings.SoundPlaybackRate = (Settings.SoundPlaybackRate - 1) & 7;
 					} else if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED) {
 						Settings.SoundPlaybackRate = (Settings.SoundPlaybackRate + 1) & 7;
 					}
 					break;
-				case 12:
+				case 13:
 					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED ||
 					    keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
 						Settings.Stereo = !Settings.Stereo;
 					break;
-				case 13:
+				case 14:
 					if (keyssnes[sfc_key[A_1]] == SDL_PRESSED)
 						show_credits();
 					break;
-				case 14:
+				case 15:
 					if (keyssnes[sfc_key[A_1]] == SDL_PRESSED)
 						S9xExit();
 					break;

@@ -100,7 +100,7 @@ uint32 xs = SURFACE_WIDTH;  // width
 uint32 ys = SURFACE_HEIGHT; // height
 uint32 cl = 12;		    // ypos in highres mode
 uint32 cs = 0;
-uint32 mfs = 10; // skippedframes
+int32 MaxAutoFrameSkip = 3;
 
 char *rom_filename = NULL;
 char *snapshot_filename = NULL;
@@ -153,7 +153,7 @@ void S9xParseArg(char **argv, int &i, int argc)
 			S9xUsage();
 	} else if (strcmp(argv[i], "-mfs") == 0) {
 		if (i + 1 < argc)
-			mfs = atoi(argv[++i]);
+			MaxAutoFrameSkip = atoi(argv[++i]);
 		else
 			S9xUsage();
 	} else
@@ -201,6 +201,7 @@ void S9xWriteConfig()
 #ifdef BILINEAR_SCALE
 	fwrite(&Bilinear, 1, sizeof(Bilinear), fp);
 #endif
+	fwrite(&MaxAutoFrameSkip, 1, sizeof(MaxAutoFrameSkip), fp);
 	fclose(fp);
 }
 
@@ -223,6 +224,7 @@ void S9xReadConfig()
 #ifdef BILINEAR_SCALE
 	fread(&Bilinear, 1, sizeof(Bilinear), fp);
 #endif
+	fread(&MaxAutoFrameSkip, 1, sizeof(MaxAutoFrameSkip), fp);
 	fclose(fp);
 }
 
@@ -457,7 +459,7 @@ void S9xExit()
 	exit(0);
 }
 
-Uint16 sfc_key[256];
+uint16 sfc_key[256];
 void S9xInitInputDevices()
 {
 	keyssnes = SDL_GetKeyState(NULL);
@@ -808,7 +810,7 @@ void S9xSyncSpeed() // called from S9xMainLoop in ../cpuexec.cpp
 			IPPU.RenderThisFrame = TRUE;
 			IPPU.SkippedFrames = 0;
 		} else {
-			if (IPPU.SkippedFrames < mfs) {
+			if (IPPU.SkippedFrames < MaxAutoFrameSkip) {
 				IPPU.SkippedFrames++;
 				IPPU.RenderThisFrame = FALSE;
 			} else {

@@ -28,7 +28,7 @@ SDL_mutex *sound_mutex;
 SDL_cond *sound_cv;
 int sound_i = FALSE;
 
-static void sdl_audio_callback(void *userdata, Uint8 *stream, int len)
+static void sdl_audio_callback(void *userdata, uint8 *stream, int len)
 {
 	SDL_LockMutex(sound_mutex);
 	if (!so.mute_sound)
