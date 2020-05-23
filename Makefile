@@ -69,7 +69,7 @@ ifeq ($(PGO), GENERATE)
   OFLAGS += -fprofile-generate -fprofile-dir=./profile
   LDFLAGS += -lgcov
 else ifeq ($(PGO), APPLY)
-  LDFLAGS += -fprofile-use -fprofile-dir=./profile -fbranch-probabilities
+  OFLAGS += -fprofile-use -fprofile-dir=./profile -fbranch-probabilities
 else
   OFLAGS += -falign-functions=1 -falign-jumps=1 -falign-loops=1 \
 	    -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-unroll-loops \
