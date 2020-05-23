@@ -228,16 +228,8 @@ void S9xReadConfig()
 	fclose(fp);
 }
 
-extern "C"
-#undef main
-    int
-    main(int argc, char **argv)
+void S9xResetConfig()
 {
-	start = clock();
-	if (argc < 2) {
-		S9xUsage();
-	}
-
 	ZeroMemory(&Settings, sizeof(Settings));
 
 	Settings.JoystickEnabled = FALSE;
@@ -277,30 +269,10 @@ extern "C"
 		Settings.Transparency = FALSE;
 	if (Settings.Transparency)
 		Settings.SixteenBit = TRUE;
+}
 
-	// parse commandline arguments for ROM filename
-	rom_filename = S9xParseArgs(argv, argc);
-	printf("Rom filename: %s\n", rom_filename);
-
-	S9xReadConfig();
-
-	Settings.HBlankStart = (256 * Settings.H_Max) / SNES_HCOUNTER_MAX;
-
-	if (!Memory.Init() || !S9xInitAPU()) {
-		OutOfMemory();
-	}
-
-	(void)S9xInitSound(Settings.SoundPlaybackRate, Settings.Stereo, Settings.SoundBufferSize);
-
-	if (!Settings.APUEnabled)
-		S9xSetSoundMute(TRUE);
-
-	uint32 saved_flags = CPU.Flags;
-
-#ifdef GFX_MULTI_FORMAT
-	S9xSetRenderPixelFormat(RGB565);
-#endif
-
+void LoadRom()
+{
 	if (rom_filename) {
 		if (!Memory.LoadROM(rom_filename)) {
 			char dir[_MAX_DIR + 1];
@@ -333,15 +305,41 @@ extern "C"
 		S9xExit();
 	}
 
-	S9xInitDisplay(argc, argv);
+	if (snapshot_filename) {
+#ifdef DEBUGGER
+		int Flags = CPU.Flags & (DEBUG_MODE_FLAG | TRACE_FLAG);
+#endif
+		if (!S9xLoadSnapshot(snapshot_filename))
+			exit(1);
+#ifdef DEBUGGER
+		CPU.Flags |= Flags;
+#endif
+	}
+}
+
+void S9xInit()
+{
+	Settings.HBlankStart = (256 * Settings.H_Max) / SNES_HCOUNTER_MAX;
+
+	if (!Memory.Init() || !S9xInitAPU()) {
+		OutOfMemory();
+	}
+
+	S9xInitSound(Settings.SoundPlaybackRate, Settings.Stereo, Settings.SoundBufferSize);
+
+	if (!Settings.APUEnabled)
+		S9xSetSoundMute(TRUE);
+
+#ifdef GFX_MULTI_FORMAT
+	S9xSetRenderPixelFormat(RGB565);
+#endif
+
+	S9xInitDisplay(0, 0);
 	if (!S9xGraphicsInit()) {
 		OutOfMemory();
 	}
 
 	S9xInitInputDevices();
-
-	CPU.Flags = saved_flags;
-	Settings.StopEmulation = FALSE;
 
 #ifdef DEBUGGER
 	struct sigaction sa;
@@ -363,23 +361,19 @@ extern "C"
 #endif
 	S9xSetInfoString(msg);
 
-	// load Snapshot
-	if (snapshot_filename) {
-		int Flags = CPU.Flags & (DEBUG_MODE_FLAG | TRACE_FLAG);
-		if (!S9xLoadSnapshot(snapshot_filename))
-			exit(1);
-		CPU.Flags |= Flags;
-	}
-
 #ifndef _ZAURUS
 	S9xGraphicsMode();
 	sprintf(String, "\"%s\" %s: %s", Memory.ROMName, TITLE, VERSION);
 	S9xSetTitle(String);
 #endif
+}
 
+void MainLoop()
+{
+	Settings.StopEmulation = FALSE;
 	S9xSetSoundMute(FALSE);
 
-	while (1) {
+	while (TRUE) {
 		if (Settings.Paused) {
 #ifdef DEBUGGER
 			if (CPU.Flags & DEBUG_MODE_FLAG)
@@ -401,6 +395,29 @@ extern "C"
 			S9xProcessEvents(TRUE);
 		}
 	}
+}
+
+extern "C"
+#undef main
+    int
+    main(int argc, char **argv)
+{
+	start = clock();
+	if (argc < 2) {
+		S9xUsage();
+	}
+
+	S9xResetConfig();
+
+	// parse commandline arguments for ROM filename
+	rom_filename = S9xParseArgs(argv, argc);
+	printf("Rom filename: %s\n", rom_filename);
+
+	S9xReadConfig();
+	S9xInit();
+
+	LoadRom();
+	MainLoop();
 
 	return (0);
 }
