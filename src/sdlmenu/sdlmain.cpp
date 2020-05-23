@@ -377,50 +377,29 @@ extern "C"
 	S9xSetTitle(String);
 #endif
 
-#ifdef JOYSTICK_SUPPORT
-	uint32 JoypadSkip = 0;
-#endif
-
 	S9xSetSoundMute(FALSE);
 
 	while (1) {
+		if (Settings.Paused) {
 #ifdef DEBUGGER
-		if (!Settings.Paused || (CPU.Flags & (DEBUG_MODE_FLAG | SINGLE_STEP_FLAG)))
-#else
-		if (!Settings.Paused)
+			if (CPU.Flags & DEBUG_MODE_FLAG)
 #endif
-			S9xMainLoop();
+				S9xSetSoundMute(TRUE);
 
-#ifdef DEBUGGER
-		if (Settings.Paused || (CPU.Flags & DEBUG_MODE_FLAG))
-#else
-		if (Settings.Paused)
-#endif
-			S9xSetSoundMute(TRUE);
-
-#ifdef DEBUGGER
-		if (CPU.Flags & DEBUG_MODE_FLAG)
-			S9xDoDebug();
-		else
-#endif
-		    if (Settings.Paused) {
 			S9xProcessEvents(FALSE);
 			usleep(100000);
-		}
-
-#ifdef JOYSTICK_SUPPORT
-		if (unixSettings.JoystickEnabled && (JoypadSkip++ & 1) == 0)
-			ReadJoysticks();
-#endif
-
-		S9xProcessEvents(TRUE);
-
-#ifdef DEBUGGER
-		if (!Settings.Paused && !(CPU.Flags & DEBUG_MODE_FLAG))
-#else
-		if (!Settings.Paused)
-#endif
 			S9xSetSoundMute(FALSE);
+		} else {
+#ifdef DEBUGGER
+			if (CPU.Flags & (DEBUG_MODE_FLAG | SINGLE_STEP_FLAG))
+#endif
+				S9xMainLoop();
+#ifdef DEBUGGER
+			if (CPU.Flags & DEBUG_MODE_FLAG)
+				S9xDoDebug();
+#endif
+			S9xProcessEvents(TRUE);
+		}
 	}
 
 	return (0);
@@ -442,12 +421,13 @@ void OutOfMemory()
 
 void S9xExit()
 {
-	S9xSetSoundMute(true);
+	S9xSetSoundMute(TRUE);
 
 	S9xWriteConfig();
 	Memory.SaveSRAM(S9xGetFilename(".srm"));
-	// S9xSaveCheatFile (S9xGetFilename (".cht")); // not needed for
-	// embedded devices
+#ifndef _ZAURUS
+	S9xSaveCheatFile(S9xGetFilename(".cht"));
+#endif
 
 	Memory.Deinit();
 	S9xDeinitAPU();
@@ -517,12 +497,16 @@ void S9xInitInputDevices()
 				sfc_key[UP_1] = atoi(envp);
 			else if (i == 12)
 				sfc_key[DOWN_1] = atoi(envp);
-			/*			else if (i == 13) sfc_key[LU_2]
-			   = atoi(envp); else if (i == 14) sfc_key[LD_2] =
-			   atoi(envp); else if (i == 15) sfc_key[RU_2] =
-			   atoi(envp); else if (i == 16) sfc_key[RD_2] =
-			   atoi(envp);
-			*/
+#if 0
+			else if (i == 13)
+				sfc_key[LU_2] = atoi(envp);
+			else if (i == 14)
+				sfc_key[LD_2] = atoi(envp);
+			else if (i == 15)
+				sfc_key[RU_2] = atoi(envp);
+			else if (i == 16)
+				sfc_key[RD_2] = atoi(envp);
+#endif
 			envp = j + 1;
 			++i;
 		} while (j);
@@ -708,19 +692,6 @@ bool8_32 S9xDeinitUpdate(int Width, int Height)
 	return (TRUE);
 }
 
-#ifndef _ZAURUS
-static unsigned long now()
-{
-	static unsigned long seconds_base = 0;
-	struct timeval tp;
-	gettimeofday(&tp, NULL);
-	if (!seconds_base)
-		seconds_base = tp.tv_sec;
-
-	return ((tp.tv_sec - seconds_base) * 1000 + tp.tv_usec / 1000);
-}
-#endif
-
 void _makepath(char *path, const char *, const char *dir, const char *fname, const char *ext)
 {
 	if (dir && *dir) {
@@ -861,7 +832,7 @@ void S9xProcessEvents(bool8_32 block)
 				 (keyssnes[sfc_key[R_1]] == SDL_PRESSED)) {
 				// extern char snapscreen;
 				char fname[256], ext[20];
-				S9xSetSoundMute(true);
+				S9xSetSoundMute(TRUE);
 				sprintf(ext, ".00%d", SaveSlotNum);
 				strcpy(fname, S9xGetFilename(ext));
 				S9xFreezeGame(fname);
@@ -869,17 +840,17 @@ void S9xProcessEvents(bool8_32 block)
 				sprintf(ext, ".s0%d", SaveSlotNum);
 				strcpy(fname, S9xGetFilename(ext));
 				save_screenshot(fname);
-				S9xSetSoundMute(false);
+				S9xSetSoundMute(FALSE);
 			}
 			// LOAD State
 			else if ((keyssnes[sfc_key[START_1]] == SDL_PRESSED) &&
 				 (keyssnes[sfc_key[L_1]] == SDL_PRESSED)) {
 				char fname[256], ext[8];
-				S9xSetSoundMute(true);
+				S9xSetSoundMute(TRUE);
 				sprintf(ext, ".00%d", SaveSlotNum);
 				strcpy(fname, S9xGetFilename(ext));
 				S9xLoadSnapshot(fname);
-				S9xSetSoundMute(false);
+				S9xSetSoundMute(FALSE);
 			}
 			// MAINMENU
 #ifdef BUTTON_QUIT
@@ -889,9 +860,9 @@ void S9xProcessEvents(bool8_32 block)
 				 (keyssnes[sfc_key[START_1]] == SDL_PRESSED))
 #endif
 			{
-				S9xSetSoundMute(true);
+				S9xSetSoundMute(TRUE);
 				menu_loop();
-				S9xSetSoundMute(false);
+				S9xSetSoundMute(FALSE);
 			}
 			break;
 		case SDL_KEYUP:
@@ -899,18 +870,6 @@ void S9xProcessEvents(bool8_32 block)
 			break;
 		}
 	}
-}
-
-//#endif
-
-static long log2(long num)
-{
-	long n = 0;
-
-	while (num >>= 1)
-		n++;
-
-	return (n);
 }
 
 uint32 S9xReadJoypad(int which1)
@@ -945,21 +904,26 @@ uint32 S9xReadJoypad(int which1)
 		val |= SNES_LEFT_MASK;
 	if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
 		val |= SNES_RIGHT_MASK;
+
+#if 0
 	// player2
-	/*
-	if (keyssnes[sfc_key[UP_2]] == SDL_PRESSED)		val |=
-	SNES_UP_MASK;
-	if (keyssnes[sfc_key[DOWN_2]] == SDL_PRESSED)	val |=
-	SNES_DOWN_MASK; if (keyssnes[sfc_key[LEFT_2]] == SDL_PRESSED)
-	val |= SNES_LEFT_MASK; if (keyssnes[sfc_key[RIGHT_2]] ==
-	SDL_PRESSED)	val |= SNES_RIGHT_MASK; if
-	(keyssnes[sfc_key[LU_2]] == SDL_PRESSED)	val |=
-	SNES_LEFT_MASK | SNES_UP_MASK; if (keyssnes[sfc_key[LD_2]] ==
-	SDL_PRESSED)	val |= SNES_LEFT_MASK | SNES_DOWN_MASK; if
-	(keyssnes[sfc_key[RU_2]] == SDL_PRESSED)	val |=
-	SNES_RIGHT_MASK | SNES_UP_MASK; if (keyssnes[sfc_key[RD_2]] ==
-	SDL_PRESSED)	val |= SNES_RIGHT_MASK | SNES_DOWN_MASK;
-	*/
+	if (keyssnes[sfc_key[UP_2]] == SDL_PRESSED)
+		val |= SNES_UP_MASK;
+	if (keyssnes[sfc_key[DOWN_2]] == SDL_PRESSED)
+		val |= SNES_DOWN_MASK;
+	if (keyssnes[sfc_key[LEFT_2]] == SDL_PRESSED)
+		val |= SNES_LEFT_MASK;
+	if (keyssnes[sfc_key[RIGHT_2]] == SDL_PRESSED)
+		val |= SNES_RIGHT_MASK;
+	if (keyssnes[sfc_key[LU_2]] == SDL_PRESSED)
+		val |= SNES_LEFT_MASK | SNES_UP_MASK;
+	if (keyssnes[sfc_key[LD_2]] == SDL_PRESSED)
+		val |= SNES_LEFT_MASK | SNES_DOWN_MASK;
+	if (keyssnes[sfc_key[RU_2]] == SDL_PRESSED)
+		val |= SNES_RIGHT_MASK | SNES_UP_MASK;
+	if (keyssnes[sfc_key[RD_2]] == SDL_PRESSED)
+		val |= SNES_RIGHT_MASK | SNES_DOWN_MASK;
+#endif
 
 	return (val);
 }
