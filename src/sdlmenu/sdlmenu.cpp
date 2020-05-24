@@ -18,7 +18,7 @@
 #include "sdlaudio.h"
 #include "sdlvideo.h"
 
-extern uint16 sfc_key[SBUFFER];
+extern uint16 sfc_key[256];
 extern bool8_32 Scale;
 #ifdef BILINEAR_SCALE
 extern bool8_32 Bilinear;
@@ -39,13 +39,6 @@ int cursor = 3;
 char SaveSlotNum_old = 255;
 bool8_32 highres_current = FALSE;
 char snapscreen[17120] = {};
-
-#define strfmt(str, format, args...)                                                                                   \
-	do {                                                                                                           \
-		char tmp[SBUFFER];                                                                                     \
-		snprintf(tmp, sizeof(tmp) - 1, format, args);                                                          \
-		strncpy(str, tmp, sizeof(tmp));                                                                        \
-	} while (0)
 
 void sys_sleep(int us)
 {
