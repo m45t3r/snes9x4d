@@ -408,7 +408,7 @@ void show_credits()
 				   "",
 				   "",
 				   "                                     ",
-				   " Thank you using this Emulator!      ",
+				   " Thank you for using this Emulator!  ",
 				   "                                     ",
 				   "",
 				   "",
@@ -429,7 +429,7 @@ void show_credits()
 				   "",
 #endif
 				   ""};
-	const int len = sizeof(disptxt) - 1;
+	const int disptxt_len = sizeof(disptxt) / sizeof(disptxt[0]);
 
 	do {
 		SDL_Event event;
@@ -441,17 +441,17 @@ void show_credits()
 
 		for (int i = 0; i <= 16; i++) {
 			int j = i + line;
-			if (j >= len)
-				j -= len;
+			if (j >= disptxt_len)
+				j -= disptxt_len;
 			S9xDisplayString(disptxt[j], GFX.Screen, GFX.Pitch, i * 10 + 80 - ypix);
 		}
 
 		ypix += 2;
-		if (ypix == 12) {
+		if (ypix >= 12) {
 			line++;
 			ypix = 0;
 		}
-		if (line == 20)
+		if (line >= disptxt_len)
 			line = 0;
 
 		menu_flip();
