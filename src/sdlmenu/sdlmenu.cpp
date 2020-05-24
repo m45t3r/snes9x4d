@@ -417,21 +417,19 @@ void show_credits()
 				   "",
 				   "",
 				   "",
-				   " by SiENcE",
-				   " crankgaming.blogspot.com",
+				   " by m45t3r                           ",
+				   "   https://github.com/m45t3r         ",
 				   "",
-				   " regards to joyrider & g17",
+				   " regards to SiENcE, joyrider, g17,   ",
+				   " dmitrysmagin, drowsnug95            ",
+				   " and the team behind Snes9x          ",
+#ifdef __ARM__
 				   "",
+				   " with assembly from ARMSNES-libretro ",
 				   "",
-				   "",
-				   "",
-				   "",
-				   "",
-				   "",
-				   " ported by m45t3r",
-				   "",
-				   " with optimizations from drowsnug95",
-				   " and assembly from ARMSNES-libretro"};
+#endif
+				   ""};
+	const int len = sizeof(disptxt) - 1;
 
 	do {
 		SDL_Event event;
@@ -443,8 +441,8 @@ void show_credits()
 
 		for (int i = 0; i <= 16; i++) {
 			int j = i + line;
-			if (j >= 30)
-				j -= 30;
+			if (j >= len)
+				j -= len;
 			S9xDisplayString(disptxt[j], GFX.Screen, GFX.Pitch, i * 10 + 80 - ypix);
 		}
 
@@ -455,6 +453,7 @@ void show_credits()
 		}
 		if (line == 20)
 			line = 0;
+
 		menu_flip();
 		sys_sleep(3000);
 	} while (keyssnes[sfc_key[B_1]] != SDL_PRESSED);
