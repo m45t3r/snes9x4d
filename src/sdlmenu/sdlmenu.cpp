@@ -99,49 +99,49 @@ void menu_dispupdate(void)
 
 	menu_init();
 
-	strfmt(disptxt[5], "%s No. %d", disptxt[5], SaveSlotNum);
+	fmt_disptxt_item(disptxt[5], "%s No. %d", SaveSlotNum);
 
 	if (Settings.DisplayFrameRate)
-		strfmt(disptxt[6], "%s True", disptxt[6]);
+		fmt_disptxt_item(disptxt[6], "%s True");
 	else
-		strfmt(disptxt[6], "%s False", disptxt[6]);
+		fmt_disptxt_item(disptxt[6], "%s False");
 
 	if (Settings.Transparency)
-		strfmt(disptxt[7], "%s True", disptxt[7]);
+		fmt_disptxt_item(disptxt[7], "%s True");
 	else
-		strfmt(disptxt[7], "%s False", disptxt[7]);
+		fmt_disptxt_item(disptxt[7], "%s False");
 
 	if (Scale)
-		strfmt(disptxt[8], "%s True", disptxt[8]);
+		fmt_disptxt_item(disptxt[8], "%s True");
 	else
-		strfmt(disptxt[8], "%s False", disptxt[8]);
+		fmt_disptxt_item(disptxt[8], "%s False");
 
 #ifdef BILINEAR_SCALE
 	if (Bilinear)
-		strfmt(disptxt[9], "%s True", disptxt[9]);
+		fmt_disptxt_item(disptxt[9], "%s True");
 	else
-		strfmt(disptxt[9], "%s False", disptxt[9]);
+		fmt_disptxt_item(disptxt[9], "%s False");
 #endif
 
 	if (Settings.SkipFrames == AUTO_FRAMERATE)
-		strfmt(disptxt[10], "%s Auto", disptxt[10]);
+		fmt_disptxt_item(disptxt[10], "%s Auto");
 	else
-		strfmt(disptxt[10], "%s %02d/%d", disptxt[10], (int)Memory.ROMFramesPerSecond, Settings.SkipFrames);
+		fmt_disptxt_item(disptxt[10], "%s %02d/%d", (int)Memory.ROMFramesPerSecond, Settings.SkipFrames);
 
-	strfmt(disptxt[11], "%s Max. %d", disptxt[11], MaxAutoFrameSkip);
+	fmt_disptxt_item(disptxt[11], "%s Max. %d", MaxAutoFrameSkip);
 
-	strfmt(disptxt[12], "%s %s", disptxt[12], Rates[Settings.SoundPlaybackRate]);
+	fmt_disptxt_item(disptxt[12], "%s %s", Rates[Settings.SoundPlaybackRate]);
 
 	if (Settings.Stereo)
-		strfmt(disptxt[13], "%s True", disptxt[13]);
+		fmt_disptxt_item(disptxt[13], "%s True");
 	else
-		strfmt(disptxt[13], "%s False", disptxt[13]);
+		fmt_disptxt_item(disptxt[13], "%s False");
 
 	for (int i = 0; i < MAX_MENU_ITEMS; i++) {
 		if (i == cursor)
-			strfmt(disptxt[i], " >%s", disptxt[i]);
+			fmt_disptxt_item(disptxt[i], " >%s");
 		else
-			strfmt(disptxt[i], "  %s", disptxt[i]);
+			fmt_disptxt_item(disptxt[i], "  %s");
 
 		S9xDisplayString(disptxt[i], GFX.Screen, GFX.Pitch, i * 10 + 64);
 	}

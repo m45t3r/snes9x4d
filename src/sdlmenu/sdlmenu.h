@@ -16,12 +16,15 @@ void show_screenshot(void);
 void capt_screenshot(void);
 int batt_level(void);
 
-#define strfmt(str, format, args...)                                                                                   \
+#define strfmt(str, format, ...)                                                                                       \
 	do {                                                                                                           \
 		char tmp[SBUFFER];                                                                                     \
-		snprintf(tmp, SBUFFER, format, args);                                                                  \
+		snprintf(tmp, SBUFFER, format, __VA_ARGS__);                                                           \
 		memcpy(str, tmp, SBUFFER);                                                                             \
 	} while (0)
+
+// __VA_OPT__ is from C++2a, but it is also available in GNU C++
+#define fmt_disptxt_item(item, format, ...) strfmt(item, format, item __VA_OPT__(, ) __VA_ARGS__)
 
 #define save_state_fname(fname, ext_format, args...)                                                                   \
 	do {                                                                                                           \
