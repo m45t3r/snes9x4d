@@ -70,6 +70,8 @@ ifeq ($(PGO), GENERATE)
   LDFLAGS += -lgcov
 else ifeq ($(PGO), APPLY)
   OFLAGS += -fprofile-use -fprofile-dir=./profile -fbranch-probabilities
+else ifeq ($(PGO), FORCE-APPLY)
+  OFLAGS += -fprofile-use -fprofile-dir=./profile -fbranch-probabilities -Wno-error=coverage-mismatch
 else
   OFLAGS += -falign-functions=1 -falign-jumps=1 -falign-loops=1 \
 	    -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-unroll-loops \
