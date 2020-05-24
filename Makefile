@@ -2,7 +2,7 @@ GIT_VERSION := "$(shell git describe --abbrev=7 --dirty --always --tags)"
 
 UNZIP = 1
 CHEATS = 1
-ARM_ASM = 1
+# ARM_ASM = 1
 
 FXOBJ = src/fxinst.o src/fxemu.o src/fxdbg.o
 
