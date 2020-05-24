@@ -104,6 +104,8 @@ typedef long int16_32;
 #define ZeroMemory(a, b) memset((a), 0, (b))
 #define LSB_FIRST
 /* #define FAST_LSB_WORD_ACCESS */
+#define VAR_CYCLES
+#define CPU_SHUTDOWN
 
 void _makepath(char *path, const char *drive, const char *dir, const char *fname, const char *ext);
 void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);

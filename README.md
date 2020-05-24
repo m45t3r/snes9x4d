@@ -144,8 +144,10 @@ straightforward to port this code for a new device, specially for a Dingux-like
 (Linux+SDL) devices.
 
 Each specific device feature is behind compiler-flags so it shouldn't affect
-compilation for other targets. Also this port has many code clean-ups, so it
-should be easier to navigate compared to other `snes9x4d` ports.
+compilation for other targets. This port has many code clean-ups, so it should
+be easier to navigate compared to other `snes9x4d` ports. Also this port brings
+some additional optimizations not available in other `snes9x4d` ports, like the
+color operations code from Snes9x 1.60 and some assembly optimizations in ARM.
 
 Some tips to port this project to another Dingoo-like device:
 
@@ -153,8 +155,14 @@ Some tips to port this project to another Dingoo-like device:
   for your device (just make a copy of the original one and change some things)
 - Enable/disable some compile toggles (see `CCFLAGS` in `Makefile`) according
   to your device. Some of the compile toggles are described below:
-    + `CPU_SHUTDOWN`, `VAR_CYCLES`, `SPC700_SHUTDOWN` are speed hacks available
-      from `snes9x` itself, so they should be safe to enable
+    + `SPC700_SHUTDOWN` is a speed hack available from `Snes9x` itself, so it
+      should be safe to enable.
+    + `_ZAURUS` is a compile toggle that is used in many parts of the project,
+      disabling many features that doesn't make sense to embedded devices. So
+      it should be enabled, and the code does not seem to build without this
+      flag anyway
+    + `FAST_LSB_WORD_ACCESS` seems to speed-up the code access to some memory
+      operations. Recommended if your target supports it
     + Unless your device is an ARM device, remove `__ARM__` feature flag since
       will enable ARM specific optimizations (assembly)
     + `VIDEO_MODE` defines some configuration related to video. For now there
@@ -166,10 +174,9 @@ Some tips to port this project to another Dingoo-like device:
       than the default one (it is slightly more expansive too). For now, it is
       only available for `VIDEO_MODE=1`, so if your device uses any other
       video mode it is better to disable it
-    + `_ZAURUS` is a compile toggle that is used in many parts of the project,
-      disabling many features that doesn't make sense to embedded devices. So
-      it should be enabled (and there are good chances that the code will
-      simply not build without it)
+    + `MIYOO` is obviously used only for Miyoo devices, so you shouldn't define
+      it for your own device. But looking where it is used in the code should
+      help you to define your own device-specific code
 - If your device is like Miyoo and doesn't have an standard Dingoo layout, you
   should define your own custom layout by creating a file
   `src/sdlmenu/<device>.h` and mapping the SDL buttons accordingly (see
