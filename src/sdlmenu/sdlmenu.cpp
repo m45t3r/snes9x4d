@@ -148,13 +148,13 @@ void menu_dispupdate(void)
 
 	// show screen shot for snapshot
 	if (SaveSlotNum_old != SaveSlotNum) {
-		char temp[SBUFFER];
-		strcpy(temp, "Loading...");
-		S9xDisplayString(temp, GFX.Screen + 280, GFX.Pitch, 210);
+		char tmp[SBUFFER];
+		snprintf(tmp, SBUFFER, "Loading...");
+		S9xDisplayString(tmp, GFX.Screen + 280, GFX.Pitch, 210);
 		menu_flip();
-		char fname[SBUFFER], ext[8];
-		sprintf(ext, ".s0%d", SaveSlotNum);
-		strcpy(fname, S9xGetFilename(ext));
+
+		char fname[PATH_MAX];
+		save_state_fname(fname, ".s0%d", SaveSlotNum);
 		load_screenshot(fname);
 		SaveSlotNum_old = SaveSlotNum;
 	}
@@ -167,7 +167,7 @@ void menu_loop(void)
 	bool8_32 old_stereo = Settings.Stereo;
 	uint32 old_sound_playback_rate = Settings.SoundPlaybackRate;
 	bool8_32 exit_loop = false;
-	char fname[SBUFFER], ext[8];
+	char fname[PATH_MAX];
 	char snapscreen_tmp[sizeof(snapscreen)];
 
 	uint8 *keyssnes = 0;
@@ -206,25 +206,27 @@ void menu_loop(void)
 					break;
 				case 3:
 					if (keyssnes[sfc_key[A_1]] == SDL_PRESSED) {
+						char tmp[SBUFFER];
+
 						memcpy(snapscreen, snapscreen_tmp, 16050);
 						show_screenshot();
-						strcpy(fname, " Saving...");
+						snprintf(tmp, SBUFFER, " Saving...");
 						S9xDisplayString(fname, GFX.Screen + 280, GFX.Pitch, 204);
 						menu_flip();
-						sprintf(ext, ".s0%d", SaveSlotNum);
-						strcpy(fname, S9xGetFilename(ext));
+
+						save_state_fname(fname, ".s0%d", SaveSlotNum);
 						save_screenshot(fname);
-						sprintf(ext, ".00%d", SaveSlotNum);
-						strcpy(fname, S9xGetFilename(ext));
+
+						save_state_fname(fname, ".00%d", SaveSlotNum);
 						S9xFreezeGame(fname);
+
 						sync();
 						exit_loop = TRUE;
 					}
 					break;
 				case 4:
 					if (keyssnes[sfc_key[A_1]] == SDL_PRESSED) {
-						sprintf(ext, ".00%d", SaveSlotNum);
-						strcpy(fname, S9xGetFilename(ext));
+						save_state_fname(fname, ".00%d", SaveSlotNum);
 						S9xLoadSnapshot(fname);
 						exit_loop = TRUE;
 					}

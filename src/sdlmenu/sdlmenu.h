@@ -5,7 +5,7 @@
 #define MAX_SAVE_STATE_SLOTS 5
 #define MENU_HEIGHT 224
 #define MENU_WIDTH 256
-#define SBUFFER PATH_MAX
+#define SBUFFER 256
 
 void menu_loop(void);
 char *menu_romselector();
@@ -21,6 +21,13 @@ int batt_level(void);
 		char tmp[SBUFFER];                                                                                     \
 		snprintf(tmp, SBUFFER, format, args);                                                                  \
 		memcpy(str, tmp, SBUFFER);                                                                             \
+	} while (0)
+
+#define save_state_fname(fname, ext_format, args...)                                                                   \
+	do {                                                                                                           \
+		char ext[8];                                                                                           \
+		snprintf(ext, PATH_MAX, ext_format, args);                                                             \
+		memcpy(fname, S9xGetFilename(ext), PATH_MAX);                                                          \
 	} while (0)
 
 #endif // ___MENU_h_
