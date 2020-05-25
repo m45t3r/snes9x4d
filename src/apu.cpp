@@ -47,6 +47,8 @@
 #undef __WIN32__
 #endif
 
+#include <limits.h>
+
 #include "snes9x.h"
 #include "spc700.h"
 #include "apu.h"
@@ -624,10 +626,10 @@ void S9xFixEnvelope(int channel, uint8 gain, uint8 adsr1, uint8 adsr2)
 		static unsigned long AttackRate[16] = {4100, 2600, 1500, 1000, 640, 380, 260, 160,
 						       96,   64,   40,	 24,   16,  10,	 6,   1};
 		static unsigned long DecayRate[8] = {1200, 740, 440, 290, 180, 110, 74, 37};
-		static unsigned long SustainRate[32] = {~0,   38000, 28000, 24000, 19000, 14000, 12000, 9400,
-							7100, 5900,  4700,  3500,  2900,  2400,	 1800,	1500,
-							1200, 880,   740,   590,   440,	  370,	 290,	220,
-							180,  150,   110,   92,	   74,	  55,	 37,	18};
+		static unsigned long SustainRate[32] = {ULONG_MAX, 38000, 28000, 24000, 19000, 14000, 12000, 9400,
+							7100,	   5900,  4700,	 3500,	2900,  2400,  1800,  1500,
+							1200,	   880,	  740,	 590,	440,   370,   290,   220,
+							180,	   150,	  110,	 92,	74,    55,    37,    18};
 		// XXX: can DSP be switched to ADSR mode directly from GAIN/INCREASE/ DECREASE mode? And if so, what
 		// stage of the sequence does it start at?
 		if (S9xSetSoundMode(channel, MODE_ADSR)) {
@@ -655,12 +657,12 @@ void S9xFixEnvelope(int channel, uint8 gain, uint8 adsr1, uint8 adsr2)
 			}
 		} else {
 			static unsigned long IncreaseRate[32] = {
-			    ~0,	 4100, 3100, 2600, 2000, 1500, 1300, 1000, 770, 640, 510, 380, 320, 260, 190, 160,
-			    130, 96,   80,   64,   48,	 40,   32,   24,   20,	16,  12,  10,  8,   6,	 4,   2};
+			    ULONG_MAX, 4100, 3100, 2600, 2000, 1500, 1300, 1000, 770, 640, 510, 380, 320, 260, 190, 160,
+			    130,       96,   80,   64,	 48,   40,   32,   24,	 20,  16,  12,	10,  8,	  6,   4,   2};
 			static unsigned long DecreaseRateExp[32] = {
-			    ~0,	  38000, 28000, 24000, 19000, 14000, 12000, 9400, 7100, 5900, 4700,
-			    3500, 2900,	 2400,	1800,  1500,  1200,  880,   740,  590,	440,  370,
-			    290,  220,	 180,	150,   110,   92,    74,    55,	  37,	18};
+			    ULONG_MAX, 38000, 28000, 24000, 19000, 14000, 12000, 9400, 7100, 5900, 4700,
+			    3500,      2900,  2400,  1800,  1500,  1200,  880,	 740,  590,  440,  370,
+			    290,       220,   180,   150,   110,   92,	  74,	 55,   37,   18};
 			if (gain & 0x40) {
 				// Increase mode
 				if (S9xSetSoundMode(channel,

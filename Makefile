@@ -64,7 +64,7 @@ OFLAGS = -Ofast -march=armv5te -mtune=arm926ej-s -marm \
 	 -flto=4 -fwhole-program -fuse-linker-plugin \
 	 -fdata-sections -ffunction-sections \
 	 -fno-stack-protector -fomit-frame-pointer \
-	 -Wall -Wno-narrowing -Wno-restrict
+	 -Wall -Wno-restrict
 
 ifeq ($(PGO), GENERATE)
   OFLAGS += -fprofile-generate -fprofile-dir=./profile
@@ -95,7 +95,7 @@ $(UNZIPDEFINES) \
 -D_ZAURUS \
 -D__SDL__ \
 
-CXXFLAGS = --std=gnu++03 \
+CXXFLAGS = --std=gnu++14 \
 	   -fno-exceptions -fno-rtti -fno-threadsafe-statics \
 $(CCFLAGS)
 
