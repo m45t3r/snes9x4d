@@ -191,7 +191,7 @@ void STOP(char *s)
 #else
 #define PushW(w)                                                                                                       \
 	*(iapu->RAM + 0xff + areg->S) = w;                                                                             \
-	*(iapu->RAM + 0x100 + areg->S) = (w >> 8);                                                                     \
+	*(iapu->RAM + 0x100 + areg->S) = ((w) >> 8);                                                                   \
 	areg->S = ((areg->S - 2) & 0xff);                                                                              \
 	;
 #define PopW(w)                                                                                                        \

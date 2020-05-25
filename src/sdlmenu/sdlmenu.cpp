@@ -23,7 +23,7 @@ extern bool8_32 Scale;
 #ifdef BILINEAR_SCALE
 extern bool8_32 Bilinear;
 #endif
-extern int32 MaxAutoFrameSkip;
+extern uint32 MaxAutoFrameSkip;
 extern short SaveSlotNum;
 extern short vol;
 
@@ -279,15 +279,17 @@ void menu_loop(void)
 						Settings.SkipFrames = 1;
 					break;
 				case 11:
-					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED)
-						MaxAutoFrameSkip--;
-					else if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
-						MaxAutoFrameSkip++;
-
-					if (MaxAutoFrameSkip > 10)
-						MaxAutoFrameSkip = 0;
-					else if (MaxAutoFrameSkip < 0)
-						MaxAutoFrameSkip = 10;
+					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED) {
+						if (MaxAutoFrameSkip <= 0)
+							MaxAutoFrameSkip = 10;
+						else
+							MaxAutoFrameSkip--;
+					} else if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED) {
+						if (MaxAutoFrameSkip >= 10)
+							MaxAutoFrameSkip = 0;
+						else
+							MaxAutoFrameSkip++;
+					}
 					break;
 				case 12:
 					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED) {

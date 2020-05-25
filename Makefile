@@ -1,7 +1,7 @@
 GIT_VERSION := "$(shell git describe --abbrev=7 --dirty --always --tags)"
 
 UNZIP = 1
-CHEATS = 1
+# CHEATS = 1
 # ARM_ASM = 1
 
 FXOBJ = src/fxinst.o src/fxemu.o src/fxdbg.o
@@ -64,6 +64,7 @@ OFLAGS = -Ofast -march=armv5te -mtune=arm926ej-s -marm \
 	 -flto=4 -fwhole-program -fuse-linker-plugin \
 	 -fdata-sections -ffunction-sections \
 	 -fno-stack-protector -fomit-frame-pointer \
+	 -Wall -Wno-narrowing -Wno-restrict
 
 ifeq ($(PGO), GENERATE)
   OFLAGS += -fprofile-generate -fprofile-dir=./profile

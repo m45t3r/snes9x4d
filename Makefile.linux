@@ -49,7 +49,8 @@ INCLUDE = -I. -Isrc/ -Isrc/unzip
 
 LDLIBS  = -lSDL -lz -lm $(SDL_LIBS)
 
-OFLAGS = -O2 -fomit-frame-pointer -fno-strict-aliasing
+OFLAGS = -O2 -fomit-frame-pointer \
+    -Wall -Wno-narrowing -Wno-restrict
 
 ifeq ($(PGO), GENERATE)
   OFLAGS += -fprofile-generate -fprofile-dir=./profile

@@ -85,8 +85,8 @@ bool8_32 Bilinear = FALSE;
 #endif
 char msg[256];
 short vol = 50;
-static int mixerdev = 0;
 clock_t start;
+uint16 sfc_key[256];
 
 const char *GetHomeDirectory();
 void OutOfMemory();
@@ -95,12 +95,11 @@ extern void S9xDisplayFrameRate(uint8 *, uint32);
 extern void S9xDisplayString(const char *string, uint8 *, uint32, int);
 extern SDL_Surface *screen, *gfxscreen;
 
-static uint32 ffc = 0;
 uint32 xs = SURFACE_WIDTH;  // width
 uint32 ys = SURFACE_HEIGHT; // height
 uint32 cl = 12;		    // ypos in highres mode
 uint32 cs = 0;
-int32 MaxAutoFrameSkip = 3;
+uint32 MaxAutoFrameSkip = 3;
 
 char *rom_filename = NULL;
 char *snapshot_filename = NULL;
@@ -456,12 +455,11 @@ void S9xExit()
 	exit(0);
 }
 
-uint16 sfc_key[256];
 void S9xInitInputDevices()
 {
 	keyssnes = SDL_GetKeyState(NULL);
 
-	memset(sfc_key, 0, 256);
+	memset(sfc_key, 0, 256 * sizeof(uint16));
 
 	// Controller mapping
 	sfc_key[A_1] = BUTTON_A;
@@ -486,7 +484,7 @@ void S9xInitInputDevices()
 	envp = j = getenv("S9XKEYS");
 	if (envp) {
 		do {
-			if (j = strchr(envp, ','))
+			if ((j = strchr(envp, ',')))
 				*j = 0;
 			if (i == 0)
 				sfc_key[QUIT] = atoi(envp);

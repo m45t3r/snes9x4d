@@ -2439,11 +2439,12 @@ static void Op0CM0(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState 
 				return;                                                                                \
 		} else if (Settings.SoundSkipMethod == 1)                                                              \
 			return;                                                                                        \
-		if (Settings.SoundSkipMethod == 3)                                                                     \
+		if (Settings.SoundSkipMethod == 3) {                                                                   \
 			if (cpu->PC - cpu->PCBase > OpAddress)                                                         \
 				return;                                                                                \
 			else                                                                                           \
 				cpu->PC = cpu->PCBase + OpAddress;                                                     \
+		}                                                                                                      \
 	}
 
 #define BranchCheck2()                                                                                                 \
@@ -2454,11 +2455,12 @@ static void Op0CM0(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState 
 				return;                                                                                \
 		} else if (Settings.SoundSkipMethod == 1)                                                              \
 			cpu->PC = cpu->PCBase + OpAddress;                                                             \
-		if (Settings.SoundSkipMethod == 3)                                                                     \
+		if (Settings.SoundSkipMethod == 3) {                                                                   \
 			if (cpu->PC - cpu->PCBase > OpAddress)                                                         \
 				return;                                                                                \
 			else                                                                                           \
 				cpu->PC = cpu->PCBase + OpAddress;                                                     \
+		}                                                                                                      \
 	}
 #else
 #define BranchCheck0()
@@ -3832,6 +3834,10 @@ static void OpCB(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *c
 {
 	struct SIAPU *iapu = &IAPU;
 	struct SAPU *apu = &APU;
+
+	// GCC triggers some unused variable warnings, but those variables are used in APU_EXECUTE1
+	(void)iapu;
+	(void)apu;
 
 // Ok, let's just C-ify the ASM versions separately.
 #ifdef SA1_OPCODES

@@ -176,8 +176,8 @@ inline uint16_t COLOR_ADD(uint16_t C1, uint16_t C2)
 
 inline uint16_t COLOR_ADD1_2(uint16_t C1, uint16_t C2)
 {
-	return (((((C1)&RGB_REMOVE_LOW_BITS_MASK) + ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >> 1) +
-		    ((C1) & (C2)&RGB_LOW_BITS_MASK) |
+	return ((((((C1)&RGB_REMOVE_LOW_BITS_MASK) + ((C2)&RGB_REMOVE_LOW_BITS_MASK)) >> 1) +
+		 ((C1) & (C2)&RGB_LOW_BITS_MASK)) |
 		ALPHA_BITS_MASK);
 }
 

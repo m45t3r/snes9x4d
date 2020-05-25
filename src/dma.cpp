@@ -72,7 +72,7 @@ extern uint8 *HDMABasePointers[8];
 uint32 HDMARawPointers[8]; // Cart address space pointer
 #endif
 
-#if defined(__linux__) || defined(__WIN32__) || defined(__MACOSX__)
+#if !defined(_ZAURUS) && (defined(__linux__) || defined(__WIN32__) || defined(__MACOSX__))
 static int S9xCompareSDD1IndexEntries(const void *p1, const void *p2) { return (*(uint32 *)p1 - *(uint32 *)p2); }
 #endif
 /**********************************************************************************************/
@@ -96,7 +96,7 @@ void S9xDoDMA(uint8 Channel)
 	bool8_32 in_sa1_dma = FALSE;
 	uint8 *in_sdd1_dma = NULL;
 	uint8 *spc7110_dma = NULL;
-	bool8_32 s7_wrap = false;
+	// bool8_32 s7_wrap = false;
 	SDMA *d = &DMA[Channel];
 
 	int count = d->TransferBytes;

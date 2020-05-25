@@ -171,7 +171,7 @@ bool8_32 S9xGraphicsInit()
 #endif
 
 	for (uint8 bitshift = 0; bitshift < 4; bitshift++) {
-		for (register char i = 0; i < 16; i++) {
+		for (register uint8 i = 0; i < 16; i++) {
 			register uint32 h = 0;
 			register uint32 l = 0;
 
@@ -1318,14 +1318,14 @@ void DrawBackgroundMode5(uint32 /* BGMODE */, uint32 bg, uint8 Z1, uint8 Z2)
 		SC3 = SC2;
 
 	int Lines;
-	int VOffsetMask;
+	// int VOffsetMask;
 	int VOffsetShift;
 
 	if (BG.TileSize == 16) {
-		VOffsetMask = 0x3ff;
+		// VOffsetMask = 0x3ff;
 		VOffsetShift = 4;
 	} else {
-		VOffsetMask = 0x1ff;
+		// VOffsetMask = 0x1ff;
 		VOffsetShift = 3;
 	}
 	int endy = IPPU.LatchedInterlace ? gfx->EndY << 1 : gfx->EndY;
@@ -3251,7 +3251,7 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 	else                                                                                                           \
 		gfx->pCurrentClip = &ippu->Clip[1]
 
-#define DISPLAY(n) (!(PPU.BG_Forced & n) && (gfx->r212c & n) || ((gfx->r212d & n) && subadd))
+#define DISPLAY(n) ((!(PPU.BG_Forced & n) && (gfx->r212c & n)) || ((gfx->r212d & n) && subadd))
 
 			uint8 subadd = gfx->r2131 & 0x3f;
 

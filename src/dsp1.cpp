@@ -1154,9 +1154,9 @@ void DSP4SetByte(uint8 byte, uint16 address)
 
 			// unknown
 			case 0x000A: {
-				int16 in1a = DSP4_READ_WORD(0);
+				// int16 in1a = DSP4_READ_WORD(0);
 				int16 in2a = DSP4_READ_WORD(2);
-				int16 in3a = DSP4_READ_WORD(4);
+				// int16 in3a = DSP4_READ_WORD(4);
 				int16 out1a, out2a, out3a, out4a;
 
 				// NOTE: Snes9x only!

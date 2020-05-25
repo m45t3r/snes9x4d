@@ -715,8 +715,8 @@ void DSP4_Op08()
 		// envelope guidelines (one frame only)
 		int16 envelope1 = DSP4_READ_WORD(0x0a);
 		int16 envelope2 = DSP4_READ_WORD(0x0c);
-		int16 envelope3 = DSP4_READ_WORD(0x0e);
-		int16 envelope4 = DSP4_READ_WORD(0x10);
+		// int16 envelope3 = DSP4_READ_WORD(0x0e);
+		// int16 envelope4 = DSP4_READ_WORD(0x10);
 
 		// ignore invalid data
 		if ((uint16)plane == 0x8001)
@@ -1335,9 +1335,9 @@ void DSP4_Op09()
 		// vehicle sprite
 		if (sprite_type == 1) {
 			int16 plane;
-			int16 car_left, car_right, car_left_a;
-			int16 focal_back, focal_front;
-			uint8 distance, id;
+			int16 car_left, car_right /* , car_left_a */;
+			int16 focal_back /* , focal_front */;
+			// uint8 distance, id;
 
 			// we already have 4 bytes we want
 			DSP4.in_count = 6 + 12;
@@ -1349,11 +1349,11 @@ void DSP4_Op09()
 			// filter inputs
 			project_y1 = DSP4_READ_WORD(0x00);
 			// 0x9000 = DSP4_READ_WORD(0x02);
-			id = DSP4.parameters[0x04];
-			distance = DSP4.parameters[0x05];
+			// id = DSP4.parameters[0x04];
+			// distance = DSP4.parameters[0x05];
 			focal_back = DSP4_READ_WORD(0x06);
-			focal_front = DSP4_READ_WORD(0x08);
-			car_left_a = DSP4_READ_WORD(0x0a);
+			// focal_front = DSP4_READ_WORD(0x08);
+			// car_left_a = DSP4_READ_WORD(0x0a);
 			car_left = DSP4_READ_WORD(0x0c);
 			plane = DSP4_READ_WORD(0x0e);
 			car_right = DSP4_READ_WORD(0x10);

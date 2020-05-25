@@ -386,11 +386,11 @@ again:
 	}
 
 	CheckForIPSPatch(filename, HeaderCount != 0, TotalFileSize);
-	int orig_hi_score, orig_lo_score;
+	// int orig_hi_score, orig_lo_score;
 	int hi_score, lo_score;
 
-	orig_hi_score = hi_score = ScoreHiROM(FALSE);
-	orig_lo_score = lo_score = ScoreLoROM(FALSE);
+	/* orig_hi_score = */ hi_score = ScoreHiROM(FALSE);
+	/* orig_lo_score = */ lo_score = ScoreLoROM(FALSE);
 
 	if (HeaderCount == 0 && !Settings.ForceNoHeader &&
 	    ((hi_score > lo_score && ScoreHiROM(TRUE) > hi_score) ||
@@ -1788,30 +1788,28 @@ const char *CMemory::KartContents()
 
 	if (Settings.BS)
 		sprintf(tmp, "%s+%s", tmp, "BSX");
-	/*	else if(Settings.SPC7110&&Settings.SPC7110RTC)
-			sprintf (tmp, "%s+%s", tmp, "SPC7110+RTC");
-		else if(Settings.SPC7110)
-			sprintf (tmp, "%s+%s", tmp, "SPC7110");
-		else if(Settings.C4)
-			sprintf (tmp, "%s+%s", tmp, "C4");
-		else if(Settings.SETA!=0)
-		{
-			switch(Settings.SETA)
-			{
-			case ST_010:
-				sprintf (tmp, "%s+%s", tmp, "ST-010");
-				break;
-			case ST_011:
-				sprintf (tmp, "%s+%s", tmp, "ST-011");
-				break;
+#if 0
+	else if (Settings.SPC7110 && Settings.SPC7110RTC)
+		sprintf(tmp, "%s+%s", tmp, "SPC7110+RTC");
+	else if (Settings.SPC7110)
+		sprintf(tmp, "%s+%s", tmp, "SPC7110");
+	else if (Settings.C4)
+		sprintf(tmp, "%s+%s", tmp, "C4");
+	else if (Settings.SETA != 0) {
+		switch (Settings.SETA) {
+		case ST_010:
+			sprintf(tmp, "%s+%s", tmp, "ST-010");
+			break;
+		case ST_011:
+			sprintf(tmp, "%s+%s", tmp, "ST-011");
+			break;
 
-			case ST_018:
-				sprintf (tmp, "%s+%s", tmp, "ST-018");
-				break;
-
-			}
+		case ST_018:
+			sprintf(tmp, "%s+%s", tmp, "ST-018");
+			break;
 		}
-	*/
+	}
+#endif
 	else if ((ROMType & 0xf) >= 3) {
 		if (ROMType & 0xf0)
 			sprintf(tmp, "%s+%s", tmp, CoPro[(ROMType & 0xf0) >> 4]);
