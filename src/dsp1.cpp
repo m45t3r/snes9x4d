@@ -823,7 +823,7 @@ uint8 DSP1GetByte(uint16 address)
 			// 	t = 0xff;
 			// Ballz3d requires this one:
 			// else
-			// 	t = 0x00;
+			t = 0x00;
 		}
 	} else
 		t = 0x80;
