@@ -64,7 +64,7 @@ OFLAGS = -Ofast -march=armv5te -mtune=arm926ej-s -marm \
 	 -flto=4 -fwhole-program -fuse-linker-plugin \
 	 -fdata-sections -ffunction-sections \
 	 -fno-stack-protector -fomit-frame-pointer \
-	 -Wall -Wno-restrict
+	 -Wall
 
 ifeq ($(PGO), GENERATE)
   OFLAGS += -fprofile-generate -fprofile-dir=./profile

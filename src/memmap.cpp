@@ -1775,7 +1775,7 @@ const char *CMemory::Size()
 
 const char *CMemory::KartContents()
 {
-	static char tmp[30];
+	static char tmp[30], result[30];
 	static const char *CoPro[16] = {"DSP",	    "SuperFX",	"OBC1",	    "SA-1",	   "S-DD1",    "S-RTC",
 					"CoPro#6",  "CoPro#7",	"CoPro#8",  "CoPro#9",	   "CoPro#10", "CoPro#11",
 					"CoPro#12", "CoPro#13", "CoPro#14", "CoPro-Custom"};
@@ -1785,39 +1785,41 @@ const char *CMemory::KartContents()
 		return ("ROM only");
 
 	sprintf(tmp, "%s", Contents[(ROMType & 0xf) % 3]);
+	// If there is not extra chip, just use ROMType
+	memcpy(result, tmp, sizeof(tmp));
 
 	if (Settings.BS)
-		sprintf(tmp, "%s+%s", tmp, "BSX");
+		sprintf(result, "%s+%s", tmp, "BSX");
 #if 0
 	else if (Settings.SPC7110 && Settings.SPC7110RTC)
-		sprintf(tmp, "%s+%s", tmp, "SPC7110+RTC");
+		sprintf(result, "%s+%s", tmp, "SPC7110+RTC");
 	else if (Settings.SPC7110)
-		sprintf(tmp, "%s+%s", tmp, "SPC7110");
+		sprintf(result, "%s+%s", tmp, "SPC7110");
 	else if (Settings.C4)
-		sprintf(tmp, "%s+%s", tmp, "C4");
+		sprintf(result, "%s+%s", tmp, "C4");
 	else if (Settings.SETA != 0) {
 		switch (Settings.SETA) {
 		case ST_010:
-			sprintf(tmp, "%s+%s", tmp, "ST-010");
+			sprintf(result, "%s+%s", tmp, "ST-010");
 			break;
 		case ST_011:
-			sprintf(tmp, "%s+%s", tmp, "ST-011");
+			sprintf(result, "%s+%s", tmp, "ST-011");
 			break;
 
 		case ST_018:
-			sprintf(tmp, "%s+%s", tmp, "ST-018");
+			sprintf(result, "%s+%s", tmp, "ST-018");
 			break;
 		}
 	}
 #endif
 	else if ((ROMType & 0xf) >= 3) {
 		if (ROMType & 0xf0)
-			sprintf(tmp, "%s+%s", tmp, CoPro[(ROMType & 0xf0) >> 4]);
+			sprintf(result, "%s+%s", tmp, CoPro[(ROMType & 0xf0) >> 4]);
 		else
-			sprintf(tmp, "%s+%s", tmp, DSPSel[DSP1.version]);
+			sprintf(result, "%s+%s", tmp, DSPSel[DSP1.version]);
 	}
 
-	return (tmp);
+	return (result);
 }
 
 const char *CMemory::MapMode()
