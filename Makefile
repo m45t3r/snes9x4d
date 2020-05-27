@@ -1,6 +1,7 @@
 GIT_VERSION := "$(shell git describe --abbrev=7 --dirty --always --tags)"
 
 UNZIP = 1
+C4_OLD = 1
 # CHEATS = 1
 # ARM_ASM = 1
 
@@ -11,8 +12,13 @@ SOUNDDEFINES = -DSPC700_C -DSPC700_SHUTDOWN
 
 CPUOBJ = src/cpuops.o src/cpuexec.o
 
+ifdef C4_OLD
+C4OBJ = src/c4_old.o src/c4emu.o
+C4DEFINES =
+else
 C4OBJ = src/c4.o src/c4emu.o
 C4DEFINES =
+endif
 
 ifdef CHEATS
 CHEAT = src/cheats.o src/cheats2.o
