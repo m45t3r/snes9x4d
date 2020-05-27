@@ -2869,6 +2869,40 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 								// fixed-colour because there is a colour window in
 								// effect clipping the main screen that will allow the
 								// sub-screen 'underneath' to show through.
+
+#ifdef ARM_ASM
+								__asm__ volatile(
+								    "    mov     r0, %[fixedcolour]		\n"
+								    "    subs    %[width], %[width], #8	\n"
+								    "    bmi     2f				\n"
+								    "    mov     r1, r0	\n"
+								    "    mov     r2, r0	\n"
+								    "    bic     %[p], #3 \n"
+
+								    "1:	\n"
+								    "    subs    %[width], %[width], #8	\n"
+								    "    stmia   %[p]!, {r0, r1, r2, %[fixedcolour]}\n"
+								    "    bpl     1b				\n"
+
+								    "2:	\n"
+								    "    tst     %[width], #1		\n"
+								    "    strneh  %[fixedcolour], [%[p]], #2	\n"
+								    "    bic     %[p], #3 \n"
+
+								    "    tst     %[width], #2		\n"
+								    "    strne   %[fixedcolour], [%[p]], #4	\n"
+
+								    "    tst     %[width], #4		\n"
+								    "    stmia   %[p]!, {r0, %[fixedcolour]}\n"
+
+								    : [ width ] "+r"(width)
+								    : [ fixedcolour ] "r"(fixedColour),
+								      [ p ] "r"(((uint16 *)(gfx->SubScreen +
+											    y * gfx->Pitch2)) +
+										pClip->Left[c][5])
+								    : "r0", "r1", "r2", "cc");
+
+#else
 								uint16 *p =
 								    (uint16 *)(gfx->SubScreen + y * gfx->Pitch2);
 								uint16 *q = p + pClip->Right[c][5] * x2;
@@ -2880,6 +2914,7 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 									*p++ = (uint16)gfx->FixedColour;
 									*p++ = (uint16)gfx->FixedColour;
 								}
+#endif
 							}
 						}
 					}
@@ -2909,6 +2944,52 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 			}
 
 			if (ippu->Clip[0].Count[5]) {
+#ifdef ARM_ASM
+				__asm__ volatile(
+				    "1:		\n"
+				    "	mov	r1, #(256 >> 2)		\n"
+
+				    "2:		\n"
+				    // four pixels at once
+				    "	ldrb	r0, [%[d]], #1		\n"
+				    "	ldrb	r3, [%[d]], #1		\n"
+
+				    "	bics	r0, r0, #1		\n"
+				    "	ldrneh	r0, [%[p], %[delta]]	\n"
+
+				    "	bics	r3, r3, #1		\n"
+				    "	ldrneh	r3, [%[p], %[delta2]]	\n"
+
+				    "	strh	r0, [%[p]], #2		\n"
+				    "	ldrb	r0, [%[d]], #1		\n"
+				    "	strh	r3, [%[p]], #2		\n"
+				    "	ldrb	r3, [%[d]], #1		\n"
+
+				    "	bics	r0, r0, #1		\n"
+				    "	ldrneh	r0, [%[p], %[delta]]	\n"
+
+				    "	bics	r3, r3, #1		\n"
+				    "	ldrneh	r3, [%[p], %[delta2]]	\n"
+
+				    "	strh	r0, [%[p]], #2		\n"
+				    "	strh	r3, [%[p]], #2		\n"
+
+				    "	subs	r1, r1, #1		\n"
+				    "	bne	2b			\n"
+				    "3:		\n"
+				    "	subs	%[lines], %[lines], #1	\n"
+				    "	addne	%[p], %[p], #(640 - 512)	\n"
+				    "	addne	%[d], %[d], #(320 - 256)	\n"
+				    "	bne	1b			\n"
+				    "4:		\n"
+
+				    :
+				    : [ p ] "r"((uint16 *)(gfx->Screen + starty * gfx->Pitch2)),
+				      [ d ] "r"(gfx->SubZBuffer + starty * gfx->ZPitch), [ delta ] "r"(gfx->Delta << 1),
+				      [ delta2 ] "r"((gfx->Delta << 1) + 2), [ lines ] "r"(endy - starty + 1)
+				    : "r0", "r1", "r3", "cc");
+
+#else
 				if (strncmp(Memory.ROMId, "AQT", 3) != 0) {
 					// Have to copy the sub-screen to the main screen as there is a colour window in
 					// effect clipping the main screen allowing the sub-screen to show through.
@@ -2951,6 +3032,7 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 						}
 					}
 				}
+#endif
 			}
 
 			gfx->DB = gfx->ZBuffer;
@@ -3087,6 +3169,41 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 								// The backdrop has not been cleared yet - so copy the
 								// sub-screen to the main screen or fill it with the
 								// back-drop colour if the sub-screen is clear.
+
+#ifdef ARM_ASM
+								__asm__ volatile(
+								    "	ldrb	r0, [%[d]] 		\n"
+								    "31:		\n"
+
+								    "	movs	r0, r0			\n"
+								    "	bne	32f			\n"
+
+								    "	cmp	r1, #1			\n"
+								    "	ldrhih	r0, [%[p], %[delta]]	\n"
+								    "	strloh	%[back], [%[p]]		\n"
+								    "	streqh	%[fixedcolour], [%[p]]	\n"
+								    "	strhih	r0, [%[p]]  		\n"
+
+								    "32:		\n"
+								    "	subs	%[c], %[c], #1		\n"
+								    "	add	%[p], %[p], #2		\n"
+								    "	ldrneb	r0, [%[d], #1]!		\n"
+								    "	bne	31b			\n"
+								    "	\n"
+								    :
+								    : [ p ] "r"(
+									  (uint16 *)(gfx->Screen + y * gfx->Pitch2) +
+									  Left),
+								      [ d ] "r"(gfx->ZBuffer + y * gfx->ZPitch + Left),
+								      [ back ] "r"(back),
+								      [ delta ] "r"(gfx->Delta << 1),
+								      [ fixedcolour ] "r"(gfx->FixedColour),
+								      [ c ] "r"(Right - Left)
+								    : "r0", "r1", "cc"
+
+								);
+
+#else
 								register uint16 *p =
 								    (uint16 *)(gfx->Screen + y * gfx->Pitch2) + Left;
 								register uint8 *d = gfx->ZBuffer + y * gfx->ZPitch;
@@ -3109,6 +3226,7 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 									p++;
 									s++;
 								}
+#endif
 							}
 						}
 					}
@@ -3122,6 +3240,49 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 				if (pClip->Count[5]) {
 					for (uint32 y = starty; y <= endy; y++) {
 						for (uint32 b = 0; b < pClip->Count[5]; b++) {
+#ifdef ARM_ASM
+							uint32 Left = pClip->Left[b][5];
+							uint32 Right = pClip->Right[b][5];
+
+							if (Left >= Right)
+								continue;
+							__asm__ volatile(
+
+							    "	tst	%[c], #1		\n"
+							    "	bne	21f			\n"
+
+							    "	ldrb	r0, [%[d]], #1 		\n"
+							    "	add	%[p], %[p], #2		\n"
+							    "	movs	r0, r0			\n"
+							    "	streqh	%[back], [%[p], #-2]  	\n"
+							    "	subs	%[c], %[c], #1		\n"
+							    "	beq	22f			\n"
+
+							    "21:		\n"
+
+							    "	ldrb	r0, [%[d]], #1 		\n"
+							    "	ldrb	r1, [%[d]], #1		\n"
+							    "	add	%[p], %[p], #4		\n"
+
+							    "	movs	r0, r0			\n"
+							    "	streqh	%[back], [%[p], #-4]  	\n"
+
+							    "	movs	r1, r1			\n"
+							    "	streqh	%[back], [%[p], #-2]  	\n"
+
+							    "	subs	%[c], %[c], #2		\n"
+							    "	bhi	21b			\n"
+							    "22:	\n"
+							    :
+							    :
+							    [ p ] "r"((uint16 *)(gfx->Screen + y * gfx->Pitch2) + Left),
+							    [ d ] "r"(gfx->ZBuffer + y * gfx->ZPitch + Left),
+							    [ back ] "r"(back), [ c ] "r"(Right - Left)
+							    : "r0", "r1", "cc"
+
+							);
+
+#else
 							uint32 Left = pClip->Left[b][5] * x2;
 							uint32 Right = pClip->Right[b][5] * x2;
 							register uint16 *p =
@@ -3135,9 +3296,63 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 									*p = (int16)back;
 								p++;
 							}
+#endif
 						}
 					}
 				} else {
+#ifdef ARM_ASM
+					__asm__ volatile(
+
+					    "@ -- SubScreen clear			\n"
+					    "1113:		\n"
+					    "	mov	r1, #(256/8)		\n"
+					    "1112:		\n"
+					    "	ldr	r0, [%[d]], #4 		\n"
+
+					    "	add	%[p], %[p], #8		\n"
+
+					    "	tst	r0, #0x0ff		\n"
+					    "	streqh	%[back], [%[p], #-8]  	\n"
+
+					    "	tst	r0, #0x0ff00		\n"
+					    "	streqh	%[back], [%[p], #-6]  	\n"
+
+					    "	tst	r0, #0x0ff0000		\n"
+					    "	streqh	%[back], [%[p], #-4]  	\n"
+
+					    "	tst	r0, #0x0ff000000	\n"
+					    "	streqh	%[back], [%[p], #-2]  	\n"
+
+					    "	ldr	r0, [%[d]], #4 		\n"
+
+					    "	add	%[p], %[p], #8		\n"
+
+					    "	tst	r0, #0x0ff		\n"
+					    "	streqh	%[back], [%[p], #-8]  	\n"
+
+					    "	tst	r0, #0x0ff00		\n"
+					    "	streqh	%[back], [%[p], #-6]  	\n"
+
+					    "	tst	r0, #0x0ff0000		\n"
+					    "	streqh	%[back], [%[p], #-4]  	\n"
+
+					    "	tst	r0, #0x0ff000000	\n"
+					    "	streqh	%[back], [%[p], #-2]  	\n"
+
+					    "	subs	r1, r1, #1 		\n"
+					    "	bne	1112b			\n"
+
+					    "	subs	%[lines], %[lines], #1	\n"
+					    "	add	%[p], %[p], #(640-512)	\n"
+					    "	add	%[d], %[d], #(320-256)	\n"
+					    "	bne	1113b			\n"
+					    "1114:"
+					    :
+					    : [ p ] "r"(gfx->Screen + starty * gfx->Pitch2),
+					      [ d ] "r"(gfx->ZBuffer + starty * gfx->ZPitch), [ back ] "r"(back),
+					      [ lines ] "r"(endy - starty + 1)
+					    : "r0", "r1", "cc");
+#else
 					for (uint32 y = starty; y <= endy; y++) {
 						register uint16 *p = (uint16 *)(gfx->Screen + y * gfx->Pitch2);
 						register uint8 *d = gfx->ZBuffer + y * gfx->ZPitch;
@@ -3149,6 +3364,7 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 							p++;
 						}
 					}
+#endif
 				}
 			}
 		} else {
@@ -3164,6 +3380,42 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 						 ippu->RenderedScreenWidth >> 1);
 
 					for (uint32 c = 0; c < ippu->Clip[0].Count[5]; c++) {
+#ifdef ARM_ASM
+						int width = IPPU.Clip[0].Right[c][5] - IPPU.Clip[0].Left[c][5];
+						if (width <= 0)
+							continue;
+
+						__asm__ volatile(
+						    "    mov     r0, %[back]		\n"
+						    "    subs    %[width], %[width], #8	\n"
+						    "    bmi     2f				\n"
+						    "    mov     r1, r0	\n"
+						    "    mov     r2, r0	\n"
+						    "    bic     %[p], #3 \n"
+
+						    "1:	\n"
+						    "    subs    %[width], %[width], #8	\n"
+						    "    stmia   %[p]!, {r0, r1, r2, %[back]}\n"
+						    "    bpl     1b				\n"
+
+						    "2:	\n"
+						    "    tst     %[width], #1		\n"
+						    "    strneh  %[back], [%[p]], #2	\n"
+						    "    bic     %[p], #3 \n"
+
+						    "    tst     %[width], #2		\n"
+						    "    strne   %[back], [%[p]], #4	\n"
+
+						    "    tst     %[width], #4		\n"
+						    "    stmia   %[p]!, {r0, %[back]}\n"
+
+						    : [ width ] "+r"(width)
+						    : [ back ] "r"(back | (back << 16)),
+						      [ p ] "r"(((uint16 *)(gfx->SubScreen + y * gfx->Pitch2)) +
+								ippu->Clip[0].Left[c][5])
+						    : "r0", "r1", "r2", "cc");
+
+#else
 						if (ippu->Clip[0].Right[c][5] > ippu->Clip[0].Left[c][5]) {
 							register uint16 *p = (uint16 *)(gfx->Screen + y * gfx->Pitch2);
 							uint16 *q = p + ippu->Clip[0].Right[c][5] * x2;
@@ -3176,6 +3428,7 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 								*p++ = (uint16)back;
 							}
 						}
+#endif
 					}
 				}
 			} else {
