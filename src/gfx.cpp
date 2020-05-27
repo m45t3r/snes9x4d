@@ -46,6 +46,7 @@
 #include "display.h"
 #include "gfx.h"
 #include "apu.h"
+#include "tile.h"
 
 #ifdef CHEATS
 #include "cheats.h"
@@ -681,6 +682,7 @@ void DrawOBJS(bool8_32 OnMain = FALSE, uint8 D = 0)
 	CHECK_SOUND();
 
 	BG.BitShift = 4;
+	SelectConvertTile();
 	BG.TileShift = 5;
 	BG.TileAddress = ppu->OBJNameBase;
 	BG.StartPalette = 128;
@@ -1543,6 +1545,7 @@ void DrawBackground(uint32 BGMode, uint32 bg, uint8 Z1, uint8 Z2)
 
 	BG.TileSize = BGSizes[ppu->BG[bg].BGSize];
 	BG.BitShift = BitShifts[BGMode][bg];
+	SelectConvertTile();
 	BG.TileShift = TileShifts[BGMode][bg];
 	BG.TileAddress = ppu->BG[bg].NameBase << 1;
 	BG.NameSelect = 0;

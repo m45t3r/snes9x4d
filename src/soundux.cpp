@@ -139,7 +139,6 @@ extern int NoiseFreq[32];
 #define ENVX_SHIFT 24
 
 extern "C" void DecodeBlockAsm(int8 *, int16 *, int32 *, int32 *);
-extern "C" void DecodeBlockAsm2(int8 *, int16 *, int32 *, int32 *);
 
 // F is channel's current frequency and M is the 16-bit modulation waveform
 // from the previous channel multiplied by the current envelope volume level.
@@ -451,15 +450,8 @@ void AltDecodeBlock(Channel *ch)
 	if ((ch->last_block = filter & 1))
 		ch->loop = (filter & 2) != 0;
 
-#ifdef __ARM__
+#ifdef ASM_SPC700
 	int16 *raw = ch->block = ch->decoded;
-
-#if 0
-	if ((Settings.AltSampleDecode) == 1)
-		DecodeBlockAsm(compressed, raw, &ch->previous[0], &ch->previous[1]);
-	else
-		DecodeBlockAsm2(compressed, raw, &ch->previous[0], &ch->previous[1]);
-#endif
 	DecodeBlockAsm(compressed, raw, &ch->previous[0], &ch->previous[1]);
 #else
 

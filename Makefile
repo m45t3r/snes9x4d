@@ -3,7 +3,8 @@ GIT_VERSION := "$(shell git describe --abbrev=7 --dirty --always --tags)"
 UNZIP = 1
 C4_OLD = 1
 # CHEATS = 1
-# ARM_ASM = 1
+ARM_ASM = 1
+ASM_SPC700 = 1
 
 FXOBJ = src/fxinst.o src/fxemu.o src/fxdbg.o
 
@@ -29,8 +30,12 @@ CHEATDEFINES =
 endif
 
 ifdef ARM_ASM
-ASM = src/arm/spc_decode.o
-ASMDEFINES = -D__ARM__
+ASM =
+ASMDEFINES = -DARM_ASM
+ifdef ASM_SPC700
+ASM += src/arm/spc_decode.o
+ASMDEFINES += -DASM_SPC700
+endif
 else
 ASM =
 ASMDEFINES =

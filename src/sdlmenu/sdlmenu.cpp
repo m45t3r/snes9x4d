@@ -425,9 +425,9 @@ void show_credits()
 				   " regards to SiENcE, joyrider, g17,   ",
 				   " dmitrysmagin, drowsnug95            ",
 				   " and the team behind Snes9x          ",
-#ifdef __ARM__
+#ifdef ARM_ASM
 				   "",
-				   " with assembly from ARMSNES-libretro ",
+				   " with assembly from snes9x2002       ",
 				   "",
 #endif
 				   ""};

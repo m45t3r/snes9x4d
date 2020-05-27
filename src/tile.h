@@ -41,6 +41,15 @@
 #ifndef _TILE_H_
 #define _TILE_H_
 
+void SelectConvertTile();
+void SelectPalette();
+
+#ifdef ARM_ASM
+extern uint8(*ConvertTile)(uint8* pCache, uint32 TileAddr);
+#else
+uint8 ConvertTile(uint8* pCache, uint32 TileAddr);
+#endif
+
 #define TILE_PREAMBLE                                                                                                  \
 	uint8 *pCache;                                                                                                 \
                                                                                                                        \
