@@ -83,6 +83,8 @@
 #include <errno.h>
 #include <fcntl.h>
 
+#include "asmmemfuncs.h"
+
 #define CLIP16(v)                                                                                                      \
 	if ((v) < -32768)                                                                                              \
 		(v) = -32768;                                                                                          \
@@ -1302,9 +1304,10 @@ void S9xMixSamplesO(uint8 *buffer, int sample_count, int byte_offset)
 	SSoundData *sd = &SoundData;
 
 	if (!so.mute_sound) {
-		memset(MixBuffer, 0, sample_count * sizeof(MixBuffer[0]));
+		memset32((uint32_t *)MixBuffer, 0, sample_count);
+
 		if (sd->echo_enable)
-			memset(EchoBuffer, 0, sample_count * sizeof(EchoBuffer[0]));
+			memset32((uint32_t *)EchoBuffer, 0, sample_count);
 		if (so.stereo)
 			MixStereo(sample_count);
 		else

@@ -47,6 +47,7 @@
 #include "gfx.h"
 #include "apu.h"
 #include "tile.h"
+#include "asmmemfuncs.h"
 
 #ifdef CHEATS
 #include "cheats.h"
@@ -2837,6 +2838,8 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 					   ((int)ippu->XB[PPU.FixedColourGreen] << 6) |
 					   (int)ippu->XB[PPU.FixedColourBlue];
 
+			uint32 fixedColour = (gfx->FixedColour << 16 | gfx->FixedColour);
+
 			// Clear the z-buffer, marking areas 'covered' by the fixed colour as depth 1.
 			pClip = &ippu->Clip[1];
 
@@ -2846,22 +2849,18 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 				// Colour window enabled.
 				for (uint32 y = starty; y <= endy; y++) {
 
-					ZeroMemory(gfx->SubZBuffer + y * gfx->ZPitch, ippu->RenderedScreenWidth);
-					ZeroMemory(gfx->ZBuffer + y * gfx->ZPitch, ippu->RenderedScreenWidth);
+					memset32((uint32_t *)(gfx->SubZBuffer + y * gfx->ZPitch), 0, (256 >> 2));
+					memset32((uint32_t *)(gfx->ZBuffer + y * gfx->ZPitch), 0, (256 >> 2));
 
 					if (ippu->Clip[0].Count[5]) {
-						uint32 *p = (uint32 *)(gfx->SubScreen + y * gfx->Pitch2);
-						uint32 *q = (uint32 *)((uint16 *)p + ippu->RenderedScreenWidth);
-						while (p < q) {
-							*p++ = black;
-							*p++ = black;
-							*p++ = black;
-							*p++ = black;
-						}
+						memset32((uint32_t *)(gfx->SubScreen + y * gfx->Pitch2), black,
+							 (256 >> 1));
 					}
 
 					for (uint32 c = 0; c < pClip->Count[5]; c++) {
-						if (pClip->Right[c][5] > pClip->Left[c][5]) {
+						int width = pClip->Right[c][5] - pClip->Left[c][5];
+
+						if (width > 0) {
 							memset(gfx->SubZBuffer + y * gfx->ZPitch +
 								   pClip->Left[c][5] * x2,
 							       1, (pClip->Right[c][5] - pClip->Left[c][5]) * x2);
@@ -2870,7 +2869,6 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 								// fixed-colour because there is a colour window in
 								// effect clipping the main screen that will allow the
 								// sub-screen 'underneath' to show through.
-
 								uint16 *p =
 								    (uint16 *)(gfx->SubScreen + y * gfx->Pitch2);
 								uint16 *q = p + pClip->Right[c][5] * x2;
@@ -2889,23 +2887,18 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 
 			} else {
 				for (uint32 y = starty; y <= endy; y++) {
-					ZeroMemory(gfx->ZBuffer + y * gfx->ZPitch, ippu->RenderedScreenWidth);
-					memset(gfx->SubZBuffer + y * gfx->ZPitch, 1, ippu->RenderedScreenWidth);
+					// Clear the Zbuffer
+					memset32((uint32_t *)(gfx->ZBuffer + y * gfx->ZPitch), 0, (256 >> 2));
+					// clear the sub Zbuffer to 1
+					memset32((uint32_t *)(gfx->SubZBuffer + y * gfx->ZPitch), 0x01010101,
+						 (256 >> 2));
+
 					if (ippu->Clip[0].Count[5]) {
 						// Blast, have to clear the sub-screen to the fixed-colour because there
 						// is a colour window in effect clipping the main screen that will allow
 						// the sub-screen 'underneath' to show through.
-
-						uint32 b = gfx->FixedColour | (gfx->FixedColour << 16);
-						register uint32 *p = (uint32 *)(gfx->SubScreen + y * gfx->Pitch2);
-						uint32 *q = (uint32 *)((uint16 *)p + ippu->RenderedScreenWidth);
-
-						while (p < q) {
-							*p++ = b;
-							*p++ = b;
-							*p++ = b;
-							*p++ = b;
-						}
+						memset32((uint32_t *)(gfx->SubScreen + y * gfx->Pitch2), fixedColour,
+							 (256 >> 1));
 					}
 				}
 			}
@@ -3167,15 +3160,8 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 				back = black;
 			if (ippu->Clip[0].Count[5]) {
 				for (uint32 y = starty; y <= endy; y++) {
-					register uint32 *p = (uint32 *)(gfx->Screen + y * gfx->Pitch2);
-					uint32 *q = (uint32 *)((uint16 *)p + ippu->RenderedScreenWidth);
-
-					while (p < q) {
-						*p++ = black;
-						*p++ = black;
-						*p++ = black;
-						*p++ = black;
-					}
+					memset32((uint32_t *)(gfx->Screen + y * gfx->Pitch2), black,
+						 ippu->RenderedScreenWidth >> 1);
 
 					for (uint32 c = 0; c < ippu->Clip[0].Count[5]; c++) {
 						if (ippu->Clip[0].Right[c][5] > ippu->Clip[0].Left[c][5]) {
@@ -3194,19 +3180,12 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 				}
 			} else {
 				for (uint32 y = starty; y <= endy; y++) {
-					register uint32 *p = (uint32 *)(gfx->Screen + y * gfx->Pitch2);
-					uint32 *q = (uint32 *)((uint16 *)p + ippu->RenderedScreenWidth);
-					while (p < q) {
-						*p++ = back;
-						*p++ = back;
-						*p++ = back;
-						*p++ = back;
-					}
+					memset32((uint32_t *)(gfx->Screen + y * gfx->Pitch2), back, (256 >> 1));
 				}
 			}
 			if (!PPU.ForcedBlanking) {
 				for (uint32 y = starty; y <= endy; y++) {
-					ZeroMemory(gfx->ZBuffer + y * gfx->ZPitch, ippu->RenderedScreenWidth);
+					memset32((uint32_t *)(gfx->ZBuffer + y * gfx->ZPitch), 0, (256 >> 2));
 				}
 				gfx->DB = gfx->ZBuffer;
 				RenderScreen(gfx->Screen, FALSE, TRUE, SUB_SCREEN_DEPTH);
@@ -3224,14 +3203,8 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 				SelectTileRenderer(TRUE);
 			}
 			for (uint32 y = starty; y <= endy; y++) {
-				register uint32 *p = (uint32 *)(gfx->Screen + y * gfx->Pitch2);
-				uint32 *q = (uint32 *)((uint16 *)p + ippu->RenderedScreenWidth);
-				while (p < q) {
-					*p++ = back;
-					*p++ = back;
-					*p++ = back;
-					*p++ = back;
-				}
+				memset32((uint32_t *)(gfx->Screen + y * gfx->Pitch2), back,
+					 ippu->RenderedScreenWidth >> 1);
 			}
 		}
 #ifndef _ZAURUS
@@ -3243,7 +3216,8 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 #endif
 		if (!PPU.ForcedBlanking) {
 			for (uint32 y = starty; y <= endy; y++) {
-				ZeroMemory(gfx->ZBuffer + y * gfx->ZPitch, ippu->RenderedScreenWidth);
+				memset32((uint32_t *)(gfx->ZBuffer + y * gfx->ZPitch), 0,
+					 ippu->RenderedScreenWidth >> 2);
 			}
 			gfx->DB = gfx->ZBuffer;
 			gfx->pCurrentClip = &ippu->Clip[0];
