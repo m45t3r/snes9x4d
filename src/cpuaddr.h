@@ -122,10 +122,10 @@ STATIC inline long AbsoluteLong(struct SRegisters *reg, struct SICPU *icpu, stru
 {
 #ifdef FAST_ALIGNED_LSB_WORD_ACCESS
 	long OpAddress;
-	if (((int32_t) cpu->PC & 1) == 0)
-		OpAddress = (*(uint16_t*) cpu->PC) + (cpu->PC[2] << 16);
+	if (((int32_t)cpu->PC & 1) == 0)
+		OpAddress = (*(uint16_t *)cpu->PC) + (cpu->PC[2] << 16);
 	else
-		OpAddress = *CPU.PC + ((*(uint16_t*) (cpu->PC + 1)) << 8);
+		OpAddress = *CPU.PC + ((*(uint16_t *)(cpu->PC + 1)) << 8);
 #else
 	long OpAddress = READ_3WORD(cpu->PC);
 #endif
@@ -251,10 +251,10 @@ STATIC inline long AbsoluteLongIndexedX(struct SRegisters *reg, struct SICPU *ic
 {
 #ifdef FAST_ALIGNED_LSB_WORD_ACCESS
 	long OpAddress;
-	if (((int32_t) cpu->PC & 1) == 0)
-		OpAddress = ((*(uint16_t*) cpu->PC) + (cpu->PC[2] << 16) + reg->X.W) & 0xFFFFFF;
+	if (((int32_t)cpu->PC & 1) == 0)
+		OpAddress = ((*(uint16_t *)cpu->PC) + (cpu->PC[2] << 16) + reg->X.W) & 0xFFFFFF;
 	else
-		OpAddress = (*cpu->PC + ((*(uint16_t*) (cpu->PC + 1)) << 8) + reg->X.W) & 0xFFFFFF;
+		OpAddress = (*cpu->PC + ((*(uint16_t *)(cpu->PC + 1)) << 8) + reg->X.W) & 0xFFFFFF;
 #else
 	long OpAddress = (READ_3WORD(cpu->PC) + reg->X.W) & 0x00ffffff;
 #endif

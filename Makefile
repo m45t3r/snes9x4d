@@ -114,7 +114,7 @@ CFLAGS = --std=gnu11 $(CCFLAGS)
 all: snes9x4d
 
 format:
-	find . -regex '.*\.\(cpp\|hpp\|cc\|cxx\)' -exec clang-format -style=file -i {} \;
+	find . -regex '.*\.\(c\|h\|cpp\|hpp\|cc\|cxx\)' -exec clang-format -style=file -i {} \;
 
 snes9x4d: $(OBJECTS)
 	$(CXX) -o $@ $(OBJECTS) $(LDFLAGS)
