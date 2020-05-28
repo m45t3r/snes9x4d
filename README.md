@@ -163,6 +163,9 @@ Some tips to port this project to another Dingoo-like device:
       flag anyway
     + `FAST_LSB_WORD_ACCESS` seems to speed-up the code access to some memory
       operations. Recommended if your target supports it
+    + `FAST_ALIGNED_LSB_WORD_ACCESS` is a similar to above, but only optimizes
+      aligned memory access. If your target doesn't support the above, this one
+      may work
     + Unless your device is an ARM device, remove `__ARM__` feature flag since
       will enable ARM specific optimizations (assembly)
     + `VIDEO_MODE` defines some configuration related to video. For now there
@@ -177,6 +180,9 @@ Some tips to port this project to another Dingoo-like device:
     + `MIYOO` is obviously used only for Miyoo devices, so you shouldn't define
       it for your own device. But looking where it is used in the code should
       help you to define your own device-specific code
+    + `C4_OLD` (this is a Makefile flag) use an older version of C(x)4 chip
+      emulation that uses approximations. Probably faster but more inaccurate.
+      Cx4 chip was only used in 2 games: Mega Man X 2 and 3
 - If your device is like Miyoo and doesn't have an standard Dingoo layout, you
   should define your own custom layout by creating a file
   `src/sdlmenu/<device>.h` and mapping the SDL buttons accordingly (see
