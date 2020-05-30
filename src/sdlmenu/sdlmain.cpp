@@ -50,17 +50,9 @@
 #include <ctype.h>
 #include <SDL/SDL.h>
 #include <time.h>
-#include "sdlmenu.h"
-#include "keydef.h"
-#include "scaler.h"
-
-#ifdef MIYOO
-#include "miyoo.h"
-#else
-#include "dingoo.h"
-#endif
 
 #include "snes9x.h"
+#include "port.h"
 #include "memmap.h"
 #include "debug.h"
 #include "cpuexec.h"
@@ -72,35 +64,32 @@
 #include "soundux.h"
 #include "spc700.h"
 
+#include "keydef.h"
+#ifdef MIYOO
+#include "miyoo.h"
+#else
+#include "dingoo.h"
+#endif
+#include "scaler.h"
+#include "sdlmain.h"
+#include "sdlmenu.h"
 #include "sdlvideo.h"
 
-uint8 *keyssnes;
-
-// SaveSlotNumber
+// public global variables
 short SaveSlotNum = 0;
-
 bool8_32 Scale = FALSE;
 #ifdef BILINEAR_SCALE
 bool8_32 Bilinear = FALSE;
 #endif
-char msg[256];
-short vol = 50;
-clock_t start;
+uint32 MaxAutoFrameSkip = 3;
 uint16 sfc_key[256];
 
-const char *GetHomeDirectory();
-void OutOfMemory();
-
-extern void S9xDisplayFrameRate(uint8 *, uint32);
-extern void S9xDisplayString(const char *string, uint8 *, uint32, int);
-extern SDL_Surface *screen, *gfxscreen;
-
+// private global variables
+uint8 *keyssnes;
 uint32 xs = SURFACE_WIDTH;  // width
 uint32 ys = SURFACE_HEIGHT; // height
 uint32 cl = 12;		    // ypos in highres mode
 uint32 cs = 0;
-uint32 MaxAutoFrameSkip = 3;
-
 char *rom_filename = NULL;
 char *snapshot_filename = NULL;
 
@@ -352,6 +341,7 @@ void S9xInit()
 	sigaction(SIGINT, &sa, NULL);
 #endif
 
+	char msg[SBUFFER];
 	// Handheld Key Infos
 #ifdef MIYOO
 	sprintf(msg, "Press R to Show MENU");
@@ -401,7 +391,6 @@ extern "C"
     int
     main(int argc, char **argv)
 {
-	start = clock();
 	if (argc < 2) {
 		S9xUsage();
 	}

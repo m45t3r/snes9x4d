@@ -3,8 +3,7 @@
 #include <fcntl.h>
 #include <dirent.h>
 #include <strings.h>
-#include "keydef.h"
-#include "dingoo.h"
+#include <unistd.h>
 
 #include "snes9x.h"
 #include "memmap.h"
@@ -12,28 +11,12 @@
 #include "snapshot.h"
 #include "display.h"
 #include "gfx.h"
-#include "unistd.h"
 
-#include "sdlmenu.h"
+#include "keydef.h"
 #include "sdlaudio.h"
+#include "sdlmain.h"
+#include "sdlmenu.h"
 #include "sdlvideo.h"
-
-extern uint16 sfc_key[256];
-extern bool8_32 Scale;
-#ifdef BILINEAR_SCALE
-extern bool8_32 Bilinear;
-#endif
-extern uint32 MaxAutoFrameSkip;
-extern short SaveSlotNum;
-extern short vol;
-
-extern void S9xDisplayString(const char *string, uint8 *, uint32, int ypos);
-void save_screenshot(char *fname);
-void load_screenshot(char *fname);
-void show_screenshot(void);
-void capt_screenshot(void);
-void menu_dispupdate(void);
-void show_credits(void);
 
 int cursor = 3;
 char SaveSlotNum_old = 255;
@@ -431,7 +414,7 @@ void show_credits()
 				   "",
 #endif
 				   ""};
-	const int disptxt_len = sizeof(disptxt) / sizeof(disptxt[0]);
+	const int disptxt_len = array_size(disptxt);
 
 	do {
 		SDL_Event event;

@@ -58,15 +58,13 @@
 #include "gfx.h"
 #include "display.h"
 #include "apu.h"
+
 #include "keydef.h"
 #include "scaler.h"
+#include "sdlmain.h"
 #include "sdlvideo.h"
 
-#define COUNT(a) (sizeof(a) / sizeof(a[0]))
-
 SDL_Surface *screen, *gfxscreen;
-extern uint32 xs, ys, cl, cs;
-extern bool8_32 Scale;
 
 #ifndef _ZAURUS
 int S9xMinCommandLineArgs() { return (2); }

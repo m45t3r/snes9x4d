@@ -18,4 +18,6 @@
 #define UPSCALE_P upscale_256x224_to_384x272_for_480x272
 #endif
 
+extern SDL_Surface *screen, *gfxscreen;
+
 #endif

@@ -7,14 +7,15 @@
 #define MENU_WIDTH 256
 #define SBUFFER 256
 
-void menu_loop(void);
 char *menu_romselector();
-void menu_disptext(void);
-void save_screenshot(char *fname);
-void load_screenshot(char *fname);
-void show_screenshot(void);
 void capt_screenshot(void);
-int batt_level(void);
+void load_screenshot(char *fname);
+void menu_disptext(void);
+void menu_dispupdate(void);
+void menu_loop(void);
+void save_screenshot(char *fname);
+void show_credits(void);
+void show_screenshot(void);
 
 #define strfmt(str, format, ...)                                                                                       \
 	do {                                                                                                           \
@@ -32,5 +33,7 @@ int batt_level(void);
 		snprintf(ext, PATH_MAX, ext_format, args);                                                             \
 		memcpy(fname, S9xGetFilename(ext), PATH_MAX);                                                          \
 	} while (0)
+
+#define array_size(a) (sizeof(a) / sizeof(a[0]))
 
 #endif // ___MENU_h_
