@@ -64,7 +64,7 @@ SDL_LIBS := $(shell $(SYSROOT)/usr/bin/sdl-config --libs)
 
 INCLUDE = -I. -Isrc/ -Isrc/unzip
 
-LDFLAGS = -lSDL -lz -lm $(SDL_LIBS) -Wl,--as-needed -Wl,--gc-sections -s
+LDFLAGS = -lz -lm $(SDL_LIBS) -Wl,--as-needed -Wl,--gc-sections -s
 
 OFLAGS = -Ofast -march=armv5te -mtune=arm926ej-s -marm \
 	 -flto=4 -fwhole-program -fuse-linker-plugin \
