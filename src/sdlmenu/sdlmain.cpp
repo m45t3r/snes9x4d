@@ -634,52 +634,42 @@ bool8_32 S9xInitUpdate() { return (TRUE); }
 
 bool8_32 S9xDeinitUpdate(int Width, int Height)
 {
-	uint32 spd = (Settings.SupportHiRes ? 256 / 2 : 0);
-	uint32 dpd = (screen->w - 256) / 2;
-	uint32 dpo = (screen->w - 256) / 4 + (screen->h - 224) / 2 * screen->w / 2;
+	uint32 spd = (Settings.SupportHiRes ? SNES_WIDTH / 2 : 0);
+	uint32 dpd = (screen->w - SNES_WIDTH) / 2;
+	uint32 dpo = (screen->w - SNES_WIDTH) / 4 + (screen->h - SNES_HEIGHT) / 2 * screen->w / 2;
 
 	SDL_LockSurface(screen);
 
-	if (Settings.SupportHiRes) {
-		if (Width > 256) {
-			// If SupportHiRes is active and HighRes Frame
-			uint16 *dp16 = (uint16 *)(screen->pixels) + dpo * 2;
-			uint32 *sp32 = (uint32 *)(GFX.Screen);
-			for (int y = 224; y--;) {
-				for (int x = 256; x--;) {
-					*dp16++ = *sp32++;
-				}
-				dp16 += dpd * 2;
+	if (Settings.SupportHiRes && (Width > SNES_WIDTH)) {
+		// If SupportHiRes is active and HighRes Frame
+		uint16 *dp16 = (uint16 *)(screen->pixels) + dpo * 2;
+		uint32 *sp32 = (uint32 *)(GFX.Screen);
+		for (int y = SNES_HEIGHT; y--;) {
+			for (int x = SNES_WIDTH; x--;) {
+				*dp16++ = *sp32++;
 			}
-		} else {
-			if (Scale) {
-				(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 512);
-			} else
-				goto __jump;
+			dp16 += dpd * 2;
 		}
+	} else if (Settings.SupportHiRes && Scale) {
+		(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, SNES_WIDTH * 2);
+	} else if (Scale) {
+		(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, SNES_WIDTH);
 	} else {
-		// if scaling for non-highres (is centered)
-		if (Scale) {
-			(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 256);
-
-		} else {
-		__jump:
-			uint32 *dp32 = (uint32 *)(screen->pixels) + dpo;
-			uint32 *sp32 = (uint32 *)(GFX.Screen);
-			for (int y = 224; y--;) {
-				for (int x = 256 / 2; x--;) {
-					*dp32++ = *sp32++;
-				}
-				sp32 += spd;
-				dp32 += dpd;
+		uint32 *dp32 = (uint32 *)(screen->pixels) + dpo;
+		uint32 *sp32 = (uint32 *)(GFX.Screen);
+		for (int y = SNES_HEIGHT; y--;) {
+			for (int x = SNES_WIDTH / 2; x--;) {
+				*dp32++ = *sp32++;
 			}
+			sp32 += spd;
+			dp32 += dpd;
 		}
 	}
 
 	if (GFX.InfoString)
-		S9xDisplayString(GFX.InfoString, (uint8 *)screen->pixels + screen->w - 256, screen->pitch, 0);
+		S9xDisplayString(GFX.InfoString, (uint8 *)screen->pixels + screen->w - SNES_WIDTH, screen->pitch, 0);
 	else if (Settings.DisplayFrameRate)
-		S9xDisplayFrameRate((uint8 *)screen->pixels + screen->w - 256, screen->pitch);
+		S9xDisplayFrameRate((uint8 *)screen->pixels + screen->w - SNES_WIDTH, screen->pitch);
 
 	SDL_UnlockSurface(screen);
 	SDL_Flip(screen);
