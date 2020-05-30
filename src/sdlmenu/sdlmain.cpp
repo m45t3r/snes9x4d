@@ -341,15 +341,6 @@ void S9xInit()
 	sigaction(SIGINT, &sa, NULL);
 #endif
 
-	char msg[SBUFFER];
-	// Handheld Key Infos
-#ifdef MIYOO
-	sprintf(msg, "Press R to Show MENU");
-#else
-	sprintf(msg, "Press SELECT+START to Show MENU");
-#endif
-	S9xSetInfoString(msg);
-
 #ifndef _ZAURUS
 	S9xGraphicsMode();
 	sprintf(String, "\"%s\" %s: %s", Memory.ROMName, TITLE, VERSION);
@@ -403,6 +394,15 @@ extern "C"
 
 	S9xReadConfig();
 	S9xInit();
+
+	char msg[SBUFFER];
+	// Handheld Key Infos
+#ifdef MIYOO
+	sprintf(msg, "Press R to Show MENU");
+#else
+	sprintf(msg, "Press SELECT+START to Show MENU");
+#endif
+	S9xSetInfoString(msg);
 
 	LoadRom();
 	MainLoop();
