@@ -7,8 +7,6 @@
 void (*upscale_p)(uint32_t *dst, uint32_t *src, int width) = 0;
 
 #ifdef BILINEAR_SCALE
-void (*upscale_p_bilinear)(uint32_t *dst, uint32_t *src, int width) = 0;
-
 /*
  * Approximately bilinear scaler, 256x224 to 320x240
  *
