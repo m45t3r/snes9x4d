@@ -318,12 +318,6 @@ void menu_loop(void)
 	S9xInitDisplay(0, 0);
 	if (sound_changed)
 		S9xReinitSound();
-#ifdef BILINEAR_SCALE
-	if (Bilinear)
-		upscale_p = UPSCALE_P;
-	else
-		upscale_p = UPSCALE_P_BILINEAR;
-#endif
 }
 
 void save_screenshot(char *fname)
