@@ -89,9 +89,13 @@ void S9xInitDisplay(int /*argc*/, char ** /*argv*/)
 
 	surfacewidth = SURFACE_WIDTH;
 	surfaceheight = SURFACE_HEIGHT;
-	upscale_p = UPSCALE_P;
 #ifdef BILINEAR_SCALE
-	upscale_p_bilinear = UPSCALE_P_BILINEAR;
+	if (Bilinear)
+		upscale_p = UPSCALE_P;
+	else
+		upscale_p = UPSCALE_P_BILINEAR;
+#else
+	upscale_p = UPSCALE_P;
 #endif
 
 	screen = SDL_SetVideoMode(surfacewidth, surfaceheight, 16, SDL_HWSURFACE | SDL_DOUBLEBUF);

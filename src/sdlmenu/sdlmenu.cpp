@@ -13,6 +13,7 @@
 #include "gfx.h"
 
 #include "keydef.h"
+#include "scaler.h"
 #include "sdlaudio.h"
 #include "sdlmain.h"
 #include "sdlmenu.h"
@@ -147,8 +148,7 @@ void menu_dispupdate(void)
 
 void menu_loop(void)
 {
-	bool8_32 old_stereo = Settings.Stereo;
-	uint32 old_sound_playback_rate = Settings.SoundPlaybackRate;
+	bool8_32 sound_changed = false;
 	bool8_32 exit_loop = false;
 	char fname[PATH_MAX];
 	char snapscreen_tmp[sizeof(snapscreen)];
@@ -277,14 +277,18 @@ void menu_loop(void)
 				case 12:
 					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED) {
 						Settings.SoundPlaybackRate = (Settings.SoundPlaybackRate - 1) & 7;
+						sound_changed = true;
 					} else if (keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED) {
 						Settings.SoundPlaybackRate = (Settings.SoundPlaybackRate + 1) & 7;
+						sound_changed = true;
 					}
 					break;
 				case 13:
 					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED ||
-					    keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED)
+					    keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED) {
 						Settings.Stereo = !Settings.Stereo;
+						sound_changed = true;
+					}
 					break;
 				case 14:
 					if (keyssnes[sfc_key[A_1]] == SDL_PRESSED)
@@ -312,8 +316,14 @@ void menu_loop(void)
 	Settings.SupportHiRes = highres_current;
 	S9xDeinitDisplay();
 	S9xInitDisplay(0, 0);
-	if (old_sound_playback_rate != Settings.SoundPlaybackRate || old_stereo != Settings.Stereo)
+	if (sound_changed)
 		S9xReinitSound();
+#ifdef BILINEAR_SCALE
+	if (Bilinear)
+		upscale_p = UPSCALE_P;
+	else
+		upscale_p = UPSCALE_P_BILINEAR;
+#endif
 }
 
 void save_screenshot(char *fname)

@@ -653,24 +653,14 @@ bool8_32 S9xDeinitUpdate(int Width, int Height)
 			}
 		} else {
 			if (Scale) {
-#ifdef BILINEAR_SCALE
-				if (Bilinear)
-					(*upscale_p_bilinear)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 512);
-				else
-#endif
-					(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 512);
+				(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 512);
 			} else
 				goto __jump;
 		}
 	} else {
 		// if scaling for non-highres (is centered)
 		if (Scale) {
-#ifdef BILINEAR_SCALE
-			if (Bilinear)
-				(*upscale_p_bilinear)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 256);
-			else
-#endif
-				(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 256);
+			(*upscale_p)((uint32_t *)screen->pixels, (uint32_t *)GFX.Screen, 256);
 
 		} else {
 		__jump:
