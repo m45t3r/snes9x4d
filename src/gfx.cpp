@@ -528,6 +528,10 @@ void S9xEndScreenRefresh(struct SPPU *ppu)
 		S9xDeinitUpdate(ippu->RenderedScreenWidth, ippu->RenderedScreenHeight);
 	}
 
+#ifdef LAGFIX
+	finishedFrame = true;
+#endif
+
 #ifdef CHEATS
 	S9xApplyCheats();
 #endif

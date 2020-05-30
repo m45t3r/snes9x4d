@@ -63,100 +63,126 @@ void S9xMainLoop(void)
 	struct SRegisters *reg = &Registers;
 	struct SAPURegisters *areg = &APURegisters;
 
-	for (;;) {
-		APU_EXECUTE();
+#ifdef LAGFIX
+	do {
+#endif
+		for (;;) {
+			APU_EXECUTE();
 
-		if (cpu->Flags) {
-			if (cpu->Flags & NMI_FLAG) {
-				if (--cpu->NMICycleCount == 0) {
-					cpu->Flags &= ~NMI_FLAG;
-					if (cpu->WaitingForInterrupt) {
-						cpu->WaitingForInterrupt = FALSE;
-						++cpu->PC;
+			if (cpu->Flags) {
+				if (cpu->Flags & NMI_FLAG) {
+					if (--cpu->NMICycleCount == 0) {
+						cpu->Flags &= ~NMI_FLAG;
+						if (cpu->WaitingForInterrupt) {
+							cpu->WaitingForInterrupt = FALSE;
+							++cpu->PC;
+						}
+						S9xOpcode_NMI();
 					}
-					S9xOpcode_NMI();
 				}
-			}
 
 #ifdef DEBUGGER
-			if ((cpu->Flags & BREAK_FLAG) && !(cpu->Flags & SINGLE_STEP_FLAG)) {
-				for (int Break = 0; Break != 6; Break++) {
-					if (S9xBreakpoint[Break].Enabled && S9xBreakpoint[Break].Bank == Registers.PB &&
-					    S9xBreakpoint[Break].Address == cpu->PC - cpu->PCBase) {
-						if (S9xBreakpoint[Break].Enabled == 2)
-							S9xBreakpoint[Break].Enabled = TRUE;
-						else
-							cpu->Flags |= DEBUG_MODE_FLAG;
+				if ((cpu->Flags & BREAK_FLAG) && !(cpu->Flags & SINGLE_STEP_FLAG)) {
+					for (int Break = 0; Break != 6; Break++) {
+						if (S9xBreakpoint[Break].Enabled &&
+						    S9xBreakpoint[Break].Bank == Registers.PB &&
+						    S9xBreakpoint[Break].Address == cpu->PC - cpu->PCBase) {
+							if (S9xBreakpoint[Break].Enabled == 2)
+								S9xBreakpoint[Break].Enabled = TRUE;
+							else
+								cpu->Flags |= DEBUG_MODE_FLAG;
+						}
 					}
 				}
-			}
 #endif
-			CHECK_SOUND();
+				CHECK_SOUND();
 
-			if (cpu->Flags & IRQ_PENDING_FLAG) {
-				if (cpu->IRQCycleCount == 0) {
-					if (cpu->WaitingForInterrupt) {
-						cpu->WaitingForInterrupt = FALSE;
-						cpu->PC++;
-					}
-					if (cpu->IRQActive /* && !Settings.DisableIRQ */) {
-						if (!CHECKFLAG(IRQ))
-							S9xOpcode_IRQ();
+				if (cpu->Flags & IRQ_PENDING_FLAG) {
+					if (cpu->IRQCycleCount == 0) {
+						if (cpu->WaitingForInterrupt) {
+							cpu->WaitingForInterrupt = FALSE;
+							cpu->PC++;
+						}
+						if (cpu->IRQActive /* && !Settings.DisableIRQ */) {
+							if (!CHECKFLAG(IRQ))
+								S9xOpcode_IRQ();
+						} else
+							cpu->Flags &= ~IRQ_PENDING_FLAG;
 					} else
-						cpu->Flags &= ~IRQ_PENDING_FLAG;
-				} else
-					cpu->IRQCycleCount--;
-			}
+						cpu->IRQCycleCount--;
+				}
 #ifdef DEBUGGER
-			if (cpu->Flags & DEBUG_MODE_FLAG)
-				break;
+				if (cpu->Flags & DEBUG_MODE_FLAG)
+					break;
 #endif
-			if (cpu->Flags & SCAN_KEYS_FLAG)
-				break;
+				if (cpu->Flags & SCAN_KEYS_FLAG)
+					break;
 #ifdef DEBUGGER
-			if (cpu->Flags & TRACE_FLAG)
-				S9xTrace();
+				if (cpu->Flags & TRACE_FLAG)
+					S9xTrace();
 
-			if (cpu->Flags & SINGLE_STEP_FLAG) {
-				cpu->Flags &= ~SINGLE_STEP_FLAG;
-				cpu->Flags |= DEBUG_MODE_FLAG;
-			}
+				if (cpu->Flags & SINGLE_STEP_FLAG) {
+					cpu->Flags &= ~SINGLE_STEP_FLAG;
+					cpu->Flags |= DEBUG_MODE_FLAG;
+				}
 #endif
-		} // if (CPU.Flags)
+			} // if (CPU.Flags)
 #ifdef CPU_SHUTDOWN
-		cpu->PCAtOpcodeStart = cpu->PC;
+			cpu->PCAtOpcodeStart = cpu->PC;
 #endif
 #ifdef VAR_CYCLES
-		cpu->Cycles += cpu->MemSpeed;
+			cpu->Cycles += cpu->MemSpeed;
 #else
 		cpu->Cycles += icpu->Speed[*cpu->PC];
 #endif
-		(*icpu->S9xOpcodes[*cpu->PC++].S9xOpcode)(reg, icpu, cpu);
+			(*icpu->S9xOpcodes[*cpu->PC++].S9xOpcode)(reg, icpu, cpu);
 
-		S9xUpdateAPUTimer();
+			S9xUpdateAPUTimer();
 
-		if (SA1.Executing)
-			S9xSA1MainLoop();
+			if (SA1.Executing)
+				S9xSA1MainLoop();
 
-		DO_HBLANK_CHECK();
-	}
-	Registers.PC = cpu->PC - cpu->PCBase;
-	S9xPackStatus();
-	areg->PC = iapu->PC - iapu->RAM;
-	S9xAPUPackStatus_OP();
-	if (cpu->Flags & SCAN_KEYS_FLAG) {
-#ifdef DEBUGGER
-		if (!(cpu->Flags & FRAME_ADVANCE_FLAG))
+			DO_HBLANK_CHECK();
+
+#ifdef LAGFIX
+			if (finishedFrame)
+				break;
 #endif
-			S9xSyncSpeed();
-		cpu->Flags &= ~SCAN_KEYS_FLAG;
-	}
+		}
+
+#ifdef LAGFIX
+		if (!finishedFrame) {
+#endif
+#ifndef LAGFIX
+			Registers.PC = cpu->PC - cpu->PCBase;
+			S9xPackStatus();
+			areg->PC = iapu->PC - iapu->RAM;
+			S9xAPUPackStatus_OP();
+#endif
+			if (cpu->Flags & SCAN_KEYS_FLAG) {
+#ifdef DEBUGGER
+				if (!(cpu->Flags & FRAME_ADVANCE_FLAG))
+#endif
+					S9xSyncSpeed();
+				cpu->Flags &= ~SCAN_KEYS_FLAG;
+			}
 #ifdef DETECT_NASTY_FX_INTERLEAVE
-	if (cpu->BRKTriggered && Settings.SuperFX && !cpu->TriedInterleavedMode2) {
-		cpu->TriedInterleavedMode2 = TRUE;
-		cpu->BRKTriggered = FALSE;
-		S9xDeinterleaveMode2();
-	}
+			if (cpu->BRKTriggered && Settings.SuperFX && !cpu->TriedInterleavedMode2) {
+				cpu->TriedInterleavedMode2 = TRUE;
+				cpu->BRKTriggered = FALSE;
+				S9xDeinterleaveMode2();
+			}
+#endif
+#ifdef LAGFIX
+		} else {
+			finishedFrame = false;
+			Registers.PC = cpu->PC - cpu->PCBase;
+			S9xPackStatus();
+			areg->PC = iapu->PC - iapu->RAM;
+			S9xAPUPackStatus_OP();
+			break;
+		}
+	} while (!finishedFrame);
 #endif
 }
 

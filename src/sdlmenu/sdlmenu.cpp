@@ -411,12 +411,7 @@ void show_credits()
 				   "",
 				   " regards to SiENcE, joyrider, g17,   ",
 				   " dmitrysmagin, drowsnug95            ",
-				   " and the team behind Snes9x          ",
-#ifdef __ARM__
-				   "",
-				   " with assembly from ARMSNES-libretro ",
-				   "",
-#endif
+				   " and the teams behind Snes9x/libretro",
 				   ""};
 	const int disptxt_len = array_size(disptxt);
 
