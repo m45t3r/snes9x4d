@@ -411,7 +411,7 @@ void show_credits()
 				   "",
 				   " regards to SiENcE, joyrider, g17,   ",
 				   " dmitrysmagin, drowsnug95            ",
-				   " and the teams behind Snes9x/libretro",
+				   " and Snes9x/libretro teams           ",
 				   ""};
 	const int disptxt_len = array_size(disptxt);
 
