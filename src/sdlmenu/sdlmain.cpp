@@ -164,7 +164,7 @@ const char *S9xGetCfgName()
 
 int is_home_created()
 {
-	char home[512];
+	char home[PATH_MAX + 1];
 	sprintf(home, "%s/%s", GetHomeDirectory(), ".snes9x4d");
 	mkdir(home, 0777);
 	if (!errno)
