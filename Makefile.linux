@@ -21,7 +21,7 @@ CHEAT =
 CHEATDEFINES =
 endif
 
-OBJECTS = $(CPUOBJ) $(FXOBJ) $(C4OBJ) $(CHEAT) $(ASM) \
+OBJECTS = $(CPUOBJ) $(FXOBJ) $(C4OBJ) $(CHEAT) \
 	src/cpu.o src/tile.o src/gfx.o src/clip.o \
 	src/memmap.o src/ppu.o src/dma.o $(SOUNDOBJ) \
 	src/sdd1.o src/sdd1emu.o src/dsp1.o src/sa1.o src/sa1cpu.o src/obc1.o \
@@ -39,7 +39,6 @@ CXX	= g++
 CC	= gcc
 STRIP	= strip
 AS	= as
-GASM	= g++
 
 SYSROOT := $(shell $(CC) --print-sysroot)
 SDL_CFLAGS := $(shell $(SYSROOT)/usr/bin/sdl-config --cflags)
@@ -59,7 +58,6 @@ else ifeq ($(PGO), APPLY)
 endif
 
 CCFLAGS = $(OFLAGS) \
-$(ASMDEFINES) \
 $(C4DEFINES) \
 $(CHEATDEFINES) \
 $(INCLUDE) \

@@ -146,8 +146,9 @@ straightforward to port this code for a new device, specially for a Dingux-like
 Each specific device feature is behind compiler-flags so it shouldn't affect
 compilation for other targets. This port has many code clean-ups, so it should
 be easier to navigate compared to other `snes9x4d` ports. Also this port brings
-some additional optimizations not available in other `snes9x4d` ports, like the
-color operations code from Snes9x 1.60 and some assembly optimizations in ARM.
+some additional optimizations and features not available in other `snes9x4d`
+ports, like the color operations code from `Snes9x 1.60`, bilinear(ish)
+filtering from `PocketSNES`, `LAGFIX` from `snes9x2002`, etc.
 
 Some tips to port this project to another Dingoo-like device:
 
@@ -166,8 +167,6 @@ Some tips to port this project to another Dingoo-like device:
     + `FAST_ALIGNED_LSB_WORD_ACCESS` is a similar to above, but only optimizes
       aligned memory access. If your target doesn't support the above, this one
       may work
-    + Unless your device is an ARM device, remove `__ARM__` feature flag since
-      will enable ARM specific optimizations (assembly)
     + `VIDEO_MODE` defines some configuration related to video. For now there
       are 3 pre-defined video modes: `1` for `320x240`, `2` for `400x240` and
       `3` for `480x272`. If your device has another resolution, you will need
@@ -183,6 +182,9 @@ Some tips to port this project to another Dingoo-like device:
     + `C4_OLD` (this is a Makefile flag) use an older version of C(x)4 chip
       emulation that uses approximations. Probably faster but more inaccurate.
       Cx4 chip was only used in 2 games: Mega Man X 2 and 3
+    + `LAGFIX` this flag reduces the input lag in one frame (~16ms). Backported
+      from `snes9x2002`, and you can read more about it here:
+      https://www.libretro.com/index.php/core-progress-snes9x-2002-input-lag-reduced-by-1-2-frames/
 - If your device is like Miyoo and doesn't have an standard Dingoo layout, you
   should define your own custom layout by creating a file
   `src/sdlmenu/<device>.h` and mapping the SDL buttons accordingly (see

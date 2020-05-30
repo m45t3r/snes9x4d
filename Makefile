@@ -3,7 +3,6 @@ GIT_VERSION := "$(shell git describe --abbrev=7 --dirty --always --tags)"
 UNZIP = 1
 C4_OLD = 1
 # CHEATS = 1
-# ARM_ASM = 1
 
 FXOBJ = src/fxinst.o src/fxemu.o src/fxdbg.o
 
@@ -28,15 +27,7 @@ CHEAT =
 CHEATDEFINES =
 endif
 
-ifdef ARM_ASM
-ASM = src/arm/spc_decode.o
-ASMDEFINES = -D__ARM__
-else
-ASM =
-ASMDEFINES =
-endif
-
-OBJECTS = $(CPUOBJ) $(FXOBJ) $(C4OBJ) $(CHEAT) $(ASM) \
+OBJECTS = $(CPUOBJ) $(FXOBJ) $(C4OBJ) $(CHEAT) \
 	src/cpu.o src/tile.o src/gfx.o src/clip.o \
 	src/memmap.o src/ppu.o src/dma.o $(SOUNDOBJ) \
 	src/sdd1.o src/sdd1emu.o src/dsp1.o src/sa1.o src/sa1cpu.o src/obc1.o \
@@ -56,7 +47,6 @@ CXX	= $(PREFIX)-g++
 CC	= $(PREFIX)-gcc
 STRIP	= $(PREFIX)-strip
 AS	= $(PREFIX)-as
-GASM	= $(PREFIX)-g++
 
 SYSROOT := $(shell $(CC) --print-sysroot)
 SDL_CFLAGS := $(shell $(SYSROOT)/usr/bin/sdl-config --cflags)
@@ -86,7 +76,6 @@ else
 endif
 
 CCFLAGS = $(OFLAGS) \
-$(ASMDEFINES) \
 $(C4DEFINES) \
 $(CHEATDEFINES) \
 $(INCLUDE) \
