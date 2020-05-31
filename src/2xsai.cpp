@@ -38,20 +38,9 @@
  * Super NES and Super Nintendo Entertainment System are trademarks of
  * Nintendo Co., Limited and its subsidiary companies.
  */
-#ifdef __DJGPP
-#include <allegro.h>
-#endif
-
 #include "snes9x.h"
 #include "port.h"
 #include "gfx.h"
-
-/*
-#if (defined (__i386__) || defined (__i486__) || \
-     defined (__i586__) || defined (__WIN32__) || defined (__DJGPP))
-#define MMX
-#endif
-*/
 
 extern "C" {
 

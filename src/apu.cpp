@@ -38,22 +38,12 @@
  * Super NES and Super Nintendo Entertainment System are trademarks of
  * Nintendo Co., Limited and its subsidiary companies.
  */
-#ifdef __DJGPP
-//#include <allegro.h>
-#undef TRUE
-#endif
-
-#ifdef __SDL__
-#undef __WIN32__
-#endif
-
 #include <limits.h>
 
 #include "snes9x.h"
 #include "spc700.h"
 #include "apu.h"
 #include "soundux.h"
-/*#include "cpuexec.h"*/
 #include "port.h"
 
 extern int NoiseFreq[32];

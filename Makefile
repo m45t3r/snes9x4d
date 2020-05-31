@@ -90,7 +90,6 @@ $(UNZIPDEFINES) \
 -DVIDEO_MODE=1 \
 -DZLIB \
 -D_ZAURUS \
--D__SDL__ \
 
 CXXFLAGS = --std=gnu++14 \
 	   -fno-exceptions -fno-rtti -fno-threadsafe-statics \

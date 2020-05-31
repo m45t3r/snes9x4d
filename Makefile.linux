@@ -69,7 +69,6 @@ $(UNZIPDEFINES) \
 -DFAST_LSB_WORD_ACCESS \
 -DZLIB \
 -D_ZAURUS \
--D__SDL__ \
 -D__linux \
 
 CXXFLAGS = --std=gnu++03 $(CCFLAGS)
