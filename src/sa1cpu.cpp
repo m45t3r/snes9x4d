@@ -48,10 +48,10 @@
 #define ICPU SA1ICPU
 //#define ICPU SA1
 #define Registers SA1Registers
-#define S9xGetByte S9xSA1GetByte
-#define S9xGetWord S9xSA1GetWord
-#define S9xSetByte S9xSA1SetByte
-#define S9xSetWord S9xSA1SetWord
+#define S9xGetByte S9xSA1GetByteFast
+#define S9xGetWord S9xSA1GetWordFast
+#define S9xSetByte S9xSA1SetByteFast
+#define S9xSetWord S9xSA1SetWordFast
 #define S9xSetPCBase S9xSA1SetPCBase
 #define S9xOpcodesM1X1 S9xSA1OpcodesM1X1
 #define S9xOpcodesM1X0 S9xSA1OpcodesM1X0
@@ -96,8 +96,6 @@
 
 void S9xSA1MainLoop()
 {
-	int i;
-
 #if 0
     if (SA1.Flags & NMI_FLAG)
     {
@@ -123,7 +121,7 @@ void S9xSA1MainLoop()
 	}
 #ifdef DEBUGGER
 	if (SA1.Flags & TRACE_FLAG) {
-		for (i = 0; i < 3 && SA1.Executing; i++) {
+		for (int i = 0; i < 3 && SA1.Executing; i++) {
 			S9xSA1Trace();
 #ifdef CPU_SHUTDOWN
 			SA1.PCAtOpcodeStart = SA1.PC;
@@ -132,7 +130,7 @@ void S9xSA1MainLoop()
 		}
 	} else
 #endif
-		for (i = 0; i < 3 && SA1.Executing; i++) {
+		for (int i = 0; i < 3 && SA1.Executing; i++) {
 #ifdef CPU_SHUTDOWN
 			SA1.PCAtOpcodeStart = SA1.PC;
 #endif
