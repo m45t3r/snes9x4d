@@ -37,7 +37,6 @@ CCFLAGS += $(OFLAGS) \
     -DFAST_LSB_WORD_ACCESS \
     -DVIDEO_MODE=1 \
     -DZLIB \
-    -D_ZAURUS \
     -D__linux \
 
 CXXFLAGS = --std=gnu++14 $(CCFLAGS)

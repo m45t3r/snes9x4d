@@ -49,7 +49,6 @@ CCFLAGS += $(OFLAGS) \
 	-DMIYOO \
 	-DVIDEO_MODE=1 \
 	-DZLIB \
-	-D_ZAURUS \
 
 CXXFLAGS = --std=gnu++14 $(CCFLAGS) \
 	-fno-exceptions -fno-rtti -fno-threadsafe-statics

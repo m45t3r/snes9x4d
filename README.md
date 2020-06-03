@@ -158,10 +158,6 @@ Some tips to port this project to another Dingoo-like device:
   to your device. Some of the compile toggles are described below:
     + `SPC700_SHUTDOWN` is a speed hack available from `Snes9x` itself, so it
       should be safe to enable.
-    + `_ZAURUS` is a compile toggle that is used in many parts of the project,
-      disabling many features that doesn't make sense to embedded devices. So
-      it should be enabled, and the code does not seem to build without this
-      flag anyway
     + `FAST_LSB_WORD_ACCESS` seems to speed-up the code access to some memory
       operations. Recommended if your target supports it
     + `FAST_ALIGNED_LSB_WORD_ACCESS` is a similar to above, but only optimizes
