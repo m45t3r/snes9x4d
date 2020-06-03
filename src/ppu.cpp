@@ -106,7 +106,7 @@ void S9xUpdateHTimer(struct SPPU *ppu, struct SCPUState *cpu)
 void S9xFixColourBrightness()
 {
 	IPPU.XB = mul_brightness[PPU.Brightness];
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 	if (Settings.SixteenBit)
 #endif
 	{

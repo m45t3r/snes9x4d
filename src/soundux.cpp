@@ -1313,7 +1313,7 @@ void S9xMixSamplesO(uint8 *buffer, int sample_count, int byte_offset)
 	}
 
 	/* Mix and convert waveforms */
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 	if (so.sixteen_bit)
 #endif
 	{
@@ -1437,7 +1437,7 @@ void S9xMixSamplesO(uint8 *buffer, int sample_count, int byte_offset)
 			}
 		}
 	}
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 	else {
 		int O = byte_offset;
 

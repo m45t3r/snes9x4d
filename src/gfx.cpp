@@ -93,7 +93,7 @@ extern bool8_32 Scale;
 
 #define BLACK BUILD_PIXEL(0, 0, 0)
 
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 void DrawTile(uint32 Tile, uint32 Offset, uint32 StartLine, uint32 LineCount, struct SGFX *gfx);
 void DrawClippedTile(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Width, uint32 StartLine, uint32 LineCount,
 		     struct SGFX *gfx);
@@ -274,7 +274,7 @@ bool8_32 S9xGraphicsInit()
 
 	IPPU.DirectColourMapsNeedRebuild = TRUE;
 	GFX.PixSize = 1;
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 	if (Settings.SixteenBit) {
 #endif
 		DrawTilePtr = DrawTile16;
@@ -284,7 +284,7 @@ bool8_32 S9xGraphicsInit()
 		DrawHiResClippedTilePtr = DrawClippedTile16;
 		GFX.PPL = GFX.Pitch >> 1;
 		GFX.PPLx2 = GFX.Pitch;
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 	} else {
 		DrawTilePtr = DrawTile;
 		DrawClippedTilePtr = DrawClippedTile;
@@ -494,7 +494,7 @@ void S9xEndScreenRefresh(struct SPPU *ppu)
 		FLUSH_REDRAW();
 		if (ippu->ColorsChanged) {
 			uint32 saved = ppu->CGDATA[0];
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 			if (!Settings.SixteenBit) {
 				// Hack for Super Mario World - to get its sky blue (It uses Fixed colour addition on
 				// the backdrop colour)
@@ -701,28 +701,28 @@ void DrawOBJS(bool8_32 OnMain = FALSE, uint8 D = 0)
 		if (ppu->BGMode == 5 || ppu->BGMode == 6) {
 			gfx->PixSize = 2;
 			if (IPPU.LatchedInterlace) {
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 				if (Settings.SixteenBit)
 #endif
 				{
 					DrawTilePtr = DrawTile16x2x2;
 					DrawClippedTilePtr = DrawClippedTile16x2x2;
 				}
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 				else {
 					DrawTilePtr = DrawTilex2x2;
 					DrawClippedTilePtr = DrawClippedTilex2x2;
 				}
 #endif
 			} else {
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 				if (Settings.SixteenBit)
 #endif
 				{
 					DrawTilePtr = DrawTile16x2;
 					DrawClippedTilePtr = DrawClippedTile16x2;
 				}
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 				else {
 					DrawTilePtr = DrawTilex2;
 					DrawClippedTilePtr = DrawClippedTilex2;
@@ -730,14 +730,14 @@ void DrawOBJS(bool8_32 OnMain = FALSE, uint8 D = 0)
 #endif
 			}
 		} else {
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 			if (Settings.SixteenBit)
 #endif
 			{
 				DrawTilePtr = DrawTile16;
 				DrawClippedTilePtr = DrawClippedTile16;
 			}
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 			else {
 				DrawTilePtr = DrawTile;
 				DrawClippedTilePtr = DrawClippedTile;
@@ -1953,7 +1953,7 @@ void DrawBackground(uint32 BGMode, uint32 bg, uint8 Z1, uint8 Z2)
 			}                                                                                              \
 		}                                                                                                      \
 	}
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 void DrawBGMode7Background(uint8 *Screen, int bg)
 {
 	struct SPPU *ppu = &PPU;
@@ -2652,7 +2652,7 @@ void DisplayChar(uint8 *Screen, uint8 c, uint32 pitch)
 {
 	int line = (((c & 0x7f) - 32) >> 4) * font_height;
 	int offset = (((c & 0x7f) - 32) & 15) * font_width;
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 	if (Settings.SixteenBit)
 #endif
 	{
@@ -2670,7 +2670,7 @@ void DisplayChar(uint8 *Screen, uint8 c, uint32 pitch)
 			}
 		}
 	}
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 	else {
 		int h, w;
 		uint8 *s = Screen;
@@ -2778,7 +2778,7 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 		if (!ippu->DoubleWidthPixels) {
 			// The game has switched from lo-res to hi-res mode part way down the screen. Scale any existing
 			// lo-res pixels on screen
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 			if (Settings.SixteenBit)
 #endif
 			{
@@ -3214,7 +3214,7 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 			}
 		}
 	} else {
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 		if (Settings.SixteenBit)
 #endif
 		{
@@ -3235,7 +3235,7 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 				}
 			}
 		}
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 		else {
 			for (uint32 y = starty; y <= endy; y++) {
 				ZeroMemory(gfx->Screen + y * gfx->Pitch2, ippu->RenderedScreenWidth);
@@ -3321,14 +3321,14 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 						bg = 0;
 					}
 
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 					if (!Settings.SixteenBit)
 						DrawBGMode7Background(gfx->Screen, bg);
 					else {
 						if (!Settings.Mode7Interpolate) {
 #endif
 							DrawBGMode7Background16(gfx->Screen, bg);
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 						} else {
 							DrawBGMode7Background16_i(gfx->Screen, bg);
 						}
@@ -3342,7 +3342,7 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 		if (ippu->DoubleWidthPixels) {
 			// Mixure of background modes used on screen - scale width of all non-mode 5 and
 			// 6 pixels.
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 			if (Settings.SixteenBit) {
 #endif
 				for (register uint32 y = gfx->StartY; y <= gfx->EndY; y++) {
@@ -3351,7 +3351,7 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 					for (register int x = 255; x >= 0; x--, p--, q -= 2)
 						*q = *(q + 1) = *p;
 				}
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 			} else {
 				for (register uint32 y = gfx->StartY; y <= gfx->EndY; y++) {
 					register uint8 *p = gfx->Screen + y * gfx->Pitch + 255;

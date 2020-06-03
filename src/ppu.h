@@ -466,14 +466,14 @@ STATIC inline void REGISTER_2122(uint8 Byte, CMemory *mem, struct InternalPPU *i
 
 	if (ppu->CGFLIP) {
 		if ((Byte & 0x7f) != (ppu->CGDATA[ppu->CGADD] >> 8)) {
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 			if (Settings.SixteenBit)
 #endif
 				FLUSH_REDRAW();
 			ppu->CGDATA[ppu->CGADD] &= 0x00FF;
 			ppu->CGDATA[ppu->CGADD] |= (Byte & 0x7f) << 8;
 			ippu->ColorsChanged = TRUE;
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 			if (Settings.SixteenBit)
 #endif
 			{
@@ -486,14 +486,14 @@ STATIC inline void REGISTER_2122(uint8 Byte, CMemory *mem, struct InternalPPU *i
 		ppu->CGADD++;
 	} else {
 		if (Byte != (uint8)(ppu->CGDATA[ppu->CGADD] & 0xff)) {
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 			if (Settings.SixteenBit)
 #endif
 				FLUSH_REDRAW();
 			ppu->CGDATA[ppu->CGADD] &= 0x7F00;
 			ppu->CGDATA[ppu->CGADD] |= Byte;
 			ippu->ColorsChanged = TRUE;
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 			if (Settings.SixteenBit)
 #endif
 			{
