@@ -743,53 +743,53 @@ void S9xSetAPUTimer(uint16 Address, uint8 byte)
 void S9xUpdateAPUTimer(void)
 {
 #if 0
-		while (CPU.Cycles * 10000L >= IAPU.NextAPUTimerPos)
-		// if (CPU.Cycles * 10000L >= IAPU.NextAPUTimerPos)
-		{
-			// APU_EXECUTE();
+	while (CPU.Cycles * 10000L >= IAPU.NextAPUTimerPos)
+	// if (CPU.Cycles * 10000L >= IAPU.NextAPUTimerPos)
+	{
+		// APU_EXECUTE();
 
-			IAPU.NextAPUTimerPos += SNES_APUTIMER2_CYCLEx10000;
+		IAPU.NextAPUTimerPos += SNES_APUTIMER2_CYCLEx10000;
 
-			if (APU.TimerEnabled [2])
-			{
-				APU.Timer [2] ++;
-				if (APU.Timer [2] >= APU.TimerTarget [2])
-				{
-				    IAPU.RAM [0xff] = (IAPU.RAM [0xff] + 1) &
-	   0xf; APU.Timer [2] = 0; #ifdef SPC700_SHUTDOWN IAPU.WaitCounter++;
-				    IAPU.APUExecuting = TRUE;
+		if (APU.TimerEnabled[2]) {
+			APU.Timer[2]++;
+			if (APU.Timer[2] >= APU.TimerTarget[2]) {
+				IAPU.RAM[0xff] = (IAPU.RAM[0xff] + 1) & 0xf;
+				APU.Timer[2] = 0;
+#ifdef SPC700_SHUTDOWN
+				IAPU.WaitCounter++;
+				IAPU.APUExecuting = TRUE;
+#endif
+			}
+		}
+
+		if (++APU.APUTimerCounter == 8) {
+			APU.APUTimerCounter = 0;
+
+			if (APU.TimerEnabled[0]) {
+				APU.Timer[0]++;
+				if (APU.Timer[0] >= APU.TimerTarget[0]) {
+					IAPU.RAM[0xfd] = (IAPU.RAM[0xfd] + 1) & 0xf;
+					APU.Timer[0] = 0;
+#ifdef SPC700_SHUTDOWN
+					IAPU.WaitCounter++;
+					IAPU.APUExecuting = TRUE;
+#endif
 				}
 			}
 
-			if (++IAPU.APUTimerCounter == 8)
-			{
-				IAPU.APUTimerCounter = 0;
-
-				if (APU.TimerEnabled [0])
-				{
-				    APU.Timer [0]++;
-				    if (APU.Timer [0] >= APU.TimerTarget [0])
-				    {
-						IAPU.RAM [0xfd] = (IAPU.RAM
-	   [0xfd] + 1) & 0xf; APU.Timer [0] = 0; #ifdef SPC700_SHUTDOWN
-						IAPU.WaitCounter++;
-						IAPU.APUExecuting = TRUE;
-				    }
-				}
-
-				if (APU.TimerEnabled [1])
-				{
-				    APU.Timer [1]++;
-				    if (APU.Timer [1] >= APU.TimerTarget [1])
-				    {
-						IAPU.RAM [0xfe] = (IAPU.RAM
-	   [0xfe] + 1) & 0xf; APU.Timer [1] = 0; #ifdef SPC700_SHUTDOWN
-						IAPU.WaitCounter++;
-						IAPU.APUExecuting = TRUE;
-				    }
+			if (APU.TimerEnabled[1]) {
+				APU.Timer[1]++;
+				if (APU.Timer[1] >= APU.TimerTarget[1]) {
+					IAPU.RAM[0xfe] = (IAPU.RAM[0xfe] + 1) & 0xf;
+					APU.Timer[1] = 0;
+#ifdef SPC700_SHUTDOWN
+					IAPU.WaitCounter++;
+					IAPU.APUExecuting = TRUE;
+#endif
 				}
 			}
 		}
+	}
 #endif
 }
 
