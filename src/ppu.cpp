@@ -1252,7 +1252,7 @@ uint8 S9xGetPPU(uint16 Address, struct SPPU *ppu, CMemory *mem)
 			case 0x21c3:
 				return (0);
 			case 0x2800:
-#ifndef _ZAURUS
+#ifdef S_RTC
 				// For Dai Kaijyu Monogatari II
 				if (Settings.SRTC)
 					return (S9xGetSRTC(Address));

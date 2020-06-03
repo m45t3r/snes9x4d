@@ -2,7 +2,8 @@ GIT_VERSION := "$(shell git describe --abbrev=7 --dirty --always --tags)"
 
 UNZIP = 1
 C4_OLD = 1
-# CHEATS = 1
+SRTC = 0
+CHEATS = 0
 
 FXOBJ = src/fxinst.o src/fxemu.o src/fxdbg.o
 
@@ -11,35 +12,34 @@ SOUNDDEFINES = -DSPC700_C -DSPC700_SHUTDOWN
 
 CPUOBJ = src/cpuops.o src/cpuexec.o
 
-ifdef C4_OLD
+ifeq ($(SRTC), 1)
+SRTC = src/srtc.o
+SRTCDEFINES = -DS_RTC
+endif
+
+ifeq ($(C4_OLD), 1)
 C4OBJ = src/c4_old.o src/c4emu.o
 C4DEFINES =
-else
-C4OBJ = src/c4.o src/c4emu.o
-C4DEFINES =
 endif
 
-ifdef CHEATS
+ifeq ($(CHEATS), 1)
 CHEAT = src/cheats.o src/cheats2.o
 CHEATDEFINES = -DCHEATS
-else
-CHEAT =
-CHEATDEFINES =
 endif
 
-OBJECTS = $(CPUOBJ) $(FXOBJ) $(C4OBJ) $(CHEAT) \
+ifeq ($(UNZIP), 1)
+UNZIP = src/loadzip.o src/unzip/unzip.o src/unzip/explode.o src/unzip/unreduce.o \
+	   src/unzip/unshrink.o
+UNZIPDEFINES = -DUNZIP_SUPPORT
+endif
+
+OBJECTS = $(CHEAT) $(CPUOBJ) $(FXOBJ) $(C4OBJ) $(SRTC) $(SOUNDOBJ) $(UNZIP) \
 	src/cpu.o src/tile.o src/gfx.o src/clip.o \
-	src/memmap.o src/ppu.o src/dma.o $(SOUNDOBJ) \
+	src/memmap.o src/ppu.o src/dma.o \
 	src/sdd1.o src/sdd1emu.o src/dsp1.o src/sa1.o src/sa1cpu.o src/obc1.o \
 	src/snes9x.o src/snapshot.o src/data.o src/globals.o \
 	src/sdlmenu/sdlmenu.o src/sdlmenu/sdlmain.o src/sdlmenu/sdlaudio.o \
 	src/sdlmenu/scaler.o src/sdlmenu/sdlvideo.o \
-
-ifdef UNZIP
-OBJECTS += src/loadzip.o src/unzip/unzip.o src/unzip/explode.o src/unzip/unreduce.o \
-	   src/unzip/unshrink.o
-UNZIPDEFINES = -DUNZIP_SUPPORT
-endif
 
 PREFIX  = arm-linux
 
@@ -81,6 +81,7 @@ $(CHEATDEFINES) \
 $(INCLUDE) \
 $(SDL_CFLAGS) \
 $(SOUNDDEFINES) \
+$(SRTCDEFINES) \
 $(UNZIPDEFINES) \
 -DBILINEAR_SCALE \
 -DBUILD_VERSION=\"$(GIT_VERSION)\" \

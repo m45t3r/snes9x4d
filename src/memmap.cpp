@@ -901,7 +901,7 @@ bool8_32 CMemory::LoadSRAM(const char *filename)
 				// S-RAM file has a header - remove it
 				memmove(::SRAM, ::SRAM + 512, size);
 			}
-#ifndef _ZAURUS
+#ifdef S_RTC
 			if (len == size + SRTC_SRAM_PAD) {
 				S9xSRTCPostLoadState();
 				S9xResetSRTC();
@@ -912,7 +912,7 @@ bool8_32 CMemory::LoadSRAM(const char *filename)
 #endif
 			return (TRUE);
 		}
-#ifndef _ZAURUS
+#ifdef S_RTC
 		S9xHardResetSRTC();
 #endif
 		return (FALSE);
@@ -923,7 +923,7 @@ bool8_32 CMemory::LoadSRAM(const char *filename)
 bool8_32 CMemory::SaveSRAM(const char *filename)
 {
 	int size = Memory.SRAMSize ? (1 << (Memory.SRAMSize + 3)) * 128 : 0;
-#ifndef _ZAURUS
+#ifdef S_RTC
 	if (Settings.SRTC) {
 		size += SRTC_SRAM_PAD;
 		S9xSRTCPreSaveState();
