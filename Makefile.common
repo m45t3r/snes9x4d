@@ -12,12 +12,16 @@ endif
 
 ifeq ($(C4_OLD), 1)
 C4OBJ = src/c4_old.o src/c4emu.o
-C4DEFINES =
 endif
 
 ifeq ($(CHEATS), 1)
 CHEATOBJ = src/cheats.o src/cheats2.o
 CHEATDEFINES = -DCHEATS
+endif
+
+ifeq ($(SNAPSHOT_OLD), 1)
+SNAPSHOTOBJ = src/snaporig.o
+SNAPSHOTDEFINES = -DSNAPSHOT_ORIG
 endif
 
 ifeq ($(UNZIP), 1)
@@ -33,7 +37,8 @@ MENUOBJ = src/sdlmenu/scaler.o src/sdlmenu/sdlvideo.o \
 MENUDEFINES = -DBUILD_VERSION=\"$(GIT_VERSION)\"
 endif
 
-OBJECTS = $(CHEATOBJ) $(CPUOBJ) $(FXOBJ) $(C4OBJ) $(SRTCOBJ) $(SOUNDOBJ) $(UNZIPOBJ) \
+OBJECTS = $(CHEATOBJ) $(CPUOBJ) $(FXOBJ) $(C4OBJ) $(SRTCOBJ) $(SOUNDOBJ) \
+    $(SNAPSHOTOBJ) $(UNZIPOBJ) \
     src/cpu.o src/tile.o src/gfx.o src/clip.o \
     src/memmap.o src/ppu.o src/dma.o \
     src/sdd1.o src/sdd1emu.o src/dsp1.o src/sa1.o src/sa1cpu.o src/obc1.o \
@@ -43,10 +48,10 @@ OBJECTS = $(CHEATOBJ) $(CPUOBJ) $(FXOBJ) $(C4OBJ) $(SRTCOBJ) $(SOUNDOBJ) $(UNZIP
 INCLUDE = -I. -Isrc/ -Isrc/unzip
 
 CCFLAGS = $(INCLUDE) \
-    $(C4DEFINES) \
     $(CHEATDEFINES) \
     $(MENUDEFINES) \
     $(SDL_CFLAGS) \
+    $(SNAPSHOTDEFINES) \
     $(SOUNDDEFINES) \
     $(SRTCDEFINES) \
     $(UNZIPDEFINES) \

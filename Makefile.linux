@@ -3,6 +3,7 @@ C4_OLD = 1
 SRTC = 1
 CHEATS = 1
 SDLMENU = 1
+SNAPSHOT_OLD = 1
 
 include Makefile.common
 
@@ -37,7 +38,7 @@ CCFLAGS += $(OFLAGS) \
     -D_ZAURUS \
     -D__linux \
 
-CXXFLAGS = --std=gnu++03 $(CCFLAGS)
+CXXFLAGS = --std=gnu++14 $(CCFLAGS)
 
 CFLAGS = --std=gnu11 $(CCFLAGS)
 
