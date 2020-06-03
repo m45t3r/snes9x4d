@@ -156,7 +156,7 @@ const char *S9xGetCfgName()
 	char ext[_MAX_EXT + 1];
 
 	_splitpath(rom_filename, drive, dir, fname, ext);
-	sprintf(filename, "%s/.snes9x4d/%s.cfg", GetHomeDirectory(), fname);
+	sprintf(filename, "%s/" CFG_DIRECTORY "/%s.cfg", GetHomeDirectory(), fname);
 
 	return (filename);
 }
@@ -164,7 +164,7 @@ const char *S9xGetCfgName()
 int is_home_created()
 {
 	char home[PATH_MAX + 1];
-	sprintf(home, "%s/%s", GetHomeDirectory(), ".snes9x4d");
+	sprintf(home, "%s/%s", GetHomeDirectory(), CFG_DIRECTORY);
 	mkdir(home, 0777);
 	if (!errno)
 		return FALSE;
