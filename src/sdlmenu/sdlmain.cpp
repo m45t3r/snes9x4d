@@ -426,7 +426,7 @@ void S9xExit()
 
 	S9xWriteConfig();
 	Memory.SaveSRAM(S9xGetFilename(".srm"));
-#ifndef CHEATS
+#ifdef CHEATS
 	S9xSaveCheatFile(S9xGetFilename(".cht"));
 #endif
 

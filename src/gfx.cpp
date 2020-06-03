@@ -2690,14 +2690,12 @@ void DisplayChar(uint8 *Screen, uint8 c, uint32 pitch)
 
 void S9xDisplayFrameRate(uint8 *screen, uint32 pitch)
 {
-	uint8 *Screen = screen + 2 + 400 + (IPPU.RenderedScreenHeight - font_height - 1) * pitch;
+	uint8 *Screen = screen + 2 + 400 + (IPPU.RenderedScreenHeight - font_height - 1) * pitch +
+			(font_width - 1) * sizeof(uint16);
 	char string[16];
 
 	sprintf(string, "%02d/%02d", IPPU.DisplayedRenderedFrameCount, (int)Memory.ROMFramesPerSecond);
 
-#ifdef _ZAURUS
-	Screen += (font_width - 1) * sizeof(uint16);
-#endif
 	for (int i = 0; i < 5; i++) {
 		DisplayChar(Screen, string[i], pitch);
 		Screen += (font_width - 1) * sizeof(uint16);
