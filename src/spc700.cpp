@@ -96,7 +96,6 @@ END_EXTERN_C
 #define APUSetZN8(b) iapu->_Zero = (b);
 
 #define APUSetZN16(w) iapu->_Zero = ((w) != 0) | ((w) >> 8);
-#ifndef _ZAURUS
 void STOP(char *s)
 {
 	char buffer[100];
@@ -116,7 +115,6 @@ void STOP(char *s)
 	S9xExit();
 #endif
 }
-#endif
 #define TCALL(n)                                                                                                       \
 	{                                                                                                              \
 		PushW(iapu->PC - iapu->RAM + 1);                                                                       \

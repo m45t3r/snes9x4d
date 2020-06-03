@@ -536,7 +536,7 @@ static void Freeze(STREAM stream)
 	if (Settings.SuperFX)
 		S9xSuperFXPreSaveState();
 #endif
-#ifndef _ZAURUS
+#ifndef S_RTC
 	S9xSRTCPreSaveState();
 #endif
 	for (i = 0; i < 8; i++) {

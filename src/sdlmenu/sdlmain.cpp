@@ -93,14 +93,12 @@ uint32 cs = 0;
 char *rom_filename = NULL;
 char *snapshot_filename = NULL;
 
-#ifndef _ZAURUS
+#ifdef DEBUGGER
 #if defined(__linux) || defined(__sun)
 static void sigbrkhandler(int)
 {
-#ifdef DEBUGGER
 	CPU.Flags |= DEBUG_MODE_FLAG;
 	signal(SIGINT, (SIG_PF)sigbrkhandler);
-#endif
 }
 #endif
 #endif
@@ -341,11 +339,9 @@ void S9xInit()
 	sigaction(SIGINT, &sa, NULL);
 #endif
 
-#ifndef _ZAURUS
 	S9xGraphicsMode();
 	sprintf(String, "\"%s\" %s: %s", Memory.ROMName, TITLE, VERSION);
 	S9xSetTitle(String);
-#endif
 }
 
 void MainLoop()
@@ -430,7 +426,7 @@ void S9xExit()
 
 	S9xWriteConfig();
 	Memory.SaveSRAM(S9xGetFilename(".srm"));
-#ifndef _ZAURUS
+#ifndef CHEATS
 	S9xSaveCheatFile(S9xGetFilename(".cht"));
 #endif
 
