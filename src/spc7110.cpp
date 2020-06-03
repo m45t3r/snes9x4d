@@ -1289,7 +1289,7 @@ void S9xSetSPC7110(uint8 data, uint16 Address)
 }
 extern "C" {
 // emulate the SPC7110's ability to remap banks Dx, Ex, and Fx.
-uint8 S9xGetS7110Byte(uint32 Address)
+uint8 S9xGetSPC7110Byte(uint32 Address)
 {
 	uint32 i;
 	switch ((Address & 0x00F00000) >> 16) {

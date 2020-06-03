@@ -3,7 +3,9 @@ C4_OLD = 1
 SRTC = 0
 CHEATS = 0
 SDLMENU = 1
+SETA_DSP = 0
 SNAPSHOT_OLD = 0
+SPC7110 = 0
 
 include Makefile.common
 

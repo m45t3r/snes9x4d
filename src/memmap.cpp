@@ -663,6 +663,10 @@ void CMemory::InitROM(bool8_32 Interleaved)
 
 		if (Settings.BS)
 			BSHiROMMap();
+#ifdef SPC7110_DSP
+		else if (Settings.SPC7110)
+			SPC7110HiROMMap();
+#endif
 		else if ((ROMSpeed & ~0x10) == 0x25)
 			TalesROMMap(Interleaved);
 		else if ((ROMSpeed & ~0x10) == 0x22 && strncmp(ROMName, "Super Street Fighter", 20) != 0) {
@@ -1746,6 +1750,97 @@ void CMemory::BSHiROMMap()
 	MapRAM();
 	WriteProtectROM();
 }
+
+#ifdef SPC7110_DSP
+void CMemory::SPC7110HiROMMap()
+{
+	int c;
+	int i;
+
+	// Banks 00->3f and 80->bf
+	for (c = 0; c < 0x400; c += 16) {
+		Map[c + 0] = Map[c + 0x800] = RAM;
+		BlockIsRAM[c + 0] = BlockIsRAM[c + 0x800] = TRUE;
+		Map[c + 1] = Map[c + 0x801] = RAM;
+		BlockIsRAM[c + 1] = BlockIsRAM[c + 0x801] = TRUE;
+
+		Map[c + 2] = Map[c + 0x802] = (uint8 *)MAP_PPU;
+		Map[c + 3] = Map[c + 0x803] = (uint8 *)MAP_PPU;
+		Map[c + 4] = Map[c + 0x804] = (uint8 *)MAP_CPU;
+		Map[c + 5] = Map[c + 0x805] = (uint8 *)MAP_CPU;
+
+		Map[c + 6] /*= Map [c + 0x806]*/ = (uint8 *)MAP_HIROM_SRAM;
+		Map[c + 7] /*= Map [c + 0x807]*/ = (uint8 *)MAP_HIROM_SRAM;
+		Map[c + 0x806] = Map[c + 0x807] = (uint8 *)MAP_NONE;
+
+		for (i = c + 8; i < c + 16; i++) {
+			Map[i] = Map[i + 0x800] = &ROM[(c << 12) % CalculatedSize];
+			BlockIsROM[i] = BlockIsROM[i + 0x800] = TRUE;
+		}
+	}
+
+	// Banks 30->3f and b0->bf, address ranges 6000->7fff is S-RAM.
+	for (c = 0; c < 16; c++) {
+		Map[0x306 + (c << 4)] = (uint8 *)MAP_HIROM_SRAM;
+		Map[0x307 + (c << 4)] = (uint8 *)MAP_HIROM_SRAM;
+		Map[0xb06 + (c << 4)] = (uint8 *)MAP_NONE;
+		Map[0xb07 + (c << 4)] = (uint8 *)MAP_NONE;
+		BlockIsRAM[0x306 + (c << 4)] = TRUE;
+		BlockIsRAM[0x307 + (c << 4)] = TRUE;
+		//	BlockIsRAM [0xb06 + (c << 4)] = TRUE;
+		//	BlockIsRAM [0xb07 + (c << 4)] = TRUE;
+	}
+
+	// Banks 40->7f and c0->ff
+	for (c = 0; c < 0x400; c += 16) {
+		for (i = c; i < c + 16; i++) {
+			Map[i + 0x400] = Map[i + 0xc00] = &ROM[(c << 12) % CalculatedSize];
+			BlockIsROM[i + 0x400] = BlockIsROM[i + 0xc00] = TRUE;
+		}
+	}
+
+	for (c = 0; c < 0x10; c++) {
+		Map[0x500 + c] = (uint8 *)MAP_SPC7110_DRAM;
+		BlockIsROM[0x500 + c] = TRUE;
+	}
+
+	for (c = 0; c < 0x100; c++) {
+		Map[0xD00 + c] = (uint8 *)MAP_SPC7110_ROM;
+		Map[0xE00 + c] = (uint8 *)MAP_SPC7110_ROM;
+		Map[0xF00 + c] = (uint8 *)MAP_SPC7110_ROM;
+		BlockIsROM[0xD00 + c] = BlockIsROM[0xE00 + c] = BlockIsROM[0xF00 + c] = TRUE;
+	}
+	S9xSpc7110Init();
+
+	int sum = 0;
+	for (i = 0; i < (int)CalculatedSize; i++) {
+		sum += ROM[i];
+	}
+
+	if (CalculatedSize == 0x300000)
+		sum <<= 1;
+	CalculatedChecksum = sum & 0xFFFF;
+
+	MapRAM();
+	WriteProtectROM();
+}
+
+void CMemory::SPC7110Sram(uint8 newstate)
+{
+	if (newstate & 0x80) {
+		Memory.Map[6] = (uint8 *)MAP_HIROM_SRAM;
+		Memory.Map[7] = (uint8 *)MAP_HIROM_SRAM;
+		Memory.Map[0x306] = (uint8 *)MAP_HIROM_SRAM;
+		Memory.Map[0x307] = (uint8 *)MAP_HIROM_SRAM;
+
+	} else {
+		Memory.Map[6] = (uint8 *)MAP_RONLY_SRAM;
+		Memory.Map[7] = (uint8 *)MAP_RONLY_SRAM;
+		Memory.Map[0x306] = (uint8 *)MAP_RONLY_SRAM;
+		Memory.Map[0x307] = (uint8 *)MAP_RONLY_SRAM;
+	}
+}
+#endif
 
 const char *CMemory::TVStandard() { return (Settings.PAL ? "PAL" : "NTSC"); }
 

@@ -58,7 +58,7 @@ void Close7110Gfx(void);
 void Drop7110Gfx(void);
 extern "C" {
 uint8 S9xGetSPC7110(uint16 Address);
-uint8 S9xGetS7110Byte(uint32 Address);
+uint8 S9xGetSPC7110Byte(uint32 Address);
 uint8 *Get7110BasePtr(uint32);
 }
 void S9xSetSPC7110(uint8 data, uint16 Address);

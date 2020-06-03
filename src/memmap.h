@@ -78,6 +78,8 @@ class CMemory
 	void AlphaROMMap();
 	void SA1ROMMap();
 	void BSHiROMMap();
+	void SPC7110HiROMMap();
+	void SPC7110Sram(uint8);
 	bool8_32 AllASCII(uint8 *b, int size);
 	int ScoreHiROM(bool8_32 skip_header);
 	int ScoreLoROM(bool8_32 skip_header);
@@ -107,7 +109,16 @@ class CMemory
 	       MAP_BWRAM_BITMAP,
 	       MAP_BWRAM_BITMAP2,
 	       MAP_SA1RAM,
+#ifdef SPC7110_DSP
+	       MAP_SPC7110_ROM,
+	       MAP_SPC7110_DRAM,
+	       MAP_RONLY_SRAM,
+#endif
 	       MAP_OBC_RAM,
+#ifdef SETA_DSP
+	       MAP_SETA_DSP,
+	       MAP_SETA_RISC,
+#endif
 	       MAP_LAST };
 	enum { MAX_ROM_SIZE = 0x600000 };
 

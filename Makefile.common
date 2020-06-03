@@ -24,6 +24,16 @@ SNAPSHOTOBJ = src/snaporig.o
 SNAPSHOTDEFINES = -DSNAPSHOT_ORIG
 endif
 
+ifeq ($(SETA_DSP), 1)
+SETAOBJ = src/seta.o src/seta010.o src/seta011.o src/seta018.o
+SETADEFINES = -DSETA_DSP
+endif
+
+ifeq ($(SPC7110), 1)
+SPC7110OBJ = src/spc7110.o
+SPC7110DEFINES = -DSPC7110_DSP
+endif
+
 ifeq ($(UNZIP), 1)
 UNZIPOBJ = src/loadzip.o src/unzip/unzip.o src/unzip/explode.o \
          src/unzip/unreduce.o src/unzip/unshrink.o
@@ -38,7 +48,7 @@ MENUDEFINES = -DBUILD_VERSION=\"$(GIT_VERSION)\"
 endif
 
 OBJECTS = $(CHEATOBJ) $(CPUOBJ) $(FXOBJ) $(C4OBJ) $(SRTCOBJ) $(SOUNDOBJ) \
-    $(SNAPSHOTOBJ) $(UNZIPOBJ) \
+    $(SNAPSHOTOBJ) $(SETAOBJ) $(SPC7110OBJ) $(UNZIPOBJ) \
     src/cpu.o src/tile.o src/gfx.o src/clip.o \
     src/memmap.o src/ppu.o src/dma.o \
     src/sdd1.o src/sdd1emu.o src/dsp1.o src/sa1.o src/sa1cpu.o src/obc1.o \
@@ -51,7 +61,9 @@ CCFLAGS = $(INCLUDE) \
     $(CHEATDEFINES) \
     $(MENUDEFINES) \
     $(SDL_CFLAGS) \
+    $(SETADEFINES) \
     $(SNAPSHOTDEFINES) \
     $(SOUNDDEFINES) \
+    $(SPC7110DEFINES) \
     $(SRTCDEFINES) \
     $(UNZIPDEFINES) \

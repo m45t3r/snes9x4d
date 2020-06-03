@@ -52,6 +52,7 @@
 #include <time.h>
 
 #include "snes9x.h"
+#include "cheats.h"
 #include "port.h"
 #include "memmap.h"
 #include "debug.h"

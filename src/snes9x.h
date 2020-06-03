@@ -266,8 +266,10 @@ struct SSettings {
 	bool8_32 SA1;
 	bool8_32 C4;
 	bool8_32 SDD1;
-	// bool8_32 SPC7110;
-	// bool8_32 SPC7110RTC;
+#ifdef SPC7110_DSP
+	bool8_32 SPC7110;
+	bool8_32 SPC7110RTC;
+#endif
 	bool8_32 OBC1;
 
 	// Sound options
