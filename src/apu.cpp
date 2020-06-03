@@ -1,67 +1,200 @@
-/*
- * Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
- *
- * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
- *                           Jerremy Koot (jkoot@snes9x.com)
- *
- * Super FX C emulator code
- * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
- *                           Gary Henderson.
- * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
- *
- * DSP1 emulator code (c) Copyright 1998 Ivar, _Demo_ and Gary Henderson.
- * C4 asm and some C emulation code (c) Copyright 2000 zsKnight and _Demo_.
- * C4 C code (c) Copyright 2001 Gary Henderson (gary.henderson@ntlworld.com).
- *
- * DOS port code contains the works of other authors. See headers in
- * individual files.
- *
- * Snes9x homepage: http://www.snes9x.com
- *
- * Permission to use, copy, modify and distribute Snes9x in both binary and
- * source form, for non-commercial purposes, is hereby granted without fee,
- * providing that this license information and copyright notice appear with
- * all copies and any derived work.
- *
- * This software is provided 'as-is', without any express or implied
- * warranty. In no event shall the authors be held liable for any damages
- * arising from the use of this software.
- *
- * Snes9x is freeware for PERSONAL USE only. Commercial users should
- * seek permission of the copyright holders first. Commercial use includes
- * charging money for Snes9x or software derived from Snes9x.
- *
- * The copyright holders request that bug fixes and improvements to the code
- * should be forwarded to them so everyone can benefit from the modifications
- * in future versions.
- *
- * Super NES and Super Nintendo Entertainment System are trademarks of
- * Nintendo Co., Limited and its subsidiary companies.
- */
-#include <limits.h>
+/**********************************************************************************
+  Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
+
+  (c) Copyright 1996 - 2002  Gary Henderson (gary.henderson@ntlworld.com),
+			     Jerremy Koot (jkoot@snes9x.com)
+
+  (c) Copyright 2002 - 2004  Matthew Kendora
+
+  (c) Copyright 2002 - 2005  Peter Bortas (peter@bortas.org)
+
+  (c) Copyright 2004 - 2005  Joel Yliluoma (http://iki.fi/bisqwit/)
+
+  (c) Copyright 2001 - 2006  John Weidman (jweidman@slip.net)
+
+  (c) Copyright 2002 - 2006  funkyass (funkyass@spam.shaw.ca),
+			     Kris Bleakley (codeviolation@hotmail.com)
+
+  (c) Copyright 2002 - 2007  Brad Jorsch (anomie@users.sourceforge.net),
+			     Nach (n-a-c-h@users.sourceforge.net),
+			     zones (kasumitokoduck@yahoo.com)
+
+  (c) Copyright 2006 - 2007  nitsuja
+
+
+  BS-X C emulator code
+  (c) Copyright 2005 - 2006  Dreamer Nom,
+			     zones
+
+  C4 x86 assembler and some C emulation code
+  (c) Copyright 2000 - 2003  _Demo_ (_demo_@zsnes.com),
+			     Nach,
+			     zsKnight (zsknight@zsnes.com)
+
+  C4 C++ code
+  (c) Copyright 2003 - 2006  Brad Jorsch,
+			     Nach
+
+  DSP-1 emulator code
+  (c) Copyright 1998 - 2006  _Demo_,
+			     Andreas Naive (andreasnaive@gmail.com)
+			     Gary Henderson,
+			     Ivar (ivar@snes9x.com),
+			     John Weidman,
+			     Kris Bleakley,
+			     Matthew Kendora,
+			     Nach,
+			     neviksti (neviksti@hotmail.com)
+
+  DSP-2 emulator code
+  (c) Copyright 2003         John Weidman,
+			     Kris Bleakley,
+			     Lord Nightmare (lord_nightmare@users.sourceforge.net),
+			     Matthew Kendora,
+			     neviksti
+
+
+  DSP-3 emulator code
+  (c) Copyright 2003 - 2006  John Weidman,
+			     Kris Bleakley,
+			     Lancer,
+			     z80 gaiden
+
+  DSP-4 emulator code
+  (c) Copyright 2004 - 2006  Dreamer Nom,
+			     John Weidman,
+			     Kris Bleakley,
+			     Nach,
+			     z80 gaiden
+
+  OBC1 emulator code
+  (c) Copyright 2001 - 2004  zsKnight,
+			     pagefault (pagefault@zsnes.com),
+			     Kris Bleakley,
+			     Ported from x86 assembler to C by sanmaiwashi
+
+  SPC7110 and RTC C++ emulator code
+  (c) Copyright 2002         Matthew Kendora with research by
+			     zsKnight,
+			     John Weidman,
+			     Dark Force
+
+  S-DD1 C emulator code
+  (c) Copyright 2003         Brad Jorsch with research by
+			     Andreas Naive,
+			     John Weidman
+
+  S-RTC C emulator code
+  (c) Copyright 2001-2006    byuu,
+			     John Weidman
+
+  ST010 C++ emulator code
+  (c) Copyright 2003         Feather,
+			     John Weidman,
+			     Kris Bleakley,
+			     Matthew Kendora
+
+  Super FX x86 assembler emulator code
+  (c) Copyright 1998 - 2003  _Demo_,
+			     pagefault,
+			     zsKnight,
+
+  Super FX C emulator code
+  (c) Copyright 1997 - 1999  Ivar,
+			     Gary Henderson,
+			     John Weidman
+
+  Sound DSP emulator code is derived from SNEeSe and OpenSPC:
+  (c) Copyright 1998 - 2003  Brad Martin
+  (c) Copyright 1998 - 2006  Charles Bilyue'
+
+  SH assembler code partly based on x86 assembler code
+  (c) Copyright 2002 - 2004  Marcus Comstedt (marcus@mc.pp.se)
+
+  2xSaI filter
+  (c) Copyright 1999 - 2001  Derek Liauw Kie Fa
+
+  HQ2x, HQ3x, HQ4x filters
+  (c) Copyright 2003         Maxim Stepin (maxim@hiend3d.com)
+
+  Win32 GUI code
+  (c) Copyright 2003 - 2006  blip,
+			     funkyass,
+			     Matthew Kendora,
+			     Nach,
+			     nitsuja
+
+  Mac OS GUI code
+  (c) Copyright 1998 - 2001  John Stiles
+  (c) Copyright 2001 - 2007  zones
+
+
+  Specific ports contains the works of other authors. See headers in
+  individual files.
+
+
+  Snes9x homepage: http://www.snes9x.com
+
+  Permission to use, copy, modify and/or distribute Snes9x in both binary
+  and source form, for non-commercial purposes, is hereby granted without
+  fee, providing that this license information and copyright notice appear
+  with all copies and any derived work.
+
+  This software is provided 'as-is', without any express or implied
+  warranty. In no event shall the authors be held liable for any damages
+  arising from the use of this software or it's derivatives.
+
+  Snes9x is freeware for PERSONAL USE only. Commercial users should
+  seek permission of the copyright holders first. Commercial use includes,
+  but is not limited to, charging money for Snes9x or software derived from
+  Snes9x, including Snes9x or derivatives in commercial game bundles, and/or
+  using Snes9x as a promotion for your commercial product.
+
+  The copyright holders request that bug fixes and improvements to the code
+  should be forwarded to them so everyone can benefit from the modifications
+  in future versions.
+
+  Super NES and Super Nintendo Entertainment System are trademarks of
+  Nintendo Co., Limited and its subsidiary companies.
+**********************************************************************************/
+
+#ifdef __DJGPP
+#include <allegro.h>
+#undef TRUE
+#endif
 
 #include "snes9x.h"
 #include "spc700.h"
 #include "apu.h"
 #include "soundux.h"
-#include "port.h"
+#include "display.h"
+#ifdef DEBUGGER
+#include "cpuexec.h"
+#endif
 
-extern int NoiseFreq[32];
+/* For note-triggered SPC dump support */
+#include "snapshot.h"
+
+extern int32 env_counter_table[32];
+
+int spc_is_dumping = 0;
+int spc_is_dumping_temp;
+
 #ifdef DEBUGGER
 void S9xTraceSoundDSP(const char *s, int i1 = 0, int i2 = 0, int i3 = 0, int i4 = 0, int i5 = 0, int i6 = 0,
 		      int i7 = 0);
 #endif
 
-bool8_32 S9xInitAPU()
+bool8 S9xInitAPU()
 {
 	IAPU.RAM = (uint8 *)malloc(0x10000);
-	IAPU.ShadowRAM = (uint8 *)malloc(0x10000);
-	IAPU.CachedSamples = (uint8 *)malloc(0x40000);
 
-	if (!IAPU.RAM || !IAPU.ShadowRAM || !IAPU.CachedSamples) {
+	if (!IAPU.RAM) {
 		S9xDeinitAPU();
 		return (FALSE);
 	}
+
+	memset(IAPU.RAM, 0, 0x10000);
 
 	return (TRUE);
 }
@@ -72,36 +205,40 @@ void S9xDeinitAPU()
 		free((char *)IAPU.RAM);
 		IAPU.RAM = NULL;
 	}
-	if (IAPU.ShadowRAM) {
-		free((char *)IAPU.ShadowRAM);
-		IAPU.ShadowRAM = NULL;
-	}
-	if (IAPU.CachedSamples) {
-		free((char *)IAPU.CachedSamples);
-		IAPU.CachedSamples = NULL;
-	}
 }
 
 EXTERN_C uint8 APUROM[64];
 
-void S9xResetAPU()
+void S9xSoftResetAPU()
 {
+	int i;
+
 	Settings.APUEnabled = Settings.NextAPUEnabled;
 
-	memset(IAPU.RAM, Settings.APURAMInitialValue, 0x10000);
-	memset(IAPU.ShadowRAM, Settings.APURAMInitialValue, 0x10000);
+	if (Settings.APUEnabled)
+		APU.Flags &= ~HALTED_FLAG;
 
-	ZeroMemory(IAPU.CachedSamples, 0x40000);
-	ZeroMemory(APU.OutPorts, 4);
+	memset(IAPU.RAM, 0, 0x100);
+	memset(IAPU.RAM + 0x20, 0xFF, 0x20);
+	memset(IAPU.RAM + 0x60, 0xFF, 0x20);
+	memset(IAPU.RAM + 0xA0, 0xFF, 0x20);
+	memset(IAPU.RAM + 0xE0, 0xFF, 0x20);
+
+	for (i = 1; i < 256; i++) {
+		memcpy(IAPU.RAM + (i << 8), IAPU.RAM, 0x100);
+	}
+
+	memset(APU.OutPorts, 0, 4);
 	IAPU.DirectPage = IAPU.RAM;
+	memmove(APU.ExtraRAM, &IAPU.RAM[0xffc0], sizeof(APUROM));
 	memmove(&IAPU.RAM[0xffc0], APUROM, sizeof(APUROM));
-	memmove(APU.ExtraRAM, APUROM, sizeof(APUROM));
 	IAPU.PC = IAPU.RAM + IAPU.RAM[0xfffe] + (IAPU.RAM[0xffff] << 8);
 	APU.Cycles = 0;
+	APU.OldCycles = -99999999; // For shapshot compatibility
 	APURegisters.YA.W = 0;
 	APURegisters.X = 0;
-	APURegisters.S = 0xff;
-	APURegisters.P = 0;
+	APURegisters.S = 0xef;
+	APURegisters.P = 0x02;
 	S9xAPUUnpackStatus();
 	APURegisters.PC = 0;
 	IAPU.APUExecuting = Settings.APUEnabled;
@@ -110,12 +247,10 @@ void S9xResetAPU()
 	IAPU.WaitAddress2 = NULL;
 	IAPU.WaitCounter = 0;
 #endif
-	IAPU.NextAPUTimerPos = 0;
-	IAPU.APUTimerCounter = 0;
+	APU.NextAPUTimerPos = 0;
+	APU.APUTimerCounter = 0;
 	APU.ShowROM = TRUE;
 	IAPU.RAM[0xf1] = 0x80;
-
-	int i;
 
 	for (i = 0; i < 3; i++) {
 		APU.TimerEnabled[i] = FALSE;
@@ -139,12 +274,34 @@ void S9xResetAPU()
 
 	S9xResetSound(TRUE);
 	S9xSetEchoEnable(0);
+
+	IAPU.OUTXNotifier = false;
+	IAPU.ENVXNotifier = false;
+}
+
+void S9xResetAPU()
+{
+	uint8 *IAPURAM = IAPU.RAM;
+	int32 IAPUOneCycle = IAPU.OneCycle;
+
+	memset(&IAPU, 0, sizeof(IAPU));
+
+	IAPU.RAM = IAPURAM;
+	IAPU.OneCycle = IAPUOneCycle;
+
+	memset(IAPU.RAM, 0, 0x10000);
+
+	S9xSoftResetAPU();
+}
+
+extern "C" {
+uint8 KeyOn;
+uint8 KeyOnPrev;
 }
 
 void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 {
 	uint8 reg = iapu->RAM[0xf2];
-	int i;
 
 	switch (reg) {
 	case APU_FLG:
@@ -171,11 +328,7 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 			} else
 				S9xSetSoundMute(FALSE);
 
-			SoundData.noise_hertz = NoiseFreq[byte & 0x1f];
-			for (i = 0; i < 8; i++) {
-				if (SoundData.channels[i].type == SOUND_NOISE)
-					S9xSetSoundFrequency(i, SoundData.noise_hertz);
-			}
+			SoundData.noise_rate = env_counter_table[byte & 0x1f];
 		}
 		break;
 	case APU_NON:
@@ -206,8 +359,7 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 					}
 #endif
 				}
-				// S9xSetSoundType (c, type);
-				SoundData.channels[c].type = type;
+				S9xSetSoundType(c, type);
 			}
 #ifdef DEBUGGER
 			if (Settings.TraceSoundDSP)
@@ -221,11 +373,7 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 			if (Settings.TraceSoundDSP)
 				S9xTraceSoundDSP("[%d] Master volume left:%d\n", ICPU.Scanline, (signed char)byte);
 #endif
-			// S9xSetMasterVolume((signed char)byte, (signed char)apu->DSP[APU_MVOL_RIGHT]);
-			SoundData.master_volume_left = (signed char)byte;
-			SoundData.master_volume_right = (signed char)apu->DSP[APU_MVOL_RIGHT];
-			SoundData.master_volume[Settings.ReverseStereo] = (signed char)byte;
-			SoundData.master_volume[1 ^ Settings.ReverseStereo] = (signed char)apu->DSP[APU_MVOL_RIGHT];
+			S9xSetMasterVolume((signed char)byte, (signed char)apu->DSP[APU_MVOL_RIGHT]);
 		}
 		break;
 	case APU_MVOL_RIGHT:
@@ -234,11 +382,7 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 			if (Settings.TraceSoundDSP)
 				S9xTraceSoundDSP("[%d] Master volume right:%d\n", ICPU.Scanline, (signed char)byte);
 #endif
-			// S9xSetMasterVolume((signed char)apu->DSP[APU_MVOL_LEFT], (signed char)byte);
-			SoundData.master_volume_left = (signed char)apu->DSP[APU_MVOL_LEFT];
-			SoundData.master_volume_right = (signed char)(signed char)byte;
-			SoundData.master_volume[Settings.ReverseStereo] = (signed char)apu->DSP[APU_MVOL_LEFT];
-			SoundData.master_volume[1 ^ Settings.ReverseStereo] = (signed char)byte;
+			S9xSetMasterVolume((signed char)apu->DSP[APU_MVOL_LEFT], (signed char)byte);
 		}
 		break;
 	case APU_EVOL_LEFT:
@@ -247,11 +391,7 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 			if (Settings.TraceSoundDSP)
 				S9xTraceSoundDSP("[%d] Echo volume left:%d\n", ICPU.Scanline, (signed char)byte);
 #endif
-			// S9xSetEchoVolume((signed char)byte, (signed char)apu->DSP[APU_EVOL_RIGHT]);
-			SoundData.echo_volume_left = (signed char)byte;
-			SoundData.echo_volume_right = (signed char)apu->DSP[APU_EVOL_RIGHT];
-			SoundData.echo_volume[Settings.ReverseStereo] = (signed char)byte;
-			SoundData.echo_volume[1 ^ Settings.ReverseStereo] = (signed char)apu->DSP[APU_EVOL_RIGHT];
+			S9xSetEchoVolume((signed char)byte, (signed char)apu->DSP[APU_EVOL_RIGHT]);
 		}
 		break;
 	case APU_EVOL_RIGHT:
@@ -260,11 +400,7 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 			if (Settings.TraceSoundDSP)
 				S9xTraceSoundDSP("[%d] Echo volume right:%d\n", ICPU.Scanline, (signed char)byte);
 #endif
-			// S9xSetEchoVolume((signed char)apu->DSP[APU_EVOL_LEFT], (signed char)byte);
-			SoundData.echo_volume_left = (signed char)apu->DSP[APU_EVOL_LEFT];
-			SoundData.echo_volume_right = (signed char)byte;
-			SoundData.echo_volume[Settings.ReverseStereo] = (signed char)apu->DSP[APU_EVOL_LEFT];
-			SoundData.echo_volume[1 ^ Settings.ReverseStereo] = (signed char)byte;
+			S9xSetEchoVolume((signed char)apu->DSP[APU_EVOL_LEFT], (signed char)byte);
 		}
 		break;
 	case APU_ENDX:
@@ -276,7 +412,8 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 		break;
 
 	case APU_KOFF:
-		if (byte) {
+		//		if (byte)
+		{
 			uint8 mask = 1;
 #ifdef DEBUGGER
 			if (Settings.TraceSoundDSP)
@@ -291,12 +428,20 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 #endif
 					if (apu->KeyedChannels & mask) {
 						{
+							KeyOnPrev &= ~mask;
 							apu->KeyedChannels &= ~mask;
 							apu->DSP[APU_KON] &= ~mask;
-							// apu->DSP[APU_KOFF] |= mask;
+							// apu->DSP [APU_KOFF] |= mask;
 							S9xSetSoundKeyOff(c);
 						}
 					}
+				} else if ((KeyOnPrev & mask) != 0) {
+					KeyOnPrev &= ~mask;
+					apu->KeyedChannels |= mask;
+					// apu->DSP [APU_KON] |= mask;
+					apu->DSP[APU_KOFF] &= ~mask;
+					apu->DSP[APU_ENDX] &= ~mask;
+					S9xPlaySample(c);
 				}
 			}
 #ifdef DEBUGGER
@@ -304,9 +449,18 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 				S9xTraceSoundDSP("\n");
 #endif
 		}
+		// KeyOnPrev=0;
 		apu->DSP[APU_KOFF] = byte;
 		return;
 	case APU_KON:
+		if (spc_is_dumping) {
+			if (byte & ~spc_is_dumping_temp) {
+				APURegisters.PC = iapu->PC - iapu->RAM;
+				S9xAPUPackStatus();
+				S9xSPCDump(S9xGetFilename(".spc"));
+				spc_is_dumping = 0;
+			}
+		}
 		if (byte) {
 			uint8 mask = 1;
 #ifdef DEBUGGER
@@ -320,13 +474,17 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 					if (Settings.TraceSoundDSP)
 						S9xTraceSoundDSP("%d,", c);
 #endif
-					// Pac-In-Time requires that channels can be key-on regardeless of their current
-					// state.
-					apu->KeyedChannels |= mask;
-					apu->DSP[APU_KON] |= mask;
-					apu->DSP[APU_KOFF] &= ~mask;
-					apu->DSP[APU_ENDX] &= ~mask;
-					S9xPlaySample(c, apu);
+					// Pac-In-Time requires that channels can be key-on
+					// regardeless of their current state.
+					if ((apu->DSP[APU_KOFF] & mask) == 0) {
+						KeyOnPrev &= ~mask;
+						apu->KeyedChannels |= mask;
+						// apu->DSP [APU_KON] |= mask;
+						// apu->DSP [APU_KOFF] &= ~mask;
+						apu->DSP[APU_ENDX] &= ~mask;
+						S9xPlaySample(c);
+					} else
+						KeyOn |= mask;
 				}
 			}
 #ifdef DEBUGGER
@@ -334,6 +492,7 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 				S9xTraceSoundDSP("\n");
 #endif
 		}
+		spc_is_dumping_temp = byte;
 		return;
 
 	case APU_VOL_LEFT + 0x00:
@@ -345,20 +504,14 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 	case APU_VOL_LEFT + 0x60:
 	case APU_VOL_LEFT + 0x70:
 		// At Shin Megami Tensei suggestion 6/11/00
-		// if (byte != apu->DSP [reg])
+		//	if (byte != apu->DSP [reg])
 		{
 #ifdef DEBUGGER
 			if (Settings.TraceSoundDSP)
 				S9xTraceSoundDSP("[%d] %d volume left: %d\n", ICPU.Scanline, reg >> 4,
 						 (signed char)byte);
 #endif
-			// S9xSetSoundVolume(reg >> 4, (signed char)byte, (signed char)apu->DSP[reg + 1]);
-			int ch = reg >> 4;
-			SoundData.channels[ch].volume_left = (signed char)byte;
-			SoundData.channels[ch].volume_right = (signed char)apu->DSP[reg + 1];
-			SoundData.channels[ch].left_vol_level = (SoundData.channels[ch].envx * (signed char)byte) / 128;
-			SoundData.channels[ch].right_vol_level =
-			    (SoundData.channels[ch].envx * (signed char)apu->DSP[reg + 1]) / 128;
+			S9xSetSoundVolume(reg >> 4, (signed char)byte, (signed char)apu->DSP[reg + 1]);
 		}
 		break;
 	case APU_VOL_RIGHT + 0x00:
@@ -370,21 +523,14 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 	case APU_VOL_RIGHT + 0x60:
 	case APU_VOL_RIGHT + 0x70:
 		// At Shin Megami Tensei suggestion 6/11/00
-		// if (byte != apu->DSP [reg])
+		//	if (byte != apu->DSP [reg])
 		{
 #ifdef DEBUGGER
 			if (Settings.TraceSoundDSP)
 				S9xTraceSoundDSP("[%d] %d volume right: %d\n", ICPU.Scanline, reg >> 4,
 						 (signed char)byte);
 #endif
-			// S9xSetSoundVolume(reg >> 4, (signed char)apu->DSP[reg - 1], (signed char)byte);
-			int ch = reg >> 4;
-			SoundData.channels[ch].volume_left = (signed char)apu->DSP[reg - 1];
-			SoundData.channels[ch].volume_right = (signed char)byte;
-			SoundData.channels[ch].left_vol_level =
-			    (SoundData.channels[ch].envx * (signed char)apu->DSP[reg - 1]) / 128;
-			SoundData.channels[ch].right_vol_level =
-			    (SoundData.channels[ch].envx * (signed char)byte) / 128;
+			S9xSetSoundVolume(reg >> 4, (signed char)apu->DSP[reg - 1], (signed char)byte);
 		}
 		break;
 
@@ -400,14 +546,9 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 		if (Settings.TraceSoundDSP)
 			S9xTraceSoundDSP("[%d] %d freq low: %d\n", ICPU.Scanline, reg >> 4, byte);
 #endif
-		// S9xSetSoundHertz(reg >> 4, ((byte + (apu->DSP[reg + 1] << 8)) & FREQUENCY_MASK) * 8);
-		{
-			int ch = reg >> 4;
-			int hertz = ((byte + (apu->DSP[reg + 1] << 8)) & FREQUENCY_MASK) * 8;
-			SoundData.channels[ch].hertz = hertz;
-			S9xSetSoundFrequency(ch, hertz);
-			break;
-		}
+		S9xSetSoundHertz(reg >> 4, ((byte + (apu->DSP[reg + 1] << 8)) & FREQUENCY_MASK) * 8);
+		break;
+
 	case APU_P_HIGH + 0x00:
 	case APU_P_HIGH + 0x10:
 	case APU_P_HIGH + 0x20:
@@ -420,13 +561,7 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 		if (Settings.TraceSoundDSP)
 			S9xTraceSoundDSP("[%d] %d freq high: %d\n", ICPU.Scanline, reg >> 4, byte);
 #endif
-		// S9xSetSoundHertz(reg >> 4, (((byte << 8) + apu->DSP[reg - 1]) & FREQUENCY_MASK) * 8);
-		{
-			int ch = reg >> 4;
-			int hertz = (((byte << 8) + apu->DSP[reg - 1]) & FREQUENCY_MASK) * 8;
-			SoundData.channels[ch].hertz = hertz;
-			S9xSetSoundFrequency(ch, hertz);
-		}
+		S9xSetSoundHertz(reg >> 4, (((byte << 8) + apu->DSP[reg - 1]) & FREQUENCY_MASK) * 8);
 		break;
 
 	case APU_SRCN + 0x00:
@@ -437,13 +572,10 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 	case APU_SRCN + 0x50:
 	case APU_SRCN + 0x60:
 	case APU_SRCN + 0x70:
-		if (byte != apu->DSP[reg]) {
 #ifdef DEBUGGER
-			if (Settings.TraceSoundDSP)
-				S9xTraceSoundDSP("[%d] %d sample number: %d\n", ICPU.Scanline, reg >> 4, byte);
+		if (Settings.TraceSoundDSP)
+			S9xTraceSoundDSP("[%d] %d sample number: %d\n", ICPU.Scanline, reg >> 4, byte);
 #endif
-			S9xSetSoundSample(reg >> 4, byte);
-		}
 		break;
 
 	case APU_ADSR1 + 0x00:
@@ -601,9 +733,12 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 		break;
 	default:
 		// XXX
-		// printf("Write %02x to unknown APU register %02x\n", byte, reg);
+		// printf ("Write %02x to unknown APU register %02x\n", byte, reg);
 		break;
 	}
+
+	KeyOnPrev |= KeyOn;
+	KeyOn = 0;
 
 	if (reg < 0x80)
 		apu->DSP[reg] = byte;
@@ -612,60 +747,21 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 void S9xFixEnvelope(int channel, uint8 gain, uint8 adsr1, uint8 adsr2)
 {
 	if (adsr1 & 0x80) {
-		// ADSR mode
-		static unsigned long AttackRate[16] = {4100, 2600, 1500, 1000, 640, 380, 260, 160,
-						       96,   64,   40,	 24,   16,  10,	 6,   1};
-		static unsigned long DecayRate[8] = {1200, 740, 440, 290, 180, 110, 74, 37};
-		static unsigned long SustainRate[32] = {ULONG_MAX, 38000, 28000, 24000, 19000, 14000, 12000, 9400,
-							7100,	   5900,  4700,	 3500,	2900,  2400,  1800,  1500,
-							1200,	   880,	  740,	 590,	440,   370,   290,   220,
-							180,	   150,	  110,	 92,	74,    55,    37,    18};
-		// XXX: can DSP be switched to ADSR mode directly from GAIN/INCREASE/ DECREASE mode? And if so, what
-		// stage of the sequence does it start at?
-		if (S9xSetSoundMode(channel, MODE_ADSR)) {
-			// Hack for ROMs that use a very short attack rate, key on a channel, then switch to decay mode.
-			// e.g. Final Fantasy II.
-
-			int attack = AttackRate[adsr1 & 0xf];
-
-			if (attack == 1 && (!Settings.SoundSync
-#ifdef __WIN32__
-					    || Settings.SoundDriver != WIN_SNES9X_DIRECT_SOUND_DRIVER
-#endif
-					    ))
-				attack = 0;
-
-			S9xSetSoundADSR(channel, attack, DecayRate[(adsr1 >> 4) & 7], SustainRate[adsr2 & 0x1f],
-					(adsr2 >> 5) & 7, 8);
-		}
+		if (S9xSetSoundMode(channel, MODE_ADSR))
+			S9xSetSoundADSR(channel, adsr1 & 0xf, (adsr1 >> 4) & 7, adsr2 & 0x1f, (adsr2 >> 5) & 7);
 	} else {
-		// Gain mode
 		if ((gain & 0x80) == 0) {
-			if (S9xSetSoundMode(channel, MODE_GAIN)) {
-				S9xSetEnvelopeRate(channel, 0, 0, gain & 0x7f);
-				S9xSetEnvelopeHeight(channel, gain & 0x7f);
-			}
+			if (S9xSetSoundMode(channel, MODE_GAIN))
+				S9xSetEnvelopeHeight(channel, (gain & 0x7f) << ENV_SHIFT);
 		} else {
-			static unsigned long IncreaseRate[32] = {
-			    ULONG_MAX, 4100, 3100, 2600, 2000, 1500, 1300, 1000, 770, 640, 510, 380, 320, 260, 190, 160,
-			    130,       96,   80,   64,	 48,   40,   32,   24,	 20,  16,  12,	10,  8,	  6,   4,   2};
-			static unsigned long DecreaseRateExp[32] = {
-			    ULONG_MAX, 38000, 28000, 24000, 19000, 14000, 12000, 9400, 7100, 5900, 4700,
-			    3500,      2900,  2400,  1800,  1500,  1200,  880,	 740,  590,  440,  370,
-			    290,       220,   180,   150,   110,   92,	  74,	 55,   37,   18};
 			if (gain & 0x40) {
-				// Increase mode
 				if (S9xSetSoundMode(channel,
-						    (gain & 0x20) ? MODE_INCREASE_BENT_LINE : MODE_INCREASE_LINEAR)) {
-					S9xSetEnvelopeRate(channel, IncreaseRate[gain & 0x1f], 1, 127);
-				}
+						    (gain & 0x20) ? MODE_INCREASE_BENT_LINE : MODE_INCREASE_LINEAR))
+					S9xSetEnvelopeRate(channel, env_counter_table[gain & 0x1f], ENV_MAX);
 			} else {
-				uint32 rate =
-				    (gain & 0x20) ? DecreaseRateExp[gain & 0x1f] / 2 : IncreaseRate[gain & 0x1f];
-				int mode = (gain & 0x20) ? MODE_DECREASE_EXPONENTIAL : MODE_DECREASE_LINEAR;
-
-				if (S9xSetSoundMode(channel, mode))
-					S9xSetEnvelopeRate(channel, rate, -1, 0);
+				if (S9xSetSoundMode(channel,
+						    (gain & 0x20) ? MODE_DECREASE_EXPONENTIAL : MODE_DECREASE_LINEAR))
+					S9xSetEnvelopeRate(channel, env_counter_table[gain & 0x1f], 0);
 			}
 		}
 	}
@@ -674,7 +770,7 @@ void S9xFixEnvelope(int channel, uint8 gain, uint8 adsr1, uint8 adsr2)
 void S9xSetAPUControl(uint8 byte)
 {
 	// if (byte & 0x40)
-	// 	printf("*** Special SPC700 timing enabled\n");
+	// printf ("*** Special SPC700 timing enabled\n");
 	if ((byte & 1) != 0 && !APU.TimerEnabled[0]) {
 		APU.Timer[0] = 0;
 		IAPU.RAM[0xfd] = 0;
@@ -800,9 +896,12 @@ uint8 S9xGetAPUDSP()
 
 	switch (reg) {
 	case APU_KON:
+		IAPU.KONNotifier = true;
 		break;
 	case APU_KOFF:
+		IAPU.KOFFNotifier = true;
 		break;
+
 	case APU_OUTX + 0x00:
 	case APU_OUTX + 0x10:
 	case APU_OUTX + 0x20:
@@ -810,10 +909,18 @@ uint8 S9xGetAPUDSP()
 	case APU_OUTX + 0x40:
 	case APU_OUTX + 0x50:
 	case APU_OUTX + 0x60:
-	case APU_OUTX + 0x70:
-		if (SoundData.channels[reg >> 4].state == SOUND_SILENT)
+	case APU_OUTX + 0x70: {
+		IAPU.OUTXNotifier = true;
+
+		if (Settings.FakeMuteFix) {
+			// hack that is off by default: fixes Terranigma desync
 			return (0);
-		return ((SoundData.channels[reg >> 4].sample >> 8) | (SoundData.channels[reg >> 4].sample & 0xff));
+		} else {
+			if (SoundData.channels[reg >> 4].state == SOUND_SILENT)
+				return (0);
+			return (int8)(SoundData.channels[reg >> 4].out_sample >> 8);
+		}
+	}
 
 	case APU_ENVX + 0x00:
 	case APU_ENVX + 0x10:
@@ -822,15 +929,21 @@ uint8 S9xGetAPUDSP()
 	case APU_ENVX + 0x40:
 	case APU_ENVX + 0x50:
 	case APU_ENVX + 0x60:
-	case APU_ENVX + 0x70:
-		return ((uint8)S9xGetEnvelopeHeight(reg >> 4));
+	case APU_ENVX + 0x70: {
+		IAPU.ENVXNotifier = true;
+
+		return (S9xGetEnvelopeHeight(reg >> 4));
+	}
 
 	case APU_ENDX:
+		IAPU.ENDXNotifier = true;
 		// To fix speech in Magical Drop 2 6/11/00
-		// APU.DSP[APU_ENDX] = 0;
+		//	APU.DSP [APU_ENDX] = 0;
 		break;
+
 	default:
 		break;
 	}
+
 	return (byte);
 }

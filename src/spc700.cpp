@@ -618,7 +618,7 @@ void Apu1C(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 void Apu0D(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 {
 	// PUSH PSW
-	S9xAPUPackStatus_OP();
+	S9xAPUPackStatus();
 	Push(areg->P);
 	iapu->PC++;
 }
@@ -648,7 +648,7 @@ void Apu8E(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 {
 	// POP PSW
 	Pop(areg->P);
-	S9xAPUUnpackStatus_OP();
+	S9xAPUUnpackStatus();
 	if (APUCHECKDIRECTPAGE_OP())
 		iapu->DirectPage = iapu->RAM + 0x100;
 	else
@@ -707,7 +707,7 @@ void Apu0F(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
     STOP ("BRK");
 #else
 	PushW(iapu->PC + 1 - iapu->RAM);
-	S9xAPUPackStatus_OP();
+	S9xAPUPackStatus();
 	Push(areg->P);
 	APUSetBreak();
 	APUClearInterrupt();
@@ -1726,7 +1726,7 @@ void Apu7F(struct SAPURegisters *areg, struct SIAPU *iapu, struct SAPU *apu)
 	// RETI
 	// STOP ("RETI");
 	Pop(areg->P);
-	S9xAPUUnpackStatus_OP();
+	S9xAPUUnpackStatus();
 	PopW(areg->PC);
 	iapu->PC = iapu->RAM + areg->PC;
 }
