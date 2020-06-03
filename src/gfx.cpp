@@ -2016,7 +2016,7 @@ void DrawBGMode7Background16Sub1_2(uint8 *Screen, int bg)
 					    : gfx->ScreenColors[b & gfx->Mode7Mask]);
 }
 
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 #define RENDER_BACKGROUND_MODE7_i(TYPE, FUNC, COLORFUNC)                                                               \
 	CHECK_SOUND();                                                                                                 \
                                                                                                                        \
@@ -2589,51 +2589,51 @@ void RenderScreen(uint8 *Screen, bool8_32 sub, bool8_32 force_no_add, uint8 D)
 				bg = 0;
 			}
 			if (sub || !SUB_OR_ADD(0)) {
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 				if (!Settings.Mode7Interpolate)
 #endif
 					DrawBGMode7Background16(Screen, bg);
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 				else
 					DrawBGMode7Background16_i(Screen, bg);
 #endif
 			} else {
 				if (gfx->r2131 & 0x80) {
 					if (gfx->r2131 & 0x40) {
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 						if (!Settings.Mode7Interpolate)
 #endif
 							DrawBGMode7Background16Sub1_2(Screen, bg);
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 						else
 							DrawBGMode7Background16Sub1_2_i(Screen, bg);
 #endif
 					} else {
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 						if (!Settings.Mode7Interpolate)
 #endif
 							DrawBGMode7Background16Sub(Screen, bg);
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 						else
 							DrawBGMode7Background16Sub_i(Screen, bg);
 #endif
 					}
 				} else {
 					if (gfx->r2131 & 0x40) {
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 						if (!Settings.Mode7Interpolate)
 #endif
 							DrawBGMode7Background16Add1_2(Screen, bg);
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 						else
 							DrawBGMode7Background16Add1_2_i(Screen, bg);
 #endif
 					} else {
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 						if (!Settings.Mode7Interpolate)
 #endif
 							DrawBGMode7Background16Add(Screen, bg);
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 						else
 							DrawBGMode7Background16Add_i(Screen, bg);
 #endif
@@ -2805,7 +2805,7 @@ void S9xUpdateScreen() // ~30-50ms! (called from FLUSH_REDRAW())
 							*q = *(q + 1) = *p;
 					}
 			}
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 			else {
 				for (uint32 y = 0; y < gfx->StartY; y++) {
 					uint8 *p = gfx->Screen + y * gfx->Pitch + 255;

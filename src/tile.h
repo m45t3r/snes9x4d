@@ -212,4 +212,6 @@
 			}                                                                                              \
 		}                                                                                                      \
 	}
+
+#define PLOT_PIXEL(screen, pixel) (pixel)
 #endif

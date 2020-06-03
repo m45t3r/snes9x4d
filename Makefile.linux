@@ -31,7 +31,6 @@ endif
 CCFLAGS += $(OFLAGS) \
     -DBILINEAR_SCALE \
     -DLAGFIX \
-    -DFOREVER_16_BIT \
     -DFAST_LSB_WORD_ACCESS \
     -DVIDEO_MODE=1 \
     -DZLIB \

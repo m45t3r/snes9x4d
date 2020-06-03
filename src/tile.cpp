@@ -151,7 +151,7 @@ uint8 ConvertTile(uint8 *pCache, uint32 TileAddr)
 	return (non_zero ? TRUE : BLANK_TILE);
 }
 
-#ifndef _ZAURUS
+#ifndef FOREVER_16_BIT
 inline void WRITE_4PIXELS(uint32 Offset, uint8 *Pixels, struct SGFX *gfx)
 {
 	uint8 Pixel;
@@ -535,7 +535,6 @@ void DrawLargePixel16(uint32 Tile, uint32 Offset, uint32 StartPixel, uint32 Pixe
 {
 	TILE_PREAMBLE
 
-#define PLOT_PIXEL(screen, pixel) (pixel)
 	register uint16 *sp = (uint16 *)gfx->S + Offset;
 	uint8 *Depth = gfx->DB + Offset;
 	uint16 pixel;
