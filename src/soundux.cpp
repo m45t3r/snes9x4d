@@ -502,7 +502,7 @@ void S9xPrepareSoundForSnapshotSave(bool8 restore)
 static void S9xConvertSoundOldValues()
 {
 	int i, j;
-	int old_noise_freq = 0;
+	// int old_noise_freq = 0;
 
 	for (i = 0; i < NUM_CHANNELS; i++) {
 		Channel *ch = &SoundData.channels[i];
@@ -531,7 +531,7 @@ static void S9xConvertSoundOldValues()
 		ch->xsustain_rate = env_counter_table[(unsigned)(j & 0x1F)];
 
 		if (ch->type == SOUND_NOISE) {
-			old_noise_freq = ch->hertz;
+			// old_noise_freq = ch->hertz;
 			ch->hertz = 32000;
 		}
 	}
