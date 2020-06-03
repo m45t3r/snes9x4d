@@ -382,7 +382,7 @@ extern "C"
     int
     main(int argc, char **argv)
 {
-	if (argc < 2) {
+	if (argc < S9xMinCommandLineArgs()) {
 		S9xUsage();
 	}
 
@@ -723,7 +723,6 @@ void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext
 	}
 }
 
-#ifndef _ZAURUS
 void S9xToggleSoundChannel(int c)
 {
 	if (c == 8)
@@ -732,7 +731,6 @@ void S9xToggleSoundChannel(int c)
 		so.sound_switch ^= 1 << c;
 	S9xSetSoundControl(so.sound_switch);
 }
-#endif
 
 inline void timespec_sub(struct timespec *diff, const struct timespec *left, const struct timespec *right)
 {

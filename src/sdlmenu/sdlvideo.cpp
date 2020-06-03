@@ -66,13 +66,11 @@
 
 SDL_Surface *screen, *gfxscreen;
 
-#ifndef _ZAURUS
 int S9xMinCommandLineArgs() { return (2); }
 
 void S9xGraphicsMode() {}
 
 void S9xTextMode() {}
-#endif
 
 void S9xInitDisplay(int /*argc*/, char ** /*argv*/)
 {
@@ -131,7 +129,6 @@ void S9xSetPalette() {}
 
 void S9xSetTitle(const char * /*title*/) {}
 
-#ifndef _ZAURUS
 const char *S9xSelectFilename(const char *def, const char *dir1, const char *ext1, const char *title)
 {
 	static char path[PATH_MAX];
@@ -178,6 +175,5 @@ bool8 S9xReadMousePosition(int /* which1 */, int & /* x */, int & /* y */, uint3
 }
 
 bool8 S9xReadSuperScopePosition(int & /* x */, int & /* y */, uint32 & /* buttons */) { return (FALSE); }
-#endif
 
 void S9xMessage(int /* type */, int /* number */, const char *message) { fprintf(stderr, "%s\n", message); }

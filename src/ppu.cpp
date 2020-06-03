@@ -1763,7 +1763,6 @@ uint8 S9xGetCPU(uint16 Address, struct InternalPPU *ippu, CMemory *mem)
 			return (0x40);
 
 		case 0x4016: {
-#ifndef _ZAURUS
 			if (mem->FillRAM[0x4016] & 1) {
 				if ((!Settings.SwapJoypads && ippu->Controller == SNES_MOUSE_SWAPPED) ||
 				    (Settings.SwapJoypads && ippu->Controller == SNES_MOUSE)) {
@@ -1772,14 +1771,12 @@ uint8 S9xGetCPU(uint16 Address, struct InternalPPU *ippu, CMemory *mem)
 				}
 				return (0);
 			}
-#endif
 			int ind = Settings.SwapJoypads ? 1 : 0;
 			byte = ippu->Joypads[ind] >> (PPU.Joypad1ButtonReadPos ^ 15);
 			PPU.Joypad1ButtonReadPos++;
 			return (byte & 1);
 		}
 		case 0x4017: {
-#ifndef _ZAURUS
 			if (mem->FillRAM[0x4016] & 1) {
 				// MultiPlayer5 adaptor is only allowed to be
 				// plugged into port 2
@@ -1798,9 +1795,7 @@ uint8 S9xGetCPU(uint16 Address, struct InternalPPU *ippu, CMemory *mem)
 				}
 				return (0x00);
 			}
-#endif
 			int ind = Settings.SwapJoypads ? 0 : 1;
-#ifndef _ZAURUS
 			if (ippu->Controller == SNES_MULTIPLAYER5) {
 				if (mem->FillRAM[0x4201] & 0x80) {
 					byte = ((ippu->Joypads[ind] >> (PPU.Joypad2ButtonReadPos ^ 15)) & 1) |
@@ -1814,7 +1809,6 @@ uint8 S9xGetCPU(uint16 Address, struct InternalPPU *ippu, CMemory *mem)
 					return (byte);
 				}
 			}
-#endif
 			return ((ippu->Joypads[ind] >> (PPU.Joypad2ButtonReadPos++ ^ 15)) & 1);
 		}
 		default:
@@ -2192,19 +2186,15 @@ void S9xResetPPU()
 
 	if (Settings.ControllerOption == 0)
 		IPPU.Controller = SNES_MAX_CONTROLLER_OPTIONS - 1;
-#ifndef _ZAURUS
 	else
 		IPPU.Controller = Settings.ControllerOption - 1;
 	S9xNextController();
-#endif
 	for (c = 0; c < 2; c++)
 		memset(&IPPU.Clip[c], 0, sizeof(struct ClipData));
-#ifndef _ZAURUS
-		// if (Settings.MouseMaster) {
-		// 	S9xProcessMouse(0);
-		// 	S9xProcessMouse(1);
-		// }
-#endif
+	if (Settings.MouseMaster) {
+		S9xProcessMouse(0);
+		S9xProcessMouse(1);
+	}
 	for (c = 0; c < 0x8000; c += 0x100)
 		memset(&Memory.FillRAM[c], c >> 8, 0x100);
 
@@ -2215,7 +2205,6 @@ void S9xResetPPU()
 	ZeroMemory(&Memory.FillRAM[0x1000], 0x1000);
 }
 
-#ifndef _ZAURUS
 void S9xProcessMouse(int which1)
 {
 	int x, y;
@@ -2328,27 +2317,20 @@ void S9xNextController()
 		break;
 	}
 }
-#endif
 
 void S9xUpdateJoypads(struct InternalPPU *ippu)
 {
-#ifdef _ZAURUS
 	int i = 0;
-#else
-	int i = 0;
-	;
 
 	// for (i = 0; i < 5; i++)
-#endif
-	//{
-	ippu->Joypads[i] = S9xReadJoypad(i);
-	if (ippu->Joypads[i] & SNES_LEFT_MASK)
-		ippu->Joypads[i] &= ~SNES_RIGHT_MASK;
-	if (ippu->Joypads[i] & SNES_UP_MASK)
-		ippu->Joypads[i] &= ~SNES_DOWN_MASK;
-		//}
+	{
+		ippu->Joypads[i] = S9xReadJoypad(i);
+		if (ippu->Joypads[i] & SNES_LEFT_MASK)
+			ippu->Joypads[i] &= ~SNES_RIGHT_MASK;
+		if (ippu->Joypads[i] & SNES_UP_MASK)
+			ippu->Joypads[i] &= ~SNES_DOWN_MASK;
+	}
 
-#ifndef _ZAURUS
 	// touhaiden controller Fix
 	if (SNESGameFixes.TouhaidenControllerFix &&
 	    (ippu->Controller == SNES_JOYPAD || ippu->Controller == SNES_MULTIPLAYER5)) {
@@ -2366,7 +2348,7 @@ void S9xUpdateJoypads(struct InternalPPU *ippu)
 	// Read SuperScope if enabled
 	if (Settings.SuperScopeMaster)
 		ProcessSuperScope();
-#endif
+
 	if (Memory.FillRAM[0x4200] & 1) {
 		PPU.Joypad1ButtonReadPos = 16;
 		if (Memory.FillRAM[0x4201] & 0x80) {

@@ -133,8 +133,10 @@ extern int NoiseFreq[32];
 #define VOL_DIV16 0x0080
 #define ENVX_SHIFT 24
 
+#ifdef SPC700_ASM
 extern "C" void DecodeBlockAsm(int8 *, int16 *, int32 *, int32 *);
 extern "C" void DecodeBlockAsm2(int8 *, int16 *, int32 *, int32 *);
+#endif
 
 // F is channel's current frequency and M is the 16-bit modulation waveform
 // from the previous channel multiplied by the current envelope volume level.
@@ -186,7 +188,7 @@ void S9xSetEnvelopeRate(int channel, unsigned long rate, int direction, int targ
 {
 	S9xSetEnvRate(&SoundData.channels[channel], rate, direction, target);
 }
-#ifndef _ZAURUS
+
 void S9xSetSoundVolume(int channel, short volume_left, short volume_right)
 {
 	Channel *ch = &SoundData.channels[channel];
@@ -224,7 +226,6 @@ void S9xSetEchoVolume(short volume_left, short volume_right)
 	SoundData.echo_volume[Settings.ReverseStereo] = volume_left;
 	SoundData.echo_volume[1 ^ Settings.ReverseStereo] = volume_right;
 }
-#endif
 
 void S9xSetEchoEnable(uint8 byte)
 {
@@ -413,7 +414,6 @@ void S9xSetSoundFrequency(int channel, int hertz)
 		}
 	}
 }
-#ifndef _ZAURUS
 void S9xSetSoundHertz(int channel, int hertz)
 {
 	SoundData.channels[channel].hertz = hertz;
@@ -421,7 +421,6 @@ void S9xSetSoundHertz(int channel, int hertz)
 }
 
 void S9xSetSoundType(int channel, int type_of_sound) { SoundData.channels[channel].type = type_of_sound; }
-#endif
 
 bool8_32 S9xSetSoundMute(bool8_32 mute)
 {
@@ -446,14 +445,13 @@ void AltDecodeBlock(Channel *ch)
 	if ((ch->last_block = filter & 1))
 		ch->loop = (filter & 2) != 0;
 
-#if 0
+#if SPC700_ASM
 	int16 *raw = ch->block = ch->decoded;
 
-	// if ((Settings.AltSampleDecode) == 1)
-	//	DecodeBlockAsm(compressed, raw, &ch->previous[0], &ch->previous[1]);
-	// else
-	//	DecodeBlockAsm2(compressed, raw, &ch->previous[0], &ch->previous[1]);
-	DecodeBlockAsm(compressed, raw, &ch->previous[0], &ch->previous[1]);
+	if ((Settings.AltSampleDecode) == 1)
+		DecodeBlockAsm(compressed, raw, &ch->previous[0], &ch->previous[1]);
+	else
+		DecodeBlockAsm2(compressed, raw, &ch->previous[0], &ch->previous[1]);
 #else
 
 	int32 out;
@@ -538,7 +536,6 @@ void AltDecodeBlock(Channel *ch)
 	ch->block_pointer += 9;
 }
 
-#ifndef _ZAURUS
 void AltDecodeBlock2(Channel *ch)
 {
 	int32 out;
@@ -676,7 +673,6 @@ void AltDecodeBlock2(Channel *ch)
 	ch->previous[1] = prev1;
 	ch->block_pointer += 9;
 }
-#endif
 
 void DecodeBlock(Channel *ch)
 {
@@ -688,10 +684,10 @@ void DecodeBlock(Channel *ch)
 	bool invalid_header;
 
 	if (Settings.AltSampleDecode) {
-		// if (Settings.AltSampleDecode < 3)
-		AltDecodeBlock(ch);
-		// else
-		// 	AltDecodeBlock2(ch);
+		if (Settings.AltSampleDecode < 3)
+			AltDecodeBlock(ch);
+		else
+			AltDecodeBlock2(ch);
 		return;
 	}
 	if (ch->block_pointer > 0x10000 - 9) {

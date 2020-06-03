@@ -235,18 +235,14 @@ char *S9xParseArgs(char **argv, int argc)
 					Settings.SoundPlaybackRate = atoi(argv[++i]) & 7;
 				else
 					S9xUsage();
-			}
-#ifndef _ZAURUS
-			else if (strcasecmp(argv[i], "-stereo") == 0 || strcasecmp(argv[i], "-st") == 0) {
+			} else if (strcasecmp(argv[i], "-stereo") == 0 || strcasecmp(argv[i], "-st") == 0) {
 				Settings.Stereo = TRUE;
 				Settings.APUEnabled = TRUE;
 				Settings.NextAPUEnabled = TRUE;
 			} else if (strcasecmp(argv[i], "-mono") == 0) {
 				Settings.Stereo = FALSE;
 				Settings.NextAPUEnabled = TRUE;
-			}
-#endif
-			else if (strcasecmp(argv[i], "-envx") == 0 || strcasecmp(argv[i], "-ex") == 0) {
+			} else if (strcasecmp(argv[i], "-envx") == 0 || strcasecmp(argv[i], "-ex") == 0) {
 				Settings.SoundEnvelopeHeightReading = TRUE;
 			} else if (strcasecmp(argv[i], "-nosamplecaching") == 0 || strcasecmp(argv[i], "-nsc") == 0 ||
 				   strcasecmp(argv[i], "-nc") == 0) {
@@ -306,50 +302,42 @@ char *S9xParseArgs(char **argv, int argc)
 
 	return (rom_filename);
 }
-/*
-void S9xParseCheatsFile (const char *rom_filename)
+
+#ifdef CHEATS
+void S9xParseCheatsFile(const char *rom_filename)
 {
-    FILE *f;
-    char dir [_MAX_DIR];
-    char drive [_MAX_DRIVE];
-    char name [_MAX_FNAME];
-    char ext [_MAX_EXT];
-    char fname [_MAX_PATH];
-    char buf [80];
-    uint32 address;
-    uint8 byte;
-    uint8 bytes [3];
-    bool8 sram;
-    uint8 num_bytes;
-    const char *error;
-    char *p;
+	FILE *f;
+	char dir[_MAX_DIR];
+	char drive[_MAX_DRIVE];
+	char name[_MAX_FNAME];
+	char ext[_MAX_EXT];
+	char fname[_MAX_PATH];
+	char buf[80];
+	uint32 address;
+	uint8 byte;
+	uint8 bytes[3];
+	bool8 sram;
+	uint8 num_bytes;
+	const char *error;
+	char *p;
 
-    _splitpath (rom_filename, drive, dir, name, ext);
-    _makepath (fname, drive, dir, name, "pat");
+	_splitpath(rom_filename, drive, dir, name, ext);
+	_makepath(fname, drive, dir, name, "pat");
 
-    if ((f = fopen(fname, "r")) != NULL)
-    {
-	while(fgets(buf, 80, f) != NULL)
-	{
-	    if ((p = strrchr (buf, '\n')) != NULL)
-		*p = '\0';
-	    if (((error = S9xGameGenieToRaw (buf, address, byte)) == NULL) ||
-		((error = S9xProActionReplayToRaw (buf, address, byte)) ==
-NULL))
-	    {
-		S9xAddCheat (TRUE, FALSE, address, byte);
-	    }
-	    else
-	    if ((error = S9xGoldFingerToRaw (buf, address, sram,
-					     num_bytes, bytes)) == NULL)
-	    {
-		for (int c = 0; c < num_bytes; c++)
-		    S9xAddCheat (TRUE, FALSE, address + c, bytes [c]);
-	    }
-	    else
-		S9xMessage (S9X_ERROR, S9X_GAME_GENIE_CODE_ERROR, error);
+	if ((f = fopen(fname, "r")) != NULL) {
+		while (fgets(buf, 80, f) != NULL) {
+			if ((p = strrchr(buf, '\n')) != NULL)
+				*p = '\0';
+			if (((error = S9xGameGenieToRaw(buf, address, byte)) == NULL) ||
+			    ((error = S9xProActionReplayToRaw(buf, address, byte)) == NULL)) {
+				S9xAddCheat(TRUE, FALSE, address, byte);
+			} else if ((error = S9xGoldFingerToRaw(buf, address, sram, num_bytes, bytes)) == NULL) {
+				for (int c = 0; c < num_bytes; c++)
+					S9xAddCheat(TRUE, FALSE, address + c, bytes[c]);
+			} else
+				S9xMessage(S9X_ERROR, S9X_GAME_GENIE_CODE_ERROR, error);
+		}
+		fclose(f);
 	}
-	fclose(f);
-    }
 }
-*/
+#endif

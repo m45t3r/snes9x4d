@@ -373,12 +373,10 @@ void S9xStartScreenRefresh()
 		gfx->InfoString = NULL;
 
 	if (ippu->RenderThisFrame) {
-#ifndef _ZAURUS
 		if (!S9xInitUpdate()) {
 			ippu->RenderThisFrame = FALSE;
 			return;
 		}
-#endif
 		ippu->RenderedFramesCount++;
 		ippu->PreviousLine = ippu->CurrentLine = 0;
 		ippu->MaxBrightness = ppu->Brightness;
