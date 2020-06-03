@@ -1,5 +1,5 @@
-#ifndef ___KEYDEF_h_
-#define ___KEYDEF_h_
+#ifndef __KEYDEF_h_
+#define __KEYDEF_h_
 
 #define A_1 0
 #define B_1 1
@@ -41,5 +41,4 @@
 #define CTRLL 32
 #define CTRLR 33
 
-//#endif
-#endif // ___KEYDEF_h_
+#endif // __KEYDEF_h_

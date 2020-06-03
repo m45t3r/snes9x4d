@@ -1,6 +1,5 @@
-/*
-	Dingoo Keys
-*/
+#ifndef __DINGOO_h_
+#define __DINGOO_h_
 
 #define BUTTON_UP 273
 #define BUTTON_DOWN 274
@@ -15,3 +14,5 @@
 #define BUTTON_SELECT 27
 #define BUTTON_START 13
 #define BUTTON_END 0
+
+#endif // __DINGOO_h_

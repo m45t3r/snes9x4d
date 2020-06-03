@@ -1,6 +1,5 @@
-/*
-	Miyoo Keys
-*/
+#ifndef __MIYOO_h_
+#define __MIYOO_h_
 
 #define BUTTON_UP 273
 #define BUTTON_DOWN 274
@@ -15,3 +14,5 @@
 #define BUTTON_SELECT 27
 #define BUTTON_START 13
 #define BUTTON_QUIT 305
+
+#endif // __MIYOO_h_
