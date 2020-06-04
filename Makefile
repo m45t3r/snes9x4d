@@ -22,7 +22,7 @@ SDL_LIBS := $(shell $(SYSROOT)/usr/bin/sdl-config --libs)
 
 LDFLAGS = -lz -lm $(SDL_LIBS) -Wl,--as-needed -Wl,--gc-sections -s
 
-OFLAGS = -Ofast -march=armv5te -mtune=arm926ej-s -marm \
+OFLAGS = -Os -ffast-math -march=armv5te -mtune=arm926ej-s -marm \
 	 -flto=4 -fwhole-program -fuse-linker-plugin \
 	 -fdata-sections -ffunction-sections \
 	 -fno-stack-protector -fomit-frame-pointer \
