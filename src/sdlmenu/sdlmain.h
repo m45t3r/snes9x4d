@@ -1,7 +1,7 @@
 #ifndef __MAIN_h_
 #define __MAIN_h_
 
-#define CFG_DIRECTORY ".snes9x4d-ng"
+#define CFG_DIRECTORY ".snes9x4d"
 
 extern uint16 sfc_key[256];
 extern short SaveSlotNum;
