@@ -38,7 +38,8 @@ static void sdl_audio_callback(void *userdata, uint8 *stream, int len)
 	return;
 }
 
-bool8 S9xOpenSoundDevice(int mode, bool8 stereo, int buffer_size) // called from S9xInitSound in ../soundux.cpp
+bool8_32 S9xOpenSoundDevice(int mode, bool8_32 stereo,
+			    int buffer_size) // called from S9xInitSound in ../soundux.cpp
 {
 	SDL_AudioSpec *audiospec;
 

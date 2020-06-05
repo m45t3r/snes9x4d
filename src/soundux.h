@@ -1,154 +1,69 @@
-/**********************************************************************************
+/*******************************************************************************
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
 
-  (c) Copyright 1996 - 2002  Gary Henderson (gary.henderson@ntlworld.com),
-			     Jerremy Koot (jkoot@snes9x.com)
+  (c) Copyright 1996 - 2003 Gary Henderson (gary.henderson@ntlworld.com) and
+			    Jerremy Koot (jkoot@snes9x.com)
 
-  (c) Copyright 2002 - 2004  Matthew Kendora
-
-  (c) Copyright 2002 - 2005  Peter Bortas (peter@bortas.org)
-
-  (c) Copyright 2004 - 2005  Joel Yliluoma (http://iki.fi/bisqwit/)
-
-  (c) Copyright 2001 - 2006  John Weidman (jweidman@slip.net)
-
-  (c) Copyright 2002 - 2006  funkyass (funkyass@spam.shaw.ca),
-			     Kris Bleakley (codeviolation@hotmail.com)
-
-  (c) Copyright 2002 - 2007  Brad Jorsch (anomie@users.sourceforge.net),
-			     Nach (n-a-c-h@users.sourceforge.net),
-			     zones (kasumitokoduck@yahoo.com)
-
-  (c) Copyright 2006 - 2007  nitsuja
+  (c) Copyright 2002 - 2003 Matthew Kendora and
+			    Brad Jorsch (anomie@users.sourceforge.net)
 
 
-  BS-X C emulator code
-  (c) Copyright 2005 - 2006  Dreamer Nom,
-			     zones
 
   C4 x86 assembler and some C emulation code
-  (c) Copyright 2000 - 2003  _Demo_ (_demo_@zsnes.com),
-			     Nach,
-			     zsKnight (zsknight@zsnes.com)
+  (c) Copyright 2000 - 2003 zsKnight (zsknight@zsnes.com),
+			    _Demo_ (_demo_@zsnes.com), and
+			    Nach (n-a-c-h@users.sourceforge.net)
 
   C4 C++ code
-  (c) Copyright 2003 - 2006  Brad Jorsch,
-			     Nach
+  (c) Copyright 2003 Brad Jorsch
 
   DSP-1 emulator code
-  (c) Copyright 1998 - 2006  _Demo_,
-			     Andreas Naive (andreasnaive@gmail.com)
-			     Gary Henderson,
-			     Ivar (ivar@snes9x.com),
-			     John Weidman,
-			     Kris Bleakley,
-			     Matthew Kendora,
-			     Nach,
-			     neviksti (neviksti@hotmail.com)
+  (c) Copyright 1998 - 2003 Ivar (ivar@snes9x.com), _Demo_, Gary Henderson,
+			    John Weidman (jweidman@slip.net),
+			    neviksti (neviksti@hotmail.com), and
+			    Kris Bleakley (stinkfish@bigpond.com)
 
   DSP-2 emulator code
-  (c) Copyright 2003         John Weidman,
-			     Kris Bleakley,
-			     Lord Nightmare (lord_nightmare@users.sourceforge.net),
-			     Matthew Kendora,
-			     neviksti
-
-
-  DSP-3 emulator code
-  (c) Copyright 2003 - 2006  John Weidman,
-			     Kris Bleakley,
-			     Lancer,
-			     z80 gaiden
-
-  DSP-4 emulator code
-  (c) Copyright 2004 - 2006  Dreamer Nom,
-			     John Weidman,
-			     Kris Bleakley,
-			     Nach,
-			     z80 gaiden
+  (c) Copyright 2003 Kris Bleakley, John Weidman, neviksti, Matthew Kendora, and
+		     Lord Nightmare (lord_nightmare@users.sourceforge.net
 
   OBC1 emulator code
-  (c) Copyright 2001 - 2004  zsKnight,
-			     pagefault (pagefault@zsnes.com),
-			     Kris Bleakley,
-			     Ported from x86 assembler to C by sanmaiwashi
+  (c) Copyright 2001 - 2003 zsKnight, pagefault (pagefault@zsnes.com)
+  Ported from x86 assembler to C by sanmaiwashi
 
   SPC7110 and RTC C++ emulator code
-  (c) Copyright 2002         Matthew Kendora with research by
-			     zsKnight,
-			     John Weidman,
-			     Dark Force
-
-  S-DD1 C emulator code
-  (c) Copyright 2003         Brad Jorsch with research by
-			     Andreas Naive,
-			     John Weidman
+  (c) Copyright 2002 Matthew Kendora with research by
+		     zsKnight, John Weidman, and Dark Force
 
   S-RTC C emulator code
-  (c) Copyright 2001-2006    byuu,
-			     John Weidman
-
-  ST010 C++ emulator code
-  (c) Copyright 2003         Feather,
-			     John Weidman,
-			     Kris Bleakley,
-			     Matthew Kendora
+  (c) Copyright 2001 John Weidman
 
   Super FX x86 assembler emulator code
-  (c) Copyright 1998 - 2003  _Demo_,
-			     pagefault,
-			     zsKnight,
+  (c) Copyright 1998 - 2003 zsKnight, _Demo_, and pagefault
 
   Super FX C emulator code
-  (c) Copyright 1997 - 1999  Ivar,
-			     Gary Henderson,
-			     John Weidman
+  (c) Copyright 1997 - 1999 Ivar and Gary Henderson.
 
-  Sound DSP emulator code is derived from SNEeSe and OpenSPC:
-  (c) Copyright 1998 - 2003  Brad Martin
-  (c) Copyright 1998 - 2006  Charles Bilyue'
 
-  SH assembler code partly based on x86 assembler code
-  (c) Copyright 2002 - 2004  Marcus Comstedt (marcus@mc.pp.se)
-
-  2xSaI filter
-  (c) Copyright 1999 - 2001  Derek Liauw Kie Fa
-
-  HQ2x, HQ3x, HQ4x filters
-  (c) Copyright 2003         Maxim Stepin (maxim@hiend3d.com)
-
-  Win32 GUI code
-  (c) Copyright 2003 - 2006  blip,
-			     funkyass,
-			     Matthew Kendora,
-			     Nach,
-			     nitsuja
-
-  Mac OS GUI code
-  (c) Copyright 1998 - 2001  John Stiles
-  (c) Copyright 2001 - 2007  zones
 
 
   Specific ports contains the works of other authors. See headers in
   individual files.
 
-
   Snes9x homepage: http://www.snes9x.com
 
-  Permission to use, copy, modify and/or distribute Snes9x in both binary
-  and source form, for non-commercial purposes, is hereby granted without
-  fee, providing that this license information and copyright notice appear
-  with all copies and any derived work.
+  Permission to use, copy, modify and distribute Snes9x in both binary and
+  source form, for non-commercial purposes, is hereby granted without fee,
+  providing that this license information and copyright notice appear with
+  all copies and any derived work.
 
   This software is provided 'as-is', without any express or implied
   warranty. In no event shall the authors be held liable for any damages
-  arising from the use of this software or it's derivatives.
+  arising from the use of this software.
 
   Snes9x is freeware for PERSONAL USE only. Commercial users should
-  seek permission of the copyright holders first. Commercial use includes,
-  but is not limited to, charging money for Snes9x or software derived from
-  Snes9x, including Snes9x or derivatives in commercial game bundles, and/or
-  using Snes9x as a promotion for your commercial product.
+  seek permission of the copyright holders first. Commercial use includes
+  charging money for Snes9x or software derived from Snes9x.
 
   The copyright holders request that bug fixes and improvements to the code
   should be forwarded to them so everyone can benefit from the modifications
@@ -156,13 +71,11 @@
 
   Super NES and Super Nintendo Entertainment System are trademarks of
   Nintendo Co., Limited and its subsidiary companies.
-**********************************************************************************/
-
+*******************************************************************************/
 #ifndef _SOUND_H_
 #define _SOUND_H_
 
-enum { SOUND_SAMPLE = 0, SOUND_NOISE };
-
+enum { SOUND_SAMPLE = 0, SOUND_NOISE, SOUND_EXTRA_NOISE, SOUND_MUTE };
 enum { SOUND_SILENT,
        SOUND_ATTACK,
        SOUND_DECAY,
@@ -183,156 +96,147 @@ enum { MODE_NONE = SOUND_SILENT,
        MODE_DECREASE_LINEAR,
        MODE_DECREASE_EXPONENTIAL };
 
-#define NUM_CHANNELS 8
+#define MAX_ENVELOPE_HEIGHT 127
+#define ENVELOPE_SHIFT 7
+#define MAX_VOLUME 127
+#define VOLUME_SHIFT 7
+#define VOL_DIV 128
 #define SOUND_DECODE_LENGTH 16
+
+#define NUM_CHANNELS 8
 #define SOUND_BUFFER_SIZE (1024 * 16)
 #define MAX_BUFFER_SIZE SOUND_BUFFER_SIZE
 #define SOUND_BUFFER_SIZE_MASK (SOUND_BUFFER_SIZE - 1)
 
-#define ENV_RANGE 0x800
-#define ENV_MAX 0x7FF
-#define ENV_SHIFT 4
+#define SOUND_BUFS 4
 
 #ifdef __sgi
 #include <audio.h>
 #endif /* __sgi */
 
 typedef struct {
-	int sound_fd;	   // ** port specific
-	int sound_switch;  // channel on/off
-	int playback_rate; // 32000Hz is recommended
-	int buffer_size;   // ** port specific
-	int noise_gen;	   // ** unused
-	bool8 mute_sound;  // mute
-	int stereo;	   // stereo or mono
-	bool8 sixteen_bit; // 16bit or 8bit sample
-	bool8 encoded;	   // ** port specific
+	int sound_fd;
+	int sound_switch;
+	int playback_rate;
+	int buffer_size;
+	int noise_gen;
+	bool8_32 mute_sound;
+	int stereo;
+	bool8_32 sixteen_bit;
+	bool8_32 encoded;
 #ifdef __sun
-	int last_eof; // ** port specific
+	int last_eof;
 #endif
 #ifdef __sgi
-	ALport al_port;		    // ** port specific
-#endif				    /* __sgi */
-	int32 samples_mixed_so_far; // ** port specific
-	int32 play_position;	    // ** port specific
-	uint32 err_counter;	    // ** port specific
-	uint32 err_rate;	    // ** port specific
-
-	uint16 stereo_switch; // stereo channel on/off
-	double pitch_mul;     // used with Settings.FixFrequency
+	ALport al_port;
+#endif /* __sgi */
+	int32 samples_mixed_so_far;
+	int32 play_position;
+	uint32 err_counter;
+	uint32 err_rate;
 } SoundStatus;
 
 EXTERN_C volatile SoundStatus so;
 
 typedef struct {
-	int32 state;		  // ADSR/GAIN/RELEASE/SILENT
-	int32 type;		  // sample or noise
-	short volume_left;	  // VOL(L)
-	short volume_right;	  // VOL(R)
-	uint32 hertz;		  // ((P(H) << 8) + P(L)) * 8
-	uint32 frequency;	  // normalized pitch
-	uint32 count;		  // ** unused
-	bool8 loop;		  // loop flag in BRR header
-	int32 envx;		  // ** unused
-	short left_vol_level;	  // ** unused
-	short right_vol_level;	  // ** unused
-	short envx_target;	  // ** unused
-	uint32 env_error;	  // ** unused
-	uint32 erate;		  // ** unused
-	int32 direction;	  // ** unused
-	uint32 attack_rate;	  // ** unused
-	uint32 decay_rate;	  // ** unused
-	uint32 sustain_rate;	  // ** unused
-	uint32 release_rate;	  // ** unused
-	uint32 sustain_level;	  // ** unused
-	signed short sample;	  // signed 16 bit sample
-	signed short decoded[16]; // decoded 16 samples
+	int state;
+	int type;
+	short volume_left;
+	short volume_right;
+	uint32 hertz;
+	uint32 frequency;
+	uint32 count;
+	bool8_32 loop;
+	int envx;
+	short left_vol_level;
+	short right_vol_level;
+	short envx_target;
+	unsigned long int env_error;
+	unsigned long erate;
+	int direction;
+	unsigned long attack_rate;
+	unsigned long decay_rate;
+	unsigned long sustain_rate;
+	unsigned long release_rate;
+	unsigned long sustain_level;
+	signed short sample;
+	signed short decoded[16];
 	signed short previous16[2];
 	signed short *block;
-	uint16 sample_number;	  // SRCN
-	bool8 last_block;	  // end flag in BRR header
-	bool8 needs_decode;	  // true when BRR block will be decoded
-	uint32 block_pointer;	  // currect block
-	uint32 sample_pointer;	  // pointer in a block
-	int32 *echo_buf_ptr;	  // EchoBuffer[] or DummyEchoBuffer[]
-	int32 mode;		  // ADSR/GAIN/RELEASE/SILENT
-	int32 envxx;		  // ** unused
-	signed short next_sample; // ** unused
-	int32 interpolate;	  // ** unused
-	int32 previous[2];	  // last two nybbles for BRR decode
-	uint32 dummy[8];	  // Just incase they are needed in the future,
-				  // for snapshot compatibility.
-
-	int32 nb_index;	      // index of cached samples
-	int16 nb_sample[4];   // cached samples for interpolation
-	int16 out_sample;     // OUTX << 4
-	int32 xenvx;	      // ENVX << 4
-	int32 xenvx_target;   // ENVX target << 4
-	int32 xenv_count;     // counter for envelope timing
-	int32 xenv_rate;      // envelope timing from env_counter_table
-	int32 xsmp_count;     // counter for pitch
-	int32 xattack_rate;   // envelope timing from env_counter_table
-	int32 xdecay_rate;    // envelope timing from env_counter_table
-	int32 xsustain_rate;  // envelope timing from env_counter_table
-	int32 xsustain_level; // (128 / 8 * (SR + 1)) << 4
+	uint16 sample_number;
+	bool8_32 last_block;
+	bool8_32 needs_decode;
+	uint32 block_pointer;
+	uint32 sample_pointer;
+	int *echo_buf_ptr;
+	int mode;
+	int32 envxx;
+	signed short next_sample;
+	int32 interpolate;
+	int32 previous[2];
+	// Just incase they are needed in the future, for snapshot
+	// compatibility.
+	uint32 dummy[8];
+	//	unsigned short last_valid_header;
 } Channel;
 
 typedef struct {
-	short master_volume_left;  // MVOL(L)
-	short master_volume_right; // MVOL(R)
-	short echo_volume_left;	   // EVOL(L)
-	short echo_volume_right;   // EVOL(R)
-	int32 echo_enable;	   // EON
-	int32 echo_feedback;	   // EFB
-	int32 echo_ptr;		   // index of Echo[]
-	int32 echo_buffer_size;	   // num of echo samples
-	int32 echo_write_enabled;  // ECEN
-	int32 echo_channel_enable; // ** unused
-	int32 pitch_mod;	   // PMOD
-	uint32 dummy[3];	   // Just incase they are needed in the future,
-				   // for snapshot compatibility.
+	short master_volume_left;
+	short master_volume_right;
+	short echo_volume_left;
+	short echo_volume_right;
+	int echo_enable;
+	int echo_feedback;
+	int echo_ptr;
+	int echo_buffer_size;
+	int echo_write_enabled;
+	int echo_channel_enable;
+	int pitch_mod;
+	// Just incase they are needed in the future, for snapshot
+	// compatibility.
+	uint32 dummy[3];
 	Channel channels[NUM_CHANNELS];
-	bool8 no_filter; // true when simple echo
-	int32 master_volume[2];
-	int32 echo_volume[2];
-	int32 noise_hertz; // ** unused
-
-	int32 noise_count; // counter for noise frequency
-	int32 noise_rate;  // noise frequency from env_counter_table
-	uint16 noise_seed; // seed for noise generation
+	bool8_32 no_filter;
+	int master_volume[2];
+	int echo_volume[2];
+	int noise_hertz;
 } SSoundData;
 
 EXTERN_C SSoundData SoundData;
 
-void S9xSetEnvelopeRate(int channel, int32 rate_count, int32 xtarget);
 void S9xSetSoundVolume(int channel, short volume_left, short volume_right);
-void S9xSetMasterVolume(short volume_left, short volume_right);
-void S9xSetEchoVolume(short volume_left, short volume_right);
-void S9xSetEchoEnable(uint8 byte);
-void S9xSetEchoFeedback(int echo_feedback);
-void S9xSetEchoDelay(unsigned int byte);
-void S9xSetEchoWriteEnable(uint8 byte);
-void S9xSetFrequencyModulationEnable(uint8 byte);
-void S9xSetSoundKeyOff(int channel);
-void S9xPrepareSoundForSnapshotSave(bool8 restore);
-void S9xFixSoundAfterSnapshotLoad(int version);
-void S9xSetFilterCoefficient(int tap, int value);
-void S9xSetSoundADSR(int channel, int ar, int dr, int sr, int sl);
-void S9xSetEnvelopeHeight(int channel, int32 xlevel);
-uint8 S9xGetEnvelopeHeight(int channel);
+void S9xSetSoundFrequency(int channel, int hertz);
 void S9xSetSoundHertz(int channel, int hertz);
 void S9xSetSoundType(int channel, int type_of_sound);
-bool8 S9xSetSoundMute(bool8 mute);
-void S9xResetSound(bool8 full);
-void S9xSetPlaybackRate(uint32 playback_rate);
-bool8 S9xSetSoundMode(int channel, int mode);
+void S9xSetMasterVolume(short master_volume_left, short master_volume_right);
+void S9xSetEchoVolume(short echo_volume_left, short echo_volume_right);
 void S9xSetSoundControl(int sound_switch);
-void S9xPlaySample(int channel);
-
+bool8_32 S9xSetSoundMute(bool8_32 mute);
+void S9xSetEnvelopeHeight(int channel, int height);
+void S9xSetSoundADSR(int channel, int attack, int decay, int sustain, int sustain_level, int release);
+void S9xSetSoundKeyOff(int channel);
+void S9xSetSoundDecayMode(int channel);
+void S9xSetSoundAttachMode(int channel);
+void S9xSoundStartEnvelope(Channel *);
+void S9xSetSoundSample(int channel, uint16 sample_number);
+void S9xSetEchoFeedback(int echo_feedback);
+void S9xSetEchoEnable(uint8 byte);
+void S9xSetEchoDelay(int byte);
+void S9xSetEchoWriteEnable(uint8 byte);
+void S9xSetFilterCoefficient(int tap, int value);
+void S9xSetFrequencyModulationEnable(uint8 byte);
+void S9xSetEnvelopeRate(int channel, unsigned long rate, int direction, int target);
+bool8_32 S9xSetSoundMode(int channel, int mode);
+int S9xGetEnvelopeHeight(int channel);
+void S9xResetSound(bool8_32 full);
+void S9xFixSoundAfterSnapshotLoad();
+void S9xPlaybackSoundSetting(int channel);
+void S9xPlaySample(int channel, struct SAPU *);
 void S9xFixEnvelope(int channel, uint8 gain, uint8 adsr1, uint8 adsr2);
-bool8 S9xOpenSoundDevice(int mode, bool8 stereo, int buffer_size);
+void S9xStartSample(int channel);
 
 EXTERN_C void S9xMixSamples(uint8 *buffer, int sample_count);
 EXTERN_C void S9xMixSamplesO(uint8 *buffer, int sample_count, int byte_offset);
-
+bool8_32 S9xOpenSoundDevice(int, bool8_32, int);
+void S9xSetPlaybackRate(uint32 rate);
 #endif

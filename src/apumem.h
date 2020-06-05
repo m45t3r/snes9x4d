@@ -1,304 +1,171 @@
-/**********************************************************************************
-  Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
-
-  (c) Copyright 1996 - 2002  Gary Henderson (gary.henderson@ntlworld.com),
-			     Jerremy Koot (jkoot@snes9x.com)
-
-  (c) Copyright 2002 - 2004  Matthew Kendora
-
-  (c) Copyright 2002 - 2005  Peter Bortas (peter@bortas.org)
-
-  (c) Copyright 2004 - 2005  Joel Yliluoma (http://iki.fi/bisqwit/)
-
-  (c) Copyright 2001 - 2006  John Weidman (jweidman@slip.net)
-
-  (c) Copyright 2002 - 2006  funkyass (funkyass@spam.shaw.ca),
-			     Kris Bleakley (codeviolation@hotmail.com)
-
-  (c) Copyright 2002 - 2007  Brad Jorsch (anomie@users.sourceforge.net),
-			     Nach (n-a-c-h@users.sourceforge.net),
-			     zones (kasumitokoduck@yahoo.com)
-
-  (c) Copyright 2006 - 2007  nitsuja
-
-
-  BS-X C emulator code
-  (c) Copyright 2005 - 2006  Dreamer Nom,
-			     zones
-
-  C4 x86 assembler and some C emulation code
-  (c) Copyright 2000 - 2003  _Demo_ (_demo_@zsnes.com),
-			     Nach,
-			     zsKnight (zsknight@zsnes.com)
-
-  C4 C++ code
-  (c) Copyright 2003 - 2006  Brad Jorsch,
-			     Nach
-
-  DSP-1 emulator code
-  (c) Copyright 1998 - 2006  _Demo_,
-			     Andreas Naive (andreasnaive@gmail.com)
-			     Gary Henderson,
-			     Ivar (ivar@snes9x.com),
-			     John Weidman,
-			     Kris Bleakley,
-			     Matthew Kendora,
-			     Nach,
-			     neviksti (neviksti@hotmail.com)
-
-  DSP-2 emulator code
-  (c) Copyright 2003         John Weidman,
-			     Kris Bleakley,
-			     Lord Nightmare (lord_nightmare@users.sourceforge.net),
-			     Matthew Kendora,
-			     neviksti
-
-
-  DSP-3 emulator code
-  (c) Copyright 2003 - 2006  John Weidman,
-			     Kris Bleakley,
-			     Lancer,
-			     z80 gaiden
-
-  DSP-4 emulator code
-  (c) Copyright 2004 - 2006  Dreamer Nom,
-			     John Weidman,
-			     Kris Bleakley,
-			     Nach,
-			     z80 gaiden
-
-  OBC1 emulator code
-  (c) Copyright 2001 - 2004  zsKnight,
-			     pagefault (pagefault@zsnes.com),
-			     Kris Bleakley,
-			     Ported from x86 assembler to C by sanmaiwashi
-
-  SPC7110 and RTC C++ emulator code
-  (c) Copyright 2002         Matthew Kendora with research by
-			     zsKnight,
-			     John Weidman,
-			     Dark Force
-
-  S-DD1 C emulator code
-  (c) Copyright 2003         Brad Jorsch with research by
-			     Andreas Naive,
-			     John Weidman
-
-  S-RTC C emulator code
-  (c) Copyright 2001-2006    byuu,
-			     John Weidman
-
-  ST010 C++ emulator code
-  (c) Copyright 2003         Feather,
-			     John Weidman,
-			     Kris Bleakley,
-			     Matthew Kendora
-
-  Super FX x86 assembler emulator code
-  (c) Copyright 1998 - 2003  _Demo_,
-			     pagefault,
-			     zsKnight,
-
-  Super FX C emulator code
-  (c) Copyright 1997 - 1999  Ivar,
-			     Gary Henderson,
-			     John Weidman
-
-  Sound DSP emulator code is derived from SNEeSe and OpenSPC:
-  (c) Copyright 1998 - 2003  Brad Martin
-  (c) Copyright 1998 - 2006  Charles Bilyue'
-
-  SH assembler code partly based on x86 assembler code
-  (c) Copyright 2002 - 2004  Marcus Comstedt (marcus@mc.pp.se)
-
-  2xSaI filter
-  (c) Copyright 1999 - 2001  Derek Liauw Kie Fa
-
-  HQ2x, HQ3x, HQ4x filters
-  (c) Copyright 2003         Maxim Stepin (maxim@hiend3d.com)
-
-  Win32 GUI code
-  (c) Copyright 2003 - 2006  blip,
-			     funkyass,
-			     Matthew Kendora,
-			     Nach,
-			     nitsuja
-
-  Mac OS GUI code
-  (c) Copyright 1998 - 2001  John Stiles
-  (c) Copyright 2001 - 2007  zones
-
-
-  Specific ports contains the works of other authors. See headers in
-  individual files.
-
-
-  Snes9x homepage: http://www.snes9x.com
-
-  Permission to use, copy, modify and/or distribute Snes9x in both binary
-  and source form, for non-commercial purposes, is hereby granted without
-  fee, providing that this license information and copyright notice appear
-  with all copies and any derived work.
-
-  This software is provided 'as-is', without any express or implied
-  warranty. In no event shall the authors be held liable for any damages
-  arising from the use of this software or it's derivatives.
-
-  Snes9x is freeware for PERSONAL USE only. Commercial users should
-  seek permission of the copyright holders first. Commercial use includes,
-  but is not limited to, charging money for Snes9x or software derived from
-  Snes9x, including Snes9x or derivatives in commercial game bundles, and/or
-  using Snes9x as a promotion for your commercial product.
-
-  The copyright holders request that bug fixes and improvements to the code
-  should be forwarded to them so everyone can benefit from the modifications
-  in future versions.
-
-  Super NES and Super Nintendo Entertainment System are trademarks of
-  Nintendo Co., Limited and its subsidiary companies.
-**********************************************************************************/
-
+/*
+ * Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
+ *
+ * (c) Copyright 1996 - 2001 Gary Henderson (gary.henderson@ntlworld.com) and
+ *                           Jerremy Koot (jkoot@snes9x.com)
+ *
+ * Super FX C emulator code
+ * (c) Copyright 1997 - 1999 Ivar (ivar@snes9x.com) and
+ *                           Gary Henderson.
+ * Super FX assembler emulator code (c) Copyright 1998 zsKnight and _Demo_.
+ *
+ * DSP1 emulator code (c) Copyright 1998 Ivar, _Demo_ and Gary Henderson.
+ * C4 asm and some C emulation code (c) Copyright 2000 zsKnight and _Demo_.
+ * C4 C code (c) Copyright 2001 Gary Henderson (gary.henderson@ntlworld.com).
+ *
+ * DOS port code contains the works of other authors. See headers in
+ * individual files.
+ *
+ * Snes9x homepage: http://www.snes9x.com
+ *
+ * Permission to use, copy, modify and distribute Snes9x in both binary and
+ * source form, for non-commercial purposes, is hereby granted without fee,
+ * providing that this license information and copyright notice appear with
+ * all copies and any derived work.
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty. In no event shall the authors be held liable for any damages
+ * arising from the use of this software.
+ *
+ * Snes9x is freeware for PERSONAL USE only. Commercial users should
+ * seek permission of the copyright holders first. Commercial use includes
+ * charging money for Snes9x or software derived from Snes9x.
+ *
+ * The copyright holders request that bug fixes and improvements to the code
+ * should be forwarded to them so everyone can benefit from the modifications
+ * in future versions.
+ *
+ * Super NES and Super Nintendo Entertainment System are trademarks of
+ * Nintendo Co., Limited and its subsidiary companies.
+ */
 #ifndef _apumemory_h_
 #define _apumemory_h_
 
+#include "port.h"
+
 START_EXTERN_C
+extern uint8 W4;
 extern uint8 APUROM[64];
 END_EXTERN_C
 
-static INLINE uint8 apu_get_reg(uint8 Address, struct SIAPU *iapu)
-{
-	switch (Address) {
-	case 0xf0: // -w TEST
-		return 0;
-
-	case 0xf1: // -w CONTROL
-		return 0;
-
-	case 0xf2: // rw DSPADDR
-		return (iapu->RAM[Address]);
-
-	case 0xf3: // rw DSPDATA
-		return (S9xGetAPUDSP());
-
-	case 0xf4: // r- CPUI0
-	case 0xf5: // r- CPUI1
-	case 0xf6: // r- CPUI2
-	case 0xf7: // r- CPUI3
-#ifdef SPC700_SHUTDOWN
-		iapu->WaitAddress2 = iapu->WaitAddress1;
-		iapu->WaitAddress1 = iapu->PC;
-#endif
-		return (iapu->RAM[Address]);
-
-	case 0xf8: // rw - Normal RAM
-	case 0xf9: // rw - Normal RAM
-		return (iapu->RAM[Address]);
-
-	case 0xfa: // -w T0TARGET
-	case 0xfb: // -w T1TARGET
-	case 0xfc: // -w T2TARGET
-		return 0;
-
-	case 0xfd: // r- T0OUT
-	case 0xfe: // r- T1OUT
-	case 0xff: // r- T2OUT
-#ifdef SPC700_SHUTDOWN
-		iapu->WaitAddress2 = iapu->WaitAddress1;
-		iapu->WaitAddress1 = iapu->PC;
-#endif
-		uint8 t = iapu->RAM[Address] & 0xF;
-		iapu->RAM[Address] = 0;
-		return (t);
-	}
-
-	return 0;
-}
-
-static INLINE void apu_set_reg(uint8 byte, uint8 Address, struct SIAPU *iapu, struct SAPU *apu)
-{
-	switch (Address) {
-	case 0xf0: // -w TEST
-		// printf("Write %02X to APU 0xF0!\n", byte);
-		return;
-
-	case 0xf1: // -w CONTROL
-		S9xSetAPUControl(byte);
-		return;
-
-	case 0xf2: // rw DSPADDR
-		iapu->RAM[Address] = byte;
-		return;
-
-	case 0xf3: // rw DSPDATA
-		S9xSetAPUDSP(byte, apu, iapu);
-		return;
-
-	case 0xf4: // -w CPUO0
-	case 0xf5: // -w CPUO1
-	case 0xf6: // -w CPUO2
-	case 0xf7: // -w CPUO3
-		apu->OutPorts[Address - 0xf4] = byte;
-		return;
-
-	case 0xf8: // rw - Normal RAM
-	case 0xf9: // rw - Normal RAM
-		iapu->RAM[Address] = byte;
-		return;
-
-	case 0xfa: // -w T0TARGET
-	case 0xfb: // -w T1TARGET
-	case 0xfc: // -w T2TARGET
-		iapu->RAM[Address] = byte;
-		if (byte == 0)
-			apu->TimerTarget[Address - 0xfa] = 0x100;
-		else
-			apu->TimerTarget[Address - 0xfa] = byte;
-		return;
-
-	case 0xfd: // r- T0OUT
-	case 0xfe: // r- T1OUT
-	case 0xff: // r- T2OUT
-		return;
-	}
-}
-
 INLINE uint8 S9xAPUGetByteZ(uint8 Address, struct SIAPU *iapu)
 {
-	if (Address >= 0xf0 && iapu->DirectPage == iapu->RAM)
-		return (apu_get_reg(Address, iapu));
-	else
+	if (Address >= 0xf0 && iapu->DirectPage == iapu->RAM) {
+		if (Address >= 0xf4 && Address <= 0xf7) {
+#ifdef SPC700_SHUTDOWN
+			iapu->WaitAddress2 = iapu->WaitAddress1;
+			iapu->WaitAddress1 = iapu->PC;
+#endif
+			return (iapu->RAM[Address]);
+		}
+		if (Address >= 0xfd) {
+#ifdef SPC700_SHUTDOWN
+			iapu->WaitAddress2 = iapu->WaitAddress1;
+			iapu->WaitAddress1 = iapu->PC;
+#endif
+			uint8 t = iapu->RAM[Address];
+			iapu->RAM[Address] = 0;
+			return (t);
+		} else if (Address == 0xf3)
+			return (S9xGetAPUDSP());
+
+		return (iapu->RAM[Address]);
+	} else
 		return (iapu->DirectPage[Address]);
 }
 
 INLINE void S9xAPUSetByteZ(uint8 byte, uint8 Address, struct SIAPU *iapu, struct SAPU *apu)
 {
-	if (Address >= 0xf0 && iapu->DirectPage == iapu->RAM)
-		apu_set_reg(byte, Address, iapu, apu);
-	else
+	if (Address >= 0xf0 && iapu->DirectPage == iapu->RAM) {
+		if (Address == 0xf3)
+			S9xSetAPUDSP(byte, apu, iapu);
+		else if (Address >= 0xf4 && Address <= 0xf7)
+			apu->OutPorts[Address - 0xf4] = byte;
+		else if (Address == 0xf1)
+			S9xSetAPUControl(byte);
+		else if (Address < 0xfd) {
+			iapu->RAM[Address] = byte;
+			if (Address >= 0xfa) {
+				if (byte == 0)
+					apu->TimerTarget[Address - 0xfa] = 0x100;
+				else
+					apu->TimerTarget[Address - 0xfa] = byte;
+			}
+		}
+	} else
 		iapu->DirectPage[Address] = byte;
 }
 
 INLINE uint8 S9xAPUGetByte(uint32 Address, struct SIAPU *iapu)
 {
 	Address &= 0xffff;
-	if (Address <= 0xff && Address >= 0xf0)
-		return (apu_get_reg(Address & 0xff, iapu));
-	else
+
+	if (Address <= 0xff && Address >= 0xf0) {
+		if (Address >= 0xf4 && Address <= 0xf7) {
+#ifdef SPC700_SHUTDOWN
+			iapu->WaitAddress2 = iapu->WaitAddress1;
+			iapu->WaitAddress1 = iapu->PC;
+#endif
+			return (iapu->RAM[Address]);
+		} else if (Address == 0xf3)
+			return (S9xGetAPUDSP());
+		if (Address >= 0xfd) {
+#ifdef SPC700_SHUTDOWN
+			iapu->WaitAddress2 = iapu->WaitAddress1;
+			iapu->WaitAddress1 = iapu->PC;
+#endif
+			uint8 t = iapu->RAM[Address];
+			iapu->RAM[Address] = 0;
+			return (t);
+		}
+		return (iapu->RAM[Address]);
+	} else
 		return (iapu->RAM[Address]);
 }
 
 INLINE void S9xAPUSetByte(uint8 byte, uint32 Address, struct SIAPU *iapu, struct SAPU *apu)
 {
 	Address &= 0xffff;
-	if (Address <= 0xff && Address >= 0xf0)
-		apu_set_reg(byte, Address & 0xff, iapu, apu);
-	else if (Address < 0xffc0)
-		iapu->RAM[Address] = byte;
-	else {
-		apu->ExtraRAM[Address - 0xffc0] = byte;
-		if (!apu->ShowROM)
+
+	if (Address <= 0xff && Address >= 0xf0) {
+		if (Address == 0xf3)
+			S9xSetAPUDSP(byte, apu, iapu);
+		else if (Address >= 0xf4 && Address <= 0xf7)
+			apu->OutPorts[Address - 0xf4] = byte;
+		else if (Address == 0xf1)
+			S9xSetAPUControl(byte);
+		else if (Address < 0xfd) {
 			iapu->RAM[Address] = byte;
+			if (Address >= 0xfa) {
+				if (byte == 0)
+					apu->TimerTarget[Address - 0xfa] = 0x100;
+				else
+					apu->TimerTarget[Address - 0xfa] = byte;
+			}
+		}
+	} else {
+#if 0
+		if (Address >= 0x2500 && Address <= 0x2504)
+			printf("%06d %04x <- %02x\n", ICPU.Scanline, Address, byte);
+		if (Address == 0x26c6) {
+			extern FILE *apu_trace;
+			extern FILE *trace;
+			apu->Flags |= TRACE_FLAG;
+			CPU.Flags |= TRACE_FLAG;
+			if (apu_trace == NULL)
+				apu_trace = fopen("aputrace.log", "wb");
+			if (trace == NULL)
+				trace = fopen("trace.log", "wb");
+			printf("TRACING SWITCHED ON\n");
+		}
+#endif
+		if (Address < 0xffc0)
+			iapu->RAM[Address] = byte;
+		else {
+			apu->ExtraRAM[Address - 0xffc0] = byte;
+			if (!apu->ShowROM)
+				iapu->RAM[Address] = byte;
+		}
 	}
 }
-
-#endif // _apumemory_h_
+#endif

@@ -185,7 +185,6 @@ int EchoBuffer[SOUND_BUFFER_SIZE];
 int FilterTaps[8];
 unsigned long Z = 0;
 int Loop[16];
-uint32 FIRIndex = 0;
 
 uint16 SignExtend[2] = {0x00, 0xff00};
 

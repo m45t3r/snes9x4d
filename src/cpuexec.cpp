@@ -157,7 +157,7 @@ void S9xMainLoop(void)
 			Registers.PC = cpu->PC - cpu->PCBase;
 			S9xPackStatus();
 			areg->PC = iapu->PC - iapu->RAM;
-			S9xAPUPackStatus();
+			S9xAPUPackStatus_OP();
 #endif
 			if (cpu->Flags & SCAN_KEYS_FLAG) {
 #ifdef DEBUGGER
@@ -179,7 +179,7 @@ void S9xMainLoop(void)
 			Registers.PC = cpu->PC - cpu->PCBase;
 			S9xPackStatus();
 			areg->PC = iapu->PC - iapu->RAM;
-			S9xAPUPackStatus();
+			S9xAPUPackStatus_OP();
 			break;
 		}
 	} while (!finishedFrame);
@@ -225,7 +225,7 @@ void S9xDoHBlankProcessing(struct SCPUState *cpu, struct SAPU *apu, struct SIAPU
 #endif
 
 		cpu->Cycles -= Settings.H_Max;
-		APU.NextAPUTimerPos -= (Settings.H_Max * 10000L);
+		IAPU.NextAPUTimerPos -= (Settings.H_Max * 10000L);
 		if (iapu->APUExecuting)
 			apu->Cycles -= Settings.H_Max;
 		else

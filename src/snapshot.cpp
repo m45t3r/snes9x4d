@@ -668,7 +668,7 @@ static int Unfreeze(STREAM stream)
 		S9xFixSA1AfterSnapshotLoad();
 		SA1.Flags |= sa1_old_flags & (TRACE_FLAG);
 	}
-	S9xFixSoundAfterSnapshotLoad(1);
+	S9xFixSoundAfterSnapshotLoad();
 	ICPU.ShiftedPB = Registers.PB << 16;
 	ICPU.ShiftedDB = Registers.DB << 16;
 	S9xSetPCBase(ICPU.ShiftedPB + Registers.PC, &CPU);

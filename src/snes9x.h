@@ -133,7 +133,6 @@ enum { SNES_MULTIPLAYER5, SNES_JOYPAD, SNES_MOUSE_SWAPPED, SNES_MOUSE, SNES_SUPE
 #define FRAME_ADVANCE_FLAG (1 << 9)
 #define DELAYED_NMI_FLAG2 (1 << 10)
 #define IRQ_PENDING_FLAG (1 << 11)
-#define HALTED_FLAG (1 << 12)
 
 #ifdef VAR_CYCLES
 #define ONE_CYCLE 6
@@ -286,7 +285,6 @@ struct SSettings {
 	bool8_32 DisableSampleCaching;
 	bool8_32 DisableMasterVolume;
 	bool8_32 SoundSync;
-	bool8_32 FakeMuteFix;
 	bool8_32 InterpolatedSound;
 	bool8_32 ThreadSound;
 	bool8_32 Mute;
