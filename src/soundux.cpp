@@ -754,7 +754,11 @@ void MixStereo(int sample_count)
 {
 	DoFakeMute = Settings.FakeMuteFix;
 
+#ifdef FOREVER_16_BIT_SOUND
+	int byte_count = sample_count << 1;
+#else
 	int byte_count = so.sixteen_bit ? (sample_count << 1) : sample_count;
+#endif
 	int pitch_mod = SoundData.pitch_mod & ~APU.DSP[APU_NON] & ~1;
 
 	int32 noise_index = 0;
@@ -1053,7 +1057,11 @@ void MixMono(int sample_count)
 {
 	DoFakeMute = Settings.FakeMuteFix;
 
+#ifdef FOREVER_16_BIT_SOUND
+	int byte_count = sample_count << 1;
+#else
 	int byte_count = so.sixteen_bit ? (sample_count << 1) : sample_count;
+#endif
 	int pitch_mod = SoundData.pitch_mod & ~APU.DSP[APU_NON] & ~1;
 
 	int32 noise_index = 0;
@@ -1372,8 +1380,11 @@ void S9xMixSamples(uint8 *buffer, int sample_count)
 	else
 		MixMono(sample_count);
 
-	/* Mix and convert waveforms */
-	if (so.sixteen_bit) {
+		/* Mix and convert waveforms */
+#ifndef FOREVER_16_BIT_SOUND
+	if (so.sixteen_bit)
+#endif
+	{
 		if (!Settings.DisableSoundEcho) {
 			if (so.stereo) {
 				// 16-bit stereo sound with echo enabled ...
@@ -1497,7 +1508,9 @@ void S9xMixSamples(uint8 *buffer, int sample_count)
 				((int16 *)buffer)[J] = sclamp16(I);
 			}
 		}
-	} else {
+	}
+#ifndef FOREVER_16_BIT_SOUND
+	else {
 #ifdef __sun
 		if (so.encoded) {
 			for (J = 0; J < sample_count; J++) {
@@ -1636,12 +1649,17 @@ void S9xMixSamples(uint8 *buffer, int sample_count)
 			}
 		}
 	}
+#endif
 
 	if (so.mute_sound) {
+#ifndef FOREVER_16_BIT_SOUND
 		if (so.sixteen_bit)
+#endif
 			memset(buffer, 0, sample_count << 1);
+#ifndef FOREVER_16_BIT_SOUND
 		else
 			memset(buffer, 128, sample_count);
+#endif
 	}
 }
 
@@ -1769,7 +1787,11 @@ bool8 S9xInitSound(int mode, bool8 stereo, int buffer_size)
 	so.playback_rate = 0;
 	so.buffer_size = 0;
 	so.stereo = stereo;
+#ifdef FOREVER_16_BIT_SOUND
+	so.sixteen_bit = TRUE;
+#else
 	so.sixteen_bit = Settings.SixteenBitSound;
+#endif
 	so.encoded = FALSE;
 	so.pitch_mul = 1.0;
 
