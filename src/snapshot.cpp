@@ -1238,7 +1238,7 @@ bool8_32 S9xUnfreezeZSNES(const char *filename)
 		S9xFixColourBrightness();
 		IPPU.RenderThisFrame = FALSE;
 
-		S9xFixSoundAfterSnapshotLoad();
+		S9xFixSoundAfterSnapshotLoad(1);
 		ICPU.ShiftedPB = Registers.PB << 16;
 		ICPU.ShiftedDB = Registers.DB << 16;
 		S9xSetPCBase(ICPU.ShiftedPB + Registers.PC, &CPU);
