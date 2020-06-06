@@ -250,7 +250,9 @@ void S9xAPUSetEndOfSample(int i, Channel *);
 void S9xAPUSetEndX(int);
 void S9xSetEnvRate(Channel *, int32, int32);
 void MixStereo(int);
+#ifndef FOREVER_STEREO
 void MixMono(int);
+#endif
 
 static void S9xSetSoundFrequency(int, int);
 static void S9xConvertSoundOldValues();
@@ -324,8 +326,10 @@ void S9xSetSoundVolume(int channel, short volume_left, short volume_right)
 		volume_right = ((so.stereo_switch & (256 << channel)) ? volume_right : 0);
 	}
 
+#ifndef FOREVER_STEREO
 	if (!so.stereo)
 		volume_left = (ABS(volume_right) + ABS(volume_left)) >> 1;
+#endif
 
 	ch->volume_left = volume_left;
 	ch->volume_right = volume_right;
@@ -338,8 +342,10 @@ void S9xSetMasterVolume(short volume_left, short volume_right)
 		SoundData.master_volume_right = 127;
 		SoundData.master_volume[0] = SoundData.master_volume[1] = 127;
 	} else {
+#ifndef FOREVER_STEREO
 		if (!so.stereo)
 			volume_left = (ABS(volume_right) + ABS(volume_left)) >> 1;
+#endif
 
 		SoundData.master_volume_left = volume_left;
 		SoundData.master_volume_right = volume_right;
@@ -350,8 +356,10 @@ void S9xSetMasterVolume(short volume_left, short volume_right)
 
 void S9xSetEchoVolume(short volume_left, short volume_right)
 {
+#ifndef FOREVER_STEREO
 	if (!so.stereo)
 		volume_left = (ABS(volume_right) + ABS(volume_left)) >> 1;
+#endif
 
 	SoundData.echo_volume_left = volume_left;
 	SoundData.echo_volume_right = volume_right;
@@ -385,8 +393,10 @@ void S9xSetEchoFeedback(int feedback) { SoundData.echo_feedback = feedback; }
 void S9xSetEchoDelay(unsigned int delay)
 {
 	SoundData.echo_buffer_size = (delay << 10) * so.playback_rate / 32000;
+#ifndef FOREVER_STEREO
 	if (!so.stereo)
 		SoundData.echo_buffer_size >>= 1;
+#endif
 	if (SoundData.echo_buffer_size)
 		SoundData.echo_ptr %= SoundData.echo_buffer_size;
 	else
@@ -1028,6 +1038,7 @@ void MixStereo(int sample_count)
 		SoundData.noise_count = noise_count_next;
 }
 
+#ifndef FOREVER_STEREO
 void MixMono(int sample_count)
 {
 	DoFakeMute = Settings.FakeMuteFix;
@@ -1323,6 +1334,7 @@ void MixMono(int sample_count)
 	if (APU.DSP[APU_NON])
 		SoundData.noise_count = noise_count_next;
 }
+#endif
 
 #ifdef __sun
 extern uint8 int2ulaw(int);
@@ -1342,10 +1354,14 @@ void S9xMixSamples(uint8 *buffer, int sample_count)
 	if (!Settings.DisableSoundEcho)
 		memset(EchoBuffer, 0, sample_count * sizeof(EchoBuffer[0]));
 
+#ifndef FOREVER_STEREO
 	if (so.stereo)
+#endif
 		MixStereo(sample_count);
+#ifndef FOREVER_STEREO
 	else
 		MixMono(sample_count);
+#endif
 
 		/* Mix and convert waveforms */
 #ifndef FOREVER_16_BIT_SOUND
@@ -1353,7 +1369,10 @@ void S9xMixSamples(uint8 *buffer, int sample_count)
 #endif
 	{
 		if (!Settings.DisableSoundEcho) {
-			if (so.stereo) {
+#ifndef FOREVER_STEREO
+			if (so.stereo)
+#endif
+			{
 				// 16-bit stereo sound with echo enabled ...
 				if (SoundData.no_filter) {
 					// ... but no filter defined.
@@ -1410,7 +1429,9 @@ void S9xMixSamples(uint8 *buffer, int sample_count)
 						((int16 *)buffer)[J] = sclamp16(I);
 					}
 				}
-			} else {
+			}
+#ifndef FOREVER_STEREO
+			else {
 				// 16-bit mono sound with echo enabled...
 				if (SoundData.no_filter) {
 					// ... no filter defined
@@ -1468,6 +1489,7 @@ void S9xMixSamples(uint8 *buffer, int sample_count)
 					}
 				}
 			}
+#endif
 		} else {
 			// 16-bit mono or stereo sound, no echo
 			for (J = 0; J < sample_count; J++) {
@@ -1488,7 +1510,10 @@ void S9xMixSamples(uint8 *buffer, int sample_count)
 #endif
 		{
 			if (!Settings.DisableSoundEcho) {
-				if (so.stereo) {
+#ifndef FOREVER_STEREO
+				if (so.stereo)
+#endif
+				{
 					// 8-bit stereo sound with echo enabled...
 					if (SoundData.no_filter) {
 						// ... but no filter
@@ -1547,7 +1572,9 @@ void S9xMixSamples(uint8 *buffer, int sample_count)
 							buffer[J] = sclamp8(I) + 128;
 						}
 					}
-				} else {
+				}
+#ifndef FOREVER_STEREO
+				else {
 					// 8-bit mono sound with echo enabled...
 					if (SoundData.no_filter) {
 						// ... but no filter.
@@ -1607,6 +1634,7 @@ void S9xMixSamples(uint8 *buffer, int sample_count)
 						}
 					}
 				}
+#endif
 			} else {
 				// 8-bit mono or stereo sound, no echo
 				for (J = 0; J < sample_count; J++) {
@@ -1749,7 +1777,11 @@ bool8 S9xInitSound(int mode, bool8 stereo, int buffer_size)
 
 	so.playback_rate = 0;
 	so.buffer_size = 0;
+#ifdef FOREVER_STEREO
+	so.stereo = TRUE;
+#else
 	so.stereo = stereo;
+#endif
 #ifdef FOREVER_16_BIT_SOUND
 	so.sixteen_bit = TRUE;
 #else

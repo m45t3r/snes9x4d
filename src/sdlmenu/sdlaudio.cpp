@@ -32,7 +32,11 @@ static void sdl_audio_callback(void *userdata, uint8 *stream, int len)
 {
 	SDL_LockMutex(sound_mutex);
 	if (!so.mute_sound)
-		S9xMixSamplesO(stream, len >> (so.sixteen_bit ? 1 : 0), 0);
+#ifdef FOREVER_16_BIT_SOUND
+		S9xMixSamples(stream, len >> 1);
+#else
+		S9xMixSamples(stream, len >> (so.sixteen_bit ? 1 : 0));
+#endif
 	SDL_CondSignal(sound_cv);
 	SDL_UnlockMutex(sound_mutex);
 	return;
@@ -53,8 +57,16 @@ bool8 S9xOpenSoundDevice(int mode, bool8 stereo, int buffer_size) // called from
 
 	audiospec = (SDL_AudioSpec *)malloc(sizeof(SDL_AudioSpec));
 	audiospec->freq = so.playback_rate;
+#ifdef FOREVER_STEREO
+	audiospec->channels = 2;
+#else
 	audiospec->channels = so.stereo ? 2 : 1;
+#endif
+#ifdef FOREVER_16_BIT_SOUND
+	audiospec->format = AUDIO_S16;
+#else
 	audiospec->format = so.sixteen_bit ? AUDIO_S16 : AUDIO_U8;
+#endif
 	audiospec->samples = so.buffer_size;
 	audiospec->callback = sdl_audio_callback;
 

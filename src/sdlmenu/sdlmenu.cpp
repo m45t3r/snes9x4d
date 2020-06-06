@@ -77,7 +77,11 @@ void menu_dispupdate(void)
 	    "Frameskip                ",
 	    "Auto Frameskip           ",
 	    "Sound Rate               ",
+#ifndef FOREVER_STEREO
 	    "Stereo                   ",
+#else
+	    "N/A                      ",
+#endif
 	    "Credits                  ",
 	    "Exit                     "};
 
@@ -116,10 +120,12 @@ void menu_dispupdate(void)
 
 	fmt_disptxt_item(disptxt[12], "%s %s", Rates[Settings.SoundPlaybackRate]);
 
+#ifndef FOREVER_STEREO
 	if (Settings.Stereo)
 		fmt_disptxt_item(disptxt[13], "%s True");
 	else
 		fmt_disptxt_item(disptxt[13], "%s False");
+#endif
 
 	for (int i = 0; i < MAX_MENU_ITEMS; i++) {
 		if (i == cursor)
@@ -284,11 +290,13 @@ void menu_loop(void)
 					}
 					break;
 				case 13:
+#ifndef FOREVER_STEREO
 					if (keyssnes[sfc_key[LEFT_1]] == SDL_PRESSED ||
 					    keyssnes[sfc_key[RIGHT_1]] == SDL_PRESSED) {
 						Settings.Stereo = !Settings.Stereo;
 						sound_changed = true;
 					}
+#endif
 					break;
 				case 14:
 					if (keyssnes[sfc_key[A_1]] == SDL_PRESSED)
