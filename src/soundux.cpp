@@ -158,11 +158,6 @@
   Nintendo Co., Limited and its subsidiary companies.
 **********************************************************************************/
 
-#ifdef __DJGPP__
-#include <allegro.h>
-#undef TRUE
-#endif
-
 #include <stdio.h>
 #include "snes9x.h"
 #include "apu.h"
@@ -302,10 +297,6 @@ void S9xAPUSetEndOfSample(int i, Channel *ch)
 	}
 }
 
-#ifdef __DJGPP
-END_OF_FUNCTION(S9xAPUSetEndOfSample)
-#endif
-
 void S9xAPUSetEndX(int i)
 {
 	if (!DoFakeMute) {
@@ -313,28 +304,16 @@ void S9xAPUSetEndX(int i)
 	}
 }
 
-#ifdef __DJGPP
-END_OF_FUNCTION(S9xAPUSetEndX)
-#endif
-
 void S9xSetEnvRate(Channel *ch, int32 rate_count, int32 xtarget)
 {
 	ch->xenvx_target = xtarget;
 	ch->xenv_rate = rate_count;
 }
 
-#ifdef __DJGPP
-END_OF_FUNCTION(S9xSetEnvRate);
-#endif
-
 void S9xSetEnvelopeRate(int channel, int32 rate_count, int32 xtarget)
 {
 	S9xSetEnvRate(&SoundData.channels[channel], rate_count, xtarget);
 }
-
-#ifdef __DJGPP
-END_OF_FUNCTION(S9xSetEnvelopeRate);
-#endif
 
 void S9xSetSoundVolume(int channel, short volume_left, short volume_right)
 {
@@ -1049,10 +1028,6 @@ void MixStereo(int sample_count)
 		SoundData.noise_count = noise_count_next;
 }
 
-#ifdef __DJGPP
-END_OF_FUNCTION(MixStereo);
-#endif
-
 void MixMono(int sample_count)
 {
 	DoFakeMute = Settings.FakeMuteFix;
@@ -1349,10 +1324,6 @@ void MixMono(int sample_count)
 		SoundData.noise_count = noise_count_next;
 }
 
-#ifdef __DJGPP
-END_OF_FUNCTION(MixMono);
-#endif
-
 #ifdef __sun
 extern uint8 int2ulaw(int);
 #endif
@@ -1362,10 +1333,6 @@ void S9xMixSamplesO(uint8 *buffer, int sample_count, int byte_offset)
 {
 	S9xMixSamples(buffer + byte_offset, sample_count);
 }
-
-#ifdef __DJGPP
-END_OF_FUNCTION(S9xMixSamplesO);
-#endif
 
 void S9xMixSamples(uint8 *buffer, int sample_count)
 {
@@ -1662,10 +1629,6 @@ void S9xMixSamples(uint8 *buffer, int sample_count)
 #endif
 	}
 }
-
-#ifdef __DJGPP
-END_OF_FUNCTION(S9xMixSamples);
-#endif
 
 void S9xResetSound(bool8 full)
 {
