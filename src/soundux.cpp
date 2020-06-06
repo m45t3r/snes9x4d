@@ -1860,7 +1860,7 @@ bool8 S9xSetSoundMode(int channel, int mode)
 
 void S9xSetSoundControl(int sound_switch) { so.sound_switch = sound_switch; }
 
-void S9xPlaySample(int channel)
+void S9xPlaySample(int channel, struct SAPU *apu)
 {
 	Channel *ch = &SoundData.channels[channel];
 
@@ -1868,11 +1868,11 @@ void S9xPlaySample(int channel)
 	ch->mode = MODE_NONE;
 	ch->xenvx = 0;
 
-	S9xFixEnvelope(channel, APU.DSP[APU_GAIN + (channel << 4)], APU.DSP[APU_ADSR1 + (channel << 4)],
-		       APU.DSP[APU_ADSR2 + (channel << 4)]);
+	S9xFixEnvelope(channel, apu->DSP[APU_GAIN + (channel << 4)], apu->DSP[APU_ADSR1 + (channel << 4)],
+		       apu->DSP[APU_ADSR2 + (channel << 4)]);
 
-	ch->sample_number = APU.DSP[APU_SRCN + channel * 0x10];
-	if (APU.DSP[APU_NON] & (1 << channel))
+	ch->sample_number = apu->DSP[APU_SRCN + channel * 0x10];
+	if (apu->DSP[APU_NON] & (1 << channel))
 		ch->type = SOUND_NOISE;
 	else
 		ch->type = SOUND_SAMPLE;
@@ -1943,6 +1943,6 @@ void S9xPlaySample(int channel)
 		break;
 	}
 
-	S9xFixEnvelope(channel, APU.DSP[APU_GAIN + (channel << 4)], APU.DSP[APU_ADSR1 + (channel << 4)],
-		       APU.DSP[APU_ADSR2 + (channel << 4)]);
+	S9xFixEnvelope(channel, apu->DSP[APU_GAIN + (channel << 4)], apu->DSP[APU_ADSR1 + (channel << 4)],
+		       apu->DSP[APU_ADSR2 + (channel << 4)]);
 }

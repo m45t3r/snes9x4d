@@ -441,7 +441,7 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 					// apu->DSP [APU_KON] |= mask;
 					apu->DSP[APU_KOFF] &= ~mask;
 					apu->DSP[APU_ENDX] &= ~mask;
-					S9xPlaySample(c);
+					S9xPlaySample(c, apu);
 				}
 			}
 #ifdef DEBUGGER
@@ -482,7 +482,7 @@ void S9xSetAPUDSP(uint8 byte, struct SAPU *apu, struct SIAPU *iapu)
 						// apu->DSP [APU_KON] |= mask;
 						// apu->DSP [APU_KOFF] &= ~mask;
 						apu->DSP[APU_ENDX] &= ~mask;
-						S9xPlaySample(c);
+						S9xPlaySample(c, apu);
 					} else
 						KeyOn |= mask;
 				}

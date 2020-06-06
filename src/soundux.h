@@ -327,7 +327,7 @@ void S9xResetSound(bool8 full);
 void S9xSetPlaybackRate(uint32 playback_rate);
 bool8 S9xSetSoundMode(int channel, int mode);
 void S9xSetSoundControl(int sound_switch);
-void S9xPlaySample(int channel);
+void S9xPlaySample(int channel, struct SAPU *);
 
 void S9xFixEnvelope(int channel, uint8 gain, uint8 adsr1, uint8 adsr2);
 bool8 S9xOpenSoundDevice(int mode, bool8 stereo, int buffer_size);
