@@ -2516,6 +2516,36 @@ inline void CPUShutdown(struct SICPU *icpu, struct SCPUState *cpu)
 #define CPUShutdown(icpu, cpu)
 #endif
 
+#ifdef CPU_SHUTDOWN
+#ifndef SA1_OPCODES
+inline void ForceShutdown(struct SICPU *icpu, struct SCPUState *cpu)
+{
+	struct SIAPU *iapu = &IAPU;
+	struct SAPU *apu = &APU;
+
+	cpu->WaitAddress = NULL;
+	if (Settings.SA1)
+		S9xSA1ExecuteDuringSleep();
+	cpu->Cycles = cpu->NextEvent;
+	if (iapu->APUExecuting) {
+		icpu->CPUExecuting = FALSE;
+		do {
+			APU_EXECUTE1();
+		} while (apu->Cycles < cpu->NextEvent);
+		icpu->CPUExecuting = TRUE;
+	}
+}
+#else
+inline void ForceShutdown(struct SICPU *icpu, struct SCPUState *cpu)
+{
+	SA1.Executing = FALSE;
+	// SA1.CPUExecuting = FALSE;
+}
+#endif
+#else
+#define ForceShutdown(icpu, cpu)
+#endif
+
 /* BCC */
 static void Op90(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
@@ -3897,15 +3927,200 @@ static void OpCB(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *c
 #endif // SA1_OPCODES
 }
 
-// STP
+// Usually an STP opcode
+// SNESAdvance speed hack, not implemented in Snes9xTYL | Snes9x-Euphoria
 static void OpDB(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
 {
+#if defined SNESADVANCE_SPEEDHACKS && defined CPU_SHUTDOWN
+	uint8 NextByte = *cpu->PC++;
+	long OpAddress;
+
+	(void)OpAddress;
+
+	ForceShutdown(icpu, cpu);
+
+	int8 BranchOffset = (NextByte & 0x7F) | ((NextByte & 0x40) << 1);
+	// ^ -64 .. +63, sign extend bit 6 into 7 for unpacking
+	long TargetAddress = ((int)(cpu->PC - cpu->PCBase) + BranchOffset) & 0xffff;
+
+	switch (NextByte & 0x80) {
+	case 0x00: // BNE
+		BranchCheck1();
+		if (!CHECKZERO()) {
+			cpu->PC = cpu->PCBase + TargetAddress;
+#ifdef VAR_CYCLES
+			cpu->Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+			cpu->Cycles++;
+#endif
+#endif
+			CPUShutdown(icpu, cpu);
+		}
+		return;
+	case 0x80: // BEQ
+		BranchCheck2();
+		if (CHECKZERO()) {
+			cpu->PC = cpu->PCBase + TargetAddress;
+#ifdef VAR_CYCLES
+			cpu->Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+			cpu->Cycles++;
+#endif
+#endif
+			CPUShutdown(icpu, cpu);
+		}
+		return;
+	}
+#else
 	cpu->PC--;
 	cpu->Flags |= DEBUG_MODE_FLAG;
+#endif
 }
 
-// Reserved S9xOpcode
-static void Op42(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu) {}
+// SNESAdvance speed hack, as implemented in Snes9xTYL / Snes9x-Euphoria
+// https://code.google.com/p/snes9x-euphoria/source/browse/trunk/src/cpuops.cpp
+static void Op42(struct SRegisters *reg, struct SICPU *icpu, struct SCPUState *cpu)
+{
+#if defined SNESADVANCE_SPEEDHACKS && defined CPU_SHUTDOWN
+	uint8 NextByte = *cpu->PC++;
+	long OpAddress;
+
+	(void)OpAddress;
+
+	ForceShutdown(icpu, cpu);
+
+	int8 BranchOffset = 0xF0 | (NextByte & 0xF); // always negative
+	long TargetAddress = ((int)(cpu->PC - cpu->PCBase) + BranchOffset) & 0xffff;
+
+	switch (NextByte & 0xF0) {
+	case 0x10: // BPL
+		BranchCheck1();
+		if (!CHECKNEGATIVE()) {
+			cpu->PC = cpu->PCBase + TargetAddress;
+#ifdef VAR_CYCLES
+			cpu->Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+			cpu->Cycles++;
+#endif
+#endif
+			CPUShutdown(icpu, cpu);
+		}
+		return;
+	case 0x30: // BMI
+		BranchCheck1();
+		if (CHECKNEGATIVE()) {
+			cpu->PC = cpu->PCBase + TargetAddress;
+#ifdef VAR_CYCLES
+			cpu->Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+			cpu->Cycles++;
+#endif
+#endif
+			CPUShutdown(icpu, cpu);
+		}
+		return;
+	case 0x50: // BVC
+		BranchCheck0();
+		if (!CHECKOVERFLOW()) {
+			cpu->PC = cpu->PCBase + TargetAddress;
+#ifdef VAR_CYCLES
+			cpu->Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+			cpu->Cycles++;
+#endif
+#endif
+			CPUShutdown(icpu, cpu);
+		}
+		return;
+	case 0x70: // BVS
+		BranchCheck0();
+		if (CHECKOVERFLOW()) {
+			cpu->PC = cpu->PCBase + TargetAddress;
+#ifdef VAR_CYCLES
+			cpu->Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+			cpu->Cycles++;
+#endif
+#endif
+			CPUShutdown(icpu, cpu);
+		}
+		return;
+	case 0x80: // BRA
+		cpu->PC = cpu->PCBase + TargetAddress;
+#ifdef VAR_CYCLES
+		cpu->Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+		cpu->Cycles++;
+#endif
+#endif
+		CPUShutdown(icpu, cpu);
+		return;
+	case 0x90: // BCC
+		BranchCheck0();
+		if (!CHECKCARRY()) {
+			cpu->PC = cpu->PCBase + TargetAddress;
+#ifdef VAR_CYCLES
+			cpu->Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+			cpu->Cycles++;
+#endif
+#endif
+			CPUShutdown(icpu, cpu);
+		}
+		return;
+	case 0xB0: // BCS
+		BranchCheck0();
+		if (CHECKCARRY()) {
+			cpu->PC = cpu->PCBase + TargetAddress;
+#ifdef VAR_CYCLES
+			cpu->Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+			cpu->Cycles++;
+#endif
+#endif
+			CPUShutdown(icpu, cpu);
+		}
+		return;
+	case 0xD0: // BNE
+		BranchCheck1();
+		if (!CHECKZERO()) {
+			cpu->PC = cpu->PCBase + TargetAddress;
+#ifdef VAR_CYCLES
+			cpu->Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+			cpu->Cycles++;
+#endif
+#endif
+			CPUShutdown(icpu, cpu);
+		}
+		return;
+	case 0xF0: // BEQ
+		BranchCheck2();
+		if (CHECKZERO()) {
+			cpu->PC = cpu->PCBase + TargetAddress;
+#ifdef VAR_CYCLES
+			cpu->Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+			cpu->Cycles++;
+#endif
+#endif
+			CPUShutdown(icpu, cpu);
+		}
+		return;
+	}
+#endif
+}
 
 /**********************************************************************************************/
 

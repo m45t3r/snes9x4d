@@ -157,6 +157,10 @@ class CMemory
 	uint32 SDD1LoggedDataCount;
 	uint8 SDD1LoggedData[MEMMAP_MAX_SDD1_LOGGED_ENTRIES];
 	char ROMFilename[_MAX_PATH];
+
+#ifdef SNESADVANCE_SPEEDHACKS
+	uint32 ROMCRC32;
+#endif
 };
 
 START_EXTERN_C
