@@ -181,6 +181,12 @@ Some tips to port this project to another Dingoo-like device:
     + `LAGFIX` this flag reduces the input lag in one frame (~16ms). Backported
       from `snes9x2002`, and you can read more about it here:
       https://www.libretro.com/index.php/core-progress-snes9x-2002-input-lag-reduced-by-1-2-frames/
+    + `SNESADVANCE_SPEEDHACKS` enables some speedhacks that can be loaded by a
+      special crafted `snesadvanced.dat` file (there is an example in this
+      repository). Just put this file in `~/.snes9x4d-ng/snesadvanced.dat` and
+      load a ROM, if there is an available speedhack it will be automatically
+      applied. My own testing is inconclusive if this brings any benefit in
+      speed, though
 - If your device is like Miyoo and doesn't have an standard Dingoo layout, you
   should define your own custom layout by creating a file
   `src/sdlmenu/<device>.h` and mapping the SDL buttons accordingly (see
