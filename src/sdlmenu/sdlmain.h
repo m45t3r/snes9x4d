@@ -13,6 +13,9 @@ extern uint32 MaxAutoFrameSkip;
 
 const char *GetHomeDirectory();
 void OutOfMemory();
+#ifdef SNESADVANCE_SPEEDHACKS
+int S9xFindHacks(int game_crc32);
+#endif
 
 // Auxiliary functions from Snes9x
 extern void S9xDisplayFrameRate(uint8 *, uint32);

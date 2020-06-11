@@ -302,6 +302,12 @@ void LoadRom()
 		CPU.Flags |= Flags;
 #endif
 	}
+
+#ifdef SNESADVANCE_SPEEDHACKS
+	if (S9xFindHacks(Memory.ROMCRC32)) {
+		S9xSetInfoString("Found speedhacks, applying...");
+	}
+#endif
 }
 
 void S9xInit()
@@ -906,3 +912,95 @@ uint32 S9xReadJoypad(int which1)
 
 	return (val);
 }
+
+#ifdef SNESADVANCE_SPEEDHACKS
+int S9xFindHacks(int game_crc32)
+{
+	unsigned int i = 0, j;
+	int _crc32;
+	char c;
+	char str[256];
+	unsigned int size_snesadvance;
+	unsigned char *snesadvance;
+	FILE *f;
+
+	sprintf(str, "%s/%s/snesadvance.dat", GetHomeDirectory(), CFG_DIRECTORY);
+	f = fopen(str, "rb");
+	if (!f)
+		return 0;
+	fseek(f, 0, SEEK_END);
+	size_snesadvance = ftell(f);
+	fseek(f, 0, SEEK_SET);
+	snesadvance = (unsigned char *)malloc(size_snesadvance);
+	fread(snesadvance, 1, size_snesadvance, f);
+	fclose(f);
+
+	for (;;) {
+		// get crc32
+		j = i;
+		while ((i < size_snesadvance) && (snesadvance[i] != '|'))
+			i++;
+		if (i == size_snesadvance) {
+			free(snesadvance);
+			return 0;
+		}
+		// we have (snesadvance[i]=='|')
+		// convert crc32 to int
+		_crc32 = 0;
+		while (j < i) {
+			c = snesadvance[j];
+			if ((c >= '0') && (c <= '9'))
+				_crc32 = (_crc32 << 4) | (c - '0');
+			else if ((c >= 'A') && (c <= 'F'))
+				_crc32 = (_crc32 << 4) | (c - 'A' + 10);
+			else if ((c >= 'a') && (c <= 'f'))
+				_crc32 = (_crc32 << 4) | (c - 'a' + 10);
+			j++;
+		}
+		if (game_crc32 == _crc32) {
+			// int p=0;
+			for (;;) {
+				int adr, val;
+
+				i++;
+				j = i;
+				while ((i < size_snesadvance) && (snesadvance[i] != 0x0D) && (snesadvance[i] != ',')) {
+					if (snesadvance[i] == '|')
+						j = i + 1;
+					i++;
+				}
+				if (i == size_snesadvance) {
+					free(snesadvance);
+					return 0;
+				}
+				memcpy(str, &snesadvance[j], i - j);
+				str[i - j] = 0;
+				sscanf(str, "%X=%X", &adr, &val);
+				// sprintf(str,"read : %X=%X",adr,val);
+				// pgPrintAllBG(32,31-p++,0xFFFF,str);
+
+				if ((val == 0x42) || ((val & 0xFF00) == 0x4200)) {
+					// Settings.SNESAdvanceHack = true;
+					if (val & 0xFF00) {
+						Memory.ROM[adr] = (val >> 8) & 0xFF;
+						Memory.ROM[adr + 1] = val & 0xFF;
+					} else
+						Memory.ROM[adr] = val;
+				}
+
+				if (snesadvance[i] == 0x0D) {
+					free(snesadvance);
+					return 1;
+				}
+			}
+		}
+		while ((i < size_snesadvance) && (snesadvance[i] != 0x0A))
+			i++;
+		if (i == size_snesadvance) {
+			free(snesadvance);
+			return 0;
+		}
+		i++; // new line
+	}
+}
+#endif
