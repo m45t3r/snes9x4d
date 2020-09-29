@@ -82,7 +82,7 @@ toolchain is pre-built, but it is also based on an older version of GCC (7.3.0)
 using [`uclibc`](https://uclibc.org/).
 
 The second one needs to be compiled from source, but is based on a much newer
-version of GCC (9.3.0) and also uses [`musl`](https://musl.libc.org/), a newer
+version of GCC (10.1.0) and also uses [`musl`](https://musl.libc.org/), a newer
 implementation of C stdlib.
 
 Assuming that you're going to use <https://github.com/bittboy/buildroot/>, the
