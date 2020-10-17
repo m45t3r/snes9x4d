@@ -12,6 +12,8 @@ endif
 
 ifeq ($(C4_OLD), 1)
 C4OBJ = src/c4_old.o src/c4emu.o
+else
+C4OBJ = src/c4.o src/c4emu.o
 endif
 
 ifeq ($(CHEATS), 1)
