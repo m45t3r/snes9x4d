@@ -1,5 +1,5 @@
 UNZIP = 1
-C4_OLD = 1
+C4_OLD = 0
 SRTC = 0
 CHEATS = 0
 SDLMENU = 1
@@ -9,7 +9,7 @@ SPC7110 = 0
 
 include Makefile.common
 
-PREFIX  = arm-linux
+PREFIX  = mipsel-linux
 
 CXX	= $(PREFIX)-g++
 CC	= $(PREFIX)-gcc
@@ -22,10 +22,10 @@ SDL_LIBS := $(shell $(SYSROOT)/usr/bin/sdl-config --libs)
 
 LDFLAGS = -lz -lm $(SDL_LIBS) -Wl,--as-needed -Wl,--gc-sections -s
 
-OFLAGS = -Ofast -march=armv5te -mtune=arm926ej-s -marm \
-	 -flto=4 -fwhole-program -fuse-linker-plugin \
+OFLAGS = -Ofast -fomit-frame-pointer -mips32r2 \
 	 -fdata-sections -ffunction-sections \
 	 -fno-stack-protector -fomit-frame-pointer \
+	 -fno-strict-aliasing \
 	 -Wall
 
 ifeq ($(PGO), GENERATE)
@@ -43,12 +43,11 @@ endif
 
 CCFLAGS += $(OFLAGS) \
 	-DBILINEAR_SCALE \
-	-DFAST_ALIGNED_LSB_WORD_ACCESS \
+	-DFAST_LSB_WORD_ACCESS \
 	-DFOREVER_16_BIT \
 	-DFOREVER_16_BIT_SOUND \
 	-DLAGFIX \
-	-DMIYOO \
-	-DSNESADVANCE_SPEEDHACKS \
+	-DDINGOO \
 	-DVIDEO_MODE=1 \
 	-DZLIB \
 
