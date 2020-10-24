@@ -29,10 +29,10 @@ OFLAGS = -Ofast -march=armv5te -mtune=arm926ej-s -marm \
 	 -Wall
 
 ifeq ($(PGO), GENERATE)
-  OFLAGS += -fprofile-generate -fprofile-dir=/media/data/profile/snes9x4d
+  OFLAGS += -fprofile-generate -fprofile-dir=./profile
   LDFLAGS += -lgcov
 else ifeq ($(PGO), APPLY)
-  OFLAGS += -fprofile-use -fprofile-dir=./profile -fbranch-probabilities
+  OFLAGS += -fprofile-use -fprofile-dir=./profile -fbranch-probabilities -fno-unroll-loops
 else ifeq ($(PGO), FORCE-APPLY)
   OFLAGS += -fprofile-use -fprofile-dir=./profile -fbranch-probabilities -Wno-error=coverage-mismatch
 else
