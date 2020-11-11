@@ -29,7 +29,7 @@ OFLAGS = -Ofast -fomit-frame-pointer -mips32r2 \
 	 -Wall
 
 ifeq ($(PGO), GENERATE)
-  OFLAGS += -fprofile-generate -fprofile-dir=/media/data/profile/snes9x4d
+  OFLAGS += -fprofile-generate -fprofile-dir=/media/data/local/home/profile/snes9x4d
   LDFLAGS += -lgcov
 else ifeq ($(PGO), APPLY)
   OFLAGS += -fprofile-use -fprofile-dir=./profile -fbranch-probabilities -fno-unroll-loops
@@ -60,6 +60,9 @@ CFLAGS = --std=gnu11 $(CCFLAGS)
 .PHONY: format
 
 all: snes9x4d
+
+opk: snes9x4d
+	opk/make_opk.sh
 
 format:
 	find . -regex '.*\.\(c\|h\|cpp\|hpp\|cc\|cxx\)' -exec clang-format -style=file -i {} \;
