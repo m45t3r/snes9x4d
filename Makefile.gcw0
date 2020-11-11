@@ -32,7 +32,7 @@ ifeq ($(PGO), GENERATE)
   OFLAGS += -fprofile-generate -fprofile-dir=/media/data/profile/snes9x4d
   LDFLAGS += -lgcov
 else ifeq ($(PGO), APPLY)
-  OFLAGS += -fprofile-use -fprofile-dir=./profile -fbranch-probabilities
+  OFLAGS += -fprofile-use -fprofile-dir=./profile -fbranch-probabilities -fno-unroll-loops
 else ifeq ($(PGO), FORCE-APPLY)
   OFLAGS += -fprofile-use -fprofile-dir=./profile -fbranch-probabilities -Wno-error=coverage-mismatch
 else
@@ -47,7 +47,7 @@ CCFLAGS += $(OFLAGS) \
 	-DFOREVER_16_BIT \
 	-DFOREVER_16_BIT_SOUND \
 	-DLAGFIX \
-	-DDINGOO \
+	-DGCW0 \
 	-DVIDEO_MODE=1 \
 	-DZLIB \
 

@@ -68,6 +68,8 @@
 #include "keydef.h"
 #ifdef MIYOO
 #include "miyoo.h"
+#elif GCW0
+#include "gcw0.h"
 #else
 #include "dingoo.h"
 #endif
@@ -402,6 +404,8 @@ extern "C"
 	// Handheld Key Infos
 #ifdef MIYOO
 	sprintf(msg, "Press R to Show MENU");
+#elif GCW0
+	sprintf(msg, "Press POWER to Show MENU");
 #else
 	sprintf(msg, "Press SELECT+START to Show MENU");
 #endif
@@ -839,7 +843,13 @@ void S9xProcessEvents(bool8_32 block)
 			}
 			// MAINMENU
 #ifdef BUTTON_QUIT
-			else if (keyssnes[sfc_key[QUIT]] == SDL_PRESSED)
+			else if (keyssnes[sfc_key[QUIT]] ==
+#ifdef GCW0
+					 SDL_RELEASED
+#else
+					 SDL_PRESSED
+#endif
+			)
 #else
 			else if ((keyssnes[sfc_key[SELECT_1]] == SDL_PRESSED) &&
 				 (keyssnes[sfc_key[START_1]] == SDL_PRESSED))
