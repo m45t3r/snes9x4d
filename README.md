@@ -10,7 +10,7 @@ Assuming that you're using the latest version of
 [MiyooCFW](https://github.com/TriForceX/MiyooCFW/), go to the
 [releases](https://github.com/m45t3r/snes9x4d-miyoo/releases/) tab and
 download the latest version of `snes9x4d` file. Put this file in
-`sd://emus/snes9x4d`, substituing the file that is in there. That's it!
+`sd://emus/snes9x4d`, substituting the file that is in there. That's it!
 
 To check if you're running the latest version, open the emulator and press
 `R` button to open menu, and check the title. It should be written something
